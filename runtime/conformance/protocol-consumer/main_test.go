@@ -9,6 +9,7 @@ import (
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
+	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 )
 
 func TestCanonicalProtocolConsumer(t *testing.T) {
@@ -123,5 +124,49 @@ func TestCanonicalMediaArtifactConsumer(t *testing.T) {
 	compileShape.Source = "consumer"
 	if compileShape.Source != "consumer" {
 		t.Fatalf("compile shape = %#v", compileShape)
+	}
+}
+
+func TestCanonicalToolArgumentErrorConsumer(t *testing.T) {
+	typed, err := canonicalToolArgumentError()
+	if err != nil {
+		t.Fatalf("canonicalToolArgumentError(): %v", err)
+	}
+	if typed.Tool != "browser" ||
+		typed.Code != agentxtoolerrors.ToolArgumentErrorCodeInvalidArgumentObject ||
+		typed.Detail != "decode: top-level JSON object is required" ||
+		!typed.Repairable ||
+		typed.SafeAutorepair ||
+		len(typed.AllowedRepairs) != 1 ||
+		typed.AllowedRepairs[0].Kind != agentxtoolerrors.ToolArgumentRepairReturnValidJSONObject {
+		t.Fatalf("typed tool argument error = %#v", typed)
+	}
+
+	fields := []string{" url ", "", "method", "url"}
+	invalidErr := agentxtoolerrors.NewInvalidToolArgumentError(" http_request ", fields, "")
+	fields[0] = "changed"
+	invalid, ok := agentxtoolerrors.AsToolArgumentError(invalidErr)
+	if !ok {
+		t.Fatalf("AsToolArgumentError(%T) = false", invalidErr)
+	}
+	if invalid.Tool != "http_request" ||
+		invalid.Error() != "http_request: invalid arguments" ||
+		!reflect.DeepEqual(invalid.InvalidFields, []string{"url", "method"}) ||
+		!reflect.DeepEqual(invalid.AllowedRepairs, []agentxtoolerrors.ToolArgumentRepair{{
+			Kind: agentxtoolerrors.ToolArgumentRepairFixInvalidField,
+			To:   "url,method",
+		}}) {
+		t.Fatalf("invalid tool argument error = %#v", invalid)
+	}
+
+	input := []string{"query"}
+	genericErr := agentxtoolerrors.NewToolArgumentError(" search ", agentxtoolerrors.ToolArgumentErrorOptions{
+		Code:          " custom ",
+		MissingFields: input,
+	})
+	input[0] = "changed"
+	generic, ok := agentxtoolerrors.AsToolArgumentError(genericErr)
+	if !ok || !reflect.DeepEqual(generic.MissingFields, []string{"query"}) {
+		t.Fatalf("generic tool argument error = %#v", generic)
 	}
 }

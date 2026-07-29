@@ -8,6 +8,7 @@ import (
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
+	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 )
 
 func canonicalEventJSON() ([]byte, error) {
@@ -56,6 +57,20 @@ func canonicalMediaArtifactJSON() ([]byte, error) {
 		FPS:        30,
 		HasAudio:   &hasAudio,
 	})
+}
+
+func canonicalToolArgumentError() (*agentxtoolerrors.ToolArgumentError, error) {
+	cause := errors.New("decode: top-level JSON object is required")
+	err := agentxtoolerrors.NewInvalidJSONToolArgumentError(" browser ", cause)
+	wrapped := fmt.Errorf("consumer wrapper: %w", err)
+	if !errors.Is(wrapped, cause) {
+		return nil, fmt.Errorf("tool argument error lost cause")
+	}
+	typed, ok := agentxtoolerrors.AsToolArgumentError(wrapped)
+	if !ok {
+		return nil, fmt.Errorf("tool argument error lost typed identity")
+	}
+	return typed, nil
 }
 
 func main() {
