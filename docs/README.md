@@ -1,6 +1,7 @@
 # AgentX Go 中文文档
 
-当前文档对应 W1 private validation 合同，目标是让调用方能够准确判断：
+当前文档对应 W1 根合同和 W3-01 LLM 组件的 private validation 合同，目标是让
+调用方能够准确判断：
 
 1. 根 `agentx` 包现在真实提供什么；
 2. `Run`、context、并发、错误和关闭行为如何工作；
@@ -15,6 +16,7 @@
 4. [生命周期与错误处理](guides/lifecycle-and-errors.md)
 5. [自定义 Adapter](guides/custom-adapter.md)
 6. [成熟度与兼容边界](maturity.md)
+7. [`components/llm` 中文 API Reference](../components/llm/API.md)
 
 可运行验证位于：
 
@@ -22,5 +24,6 @@
 - [`examples/custom-adapter`](../examples/custom-adapter)
 - [`conformance/consumer`](../conformance/consumer)
 
-这些页面只描述根 contract module。后续 Runtime、components、extensions 和 Scene
-只有在真实代码、consumer 与门禁落地后，才会获得各自的中文 API 文档入口。
+`docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述首个
+Experimental 组件。后续 Runtime、更多 components、extensions 和 Scene 只有在
+真实代码、consumer 与门禁落地后，才会获得各自的中文 API 文档入口。

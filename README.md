@@ -1,12 +1,13 @@
 # AgentX Go
 
-`agentx-go` 是 AgentX 面向 Go consumer 的独立源码仓库。当前 W1 只落地经过
-HS/M2 验证的最小执行合同，为后续 Runtime 内核和通用组件迁移建立稳定的依赖方向。
+`agentx-go` 是 AgentX 面向 Go consumer 的独立源码仓库。当前根 module 提供经过
+HS/M2 验证的最小执行合同；W3-01 又在独立 `components` module 落地首个 LLM
+合同组件，为后续 Runtime 内核和通用组件迁移建立稳定的依赖方向。
 
 > 当前成熟度：**private validation / contract-only**。这不是 Public、Beta 或
 > Stable 发布，也不是完整 embedded Agent SDK。
 
-## 当前提供
+## 当前提供：根合同
 
 - `Client`、`Config`、`New`
 - 同步 `Run(ctx, RunRequest)`
@@ -14,6 +15,14 @@ HS/M2 验证的最小执行合同，为后续 Runtime 内核和通用组件迁�
 - 六维 `ExecutionProfile`
 - 有界、幂等的 `Shutdown(ctx)` 合同
 - 供 Runtime/host 实现的窄 `ExecutionAdapter`
+
+## 当前提供：Experimental 组件
+
+- [`components/llm`](components/llm/API.md)：provider-neutral 的 LLM
+  request/response、tool、stream、multimodal 与 usage 合同
+- 独立 module：`github.com/wsnacj/agentx-go/components`
+- 生产代码只依赖 Go 标准库；不提供 provider、credential、网络客户端或
+  AgentX Runtime
 
 ## 当前不提供
 
@@ -38,14 +47,18 @@ export GOWORK=off
 ```
 
 Git 还必须能够通过 HTTPS token 或 SSH URL rewrite 访问该私有仓库。凭据和 URL
-rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日志。W1 consumer
-固定使用：
+rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日志。当前固定验证
+版本为：
 
 ```text
-v0.0.0-20260729101644-c7c26d427ac2
+github.com/wsnacj/agentx-go
+  v0.0.0-20260729101644-c7c26d427ac2
+
+github.com/wsnacj/agentx-go/components
+  v0.0.0-20260729125257-bb6949793309
 ```
 
-它是不可变 private validation pseudo-version，不是正式发布版本。
+它们是不可变 private validation pseudo-version，不是正式发布版本。
 
 ## 文档
 
@@ -56,6 +69,7 @@ v0.0.0-20260729101644-c7c26d427ac2
 - [自定义 Adapter](docs/guides/custom-adapter.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
 - [成熟度与兼容边界](docs/maturity.md)
+- [`components/llm` 中文 API Reference](components/llm/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
@@ -69,5 +83,6 @@ GOWORK=off go vet ./...
 GOWORK=off go mod tidy -diff
 ```
 
-根 contract 的 production 代码只依赖 Go 标准库。当前私有验证阶段不创建 tag，
-不承诺正式 module 版本，也不授权 Runtime、components 或 Scene 迁移。
+根 contract 与 `components/llm` 的 production 代码都只依赖 Go 标准库。当前
+私有验证阶段不创建 tag，不承诺正式 module 版本，也不授权 Runtime、更多
+components 或 Scene 迁移。
