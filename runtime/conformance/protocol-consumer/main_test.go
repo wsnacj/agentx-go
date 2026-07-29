@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"reflect"
 	"strings"
 	"testing"
 
+	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 )
@@ -83,5 +85,43 @@ func TestCanonicalSafeErrorConsumer(t *testing.T) {
 	}
 	if got := agentxsafeerror.Identity(" material "); got != "40b30b4e8f0d137056ac497e859ea198c1a00db4267d1ade9c458d04024e2981" {
 		t.Fatalf("safeerror identity = %q", got)
+	}
+}
+
+func TestCanonicalMediaArtifactConsumer(t *testing.T) {
+	payload, err := canonicalMediaArtifactJSON()
+	if err != nil {
+		t.Fatalf("canonicalMediaArtifactJSON(): %v", err)
+	}
+	if got, want := string(payload), `{"source":"nodes","kind":"video","path":".agentx/nodes/capture.mp4","mime_type":"video/mp4","format":"mp4","bytes":4096,"duration_ms":2500,"fps":30,"has_audio":false}`; got != want {
+		t.Fatalf("media artifact JSON = %s, want %s", got, want)
+	}
+
+	var decoded agentxmedia.Descriptor
+	if err := json.Unmarshal(payload, &decoded); err != nil {
+		t.Fatalf("Unmarshal(): %v", err)
+	}
+	if decoded.HasAudio == nil || *decoded.HasAudio ||
+		decoded.Source != "nodes" ||
+		decoded.Kind != "video" ||
+		decoded.Bytes != 4096 {
+		t.Fatalf("decoded descriptor = %#v", decoded)
+	}
+
+	typ := reflect.TypeFor[agentxmedia.Descriptor]()
+	if typ.NumField() != 20 {
+		t.Fatalf("Descriptor field count = %d, want 20", typ.NumField())
+	}
+	if field := typ.Field(0); field.Name != "Source" || field.Tag.Get("json") != "source" {
+		t.Fatalf("first field = %s json:%q", field.Name, field.Tag.Get("json"))
+	}
+	if field := typ.Field(19); field.Name != "CreatedAt" || field.Tag.Get("json") != "created_at,omitempty" {
+		t.Fatalf("last field = %s json:%q", field.Name, field.Tag.Get("json"))
+	}
+
+	var compileShape agentxmedia.Descriptor
+	compileShape.Source = "consumer"
+	if compileShape.Source != "consumer" {
+		t.Fatalf("compile shape = %#v", compileShape)
 	}
 }

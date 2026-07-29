@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 )
@@ -40,6 +41,21 @@ func canonicalSafeErrorJSON() ([]byte, error) {
 		" UPSTREAM/FAILED ",
 	)
 	return json.Marshal(projection)
+}
+
+func canonicalMediaArtifactJSON() ([]byte, error) {
+	hasAudio := false
+	return json.Marshal(agentxmedia.Descriptor{
+		Source:     "nodes",
+		Kind:       "video",
+		Path:       ".agentx/nodes/capture.mp4",
+		MIMEType:   "video/mp4",
+		Format:     "mp4",
+		Bytes:      4096,
+		DurationMs: 2500,
+		FPS:        30,
+		HasAudio:   &hasAudio,
+	})
 }
 
 func main() {
