@@ -81,6 +81,11 @@ GOWORK=off go test ./... -count=1
 GOWORK=off go test -race ./... -count=1
 GOWORK=off go vet ./...
 GOWORK=off go mod tidy -diff
+GOWORK=off go -C components test ./... -count=1
+GOWORK=off go -C components test -race ./... -count=1
+GOWORK=off go -C components vet ./...
+GOWORK=off go -C components mod tidy -diff
+GOWORK=off GOPROXY=off go -C conformance/consumer test ./... -count=1
 ```
 
 根 contract 与 `components/llm` 的 production 代码都只依赖 Go 标准库。当前
