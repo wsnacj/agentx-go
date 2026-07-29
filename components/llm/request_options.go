@@ -70,6 +70,22 @@ type RequestOptions struct {
 // Clone returns a defensive copy of the request options.
 func (o RequestOptions) Clone() RequestOptions {
 	cloned := o
+	if o.Temperature != nil {
+		temperature := *o.Temperature
+		cloned.Temperature = &temperature
+	}
+	if o.TopP != nil {
+		topP := *o.TopP
+		cloned.TopP = &topP
+	}
+	if o.TopK != nil {
+		topK := *o.TopK
+		cloned.TopK = &topK
+	}
+	if o.MaxTokens != nil {
+		maxTokens := *o.MaxTokens
+		cloned.MaxTokens = &maxTokens
+	}
 	if o.Thinking != nil {
 		thinking := *o.Thinking
 		cloned.Thinking = &thinking
@@ -306,6 +322,18 @@ type EmbeddingOptions struct {
 // Clone returns a defensive copy of embedding options.
 func (o EmbeddingOptions) Clone() EmbeddingOptions {
 	cloned := o
+	if o.Dimensions != nil {
+		dimensions := *o.Dimensions
+		cloned.Dimensions = &dimensions
+	}
+	if o.SparseEmbedding != nil {
+		sparseEmbedding := *o.SparseEmbedding
+		cloned.SparseEmbedding = &sparseEmbedding
+	}
+	if o.BatchSize != nil {
+		batchSize := *o.BatchSize
+		cloned.BatchSize = &batchSize
+	}
 	if o.MaxRetryDelayMs != nil {
 		delay := *o.MaxRetryDelayMs
 		cloned.MaxRetryDelayMs = &delay

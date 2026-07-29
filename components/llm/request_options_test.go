@@ -117,6 +117,32 @@ func TestRequestOptionsClonePreservesHooks(t *testing.T) {
 	}
 }
 
+func TestRequestOptionsCloneDetachesScalarPointers(t *testing.T) {
+	temperature := 0.2
+	topP := 0.8
+	topK := 8
+	maxTokens := 128
+	opts := RequestOptions{
+		Temperature: &temperature,
+		TopP:        &topP,
+		TopK:        &topK,
+		MaxTokens:   &maxTokens,
+	}
+
+	cloned := opts.Clone()
+	*cloned.Temperature = 0.4
+	*cloned.TopP = 0.6
+	*cloned.TopK = 4
+	*cloned.MaxTokens = 256
+
+	if *opts.Temperature != 0.2 ||
+		*opts.TopP != 0.8 ||
+		*opts.TopK != 8 ||
+		*opts.MaxTokens != 128 {
+		t.Fatalf("Clone() retained scalar pointer aliases: %#v", opts)
+	}
+}
+
 func TestEmbeddingOptionsRoundTrip(t *testing.T) {
 	in := map[string]any{
 		"dimensions":       1024,
@@ -151,5 +177,31 @@ func TestEmbeddingOptionsRoundTrip(t *testing.T) {
 	out := opts.ToMap()
 	if out["video_urls"] == nil {
 		t.Fatalf("expected provider field preserved in roundtrip map")
+	}
+}
+
+func TestEmbeddingOptionsCloneDetachesScalarPointers(t *testing.T) {
+	dimensions := 1024
+	sparse := true
+	batchSize := 8
+	maxRetryDelay := 700
+	opts := EmbeddingOptions{
+		Dimensions:      &dimensions,
+		SparseEmbedding: &sparse,
+		BatchSize:       &batchSize,
+		MaxRetryDelayMs: &maxRetryDelay,
+	}
+
+	cloned := opts.Clone()
+	*cloned.Dimensions = 2048
+	*cloned.SparseEmbedding = false
+	*cloned.BatchSize = 16
+	*cloned.MaxRetryDelayMs = 900
+
+	if *opts.Dimensions != 1024 ||
+		!*opts.SparseEmbedding ||
+		*opts.BatchSize != 8 ||
+		*opts.MaxRetryDelayMs != 700 {
+		t.Fatalf("Clone() retained scalar pointer aliases: %#v", opts)
 	}
 }
