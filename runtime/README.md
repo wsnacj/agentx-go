@@ -16,6 +16,8 @@ github.com/wsnacj/agentx-go/runtime
   capability 共享的媒体产物元数据 wire descriptor。
 - [`toolerrors`](./toolerrors/API.md)：结构化工具参数错误、cause chain 与
   deterministic repair hint 数据合同。
+- [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的
+  预算阶段、停止原因与近限额警告判定。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
