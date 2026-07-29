@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	agentxbudget "github.com/wsnacj/agentx-go/runtime/budget"
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
@@ -168,5 +169,60 @@ func TestCanonicalToolArgumentErrorConsumer(t *testing.T) {
 	generic, ok := agentxtoolerrors.AsToolArgumentError(genericErr)
 	if !ok || !reflect.DeepEqual(generic.MissingFields, []string{"query"}) {
 		t.Fatalf("generic tool argument error = %#v", generic)
+	}
+}
+
+func TestCanonicalBudgetConsumer(t *testing.T) {
+	controller := agentxbudget.NewController()
+
+	tests := []struct {
+		name string
+		snap agentxbudget.Snapshot
+		want agentxbudget.Verdict
+	}{
+		{
+			name: "ok",
+			snap: agentxbudget.Snapshot{ToolCalls: 7, DurationMs: 799},
+			want: agentxbudget.Verdict{Allowed: true, Stage: agentxbudget.StageOK},
+		},
+		{
+			name: "warn",
+			snap: agentxbudget.Snapshot{ToolCalls: 8, DurationMs: 800},
+			want: agentxbudget.Verdict{
+				Allowed: true,
+				Stage:   agentxbudget.StageWarn,
+				Warnings: []string{
+					"budget near limit (max_tool_calls): 8/10",
+					"budget near limit (max_duration_ms): 800/1000ms",
+				},
+			},
+		},
+		{
+			name: "soft stop",
+			snap: agentxbudget.Snapshot{ToolCalls: 11, DurationMs: 1200},
+			want: agentxbudget.Verdict{
+				Allowed: false,
+				Stage:   agentxbudget.StageSoftStop,
+				Reason:  agentxbudget.ReasonMaxToolCalls,
+			},
+		},
+		{
+			name: "hard stop",
+			snap: agentxbudget.Snapshot{DurationMs: 1001},
+			want: agentxbudget.Verdict{
+				Allowed: false,
+				Stage:   agentxbudget.StageHardStop,
+				Reason:  agentxbudget.ReasonMaxDurationMs,
+			},
+		},
+	}
+
+	limit := agentxbudget.Limit{MaxToolCalls: 10, MaxDurationMs: 1000}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := controller.Check(limit, tc.snap); !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("Check() = %#v, want %#v", got, tc.want)
+			}
+		})
 	}
 }
