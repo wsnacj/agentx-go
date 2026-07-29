@@ -6,10 +6,12 @@
 github.com/wsnacj/agentx-go/runtime
 ```
 
-当前只落地首个无外部依赖的叶子 package：
+当前落地的无外部依赖叶子 package：
 
 - [`protocol`](./protocol/API.md)：版本化 Runtime wire/schema、normalization
   与 validation。
+- [`telemetry/safeerror`](./telemetry/safeerror/API.md)：observation-safe
+  error projection、identity 与 cause-preserving wrapper。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
