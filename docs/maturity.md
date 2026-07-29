@@ -8,7 +8,7 @@
 | 根 contract | W1 候选 |
 | Runtime construction | 未提供，计划进入 W2 |
 | Examples/conformance | W1-B private consumer 验证已提供 |
-| HS canonical import | W1-C 后切换 |
+| HS canonical import | W1-C 已切换固定 private pseudo-version |
 | Public/Beta/Stable | 未授权 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
@@ -16,6 +16,9 @@
 W1 的 exact export、签名、中文 Reference、examples 和 external-style consumer
 用于发现意外漂移，但它们是
 候选合同门禁，不等同于长期兼容承诺。
+
+根合同的 authoring/source authority 已在 W1-C 后转移到本仓库。HS 旧
+`experimental/facade` 只保留 Deprecated alias/forwarder，不再接受独立行为修改。
 
 ## 明确 non-goal
 

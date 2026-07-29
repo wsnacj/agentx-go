@@ -26,6 +26,27 @@ HS/M2 验证的最小执行合同，为后续 Runtime 内核和通用组件迁�
 `agentxruntime.New(ctx, Config)` 工作包。W1 的 `ExecutionAdapter` 面向扩展作者
 和集成验证，不等于要求所有业务调用方自行实现 Runtime。
 
+## Private validation 访问
+
+当前仓库是 private。consumer 环境需要：
+
+```bash
+export GOPRIVATE=github.com/wsnacj/agentx-go
+export GONOSUMDB=github.com/wsnacj/agentx-go
+export GOPROXY=direct
+export GOWORK=off
+```
+
+Git 还必须能够通过 HTTPS token 或 SSH URL rewrite 访问该私有仓库。凭据和 URL
+rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日志。W1 consumer
+固定使用：
+
+```text
+v0.0.0-20260729101644-c7c26d427ac2
+```
+
+它是不可变 private validation pseudo-version，不是正式发布版本。
+
 ## 文档
 
 - [文档入口](docs/README.md)
