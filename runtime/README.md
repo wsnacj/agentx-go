@@ -12,6 +12,8 @@ github.com/wsnacj/agentx-go/runtime
   与 validation。
 - [`telemetry/safeerror`](./telemetry/safeerror/API.md)：observation-safe
   error projection、identity 与 cause-preserving wrapper。
+- [`mediaartifact`](./mediaartifact/API.md)：跨 browser、PDF、video、nodes
+  capability 共享的媒体产物元数据 wire descriptor。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
