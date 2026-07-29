@@ -35,6 +35,9 @@ HS/M2 验证的最小执行合同，为后续 Runtime 内核和通用组件迁�
 - [自定义 Adapter](docs/guides/custom-adapter.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
 - [成熟度与兼容边界](docs/maturity.md)
+- [最小合同示例](examples/contract-basic)
+- [自定义 Adapter 示例](examples/custom-adapter)
+- [External-style consumer](conformance/consumer)
 
 ## 本地验证
 

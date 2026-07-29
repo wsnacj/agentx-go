@@ -7,13 +7,14 @@
 | 仓库 | private validation |
 | 根 contract | W1 候选 |
 | Runtime construction | 未提供，计划进入 W2 |
-| Examples/conformance | W1-B 后提供 |
+| Examples/conformance | W1-B private consumer 验证已提供 |
 | HS canonical import | W1-C 后切换 |
 | Public/Beta/Stable | 未授权 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
-W1 的 exact export、签名、中文 Reference 和行为测试用于发现意外漂移，但它们是
+W1 的 exact export、签名、中文 Reference、examples 和 external-style consumer
+用于发现意外漂移，但它们是
 候选合同门禁，不等同于长期兼容承诺。
 
 ## 明确 non-goal

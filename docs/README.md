@@ -16,5 +16,11 @@
 5. [自定义 Adapter](guides/custom-adapter.md)
 6. [成熟度与兼容边界](maturity.md)
 
+可运行验证位于：
+
+- [`examples/contract-basic`](../examples/contract-basic)
+- [`examples/custom-adapter`](../examples/custom-adapter)
+- [`conformance/consumer`](../conformance/consumer)
+
 这些页面只描述根 contract module。后续 Runtime、components、extensions 和 Scene
 只有在真实代码、consumer 与门禁落地后，才会获得各自的中文 API 文档入口。
