@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
+	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 )
 
 func TestCanonicalProtocolConsumer(t *testing.T) {
@@ -57,5 +58,30 @@ func TestCanonicalProtocolSchemaIdentities(t *testing.T) {
 		if !strings.HasPrefix(value, "agentx.") || !strings.HasSuffix(value, ".v1") {
 			t.Fatalf("unexpected schema identity %q", value)
 		}
+	}
+}
+
+func TestCanonicalSafeErrorConsumer(t *testing.T) {
+	payload, err := canonicalSafeErrorJSON()
+	if err != nil {
+		t.Fatalf("canonicalSafeErrorJSON(): %v", err)
+	}
+	if got, want := string(payload), `{"class":"runtime_error","code":"upstream_failed","identity":"consumer-error-1"}`; got != want {
+		t.Fatalf("safeerror JSON = %s, want %s", got, want)
+	}
+	if strings.Contains(string(payload), "private consumer sentinel") {
+		t.Fatalf("safeerror JSON leaked raw cause: %s", payload)
+	}
+
+	attrs := agentxsafeerror.AppendAttrs(nil, "tool_", agentxsafeerror.Projection{
+		Class:    "runtime_error",
+		Code:     "upstream_failed",
+		Identity: "consumer-error-1",
+	})
+	if attrs["tool_error_identity"] != "consumer-error-1" {
+		t.Fatalf("safeerror attrs = %#v", attrs)
+	}
+	if got := agentxsafeerror.Identity(" material "); got != "40b30b4e8f0d137056ac497e859ea198c1a00db4267d1ade9c458d04024e2981" {
+		t.Fatalf("safeerror identity = %q", got)
 	}
 }
