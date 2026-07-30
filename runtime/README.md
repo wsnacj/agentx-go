@@ -18,6 +18,8 @@ github.com/wsnacj/agentx-go/runtime
   deterministic repair hint 数据合同。
 - [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的
   预算阶段、停止原因与近限额警告判定。
+- [`promptcontext`](./promptcontext/API.md)：构造 prompt rendering 所需的时间、
+  timezone、session/model identity，并提供 fail-soft RFC3339 时间投影。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
