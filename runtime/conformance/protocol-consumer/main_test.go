@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -11,6 +15,7 @@ import (
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxpromptcontext "github.com/wsnacj/agentx-go/runtime/promptcontext"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
+	agentxtelemetry "github.com/wsnacj/agentx-go/runtime/telemetry"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 )
@@ -256,5 +261,100 @@ func TestCanonicalPromptContextConsumer(t *testing.T) {
 	compileShape = agentxpromptcontext.Context(agentxpromptcontext.BuildInput{})
 	if !compileShape.Now.IsZero() {
 		t.Fatalf("compile shape = %#v", compileShape)
+	}
+}
+
+func TestCanonicalTelemetryConsumer(t *testing.T) {
+	payload, err := canonicalTelemetryJSON()
+	if err != nil {
+		t.Fatalf("canonicalTelemetryJSON(): %v", err)
+	}
+	var toolEvent agentxtelemetry.ToolEvent
+	if err := json.Unmarshal(payload, &toolEvent); err != nil {
+		t.Fatalf("Unmarshal(): %v", err)
+	}
+	if toolEvent.SchemaVersion != agentxtelemetry.ToolEventSchemaV1 ||
+		toolEvent.Kind != agentxtelemetry.ToolEventKindCompleted ||
+		toolEvent.Tool != "browser_open" ||
+		toolEvent.DurationMs != 42 {
+		t.Fatalf("tool event = %#v", toolEvent)
+	}
+
+	semantic := agentxtelemetry.ProjectSemanticRunEvents(agentxtelemetry.Event{
+		Name: agentxtelemetry.SemanticRunSourceEventRunStart,
+		Attrs: map[string]any{
+			"resume": true,
+		},
+	})
+	if len(semantic) != 1 ||
+		semantic[0].Kind != agentxtelemetry.SemanticRunEventKindRunResumed {
+		t.Fatalf("semantic projection = %#v", semantic)
+	}
+	summary := agentxtelemetry.SummarizeSemanticRunEvents(semantic)
+	if summary.TotalEvents != 1 || summary.RunResumed != 1 {
+		t.Fatalf("semantic summary = %#v", summary)
+	}
+
+	recordPayload, err := json.Marshal(agentxtelemetry.Event{
+		Name: agentxtelemetry.SemanticRunSourceEventRunStart,
+		Attrs: map[string]any{
+			"resume": true,
+		},
+	})
+	if err != nil {
+		t.Fatalf("Marshal(record): %v", err)
+	}
+	replayed, trace := agentxtelemetry.ReplaySemanticRunEventsFromStoredRecords(
+		[]agentxtelemetry.StoredRawEventRecord{{
+			EventID:     "event-1",
+			RunID:       "run-1",
+			PayloadJSON: string(recordPayload),
+			CreatedAt:   1710000000123,
+		}},
+	)
+	if len(replayed) != 1 ||
+		replayed[0].SourceEventID != "event-1" ||
+		trace.ProjectedEventCount != 1 ||
+		trace.InvalidEventCount != 0 {
+		t.Fatalf("replay = %#v trace = %#v", replayed, trace)
+	}
+}
+
+func TestCanonicalTelemetryPrivateJSONLConsumer(t *testing.T) {
+	directory := filepath.Join(t.TempDir(), "observations")
+	path := filepath.Join(directory, "events.jsonl")
+	sink, err := agentxtelemetry.NewJSONLSink(path)
+	if err != nil {
+		t.Fatalf("NewJSONLSink(): %v", err)
+	}
+	if err := sink.Emit(context.Background(), agentxtelemetry.Event{
+		Component: "runner",
+		Name:      "run.start",
+	}); err != nil {
+		t.Fatalf("Emit(): %v", err)
+	}
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("ReadFile(): %v", err)
+	}
+	if !strings.Contains(string(raw), `"schema_version":"v1"`) ||
+		!strings.Contains(string(raw), `"name":"run.start"`) {
+		t.Fatalf("JSONL = %s", raw)
+	}
+	if runtime.GOOS != "windows" {
+		directoryInfo, err := os.Stat(directory)
+		if err != nil {
+			t.Fatalf("Stat(directory): %v", err)
+		}
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("Stat(file): %v", err)
+		}
+		if got, want := directoryInfo.Mode().Perm(), os.FileMode(0o700); got != want {
+			t.Fatalf("directory mode = %#o, want %#o", got, want)
+		}
+		if got, want := fileInfo.Mode().Perm(), os.FileMode(0o600); got != want {
+			t.Fatalf("file mode = %#o, want %#o", got, want)
+		}
 	}
 }

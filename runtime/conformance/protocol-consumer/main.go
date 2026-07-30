@@ -7,6 +7,7 @@ import (
 
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
+	agentxtelemetry "github.com/wsnacj/agentx-go/runtime/telemetry"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 )
@@ -73,8 +74,24 @@ func canonicalToolArgumentError() (*agentxtoolerrors.ToolArgumentError, error) {
 	return typed, nil
 }
 
+func canonicalTelemetryJSON() ([]byte, error) {
+	events := agentxtelemetry.ProjectToolEvents(agentxtelemetry.Event{
+		Component: "tool",
+		Name:      "tool.finish",
+		Tool:      " Browser_Open ",
+		Status:    "ok",
+		Attrs: map[string]any{
+			"duration_ms": 42,
+		},
+	})
+	if len(events) != 1 {
+		return nil, fmt.Errorf("telemetry projection count = %d, want 1", len(events))
+	}
+	return json.Marshal(events[0])
+}
+
 func main() {
-	payload, err := canonicalEventJSON()
+	payload, err := canonicalTelemetryJSON()
 	if err != nil {
 		panic(err)
 	}
