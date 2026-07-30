@@ -42,6 +42,16 @@ func TestCanonicalProtocolConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowBindingStateConsumer(t *testing.T) {
+	state, err := canonicalWorkflowBindingState()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowBindingState(): %v", err)
+	}
+	if got := state["report"]; got != "ready" {
+		t.Fatalf("state report = %#v, want ready", got)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {

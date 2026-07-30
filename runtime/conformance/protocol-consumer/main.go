@@ -11,6 +11,7 @@ import (
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
+	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
 )
 
 func canonicalEventJSON() ([]byte, error) {
@@ -132,6 +133,43 @@ func canonicalWorkflowJSON() ([]byte, error) {
 			Name: "quality",
 		}},
 	})
+}
+
+func canonicalWorkflowBindingState() (map[string]any, error) {
+	runtime := agentxbindingstate.New(agentxbindingstate.Inputs{
+		SessionInput: map[string]any{"query": "risk"},
+	})
+	args, err := runtime.MaterializeArguments(
+		"collect",
+		`{}`,
+		[]agentxworkflow.BindingSpec{{
+			From: "session.input.query",
+			To:   "args.query",
+		}},
+	)
+	if err != nil {
+		return nil, err
+	}
+	if args != `{"query":"risk"}` {
+		return nil, fmt.Errorf("workflow binding arguments = %s", args)
+	}
+	if err := runtime.ApplyNodeOutputs(
+		"collect",
+		[]agentxworkflow.BindingSpec{{
+			From: "result.report",
+			To:   "state.report",
+		}},
+		agentxbindingstate.NewNodeResult("completed", `{"report":"ready"}`, ""),
+	); err != nil {
+		return nil, err
+	}
+	if err := runtime.ValidateRequiredSlots([]agentxworkflow.StateSlotSpec{{
+		Name:     "report",
+		Required: true,
+	}}); err != nil {
+		return nil, err
+	}
+	return runtime.State(), nil
 }
 
 func main() {
