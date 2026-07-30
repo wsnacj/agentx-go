@@ -18,6 +18,7 @@ import (
 	agentxtelemetry "github.com/wsnacj/agentx-go/runtime/telemetry"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
+	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 )
 
 func TestCanonicalProtocolConsumer(t *testing.T) {
@@ -356,5 +357,43 @@ func TestCanonicalTelemetryPrivateJSONLConsumer(t *testing.T) {
 		if got, want := fileInfo.Mode().Perm(), os.FileMode(0o600); got != want {
 			t.Fatalf("file mode = %#o, want %#o", got, want)
 		}
+	}
+}
+
+func TestCanonicalWorkflowConsumer(t *testing.T) {
+	payload, err := canonicalWorkflowJSON()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowJSON(): %v", err)
+	}
+	var spec agentxworkflow.Spec
+	if err := json.Unmarshal(payload, &spec); err != nil {
+		t.Fatalf("Unmarshal(): %v", err)
+	}
+	if spec.ID != "consumer-workflow" ||
+		spec.PlanningMode != agentxworkflow.PlanningBounded ||
+		spec.EntryNode != "collect" ||
+		len(spec.Nodes) != 1 ||
+		spec.Nodes[0].Kind != agentxworkflow.NodeCollect ||
+		spec.Nodes[0].ExecutionMode != agentxworkflow.ExecInline ||
+		spec.Nodes[0].Retry.MaxAttempts != 2 ||
+		len(spec.Edges) != 1 ||
+		len(spec.StateSchema) != 1 ||
+		len(spec.ArtifactSchema) != 1 ||
+		len(spec.EvaluatorSchema) != 1 {
+		t.Fatalf("workflow spec = %#v", spec)
+	}
+	if got := spec.Nodes[0].Config["format"]; got != "markdown" {
+		t.Fatalf("workflow config format = %#v", got)
+	}
+
+	typ := reflect.TypeFor[agentxworkflow.Spec]()
+	if typ.NumField() != 15 {
+		t.Fatalf("Spec field count = %d, want 15", typ.NumField())
+	}
+	if field := typ.Field(0); field.Name != "ID" || field.Tag.Get("json") != "id,omitempty" {
+		t.Fatalf("first field = %s json:%q", field.Name, field.Tag.Get("json"))
+	}
+	if field := typ.Field(14); field.Name != "DefaultContract" || field.Tag.Get("json") != "default_contract,omitempty" {
+		t.Fatalf("last field = %s json:%q", field.Name, field.Tag.Get("json"))
 	}
 }

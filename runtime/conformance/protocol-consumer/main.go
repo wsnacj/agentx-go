@@ -10,6 +10,7 @@ import (
 	agentxtelemetry "github.com/wsnacj/agentx-go/runtime/telemetry"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
+	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 )
 
 func canonicalEventJSON() ([]byte, error) {
@@ -90,8 +91,51 @@ func canonicalTelemetryJSON() ([]byte, error) {
 	return json.Marshal(events[0])
 }
 
+func canonicalWorkflowJSON() ([]byte, error) {
+	return json.Marshal(agentxworkflow.Spec{
+		ID:           "consumer-workflow",
+		Version:      "1",
+		PlanningMode: agentxworkflow.PlanningBounded,
+		EntryNode:    "collect",
+		Nodes: []agentxworkflow.NodeSpec{{
+			ID:            "collect",
+			Kind:          agentxworkflow.NodeCollect,
+			ExecutionMode: agentxworkflow.ExecInline,
+			Inputs: []agentxworkflow.BindingSpec{{
+				From: "request.query",
+				To:   "query",
+			}},
+			Outputs: []agentxworkflow.BindingSpec{{
+				From: "result",
+				To:   "state.report",
+			}},
+			Retry: agentxworkflow.RetryPolicy{
+				MaxAttempts: 2,
+				BackoffMs:   []int{100},
+			},
+			Config: map[string]any{"format": "markdown"},
+		}},
+		Edges: []agentxworkflow.EdgeSpec{{
+			From: "collect",
+			To:   "collect",
+			On:   "retry",
+		}},
+		StateSchema: []agentxworkflow.StateSlotSpec{{
+			Name:     "report",
+			Type:     "string",
+			Required: true,
+		}},
+		ArtifactSchema: []agentxworkflow.ArtifactTypeRef{{
+			Type: "report",
+		}},
+		EvaluatorSchema: []agentxworkflow.EvaluatorRef{{
+			Name: "quality",
+		}},
+	})
+}
+
 func main() {
-	payload, err := canonicalTelemetryJSON()
+	payload, err := canonicalWorkflowJSON()
 	if err != nil {
 		panic(err)
 	}
