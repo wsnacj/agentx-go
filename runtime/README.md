@@ -25,6 +25,10 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow`](./workflow/API.md)：Workflow Spec 的 planning/node/execution
   mode 与 nodes/edges/state/artifact/evaluator 数据合同，以及最小 validator
   construction seam；不含 validation 实现或 executor。
+- [`workflow/bindingstate`](./workflow/bindingstate/API.md)：portable binding
+  materialization、node-result recording、内存 state transition 与 required
+  slot validation implementation；不含 lowering、executor 或 durable
+  lifecycle。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整

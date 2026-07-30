@@ -12,6 +12,10 @@ import workflow "github.com/wsnacj/agentx-go/runtime/workflow"
 seam。它不提供 validation 实现、lowering、executor、replanning、RunStore
 或 provider。
 
+portable binding/state implementation 位于
+[`workflow/bindingstate`](./bindingstate/API.md)，不会把 executor、RunStore
+或 host policy 下沉到本 package。
+
 ## Workflow Spec
 
 ```go
