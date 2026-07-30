@@ -12,6 +12,7 @@ import (
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
+	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
 )
 
 func canonicalEventJSON() ([]byte, error) {
@@ -170,6 +171,35 @@ func canonicalWorkflowBindingState() (map[string]any, error) {
 		return nil, err
 	}
 	return runtime.State(), nil
+}
+
+func canonicalWorkflowTransition() ([]string, error) {
+	machine := agentxtransition.New(agentxtransition.Plan{
+		EntryNode: "collect",
+		NodeIDs:   []string{"collect", "report"},
+		Edges: []agentxworkflow.EdgeSpec{{
+			From: "collect",
+			To:   "report",
+		}},
+	})
+	var visited []string
+	for {
+		nodeID, err := machine.Enter()
+		if err != nil {
+			return nil, err
+		}
+		if nodeID == "" {
+			return visited, nil
+		}
+		visited = append(visited, nodeID)
+		next, err := machine.Advance(agentxtransition.TriggerSuccess)
+		if err != nil {
+			return nil, err
+		}
+		if next == "" {
+			return visited, nil
+		}
+	}
 }
 
 func main() {

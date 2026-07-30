@@ -52,6 +52,16 @@ func TestCanonicalWorkflowBindingStateConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowTransitionConsumer(t *testing.T) {
+	visited, err := canonicalWorkflowTransition()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowTransition(): %v", err)
+	}
+	if !reflect.DeepEqual(visited, []string{"collect", "report"}) {
+		t.Fatalf("visited = %#v, want collect/report", visited)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {
