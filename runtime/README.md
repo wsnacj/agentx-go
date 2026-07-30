@@ -29,6 +29,9 @@ github.com/wsnacj/agentx-go/runtime
   materialization、node-result recording、内存 state transition 与 required
   slot validation implementation；不含 lowering、executor 或 durable
   lifecycle。
+- [`workflow/transition`](./workflow/transition/API.md)：portable traversal、
+  final-status normalization 与 success/failure/always edge-routing
+  implementation；不含 node execution 或 durable lifecycle。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整

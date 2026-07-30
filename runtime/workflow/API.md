@@ -16,6 +16,12 @@ portable binding/state implementation 位于
 [`workflow/bindingstate`](./bindingstate/API.md)，不会把 executor、RunStore
 或 host policy 下沉到本 package。
 
+portable traversal、final-status normalization 与 edge-routing
+implementation 位于
+[`workflow/transition`](./transition/API.md)。它只维护一次执行的
+node/visited/edge transition state，不拥有 node execution 或 durable
+lifecycle。
+
 ## Workflow Spec
 
 ```go
