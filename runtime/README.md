@@ -20,6 +20,8 @@ github.com/wsnacj/agentx-go/runtime
   预算阶段、停止原因与近限额警告判定。
 - [`promptcontext`](./promptcontext/API.md)：构造 prompt rendering 所需的时间、
   timezone、session/model identity，并提供 fail-soft RFC3339 时间投影。
+- [`telemetry`](./telemetry/API.md)：Runtime event、tool/semantic projection、
+  stored-event replay、summary 与私有 JSONL sink。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
