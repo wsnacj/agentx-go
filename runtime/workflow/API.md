@@ -8,9 +8,9 @@ import workflow "github.com/wsnacj/agentx-go/runtime/workflow"
 
 成熟度：**Experimental / private validation**。
 
-该 package 只定义 AgentX Workflow Spec 的数据合同：planning mode、node kind、
-execution mode、nodes、edges、state/artifact/evaluator schema。它不提供
-validation、lowering、executor、replanning、RunStore 或 provider。
+该 package 定义 AgentX Workflow Spec 数据合同和最小 validator construction
+seam。它不提供 validation 实现、lowering、executor、replanning、RunStore
+或 provider。
 
 ## Workflow Spec
 
@@ -158,11 +158,38 @@ spec := workflow.Spec{
 构造成功不表示 Spec 已通过验证或可执行。调用方必须交给获准的 validator/
 executor adapter，并处理其 error。
 
+## Validator construction seam
+
+```go
+type Validator interface {
+    ValidateSpec(Spec) error
+}
+```
+
+`Validator` 是完整 Workflow admission 的依赖注入合同：
+
+- consumer 只依赖单方法接口，不感知 structural、JSON Schema、runtime、
+  pack 或 host config 等内部验证阶段；
+- 本 package 不提供默认实现，也不选择 host policy；
+- 实现拥有 validation error；adapter 和 consumer 应原样传播 error，不根据
+  未文档化错误文本重建 policy；
+- 该方法是同步、无 context 的 validation 合同，不声明 cancellation、
+  deadline、网络或副作用语义；
+- 返回 `nil` 只表示当前实现接受 Spec，不表示 Workflow 已执行或持久化。
+
+示例：
+
+```go
+func Admit(validator workflow.Validator, spec workflow.Spec) error {
+    return validator.ValidateSpec(spec)
+}
+```
+
 ## 与首版 Facade 的边界
 
 首版 AgentX Facade 仍只提供 `Run`，Workflow 是后续能力。该 package 当前不提供：
 
-- `ValidateSpec`、`LowerSpec`、`ExecuteInline`；
+- `ValidateSpec` 默认函数或实现、`LowerSpec`、`ExecuteInline`；
 - Node executor、LLM/tool/provider wiring；
 - RunStore、artifact persistence、resume 或 durable lifecycle；
 - built-in delegation policy、temporary planner 或 Scene workflow；

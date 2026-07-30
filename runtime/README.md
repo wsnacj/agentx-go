@@ -23,7 +23,8 @@ github.com/wsnacj/agentx-go/runtime
 - [`telemetry`](./telemetry/API.md)：Runtime event、tool/semantic projection、
   stored-event replay、summary 与私有 JSONL sink。
 - [`workflow`](./workflow/API.md)：Workflow Spec 的 planning/node/execution
-  mode 与 nodes/edges/state/artifact/evaluator 数据合同；不含 executor。
+  mode 与 nodes/edges/state/artifact/evaluator 数据合同，以及最小 validator
+  construction seam；不含 validation 实现或 executor。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
