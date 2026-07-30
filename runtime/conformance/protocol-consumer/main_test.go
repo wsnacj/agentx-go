@@ -5,9 +5,11 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	agentxbudget "github.com/wsnacj/agentx-go/runtime/budget"
 	agentxmedia "github.com/wsnacj/agentx-go/runtime/mediaartifact"
+	agentxpromptcontext "github.com/wsnacj/agentx-go/runtime/promptcontext"
 	agentxprotocol "github.com/wsnacj/agentx-go/runtime/protocol"
 	agentxsafeerror "github.com/wsnacj/agentx-go/runtime/telemetry/safeerror"
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
@@ -224,5 +226,35 @@ func TestCanonicalBudgetConsumer(t *testing.T) {
 				t.Fatalf("Check() = %#v, want %#v", got, tc.want)
 			}
 		})
+	}
+}
+
+func TestCanonicalPromptContextConsumer(t *testing.T) {
+	now := time.Date(2026, 7, 30, 1, 2, 3, 0, time.UTC)
+	got := agentxpromptcontext.Build(agentxpromptcontext.BuildInput{
+		Now:       now,
+		Timezone:  "Asia/Shanghai",
+		SessionID: "session-1",
+		Model:     "model-1",
+	})
+	if got.Now != now ||
+		got.Timezone != "Asia/Shanghai" ||
+		got.SessionID != "session-1" ||
+		got.Model != "model-1" {
+		t.Fatalf("prompt context = %#v", got)
+	}
+	if text := got.TimestampText(); text != "2026-07-30T09:02:03+08:00" {
+		t.Fatalf("TimestampText() = %q", text)
+	}
+
+	got.Timezone = "invalid/timezone"
+	if text := got.TimestampText(); text != now.Format(time.RFC3339) {
+		t.Fatalf("invalid timezone TimestampText() = %q", text)
+	}
+
+	var compileShape agentxpromptcontext.Context
+	compileShape = agentxpromptcontext.Context(agentxpromptcontext.BuildInput{})
+	if !compileShape.Now.IsZero() {
+		t.Fatalf("compile shape = %#v", compileShape)
 	}
 }
