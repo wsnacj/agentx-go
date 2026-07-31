@@ -29,7 +29,8 @@ type StepInput struct {
 
 // StepResult reports the portable outcome of one host-owned round.
 type StepResult struct {
-	Kind OutcomeKind
+	Kind        OutcomeKind
+	Termination *TerminationSignal
 }
 
 // Result reports the round and outcome that stopped the driver.

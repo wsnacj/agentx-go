@@ -13,6 +13,21 @@ type externalStepper struct {
 	err    error
 }
 
+type externalRoundExecutor struct{}
+
+func (externalRoundExecutor) ExecuteRound(_ context.Context, input toolloop.RoundExecutionInput) (toolloop.RoundExecutionResult, error) {
+	if input.Round >= input.MaxRounds {
+		return toolloop.RoundExecutionResult{Kind: toolloop.OutcomeCompleted, Reply: "done"}, nil
+	}
+	return toolloop.RoundExecutionResult{
+		Kind:  toolloop.OutcomeContinue,
+		Reply: "working",
+		Continuation: &toolloop.RoundContinuation{
+			NextChunks: []string{"continue"},
+		},
+	}, nil
+}
+
 func (stepper externalStepper) Step(_ context.Context, input toolloop.StepInput) (toolloop.StepResult, error) {
 	if stepper.err != nil {
 		return toolloop.StepResult{}, stepper.err
@@ -68,5 +83,29 @@ func TestExternalConsumerRetainsStepErrorIdentity(t *testing.T) {
 	result, err := runtime.Run(context.Background())
 	if !errors.Is(err, sentinel) || result.Round != 1 {
 		t.Fatalf("result=%#v error=%v", result, err)
+	}
+}
+
+func TestExternalConsumerCanUseRoundCoordinatorAsStepper(t *testing.T) {
+	coordinator, err := toolloop.NewCoordinator(toolloop.CoordinatorConfig{
+		Executor: externalRoundExecutor{},
+	}, toolloop.RoundState{Chunks: []string{"start"}})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	runtime, err := toolloop.New(toolloop.Config{MaxRounds: 2}, coordinator)
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	result, err := runtime.Run(context.Background())
+	if err != nil {
+		t.Fatalf("Run(): %v", err)
+	}
+	if result.Kind != toolloop.OutcomeCompleted || result.Round != 2 {
+		t.Fatalf("result = %#v", result)
+	}
+	state := coordinator.State()
+	if state.FinalReply != "done" || len(state.Chunks) != 1 || state.Chunks[0] != "continue" {
+		t.Fatalf("state = %#v", state)
 	}
 }

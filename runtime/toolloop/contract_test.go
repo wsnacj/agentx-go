@@ -13,6 +13,18 @@ func (fn stepperFunc) Step(ctx context.Context, input StepInput) (StepResult, er
 	return fn(ctx, input)
 }
 
+type roundExecutorFunc func(context.Context, RoundExecutionInput) (RoundExecutionResult, error)
+
+func (fn roundExecutorFunc) ExecuteRound(ctx context.Context, input RoundExecutionInput) (RoundExecutionResult, error) {
+	return fn(ctx, input)
+}
+
+type continuationPolicyFunc func(context.Context, ContinuationObservation) (string, bool, error)
+
+func (fn continuationPolicyFunc) ObserveContinuation(ctx context.Context, observation ContinuationObservation) (string, bool, error) {
+	return fn(ctx, observation)
+}
+
 func TestRuntimeDrivesRoundsToCompletion(t *testing.T) {
 	var inputs []StepInput
 	runtime, err := New(Config{MaxRounds: 4}, stepperFunc(func(_ context.Context, input StepInput) (StepResult, error) {
@@ -175,5 +187,139 @@ func TestFailureFuseTracksResetAndInvalidArguments(t *testing.T) {
 		Tool: "echo", Failed: true, ErrorClass: "timeout",
 	}}); ok {
 		t.Fatalf("signal after reset = %#v", signal)
+	}
+}
+
+func TestCoordinatorAppliesContinuationAndPreservesRawReply(t *testing.T) {
+	next := []string{"next"}
+	coordinator, err := NewCoordinator(CoordinatorConfig{
+		Executor: roundExecutorFunc(func(_ context.Context, input RoundExecutionInput) (RoundExecutionResult, error) {
+			if input.Round != 2 || input.MaxRounds != 4 || input.State.FinalReply != "before" {
+				t.Fatalf("input = %#v", input)
+			}
+			return RoundExecutionResult{
+				Kind:  OutcomeContinue,
+				Reply: " raw reply ",
+				Continuation: &RoundContinuation{
+					NextChunks:       next,
+					ForceNoToolCalls: true,
+				},
+			}, nil
+		}),
+	}, RoundState{Chunks: []string{"before"}, FinalReply: "before"})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	result, err := coordinator.Step(context.Background(), StepInput{Round: 2, MaxRounds: 4})
+	if err != nil {
+		t.Fatalf("Step(): %v", err)
+	}
+	if result.Kind != OutcomeContinue {
+		t.Fatalf("result = %#v", result)
+	}
+	next[0] = "mutated"
+	state := coordinator.State()
+	if state.FinalReply != " raw reply " || !state.ForceNoToolCalls || len(state.Chunks) != 1 || state.Chunks[0] != "next" {
+		t.Fatalf("state = %#v", state)
+	}
+	state.Chunks[0] = "consumer-mutated"
+	if got := coordinator.State().Chunks[0]; got != "next" {
+		t.Fatalf("state alias leaked: %q", got)
+	}
+}
+
+func TestCoordinatorTerminationOrderFailurePolicyLoop(t *testing.T) {
+	policyCalled := false
+	coordinator, err := NewCoordinator(CoordinatorConfig{
+		Executor: roundExecutorFunc(func(context.Context, RoundExecutionInput) (RoundExecutionResult, error) {
+			return RoundExecutionResult{
+				Kind: OutcomeContinue,
+				Continuation: &RoundContinuation{
+					Calls: []Call{{Name: "tool", Arguments: `{}`}},
+					Runs:  []RunObservation{{Name: "tool", Output: "same"}},
+					Failures: []FailureObservation{{
+						Tool: "tool", Failed: true, ErrorClass: "invalid_args",
+					}},
+				},
+			}, nil
+		}),
+		FailureFuse: NewFailureFuse(FailureFuseConfig{Enabled: true, Threshold: 1}),
+		ContinuationPolicy: continuationPolicyFunc(func(context.Context, ContinuationObservation) (string, bool, error) {
+			policyCalled = true
+			return "host", true, nil
+		}),
+		LoopDetector: NewLoopDetector(LoopDetectorConfig{Enabled: true, RepeatThreshold: 1}),
+	}, RoundState{})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	result, err := coordinator.Step(context.Background(), StepInput{Round: 1, MaxRounds: 3})
+	if err != nil {
+		t.Fatalf("Step(): %v", err)
+	}
+	if result.Kind != OutcomeTerminated || result.Termination == nil || result.Termination.Kind != TerminationFailureFuse {
+		t.Fatalf("result = %#v", result)
+	}
+	if policyCalled {
+		t.Fatal("host policy ran after failure fuse termination")
+	}
+}
+
+func TestCoordinatorHostPolicyPrecedesLoopDetector(t *testing.T) {
+	coordinator, err := NewCoordinator(CoordinatorConfig{
+		Executor: roundExecutorFunc(func(context.Context, RoundExecutionInput) (RoundExecutionResult, error) {
+			return RoundExecutionResult{
+				Kind: OutcomeContinue,
+				Continuation: &RoundContinuation{
+					Calls: []Call{{Name: "tool", Arguments: `{}`}},
+					Runs:  []RunObservation{{Name: "tool", Output: "same"}},
+				},
+			}, nil
+		}),
+		ContinuationPolicy: continuationPolicyFunc(func(context.Context, ContinuationObservation) (string, bool, error) {
+			return "queue_stall", true, nil
+		}),
+		LoopDetector: NewLoopDetector(LoopDetectorConfig{Enabled: true, RepeatThreshold: 1}),
+	}, RoundState{})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	result, err := coordinator.Step(context.Background(), StepInput{Round: 1, MaxRounds: 3})
+	if err != nil {
+		t.Fatalf("Step(): %v", err)
+	}
+	if result.Termination == nil || result.Termination.Kind != TerminationHostPolicy || result.Termination.Code != "queue_stall" {
+		t.Fatalf("result = %#v", result)
+	}
+}
+
+func TestCoordinatorPreservesExecutorErrorIdentity(t *testing.T) {
+	want := errors.New("round failed")
+	coordinator, err := NewCoordinator(CoordinatorConfig{
+		Executor: roundExecutorFunc(func(context.Context, RoundExecutionInput) (RoundExecutionResult, error) {
+			return RoundExecutionResult{}, want
+		}),
+	}, RoundState{})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	_, got := coordinator.Step(context.Background(), StepInput{Round: 1, MaxRounds: 1})
+	if !errors.Is(got, want) {
+		t.Fatalf("error identity lost: %v", got)
+	}
+}
+
+func TestCoordinatorRequiresContinuationForContinue(t *testing.T) {
+	coordinator, err := NewCoordinator(CoordinatorConfig{
+		Executor: roundExecutorFunc(func(context.Context, RoundExecutionInput) (RoundExecutionResult, error) {
+			return RoundExecutionResult{Kind: OutcomeContinue}, nil
+		}),
+	}, RoundState{})
+	if err != nil {
+		t.Fatalf("NewCoordinator(): %v", err)
+	}
+	_, got := coordinator.Step(context.Background(), StepInput{Round: 1, MaxRounds: 1})
+	if got == nil || got.Error() != "agentx: open tool loop round continuation is required" {
+		t.Fatalf("error = %v", got)
 	}
 }

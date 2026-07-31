@@ -17,6 +17,8 @@ import toolloop "github.com/wsnacj/agentx-go/runtime/toolloop"
 - 按 no-progress→repeat→ping-pong优先级检测循环；
 - 检测 immediate successful replay；
 - 对同一 normalized tool的连续失败计数，并让 `invalid_args` 最多两次即熔断。
+- 对 host round结果做 outcome验证、continuation state更新，并按 failure
+  fuse→host continuation policy→loop detector的顺序决定是否继续。
 
 它不拥有 model request、tool resolution/execution、authorization、budget、
 retry、answer-contract、queue/status、checkpoint、event、session persistence、
@@ -59,6 +61,48 @@ round。
 `OutcomeContinue`进入下一轮；`OutcomeCompleted`和`OutcomeTerminated`立即返回；
 循环耗尽时返回 `OutcomeMaxRounds`。用户可见 max-rounds回复、checkpoint和
 event仍由 host负责。
+
+## Round Coordinator
+
+```go
+type RoundState struct {
+    Chunks           []string
+    ForceNoToolCalls bool
+    FinalReply       string
+}
+
+type RoundExecutor interface {
+    ExecuteRound(context.Context, RoundExecutionInput) (RoundExecutionResult, error)
+}
+
+type ContinuationPolicy interface {
+    ObserveContinuation(
+        context.Context,
+        ContinuationObservation,
+    ) (code string, stop bool, err error)
+}
+
+func NewCoordinator(CoordinatorConfig, RoundState) (*Coordinator, error)
+func (*Coordinator) Step(context.Context, StepInput) (StepResult, error)
+func (*Coordinator) State() RoundState
+```
+
+`Coordinator`本身实现 `Stepper`，可以直接交给 `New(Config, Stepper)`。具体一轮
+model request、response observation、tool execution、recovery、budget和
+persistence由 host `RoundExecutor`完成；coordinator只接收 portable
+`RoundExecutionResult`。
+
+`OutcomeContinue`必须携带 `RoundContinuation`。coordinator会防御性复制
+`NextChunks`，只用非空白的 raw reply更新 `FinalReply`，再按以下固定顺序判定：
+
+```text
+FailureFuse -> ContinuationPolicy -> LoopDetector
+```
+
+`ContinuationPolicy`是可选的 host policy seam，例如产品可在该位置保留 scheduler
+queue stall规则。portable `TerminationSignal`只记录 failure、host-policy或 loop
+事实；用户可见回复、diagnostics、checkpoint和 event投影仍由 host负责。executor
+或 policy error不会包装，`errors.Is/As` identity保持。
 
 ## LoopDetector
 
