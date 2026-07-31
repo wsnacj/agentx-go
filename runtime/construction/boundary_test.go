@@ -1,0 +1,103 @@
+package construction
+
+import (
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"os"
+	"path/filepath"
+	"reflect"
+	"sort"
+	"strconv"
+	"strings"
+	"testing"
+)
+
+func TestExactExperimentalSurface(t *testing.T) {
+	exports := map[string]bool{}
+	for _, path := range productionGoFiles(t) {
+		parsed, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
+		if err != nil {
+			t.Fatalf("parse %s: %v", path, err)
+		}
+		for _, declaration := range parsed.Decls {
+			switch value := declaration.(type) {
+			case *ast.FuncDecl:
+				if value.Recv == nil && ast.IsExported(value.Name.Name) {
+					exports[value.Name.Name] = true
+				}
+			case *ast.GenDecl:
+				for _, spec := range value.Specs {
+					switch spec := spec.(type) {
+					case *ast.TypeSpec:
+						if ast.IsExported(spec.Name.Name) {
+							exports[spec.Name.Name] = true
+						}
+					case *ast.ValueSpec:
+						for _, name := range spec.Names {
+							if ast.IsExported(name.Name) {
+								exports[name.Name] = true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	got := sortedKeys(exports)
+	want := []string{"Config", "Host", "ModelRuntime", "New", "RunnerRuntime"}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("exported surface = %v, want %v", got, want)
+	}
+}
+
+func TestProductionImportsOnlyRootContract(t *testing.T) {
+	for _, path := range productionGoFiles(t) {
+		parsed, err := parser.ParseFile(token.NewFileSet(), path, nil, parser.ImportsOnly)
+		if err != nil {
+			t.Fatalf("parse %s: %v", path, err)
+		}
+		for _, imported := range parsed.Imports {
+			importPath, err := strconv.Unquote(imported.Path.Value)
+			if err != nil {
+				t.Fatalf("unquote import in %s: %v", path, err)
+			}
+			if strings.HasPrefix(importPath, "hs/") ||
+				strings.HasPrefix(importPath, "scene/") {
+				t.Errorf("%s reverse-imports host owner %q", path, importPath)
+			}
+			if strings.HasPrefix(importPath, "github.com/") &&
+				importPath != "github.com/wsnacj/agentx-go" {
+				t.Errorf("%s imports unapproved external owner %q", path, importPath)
+			}
+		}
+	}
+}
+
+func productionGoFiles(t *testing.T) []string {
+	t.Helper()
+	entries, err := os.ReadDir(".")
+	if err != nil {
+		t.Fatalf("ReadDir: %v", err)
+	}
+	var files []string
+	for _, entry := range entries {
+		if entry.IsDir() ||
+			!strings.HasSuffix(entry.Name(), ".go") ||
+			strings.HasSuffix(entry.Name(), "_test.go") {
+			continue
+		}
+		files = append(files, filepath.Clean(entry.Name()))
+	}
+	sort.Strings(files)
+	return files
+}
+
+func sortedKeys(values map[string]bool) []string {
+	out := make([]string, 0, len(values))
+	for value := range values {
+		out = append(out, value)
+	}
+	sort.Strings(out)
+	return out
+}
