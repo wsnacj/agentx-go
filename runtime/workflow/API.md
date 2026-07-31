@@ -30,6 +30,10 @@ portable node context binding、executor capability priority 与 exact-once
 invocation 位于 [`workflow/nodeexec`](./nodeexec/API.md)。它不选择具体
 LLM/tool executor，也不拥有 lowering、retry 或 durable backend。
 
+portable Workflow JSON Schema normalization 与递归 definition validation
+位于 [`workflow/schema`](./schema/API.md)。config key/alias/default、
+Spec admission 顺序和产品 policy 不属于该 package。
+
 ## Workflow Spec
 
 ```go

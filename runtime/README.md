@@ -41,6 +41,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/orchestration`](./workflow/orchestration/API.md)：组合 portable
   binding、transition、journal 与 node execution 的 lowered-plan run 主循环；
   lowering、具体 executor/backend 和 error display policy 继续由 host 注入。
+- [`workflow/schema`](./workflow/schema/API.md)：portable Workflow JSON Schema
+  normalization 与递归 definition validation implementation；config
+  key/alias/default 和 admission policy 留在 host。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
