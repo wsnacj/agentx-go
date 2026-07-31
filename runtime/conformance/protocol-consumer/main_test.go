@@ -102,6 +102,35 @@ func TestCanonicalWorkflowNodeExecutionConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowOrchestrationConsumer(t *testing.T) {
+	result, operations, err := canonicalWorkflowOrchestration()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowOrchestration(): %v", err)
+	}
+	if result.FinalStatus != "completed" ||
+		result.FinalNode != "collect" ||
+		result.NodeOutput["collect"] != "ready" {
+		t.Fatalf("result = %#v", result)
+	}
+	want := []string{
+		"load:run-orchestration-consumer",
+		"create:run-orchestration-consumer",
+		"event:workflow.start",
+		"event:workflow.node.state.input",
+		"node:running",
+		"event:workflow.node.start",
+		"event:workflow.node.state.output",
+		"node:completed",
+		"event:workflow.node.finish",
+		"load:run-orchestration-consumer",
+		"update:run-orchestration-consumer",
+		"event:workflow.finish",
+	}
+	if !reflect.DeepEqual(operations, want) {
+		t.Fatalf("operations = %#v, want %#v", operations, want)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {

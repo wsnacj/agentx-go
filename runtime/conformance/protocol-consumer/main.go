@@ -15,6 +15,7 @@ import (
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
 	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
 	agentxnodeexec "github.com/wsnacj/agentx-go/runtime/workflow/nodeexec"
+	agentxorchestration "github.com/wsnacj/agentx-go/runtime/workflow/orchestration"
 	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
 )
 
@@ -298,6 +299,49 @@ func canonicalWorkflowNodeExecution() (agentxnodeexec.Outcome, []int, error) {
 		executor.nodeCalls,
 		executor.outcomeCalls,
 	}, err
+}
+
+func canonicalWorkflowOrchestration() (agentxorchestration.Result, []string, error) {
+	port := &consumerJournalPort{runs: map[string]agentxjournal.Run{}}
+	journal := agentxjournal.New(agentxjournal.Dependencies{
+		Port:         port,
+		NewRunID:     func() string { return "run-orchestration-consumer" },
+		NewEventID:   func() string { return "event-orchestration-consumer" },
+		NowUnixMilli: func() int64 { return 100 },
+	})
+	executor := agentxnodeexec.New(agentxnodeexec.Dependencies{
+		Outcome: &consumerNodeExecutor{},
+	})
+	result, err := agentxorchestration.Run(
+		context.Background(),
+		agentxorchestration.Plan{
+			WorkflowID: "consumer-workflow",
+			Version:    "1",
+			EntryNode:  "collect",
+			NodeIDs:    []string{"collect"},
+			Nodes: map[string]agentxorchestration.PlannedNode{
+				"collect": {
+					Spec: agentxworkflow.NodeSpec{
+						ID:   "collect",
+						Kind: agentxworkflow.NodeTool,
+					},
+					Kind: agentxworkflow.NodeTool,
+					Call: agentxnodeexec.Call{
+						Name:      "public_source",
+						Arguments: `{"query":"risk"}`,
+					},
+				},
+			},
+		},
+		agentxorchestration.Inputs{},
+		agentxorchestration.Dependencies{
+			Journal:            journal,
+			NodeExecution:      executor,
+			NewNodeExecutionID: func() string { return "nodeexec-orchestration-consumer" },
+			NowUnixMilli:       func() int64 { return 101 },
+		},
+	)
+	return result, port.operations, err
 }
 
 type consumerNodeExecutor struct {
