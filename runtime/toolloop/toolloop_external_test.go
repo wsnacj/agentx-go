@@ -15,6 +15,32 @@ type externalStepper struct {
 
 type externalRoundExecutor struct{}
 
+type externalPhaseExecutor struct {
+	steps  *[]string
+	action bool
+	gate   bool
+}
+
+func (executor externalPhaseExecutor) Request(context.Context, toolloop.RoundPhaseInput) (toolloop.RoundRequestResult, error) {
+	*executor.steps = append(*executor.steps, "request")
+	return toolloop.RoundRequestResult{ActionRequired: executor.action}, nil
+}
+
+func (executor externalPhaseExecutor) Observe(context.Context, toolloop.RoundPhaseInput) (toolloop.RoundObserveResult, error) {
+	*executor.steps = append(*executor.steps, "observe")
+	return toolloop.RoundObserveResult{Reply: "raw reply"}, nil
+}
+
+func (executor externalPhaseExecutor) BeforeAction(context.Context, toolloop.RoundPhaseInput) (bool, error) {
+	*executor.steps = append(*executor.steps, "before_action")
+	return executor.gate, nil
+}
+
+func (executor externalPhaseExecutor) Act(context.Context, toolloop.RoundPhaseInput) error {
+	*executor.steps = append(*executor.steps, "act")
+	return nil
+}
+
 func (externalRoundExecutor) ExecuteRound(_ context.Context, input toolloop.RoundExecutionInput) (toolloop.RoundExecutionResult, error) {
 	if input.Round >= input.MaxRounds {
 		return toolloop.RoundExecutionResult{Kind: toolloop.OutcomeCompleted, Reply: "done"}, nil
@@ -107,5 +133,36 @@ func TestExternalConsumerCanUseRoundCoordinatorAsStepper(t *testing.T) {
 	state := coordinator.State()
 	if state.FinalReply != "done" || len(state.Chunks) != 1 || state.Chunks[0] != "continue" {
 		t.Fatalf("state = %#v", state)
+	}
+}
+
+func TestExternalConsumerCanCoordinateRoundPhases(t *testing.T) {
+	var steps []string
+	coordinator, err := toolloop.NewRoundPhaseCoordinator(externalPhaseExecutor{
+		steps:  &steps,
+		action: true,
+		gate:   true,
+	})
+	if err != nil {
+		t.Fatalf("NewRoundPhaseCoordinator(): %v", err)
+	}
+	result, err := coordinator.Execute(context.Background(), toolloop.RoundPhaseInput{
+		Round:     1,
+		MaxRounds: 3,
+	})
+	if err != nil {
+		t.Fatalf("Execute(): %v", err)
+	}
+	if result.Kind != toolloop.RoundPhaseActionCompleted || result.Reply != "raw reply" {
+		t.Fatalf("result = %#v", result)
+	}
+	want := []string{"request", "observe", "before_action", "act"}
+	if len(steps) != len(want) {
+		t.Fatalf("steps = %v", steps)
+	}
+	for index := range want {
+		if steps[index] != want[index] {
+			t.Fatalf("steps = %v", steps)
+		}
 	}
 }

@@ -104,6 +104,45 @@ queue stall规则。portable `TerminationSignal`只记录 failure、host-policy�
 事实；用户可见回复、diagnostics、checkpoint和 event投影仍由 host负责。executor
 或 policy error不会包装，`errors.Is/As` identity保持。
 
+## Round Phase Coordinator
+
+```go
+type RoundPhaseInput struct {
+    Round     int
+    MaxRounds int
+}
+
+type RoundPhaseExecutor interface {
+    Request(context.Context, RoundPhaseInput) (RoundRequestResult, error)
+    Observe(context.Context, RoundPhaseInput) (RoundObserveResult, error)
+    BeforeAction(context.Context, RoundPhaseInput) (bool, error)
+    Act(context.Context, RoundPhaseInput) error
+}
+
+func NewRoundPhaseCoordinator(RoundPhaseExecutor) (*RoundPhaseCoordinator, error)
+func (*RoundPhaseCoordinator) Execute(
+    context.Context,
+    RoundPhaseInput,
+) (RoundPhaseResult, error)
+```
+
+`RoundPhaseCoordinator`拥有以下固定顺序：
+
+```text
+Request -> Observe -> no action
+                   -> BeforeAction -> host stopped
+                                   -> Act -> action completed
+```
+
+同一个调用方 context会原样传给每个 phase；phase error不包装，结果中的
+`LastPhase`指出失败或最后完成的 phase。`Observe`提供的 raw reply不 trim。
+无 action时不会调用 gate或 `Act`，`BeforeAction`返回 false时也不会调用
+`Act`。
+
+具体 model request/response、tool call数据、budget检查、authorization、
+persistence与产品 policy都由同一个 host executor持有。executor可在四个方法间
+保存单轮临时状态，因此每次并发 round必须使用独立实例，除非 host自行同步。
+
 ## LoopDetector
 
 ```go
