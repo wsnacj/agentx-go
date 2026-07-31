@@ -38,6 +38,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/nodeexec`](./workflow/nodeexec/API.md)：portable node context
   binding、Outcome/Node/basic capability priority 与 exact-once invocation；
   concrete executor 和 policy 留在 host。
+- [`workflow/orchestration`](./workflow/orchestration/API.md)：组合 portable
+  binding、transition、journal 与 node execution 的 lowered-plan run 主循环；
+  lowering、具体 executor/backend 和 error display policy 继续由 host 注入。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
