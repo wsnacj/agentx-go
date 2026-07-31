@@ -13,6 +13,7 @@ import (
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
+	agentxcomposition "github.com/wsnacj/agentx-go/runtime/workflow/composition"
 	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
 	agentxlowering "github.com/wsnacj/agentx-go/runtime/workflow/lowering"
 	agentxnodeexec "github.com/wsnacj/agentx-go/runtime/workflow/nodeexec"
@@ -448,6 +449,39 @@ func canonicalWorkflowOrchestration() (agentxorchestration.Result, []string, err
 		},
 	)
 	return result, port.operations, err
+}
+
+func canonicalWorkflowComposition() (agentxcomposition.Result, error) {
+	runtime, err := agentxcomposition.New(agentxcomposition.Dependencies{
+		Lowering: agentxlowering.Dependencies{
+			Validator: consumerLoweringValidator{},
+			Mapper:    consumerLoweringMapper{},
+		},
+		Orchestration: agentxorchestration.Dependencies{
+			Journal: agentxjournal.New(agentxjournal.Dependencies{
+				NewRunID:     func() string { return "run-composition-consumer" },
+				NewEventID:   func() string { return "event-composition-consumer" },
+				NowUnixMilli: func() int64 { return 100 },
+			}),
+			NodeExecution: agentxnodeexec.New(agentxnodeexec.Dependencies{
+				Outcome: &consumerNodeExecutor{},
+			}),
+			NewNodeExecutionID: func() string { return "nodeexec-composition-consumer" },
+			NowUnixMilli:       func() int64 { return 101 },
+		},
+	})
+	if err != nil {
+		return agentxcomposition.Result{}, err
+	}
+	return runtime.Run(context.Background(), agentxworkflow.Spec{
+		ID:        "consumer-composition",
+		Version:   "1",
+		EntryNode: "collect",
+		Nodes: []agentxworkflow.NodeSpec{{
+			ID:   "collect",
+			Kind: agentxworkflow.NodeTool,
+		}},
+	}, agentxcomposition.Inputs{})
 }
 
 type consumerNodeExecutor struct {

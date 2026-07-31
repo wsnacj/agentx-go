@@ -173,6 +173,19 @@ func TestCanonicalWorkflowLoweringConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowCompositionConsumer(t *testing.T) {
+	result, err := canonicalWorkflowComposition()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowComposition(): %v", err)
+	}
+	if result.LoweringPlan.SpecID != "consumer-composition" ||
+		result.Execution.RunID != "run-composition-consumer" ||
+		result.Execution.FinalStatus != "completed" ||
+		result.Execution.NodeOutput["collect"] != "ready" {
+		t.Fatalf("composition result = %#v", result)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {
