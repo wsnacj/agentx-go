@@ -34,6 +34,10 @@ portable Workflow JSON Schema normalization 与递归 definition validation
 位于 [`workflow/schema`](./schema/API.md)。config key/alias/default、
 Spec admission 顺序和产品 policy 不属于该 package。
 
+portable Spec/Node structural orchestration、graph/binding validation 与
+显式 host policy port 位于 [`workflow/validation`](./validation/API.md)。
+它不提供默认 HS/Scene/product policy。
+
 ## Workflow Spec
 
 ```go

@@ -44,6 +44,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/schema`](./workflow/schema/API.md)：portable Workflow JSON Schema
   normalization 与递归 definition validation implementation；config
   key/alias/default 和 admission policy 留在 host。
+- [`workflow/validation`](./workflow/validation/API.md)：portable Spec/Node
+  structural orchestration、graph/binding kernel 和显式 host policy port；
+  不提供默认产品或 runtime policy。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
