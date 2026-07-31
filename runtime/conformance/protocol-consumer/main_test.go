@@ -94,7 +94,7 @@ func TestCanonicalWorkflowNodeExecutionConsumer(t *testing.T) {
 	if outcome.Output != "ready" ||
 		outcome.FinalStatus != "completed" ||
 		len(outcome.ChildNodeExecutions) != 1 ||
-		outcome.ChildNodeExecutions[0].NodeExecutionID != "child-1" {
+		outcome.ChildNodeExecutions[0].NodeExecID != "child-1" {
 		t.Fatalf("outcome = %#v", outcome)
 	}
 	if !reflect.DeepEqual(calls, []int{0, 0, 1}) {

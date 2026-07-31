@@ -321,9 +321,9 @@ func (e *consumerNodeExecutor) ExecuteNodeWithOutcome(context.Context, agentxnod
 	return agentxnodeexec.Outcome{
 		Output:      "ready",
 		FinalStatus: "completed",
-		ChildNodeExecutions: []agentxnodeexec.ChildNodeExecutionProjection{{
-			NodeExecutionID: "child-1",
-			Status:          "completed",
+		ChildNodeExecutions: []agentxnodeexec.NodeExecutionProjection{{
+			NodeExecID: "child-1",
+			Status:     "completed",
 		}},
 	}, nil
 }
