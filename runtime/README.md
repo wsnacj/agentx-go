@@ -50,6 +50,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/lowering`](./workflow/lowering/API.md)：portable validation 后
   node lowering、argument JSON 编码和 orchestration plan projection；
   tool/model/task mapping 与 default继续由 host注入。
+- [`workflow/composition`](./workflow/composition/API.md)：构造并保存已验证的
+  lowering/orchestration依赖，按固定顺序执行 lower→run，并同时返回 portable
+  plan与 partial/full result；具体 policy/backend继续由 host注入。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
