@@ -20,6 +20,9 @@ github.com/wsnacj/agentx-go/runtime
   预算阶段、停止原因与近限额警告判定。
 - [`promptcontext`](./promptcontext/API.md)：构造 prompt rendering 所需的时间、
   timezone、session/model identity，并提供 fail-soft RFC3339 时间投影。
+- [`construction`](./construction/API.md)：通过窄 `Host` port组合 model、
+  runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
+  transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。
 - [`telemetry`](./telemetry/API.md)：Runtime event、tool/semantic projection、
   stored-event replay、summary 与私有 JSONL sink。
 - [`workflow`](./workflow/API.md)：Workflow Spec 的 planning/node/execution
@@ -54,9 +57,10 @@ github.com/wsnacj/agentx-go/runtime
   lowering/orchestration依赖，按固定顺序执行 lower→run，并同时返回 portable
   plan与 partial/full result；具体 policy/backend继续由 host注入。
 
-当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
-`agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
-embedded Runtime，不能据此宣称 Runtime 已达到 Public、Beta、Stable 或
+当前成熟度为 **private validation / Experimental**。本 module 已提供需要调用方
+注入 `construction.Host` 的构造生命周期，但尚未提供无需 Host 的根
+`agentxruntime.New`、具体 Runner、真实 backend、provider、credential、Scene 或
+完整 embedded Runtime，不能据此宣称 Runtime 已达到 Public、Beta、Stable 或
 production-ready。
 
 依赖方向固定为：

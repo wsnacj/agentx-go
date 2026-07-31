@@ -7,9 +7,10 @@
 | 仓库 | private validation |
 | 根 contract | W1 候选 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM及17个 Runtime owner，共19个 |
+| agentx-go production packages | 根合同、LLM及18个 Runtime owner，共20个 |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地 |
-| 根 Runtime construction | W2-A 已测量，W2-B 未获准 |
+| Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
+| 无需 Host 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
@@ -31,15 +32,15 @@ LLM 合同类型的 source authority 已在 W3-01 后转移到
 
 Runtime module 已拥有 protocol、telemetry、budget、prompt context以及
 Workflow Spec/schema/validation/lowering/state/transition/journal/nodeexec/
-orchestration/composition等 portable source authority。HS production consumer
-固定使用 canonical pseudo-version；对应 portable implementation不得在 HS
-恢复双写。
+orchestration/composition等 portable source authority，也拥有基于窄 Host port
+的 construction lifecycle。HS production consumer固定使用 canonical
+pseudo-version；对应 portable implementation不得在 HS恢复双写。
 
 ## 明确 non-goal
 
 以下能力没有进入 W1，不得根据 package 名、文档愿景或未来目录推断已支持：
 
-- 官方 embedded Runtime 构造；
+- 无需 Host 的官方 embedded Runtime 根构造；
 - Tool Direct Answer 的独立结果策略；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
 - Objective Runtime Loop；
@@ -56,9 +57,11 @@ W1 checkpoint 只证明：
 - external-style consumer 能通过 canonical import 使用它；
 - HS adapter 可以依赖同一份合同而不反向污染 owner package。
 
-W2-A 已验证普通使用者需要的窄 Runtime construction形状；W4-27 又完成
-Workflow composition source-authority cutover，但仍没有解除根 Runtime
-construction的 W2-B门禁。当前 Experimental package拥有真实实现和 consumer，
-不代表其全部导出符号已经通过 Public API审批。Pre-Beta还必须完成 construction、
-surface consolidation、版本兼容、维护 owner、Changelog、license、security和
-发布授权门禁。任何一个步骤都不能自动把当前合同升级为 Public、Beta或 Stable。
+W2-A 已验证普通使用者需要的窄 Runtime construction形状；W5-A 又把通用构造
+生命周期迁入 canonical `runtime/construction`，并完成 fixed-version consumer与
+HS production cutover。它仍要求调用方提供具体 `Host`，因此没有解除无需 Host 的
+根 Runtime construction W2-B门禁。当前 Experimental package拥有真实实现和
+consumer，不代表其全部导出符号已经通过 Public API审批。Pre-Beta还必须完成
+无需 Host 的 construction决策、surface consolidation、版本兼容、维护 owner、
+Changelog、license、security和发布授权门禁。任何一个步骤都不能自动把当前合同
+升级为 Public、Beta或 Stable。

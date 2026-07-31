@@ -29,8 +29,8 @@ implementation owner。
 
 - [`runtime`](runtime/README.md) 独立 module：
   `github.com/wsnacj/agentx-go/runtime`
-- protocol、telemetry、budget、prompt context、tool error与 media artifact
-  owner
+- protocol、telemetry、budget、prompt context、tool error、media artifact与
+  Runtime construction lifecycle owner
 - Workflow Spec、schema、validation、lowering、binding/state、transition、
   journal、node execution、orchestration与 composition owner
 - 每个已迁 production package均提供中文 `API.md`、contract/external tests和
@@ -39,15 +39,17 @@ implementation owner。
 
 ## 当前不提供
 
-- 官方 Runtime 构造入口或模型/provider 接入
+- 无需 Host 的官方 Runtime 根构造入口或模型/provider 接入
 - 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口
 - concrete Workflow validation/mapping policy、executor和 RunStore backend
 - progress stream、HTTP API、Scene registry
 - credential、真实网络 backend 或生产副作用
 
-普通使用者要获得开箱即用的 Runtime 构造能力，仍需等待后续
-`agentxruntime.New(ctx, Config)` 工作包。W1 的 `ExecutionAdapter` 面向扩展作者
-和集成验证，不等于要求所有业务调用方自行实现 Runtime。
+[`runtime/construction`](runtime/construction/API.md) 已提供基于窄 `Host`
+port 的 Experimental 构造生命周期，但普通使用者要获得无需自行提供 Host 的
+开箱即用 Runtime，仍需等待后续根 Runtime construction 工作包。W1 的
+`ExecutionAdapter` 面向扩展作者和集成验证，不等于要求所有业务调用方自行实现
+Runtime。
 
 ## Private validation 访问
 
@@ -72,7 +74,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731070530-d41d75fadece
+  v0.0.0-20260731075750-bb1d49393bda
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -88,6 +90,7 @@ github.com/wsnacj/agentx-go/runtime
 - [成熟度与兼容边界](docs/maturity.md)
 - [`components/llm` 中文 API Reference](components/llm/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
+- [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
@@ -110,6 +113,7 @@ GOWORK=off go -C runtime test -race ./... -count=1
 GOWORK=off go -C runtime vet ./...
 GOWORK=off go -C runtime mod tidy -diff
 GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime
