@@ -18,9 +18,15 @@ func main() {
 }
 
 func run(ctx context.Context, completeAt int) (toolloop.Result, error) {
+	coordinator, err := toolloop.NewCoordinator(toolloop.CoordinatorConfig{
+		Executor: conformanceRoundExecutor{completeAt: completeAt},
+	}, toolloop.RoundState{Chunks: []string{"start"}})
+	if err != nil {
+		return toolloop.Result{}, err
+	}
 	runtime, err := toolloop.New(
 		toolloop.Config{MaxRounds: 4},
-		conformanceStepper{completeAt: completeAt},
+		coordinator,
 	)
 	if err != nil {
 		return toolloop.Result{}, err
@@ -28,16 +34,25 @@ func run(ctx context.Context, completeAt int) (toolloop.Result, error) {
 	return runtime.Run(ctx)
 }
 
-type conformanceStepper struct {
+type conformanceRoundExecutor struct {
 	completeAt int
 }
 
-func (stepper conformanceStepper) Step(
+func (executor conformanceRoundExecutor) ExecuteRound(
 	_ context.Context,
-	input toolloop.StepInput,
-) (toolloop.StepResult, error) {
-	if input.Round >= stepper.completeAt {
-		return toolloop.StepResult{Kind: toolloop.OutcomeCompleted}, nil
+	input toolloop.RoundExecutionInput,
+) (toolloop.RoundExecutionResult, error) {
+	if input.Round >= executor.completeAt {
+		return toolloop.RoundExecutionResult{
+			Kind:  toolloop.OutcomeCompleted,
+			Reply: "done",
+		}, nil
 	}
-	return toolloop.StepResult{Kind: toolloop.OutcomeContinue}, nil
+	return toolloop.RoundExecutionResult{
+		Kind:  toolloop.OutcomeContinue,
+		Reply: "working",
+		Continuation: &toolloop.RoundContinuation{
+			NextChunks: []string{"continue"},
+		},
+	}, nil
 }
