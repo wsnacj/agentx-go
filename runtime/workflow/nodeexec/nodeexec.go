@@ -41,12 +41,12 @@ type Termination struct {
 
 // DelegatedRound contains one portable delegated execution round.
 type DelegatedRound struct {
-	NodeExecutionID string `json:"node_exec_id,omitempty"`
-	Round           int    `json:"round,omitempty"`
-	OutcomeKind     string `json:"outcome_kind,omitempty"`
-	StopReason      string `json:"stop_reason,omitempty"`
-	ToolCalls       int    `json:"tool_calls,omitempty"`
-	ToolRuns        int    `json:"tool_runs,omitempty"`
+	NodeExecID  string `json:"node_exec_id,omitempty"`
+	Round       int    `json:"round,omitempty"`
+	OutcomeKind string `json:"outcome_kind,omitempty"`
+	StopReason  string `json:"stop_reason,omitempty"`
+	ToolCalls   int    `json:"tool_calls,omitempty"`
+	ToolRuns    int    `json:"tool_runs,omitempty"`
 }
 
 // DelegatedExecution contains portable delegated execution evidence.
@@ -58,38 +58,44 @@ type DelegatedExecution struct {
 	Rounds      []DelegatedRound `json:"rounds,omitempty"`
 }
 
-// ChildNodeExecutionProjection is the recursive portable projection for child
+// NodeExecutionProjection is the recursive portable projection for child
 // executions returned by an outcome-aware executor.
-type ChildNodeExecutionProjection struct {
-	NodeExecutionID       string                         `json:"node_exec_id,omitempty"`
-	RunID                 string                         `json:"run_id,omitempty"`
-	BranchID              string                         `json:"branch_id,omitempty"`
-	ParentNodeExecutionID string                         `json:"parent_node_exec_id,omitempty"`
-	NodeID                string                         `json:"node_id,omitempty"`
-	Kind                  string                         `json:"kind,omitempty"`
-	Status                string                         `json:"status,omitempty"`
-	Attempt               int                            `json:"attempt,omitempty"`
-	InputStateRef         string                         `json:"input_state_ref,omitempty"`
-	OutputStateRef        string                         `json:"output_state_ref,omitempty"`
-	ExecutionContractID   string                         `json:"execution_contract_id,omitempty"`
-	ExecutionContractDiff []string                       `json:"execution_contract_diff,omitempty"`
-	Termination           *Termination                   `json:"termination,omitempty"`
-	DelegatedExecution    *DelegatedExecution            `json:"delegated_execution,omitempty"`
-	ChildNodeExecutions   []ChildNodeExecutionProjection `json:"child_node_executions,omitempty"`
-	StartedAt             int64                          `json:"started_at,omitempty"`
-	FinishedAt            int64                          `json:"finished_at,omitempty"`
+type NodeExecutionProjection struct {
+	NodeExecID            string                    `json:"node_exec_id,omitempty"`
+	RunID                 string                    `json:"run_id,omitempty"`
+	BranchID              string                    `json:"branch_id,omitempty"`
+	ParentNodeExecID      string                    `json:"parent_node_exec_id,omitempty"`
+	NodeID                string                    `json:"node_id,omitempty"`
+	Kind                  string                    `json:"kind,omitempty"`
+	Status                string                    `json:"status,omitempty"`
+	Attempt               int                       `json:"attempt,omitempty"`
+	InputStateRef         string                    `json:"input_state_ref,omitempty"`
+	OutputStateRef        string                    `json:"output_state_ref,omitempty"`
+	ExecutionContractID   string                    `json:"execution_contract_id,omitempty"`
+	ExecutionContractDiff []string                  `json:"execution_contract_diff,omitempty"`
+	Termination           *Termination              `json:"termination,omitempty"`
+	DelegatedExecution    *DelegatedExecution       `json:"delegated_execution,omitempty"`
+	ChildNodeExecutions   []NodeExecutionProjection `json:"child_node_executions,omitempty"`
+	StartedAt             int64                     `json:"started_at,omitempty"`
+	FinishedAt            int64                     `json:"finished_at,omitempty"`
 }
+
+// ChildNodeExecutionProjection is kept as a source-compatible name for the
+// recursive portable projection.
+//
+// Deprecated: use NodeExecutionProjection.
+type ChildNodeExecutionProjection = NodeExecutionProjection
 
 // Outcome is the portable result of one node executor invocation.
 type Outcome struct {
-	Output                string                         `json:"output,omitempty"`
-	FinalStatus           string                         `json:"final_status,omitempty"`
-	StopReason            string                         `json:"stop_reason,omitempty"`
-	ExecutionContractID   string                         `json:"execution_contract_id,omitempty"`
-	ExecutionContractDiff []string                       `json:"execution_contract_diff,omitempty"`
-	Termination           *Termination                   `json:"termination,omitempty"`
-	DelegatedExecution    *DelegatedExecution            `json:"delegated_execution,omitempty"`
-	ChildNodeExecutions   []ChildNodeExecutionProjection `json:"child_node_executions,omitempty"`
+	Output                string                    `json:"output,omitempty"`
+	FinalStatus           string                    `json:"final_status,omitempty"`
+	StopReason            string                    `json:"stop_reason,omitempty"`
+	ExecutionContractID   string                    `json:"execution_contract_id,omitempty"`
+	ExecutionContractDiff []string                  `json:"execution_contract_diff,omitempty"`
+	Termination           *Termination              `json:"termination,omitempty"`
+	DelegatedExecution    *DelegatedExecution       `json:"delegated_execution,omitempty"`
+	ChildNodeExecutions   []NodeExecutionProjection `json:"child_node_executions,omitempty"`
 }
 
 // BasicExecutor executes a portable call without node metadata.

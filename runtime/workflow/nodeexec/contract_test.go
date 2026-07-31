@@ -23,17 +23,17 @@ func TestCoordinatorPrefersRichOutcomeBindsContextAndInvokesExactlyOnce(t *testi
 		DelegatedExecution: &DelegatedExecution{
 			Driver: " raw driver ",
 			Rounds: []DelegatedRound{{
-				NodeExecutionID: " child-1 ",
-				Round:           1,
+				NodeExecID: " child-1 ",
+				Round:      1,
 			}},
 		},
-		ChildNodeExecutions: []ChildNodeExecutionProjection{{
-			NodeExecutionID:       " child-1 ",
-			ParentNodeExecutionID: " parent-1 ",
-			NodeID:                " child ",
-			Status:                " completed ",
-			ChildNodeExecutions: []ChildNodeExecutionProjection{{
-				NodeExecutionID: " grandchild-1 ",
+		ChildNodeExecutions: []NodeExecutionProjection{{
+			NodeExecID:       " child-1 ",
+			ParentNodeExecID: " parent-1 ",
+			NodeID:           " child ",
+			Status:           " completed ",
+			ChildNodeExecutions: []NodeExecutionProjection{{
+				NodeExecID: " grandchild-1 ",
 			}},
 		}},
 	}}
@@ -140,11 +140,11 @@ func TestPortableOutcomeJSONPreservesExistingProjectionShape(t *testing.T) {
 	payload, err := json.Marshal(Outcome{
 		Output: "ready",
 		DelegatedExecution: &DelegatedExecution{
-			Rounds: []DelegatedRound{{NodeExecutionID: "round-1"}},
+			Rounds: []DelegatedRound{{NodeExecID: "round-1"}},
 		},
-		ChildNodeExecutions: []ChildNodeExecutionProjection{{
-			NodeExecutionID:       "child-1",
-			ParentNodeExecutionID: "parent-1",
+		ChildNodeExecutions: []NodeExecutionProjection{{
+			NodeExecID:       "child-1",
+			ParentNodeExecID: "parent-1",
 		}},
 	})
 	if err != nil {

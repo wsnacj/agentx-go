@@ -53,12 +53,12 @@ type Outcome struct {
     ExecutionContractDiff []string
     Termination           *Termination
     DelegatedExecution    *DelegatedExecution
-    ChildNodeExecutions   []ChildNodeExecutionProjection
+    ChildNodeExecutions   []NodeExecutionProjection
 }
 ```
 
 `Termination`、`DelegatedExecution` 和递归
-`ChildNodeExecutionProjection` 是 portable execution evidence。字段 JSON
+`NodeExecutionProjection` 是 portable execution evidence。字段 JSON
 名称与既有 AgentX projection shape 对齐，包括 `node_exec_id`、
 `parent_node_exec_id`、`termination`、`delegated_execution` 和
 `child_node_executions`。
