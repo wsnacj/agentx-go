@@ -86,6 +86,22 @@ func TestCanonicalWorkflowJournalConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowNodeExecutionConsumer(t *testing.T) {
+	outcome, calls, err := canonicalWorkflowNodeExecution()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowNodeExecution(): %v", err)
+	}
+	if outcome.Output != "ready" ||
+		outcome.FinalStatus != "completed" ||
+		len(outcome.ChildNodeExecutions) != 1 ||
+		outcome.ChildNodeExecutions[0].NodeExecutionID != "child-1" {
+		t.Fatalf("outcome = %#v", outcome)
+	}
+	if !reflect.DeepEqual(calls, []int{0, 0, 1}) {
+		t.Fatalf("calls = %#v, want outcome-only invocation", calls)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {

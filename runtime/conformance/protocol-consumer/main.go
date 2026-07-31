@@ -14,6 +14,7 @@ import (
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
 	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
+	agentxnodeexec "github.com/wsnacj/agentx-go/runtime/workflow/nodeexec"
 	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
 )
 
@@ -274,6 +275,57 @@ func canonicalWorkflowJournal() ([]string, error) {
 		return nil, err
 	}
 	return port.operations, nil
+}
+
+func canonicalWorkflowNodeExecution() (agentxnodeexec.Outcome, []int, error) {
+	executor := &consumerNodeExecutor{}
+	coordinator := agentxnodeexec.New(agentxnodeexec.Dependencies{
+		Basic:   executor,
+		Node:    executor,
+		Outcome: executor,
+	})
+	outcome, err := coordinator.Execute(context.Background(), agentxnodeexec.Request{
+		NodeExecutionID: "nodeexec-consumer-1",
+		NodeID:          "collect",
+		Kind:            agentxworkflow.NodeTool,
+		Call: agentxnodeexec.Call{
+			Name:      "public_source",
+			Arguments: `{"query":"risk"}`,
+		},
+	})
+	return outcome, []int{
+		executor.basicCalls,
+		executor.nodeCalls,
+		executor.outcomeCalls,
+	}, err
+}
+
+type consumerNodeExecutor struct {
+	basicCalls   int
+	nodeCalls    int
+	outcomeCalls int
+}
+
+func (e *consumerNodeExecutor) Execute(context.Context, agentxnodeexec.Call) (string, error) {
+	e.basicCalls++
+	return "basic", nil
+}
+
+func (e *consumerNodeExecutor) ExecuteNode(context.Context, agentxnodeexec.Request) (string, error) {
+	e.nodeCalls++
+	return "node", nil
+}
+
+func (e *consumerNodeExecutor) ExecuteNodeWithOutcome(context.Context, agentxnodeexec.Request) (agentxnodeexec.Outcome, error) {
+	e.outcomeCalls++
+	return agentxnodeexec.Outcome{
+		Output:      "ready",
+		FinalStatus: "completed",
+		ChildNodeExecutions: []agentxnodeexec.ChildNodeExecutionProjection{{
+			NodeExecutionID: "child-1",
+			Status:          "completed",
+		}},
+	}, nil
 }
 
 type consumerJournalPort struct {
