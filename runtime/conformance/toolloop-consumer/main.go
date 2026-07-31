@@ -18,20 +18,18 @@ func main() {
 }
 
 func run(ctx context.Context, completeAt int) (toolloop.Result, error) {
-	coordinator, err := toolloop.NewCoordinator(toolloop.CoordinatorConfig{
-		Executor: conformanceRoundExecutor{completeAt: completeAt},
-	}, toolloop.RoundState{Chunks: []string{"start"}})
+	assembly, err := toolloop.NewAssembly(toolloop.AssemblyConfig{
+		MaxRounds: 4,
+		Coordinator: toolloop.CoordinatorConfig{
+			Executor: conformanceRoundExecutor{completeAt: completeAt},
+		},
+		Initial: toolloop.RoundState{Chunks: []string{"start"}},
+	})
 	if err != nil {
 		return toolloop.Result{}, err
 	}
-	runtime, err := toolloop.New(
-		toolloop.Config{MaxRounds: 4},
-		coordinator,
-	)
-	if err != nil {
-		return toolloop.Result{}, err
-	}
-	return runtime.Run(ctx)
+	result, err := assembly.Run(ctx)
+	return result.Driver, err
 }
 
 type conformanceRoundExecutor struct {
