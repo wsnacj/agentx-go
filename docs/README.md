@@ -20,7 +20,8 @@
 7. [`components/llm` 中文 API Reference](../components/llm/API.md)
 8. [`runtime` 中文 package 导航](../runtime/README.md)
 9. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
-10. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+10. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+11. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
 
 可运行验证位于：
 
@@ -29,6 +30,7 @@
 - [`conformance/consumer`](../conformance/consumer)
 - [`runtime/conformance/protocol-consumer`](../runtime/conformance/protocol-consumer)
 - [`runtime/conformance/construction-consumer`](../runtime/conformance/construction-consumer)
+- [`runtime/conformance/toolloop-consumer`](../runtime/conformance/toolloop-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地的 Experimental Runtime owner。

@@ -2,8 +2,8 @@
 
 `agentx-go` 是 AgentX 面向 Go consumer 的独立源码仓库。当前根 module 提供经过
 HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-neutral LLM
-合同；独立 `runtime` module 已逐步迁入协议、遥测、预算和 Workflow portable
-implementation owner。
+合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
+implementation owner 和 Run/Open Tool Loop 通用机制。
 
 > 当前成熟度：**private validation / Experimental Runtime**。这不是 Public、
 > Beta 或 Stable 发布，也还不是开箱即用的完整 embedded Agent SDK。
@@ -31,6 +31,8 @@ implementation owner。
   `github.com/wsnacj/agentx-go/runtime`
 - protocol、telemetry、budget、prompt context、tool error、media artifact与
   Runtime construction lifecycle owner
+- [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、循环/重放
+  检测与连续工具失败熔断；model/tool执行和产品策略仍由 host 注入
 - Workflow Spec、schema、validation、lowering、binding/state、transition、
   journal、node execution、orchestration与 composition owner
 - 每个已迁 production package均提供中文 `API.md`、contract/external tests和
@@ -74,7 +76,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731075750-bb1d49393bda
+  v0.0.0-20260731091007-0e741801f950
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -91,6 +93,7 @@ github.com/wsnacj/agentx-go/runtime
 - [`components/llm` 中文 API Reference](components/llm/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
+- [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
@@ -114,6 +117,7 @@ GOWORK=off go -C runtime vet ./...
 GOWORK=off go -C runtime mod tidy -diff
 GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime
