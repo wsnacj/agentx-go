@@ -35,6 +35,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/journal`](./workflow/journal/API.md)：portable run/node
   snapshot、upsert 与 lifecycle event 的 fail-fast durable ordering，通过
   五方法 Port 保留 host-owned backend。
+- [`workflow/nodeexec`](./workflow/nodeexec/API.md)：portable node context
+  binding、Outcome/Node/basic capability priority 与 exact-once invocation；
+  concrete executor 和 policy 留在 host。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整

@@ -26,6 +26,10 @@ portable run/node durable write ordering 位于
 [`workflow/journal`](./journal/API.md)。它通过 substrate-neutral Port 组合
 host backend，不提供具体 RunStore 或 node executor。
 
+portable node context binding、executor capability priority 与 exact-once
+invocation 位于 [`workflow/nodeexec`](./nodeexec/API.md)。它不选择具体
+LLM/tool executor，也不拥有 lowering、retry 或 durable backend。
+
 ## Workflow Spec
 
 ```go
