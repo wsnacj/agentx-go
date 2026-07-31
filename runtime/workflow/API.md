@@ -22,6 +22,10 @@ implementation 位于
 node/visited/edge transition state，不拥有 node execution 或 durable
 lifecycle。
 
+portable run/node durable write ordering 位于
+[`workflow/journal`](./journal/API.md)。它通过 substrate-neutral Port 组合
+host backend，不提供具体 RunStore 或 node executor。
+
 ## Workflow Spec
 
 ```go
