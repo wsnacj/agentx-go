@@ -1,12 +1,13 @@
 # AgentX Go 中文文档
 
-当前文档对应 W1 根合同和 W3-01 LLM 组件的 private validation 合同，目标是让
-调用方能够准确判断：
+当前文档对应根合同、LLM 组件和已迁 Experimental Runtime owner，目标是让调用方
+能够准确判断：
 
 1. 根 `agentx` 包现在真实提供什么；
 2. `Run`、context、并发、错误和关闭行为如何工作；
 3. `ExecutionAdapter` 由谁实现、拥有什么责任；
-4. 哪些能力仍是后续工作，不能从空类型或示例中误判为已支持。
+4. 哪些 Workflow portable mechanism已经进入 Runtime module；
+5. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
 
 建议阅读顺序：
 
@@ -17,13 +18,17 @@
 5. [自定义 Adapter](guides/custom-adapter.md)
 6. [成熟度与兼容边界](maturity.md)
 7. [`components/llm` 中文 API Reference](../components/llm/API.md)
+8. [`runtime` 中文 package 导航](../runtime/README.md)
+9. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
 
 可运行验证位于：
 
 - [`examples/contract-basic`](../examples/contract-basic)
 - [`examples/custom-adapter`](../examples/custom-adapter)
 - [`conformance/consumer`](../conformance/consumer)
+- [`runtime/conformance/protocol-consumer`](../runtime/conformance/protocol-consumer)
 
-`docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述首个
-Experimental 组件。后续 Runtime、更多 components、extensions 和 Scene 只有在
-真实代码、consumer 与门禁落地后，才会获得各自的中文 API 文档入口。
+`docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
+合同；`runtime/**/API.md` 描述已经真实落地的 Experimental Runtime owner。
+尚未落地的根 Runtime construction、更多 components、extensions和 Scene不会
+预先获得虚假 API 页面。
