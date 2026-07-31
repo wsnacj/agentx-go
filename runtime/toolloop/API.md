@@ -62,6 +62,35 @@ round。
 循环耗尽时返回 `OutcomeMaxRounds`。用户可见 max-rounds回复、checkpoint和
 event仍由 host负责。
 
+## Host-Backed Assembly
+
+```go
+type AssemblyConfig struct {
+    MaxRounds   int
+    Coordinator CoordinatorConfig
+    Initial     RoundState
+}
+
+type AssemblyResult struct {
+    Driver      Result
+    State       RoundState
+    Termination *TerminationSignal
+}
+
+func NewAssembly(AssemblyConfig) (*Assembly, error)
+func (*Assembly) Run(context.Context) (AssemblyResult, error)
+```
+
+`Assembly`把本 package已有的多轮 `Runtime`与`Coordinator`组合成一次逻辑 Run，
+并统一返回 driver outcome、最终 portable state与 termination fact。它是真实的
+组合 implementation，不创建或复制 model/tool/backend，也不定义产品默认值。
+
+`CoordinatorConfig.Executor`与可选 policy仍由 host注入。构造时先验证
+coordinator，再验证 `MaxRounds`；调用方 context和 round error原样传播。
+`State`与`Termination`均为防御性副本。`Assembly`持有每次 Run的可变状态，面向
+一次逻辑 Run，不应并发调用或跨 Run复用；它不创建 goroutine，也不提供
+`Shutdown`。
+
 ## Round Coordinator
 
 ```go

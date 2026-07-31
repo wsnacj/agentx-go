@@ -46,6 +46,9 @@ func TestExactExperimentalSurface(t *testing.T) {
 	}
 	got := sortedKeys(exports)
 	want := []string{
+		"Assembly",
+		"AssemblyConfig",
+		"AssemblyResult",
 		"Call",
 		"Config",
 		"ContinuationObservation",
@@ -64,6 +67,7 @@ func TestExactExperimentalSurface(t *testing.T) {
 		"LoopKindReplay",
 		"LoopSignal",
 		"New",
+		"NewAssembly",
 		"NewCoordinator",
 		"NewFailureFuse",
 		"NewLoopDetector",

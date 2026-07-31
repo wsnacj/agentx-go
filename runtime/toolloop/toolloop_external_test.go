@@ -136,6 +136,29 @@ func TestExternalConsumerCanUseRoundCoordinatorAsStepper(t *testing.T) {
 	}
 }
 
+func TestExternalConsumerCanUseIntegratedAssembly(t *testing.T) {
+	assembly, err := toolloop.NewAssembly(toolloop.AssemblyConfig{
+		MaxRounds: 2,
+		Coordinator: toolloop.CoordinatorConfig{
+			Executor: externalRoundExecutor{},
+		},
+		Initial: toolloop.RoundState{Chunks: []string{"start"}},
+	})
+	if err != nil {
+		t.Fatalf("NewAssembly(): %v", err)
+	}
+	result, err := assembly.Run(context.Background())
+	if err != nil {
+		t.Fatalf("Run(): %v", err)
+	}
+	if result.Driver.Kind != toolloop.OutcomeCompleted || result.Driver.Round != 2 {
+		t.Fatalf("driver = %#v", result.Driver)
+	}
+	if result.State.FinalReply != "done" || len(result.State.Chunks) != 1 || result.State.Chunks[0] != "continue" {
+		t.Fatalf("state = %#v", result.State)
+	}
+}
+
 func TestExternalConsumerCanCoordinateRoundPhases(t *testing.T) {
 	var steps []string
 	coordinator, err := toolloop.NewRoundPhaseCoordinator(externalPhaseExecutor{
