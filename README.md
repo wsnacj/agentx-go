@@ -32,8 +32,8 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - protocol、telemetry、budget、prompt context、tool error、media artifact与
   Runtime construction lifecycle owner
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
-  收口/continuation state 更新、循环/重放检测与连续工具失败熔断；具体
-  model/tool执行、持久化和产品策略仍由 host 注入
+  收口/continuation state 更新、request→observe→action phase编排、循环/重放
+  检测与连续工具失败熔断；具体 model/tool执行、持久化和产品策略仍由 host注入
 - Workflow Spec、schema、validation、lowering、binding/state、transition、
   journal、node execution、orchestration与 composition owner
 - 每个已迁 production package均提供中文 `API.md`、contract/external tests和

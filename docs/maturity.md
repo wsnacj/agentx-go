@@ -10,7 +10,7 @@
 | agentx-go production packages | 根合同、LLM及19个 Runtime owner，共21个 |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
-| Run/Open Tool Loop mechanism | W5-B/W5-C 已迁移多轮驱动、检测器、failure fuse与 round coordination；host step/executor 仍必需 |
+| Run/Open Tool Loop mechanism | W5-B～W5-D 已迁移多轮驱动、检测器/fuse、round coordination与 phase ordering；host executor 仍必需 |
 | 无需 Host 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
@@ -60,11 +60,12 @@ W1 checkpoint 只证明：
 - HS adapter 可以依赖同一份合同而不反向污染 owner package。
 
 W2-A 已验证普通使用者需要的窄 Runtime construction形状；W5-A 又把通用构造
-生命周期迁入 canonical `runtime/construction`，W5-B/W5-C 又把真实多轮驱动、
-循环/重放检测、failure fuse和 portable round-result coordination迁入
-`runtime/toolloop`，并分别完成 fixed-version consumer与 HS production cutover。
-construction仍要求调用方提供具体 `Host`，toolloop仍要求 host提供 `Stepper`或
-`RoundExecutor`；model request、concrete tool execution、answer-contract、
+生命周期迁入 canonical `runtime/construction`，W5-B～W5-D 又把真实多轮驱动、
+循环/重放检测、failure fuse、portable round-result coordination和 phase
+ordering迁入 `runtime/toolloop`，并分别完成 fixed-version consumer与 HS
+production cutover。construction仍要求调用方提供具体 `Host`，toolloop仍要求
+host提供 `Stepper`、`RoundExecutor`或`RoundPhaseExecutor`；model request、
+concrete tool execution、answer-contract、
 持久化和官方 host assembly尚未成为 canonical owner，因此没有解除无需 Host 的
 根 Runtime construction W2-B门禁。当前 Experimental package拥有真实实现和
 consumer，不代表其全部导出符号已经通过 Public API审批。Pre-Beta还必须完成

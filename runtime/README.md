@@ -23,11 +23,11 @@ github.com/wsnacj/agentx-go/runtime
 - [`construction`](./construction/API.md)：通过窄 `Host` port组合 model、
   runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。
-- [`toolloop`](./toolloop/API.md)：通过窄 `Stepper`/`RoundExecutor` ports 驱动
-  确定性多轮执行，拥有 outcome 收口、continuation state 更新、
-  failure fuse→host policy→loop detector 的固定判定顺序，以及循环/成功重放
-  检测；model request、concrete tool executor、持久化与用户可见回复继续由
-  host 拥有。
+- [`toolloop`](./toolloop/API.md)：通过窄 `Stepper`/`RoundExecutor`/
+  `RoundPhaseExecutor` ports驱动确定性多轮执行，拥有 outcome收口、
+  continuation state更新、request→observe→before-action→act与
+  failure fuse→host policy→loop detector固定顺序，以及循环/成功重放检测；
+  model request、concrete tool executor、持久化与用户可见回复继续由 host拥有。
 - [`telemetry`](./telemetry/API.md)：Runtime event、tool/semantic projection、
   stored-event replay、summary 与私有 JSONL sink。
 - [`workflow`](./workflow/API.md)：Workflow Spec 的 planning/node/execution
