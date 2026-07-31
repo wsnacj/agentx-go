@@ -38,6 +38,11 @@ portable Spec/Node structural orchestration、graph/binding validation 与
 显式 host policy port 位于 [`workflow/validation`](./validation/API.md)。
 它不提供默认 HS/Scene/product policy。
 
+portable validate→node lowering loop、argument JSON 编码与
+`orchestration.Plan` projection 位于
+[`workflow/lowering`](./lowering/API.md)。具体 tool/model/task mapping 和
+default必须由 host显式注入。
+
 ## Workflow Spec
 
 ```go
@@ -213,9 +218,9 @@ func Admit(validator workflow.Validator, spec workflow.Spec) error {
 
 ## 与首版 Facade 的边界
 
-首版 AgentX Facade 仍只提供 `Run`，Workflow 是后续能力。该 package 当前不提供：
+首版 AgentX Facade 仍只提供 `Run`，Workflow 是后续能力。该 package 本身当前不提供：
 
-- `ValidateSpec` 默认函数或实现、`LowerSpec`、`ExecuteInline`；
+- `ValidateSpec` 默认函数或实现、`ExecuteInline`；
 - Node executor、LLM/tool/provider wiring；
 - RunStore、artifact persistence、resume 或 durable lifecycle；
 - built-in delegation policy、temporary planner 或 Scene workflow；

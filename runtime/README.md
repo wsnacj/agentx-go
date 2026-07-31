@@ -47,6 +47,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/validation`](./workflow/validation/API.md)：portable Spec/Node
   structural orchestration、graph/binding kernel 和显式 host policy port；
   不提供默认产品或 runtime policy。
+- [`workflow/lowering`](./workflow/lowering/API.md)：portable validation 后
+  node lowering、argument JSON 编码和 orchestration plan projection；
+  tool/model/task mapping 与 default继续由 host注入。
 
 当前成熟度为 **private validation / Experimental**。本 module 尚未提供根
 `agentxruntime.New`、Runner、真实 backend、provider、credential、Scene 或完整
