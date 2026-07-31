@@ -7,7 +7,7 @@ import (
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
 )
 
-func TestFixedVersionConsumerRunsPortableRoundCoordinator(t *testing.T) {
+func TestFixedVersionConsumerRunsPortableRoundAndPhaseCoordinators(t *testing.T) {
 	result, err := run(context.Background(), 3)
 	if err != nil {
 		t.Fatalf("run(): %v", err)
