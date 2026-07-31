@@ -7,10 +7,11 @@
 | 仓库 | private validation |
 | 根 contract | W1 候选 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM及19个 Runtime owner，共21个 |
+| agentx-go production packages | 根合同、LLM及20个 Runtime owner，共22个 |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
 | Run/Open Tool Loop mechanism | W5-B～W5-E 已迁移多轮驱动、检测器/fuse、round coordination、phase ordering与 Host-backed assembly；host executor 仍必需 |
+| Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
 | 无需 Host 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
@@ -37,8 +38,9 @@ orchestration/composition等 portable source authority，也拥有基于窄 Host
 的 construction lifecycle，以及基于窄 `Stepper` port 的确定性 Run/Open
 Tool Loop 驱动、循环检测和 failure fuse，并拥有组合 driver、coordinator、
 termination capture与 final portable state的单次 Run `Assembly`。HS production
-consumer固定使用 canonical pseudo-version；对应 portable implementation不得在
-HS恢复双写。
+consumer固定使用 canonical pseudo-version；W5-F又让 `runtime/execution`
+成为根 Client到 Host的 adapter dispatch/result implementation owner。对应通用
+implementation不得在 HS恢复双写。
 
 ## 明确 non-goal
 
@@ -64,8 +66,9 @@ W1 checkpoint 只证明：
 W2-A 已验证普通使用者需要的窄 Runtime construction形状；W5-A 又把通用构造
 生命周期迁入 canonical `runtime/construction`，W5-B～W5-E 又把真实多轮驱动、
 循环/重放检测、failure fuse、portable round-result coordination和 phase
-ordering，以及 Host-backed single-run assembly迁入 `runtime/toolloop`，并分别
-完成 fixed-version consumer与 HS production cutover。construction仍要求调用方
+ordering，以及 Host-backed single-run assembly迁入 `runtime/toolloop`，W5-F
+再迁入顶层 adapter dispatch/result assembly，并分别完成 fixed-version consumer
+与 HS production cutover。construction仍要求调用方
 提供具体 `Host`，toolloop assembly仍要求 host提供 `RoundExecutor`及可选 policy；
 model request、
 concrete tool execution、answer-contract、

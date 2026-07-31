@@ -31,6 +31,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
   `github.com/wsnacj/agentx-go/runtime`
 - protocol、telemetry、budget、prompt context、tool error、media artifact与
   Runtime construction lifecycle owner
+- [`runtime/execution`](runtime/execution/API.md) 的根 Client→Host Run分派、
+  adapter result组装、Shutdown转发与 error classification委托；具体 engine
+  request/result投影仍由 host拥有
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
   收口/continuation state 更新、request→observe→action phase编排、循环/重放
   检测与连续工具失败熔断，以及把 driver/coordinator/termination/final state
@@ -79,7 +82,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731183902-61026f866ef6
+  v0.0.0-20260731190850-ed90722a5d77
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -96,6 +99,7 @@ github.com/wsnacj/agentx-go/runtime
 - [`components/llm` 中文 API Reference](components/llm/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
+- [`runtime/execution` 中文 API Reference](runtime/execution/API.md)
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [最小合同示例](examples/contract-basic)

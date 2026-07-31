@@ -7,7 +7,8 @@ W1 将一次公共执行压缩为：
 ```text
 RunRequest
   -> Client
-  -> ExecutionAdapter
+  -> ExecutionAdapter（可由 runtime/execution.Runtime 实现）
+  -> typed execution.Host
   -> AdapterRunResult
   -> RunResult
 ```
