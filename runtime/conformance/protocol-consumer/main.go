@@ -14,6 +14,7 @@ import (
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
 	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
+	agentxlowering "github.com/wsnacj/agentx-go/runtime/workflow/lowering"
 	agentxnodeexec "github.com/wsnacj/agentx-go/runtime/workflow/nodeexec"
 	agentxorchestration "github.com/wsnacj/agentx-go/runtime/workflow/orchestration"
 	agentxschema "github.com/wsnacj/agentx-go/runtime/workflow/schema"
@@ -168,6 +169,43 @@ func canonicalWorkflowValidation() error {
 			Kind: agentxworkflow.NodeParallel,
 		}},
 	}, consumerValidationPolicy{})
+}
+
+func canonicalWorkflowLowering() (agentxlowering.Plan, error) {
+	return agentxlowering.LowerSpec(agentxworkflow.Spec{
+		ID:        "consumer-lowering",
+		Version:   "1",
+		EntryNode: "collect",
+		Nodes: []agentxworkflow.NodeSpec{{
+			ID:   "collect",
+			Kind: agentxworkflow.NodeTool,
+		}},
+	}, agentxlowering.Dependencies{
+		Validator: consumerLoweringValidator{},
+		Mapper:    consumerLoweringMapper{},
+	})
+}
+
+type consumerLoweringValidator struct{}
+
+func (consumerLoweringValidator) ValidateSpec(spec agentxworkflow.Spec) error {
+	return agentxvalidation.ValidateSpec(spec, consumerValidationPolicy{})
+}
+
+func (consumerLoweringValidator) ValidateNode(node agentxworkflow.NodeSpec) error {
+	return agentxvalidation.ValidateNodeSpec(node, consumerValidationPolicy{})
+}
+
+type consumerLoweringMapper struct{}
+
+func (consumerLoweringMapper) MapNode(
+	agentxworkflow.NodeSpec,
+	agentxworkflow.ExecutionMode,
+) (agentxlowering.MappedCall, error) {
+	return agentxlowering.MappedCall{
+		Name:      "consumer_tool",
+		Arguments: map[string]any{"query": "risk"},
+	}, nil
 }
 
 type consumerValidationPolicy struct{}

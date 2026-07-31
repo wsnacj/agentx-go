@@ -155,6 +155,24 @@ func TestCanonicalWorkflowValidationConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowLoweringConsumer(t *testing.T) {
+	plan, err := canonicalWorkflowLowering()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowLowering(): %v", err)
+	}
+	node := plan.Nodes["collect"]
+	if node.ExecutionMode != agentxworkflow.ExecInline ||
+		node.Call.Name != "consumer_tool" ||
+		node.Call.Arguments != `{"query":"risk"}` {
+		t.Fatalf("lowering node = %#v", node)
+	}
+	runtimePlan := plan.OrchestrationPlan("consumer-runtime-workflow")
+	if runtimePlan.WorkflowID != "consumer-runtime-workflow" ||
+		runtimePlan.EntryNode != "collect" {
+		t.Fatalf("orchestration plan = %#v", runtimePlan)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {
