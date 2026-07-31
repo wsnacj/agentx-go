@@ -16,6 +16,7 @@ import (
 	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
 	agentxnodeexec "github.com/wsnacj/agentx-go/runtime/workflow/nodeexec"
 	agentxorchestration "github.com/wsnacj/agentx-go/runtime/workflow/orchestration"
+	agentxschema "github.com/wsnacj/agentx-go/runtime/workflow/schema"
 	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
 )
 
@@ -138,6 +139,20 @@ func canonicalWorkflowJSON() ([]byte, error) {
 			Name: "quality",
 		}},
 	})
+}
+
+func canonicalWorkflowSchema() (map[string]any, error) {
+	definition, err := agentxschema.Normalize(
+		`{"type":"object","required":["answer"],"properties":{"answer":{"type":"string","minLength":1}},"additionalProperties":false}`,
+		"config.schema",
+	)
+	if err != nil {
+		return nil, err
+	}
+	if err := agentxschema.ValidateDefinition(definition, "config.schema"); err != nil {
+		return nil, err
+	}
+	return definition, nil
 }
 
 func canonicalWorkflowBindingState() (map[string]any, error) {

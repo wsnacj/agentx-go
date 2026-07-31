@@ -131,6 +131,24 @@ func TestCanonicalWorkflowOrchestrationConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowSchemaConsumer(t *testing.T) {
+	definition, err := canonicalWorkflowSchema()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowSchema(): %v", err)
+	}
+	if definition["type"] != "object" {
+		t.Fatalf("definition = %#v", definition)
+	}
+	properties, ok := definition["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("properties = %#v", definition["properties"])
+	}
+	answer, ok := properties["answer"].(map[string]any)
+	if !ok || answer["type"] != "string" || answer["minLength"] != float64(1) {
+		t.Fatalf("answer schema = %#v", properties["answer"])
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {
