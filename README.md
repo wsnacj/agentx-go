@@ -33,7 +33,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
   Runtime construction lifecycle owner
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
   收口/continuation state 更新、request→observe→action phase编排、循环/重放
-  检测与连续工具失败熔断；具体 model/tool执行、持久化和产品策略仍由 host注入
+  检测与连续工具失败熔断，以及把 driver/coordinator/termination/final state
+  组合成单次 Run 的 Host-backed `Assembly`；具体 model/tool执行、持久化和产品
+  策略仍由 host注入
 - Workflow Spec、schema、validation、lowering、binding/state、transition、
   journal、node execution、orchestration与 composition owner
 - 每个已迁 production package均提供中文 `API.md`、contract/external tests和
@@ -77,7 +79,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731091007-0e741801f950
+  v0.0.0-20260731183902-61026f866ef6
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。

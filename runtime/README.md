@@ -26,8 +26,10 @@ github.com/wsnacj/agentx-go/runtime
 - [`toolloop`](./toolloop/API.md)：通过窄 `Stepper`/`RoundExecutor`/
   `RoundPhaseExecutor` ports驱动确定性多轮执行，拥有 outcome收口、
   continuation state更新、request→observe→before-action→act与
-  failure fuse→host policy→loop detector固定顺序，以及循环/成功重放检测；
-  model request、concrete tool executor、持久化与用户可见回复继续由 host拥有。
+  failure fuse→host policy→loop detector固定顺序、循环/成功重放检测，并通过
+  `Assembly`组合 driver、coordinator、termination capture与 final portable
+  state；model request、concrete tool executor、持久化与用户可见回复继续由
+  host拥有。
 - [`telemetry`](./telemetry/API.md)：Runtime event、tool/semantic projection、
   stored-event replay、summary 与私有 JSONL sink。
 - [`workflow`](./workflow/API.md)：Workflow Spec 的 planning/node/execution
