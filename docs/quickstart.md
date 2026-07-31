@@ -2,6 +2,9 @@
 
 当前 W1 是 contract-only 验证版本。它不负责创建模型、工具或底层 Runtime；
 调用方需要传入一个实现 `ExecutionAdapter` 的确定性 adapter。
+如果希望复用 canonical Open Tool Loop 而不依赖 HS Runner，可改用
+[`runtime/hostkit`](../runtime/hostkit/API.md)；可运行的 fixed-version 集成见
+[`runtime/conformance/hostkit-consumer`](../runtime/conformance/hostkit-consumer)。
 
 ```go
 package main

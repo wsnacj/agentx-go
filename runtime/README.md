@@ -26,6 +26,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`execution`](./execution/API.md)：把根 `agentx.Client` 的 adapter request
   确定性分派给窄 `Host` port，组装 adapter result并转发 Shutdown与 error
   classification；具体 engine input/output、model/tool/backend继续由 host拥有。
+- [`hostkit`](./hostkit/API.md)：组合 per-run `toolloop.Assembly`、
+  `execution.Runtime`和根 Client，让新项目通过窄 `Factory` 提供
+  identity、RoundExecutor与已解析 policy ports，无需依赖 HS Runner。
 - [`toolloop`](./toolloop/API.md)：通过窄 `Stepper`/`RoundExecutor`/
   `RoundPhaseExecutor` ports驱动确定性多轮执行，拥有 outcome收口、
   continuation state更新、request→observe→before-action→act与
@@ -68,9 +71,10 @@ github.com/wsnacj/agentx-go/runtime
   plan与 partial/full result；具体 policy/backend继续由 host注入。
 
 当前成熟度为 **private validation / Experimental**。本 module 已提供需要调用方
-注入 `construction.Host` 的构造生命周期，以及可直接实现根
-`agentx.ExecutionAdapter` 的 `execution.Runtime`，但尚未提供无需 Host 的根
-`agentxruntime.New`、具体 Runner、真实 backend、provider、credential、Scene 或
+注入 `construction.Host` 的构造生命周期、`execution.Runtime`，以及可以
+不依赖 HS Runner 运行的 `hostkit.New`。Host Kit 仍需宿主 `Factory`
+提供 concrete round executor；本 module 尚未提供无需任何 Host/Factory 的根
+`agentxruntime.New`、真实 backend、provider、credential、Scene 或
 完整 embedded Runtime，不能据此宣称 Runtime 已达到 Public、Beta、Stable 或
 production-ready。
 

@@ -34,6 +34,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - [`runtime/execution`](runtime/execution/API.md) 的根 Client→Host Run分派、
   adapter result组装、Shutdown转发与 error classification委托；具体 engine
   request/result投影仍由 host拥有
+- [`runtime/hostkit`](runtime/hostkit/API.md) 的 per-run portable assembly、
+  outcome/result projection、execution adapter与根 Client组合；新项目可
+  通过窄 Factory 使用 canonical toolloop，无需 HS Runner
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
   收口/continuation state 更新、request→observe→action phase编排、循环/重放
   检测与连续工具失败熔断，以及把 driver/coordinator/termination/final state
@@ -47,15 +50,17 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 
 ## 当前不提供
 
-- 无需 Host 的官方 Runtime 根构造入口或模型/provider 接入
+- 无需宿主 Factory 的开箱即用 Runtime 或官方模型/provider 接入
 - 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口
 - concrete Workflow validation/mapping policy、executor和 RunStore backend
 - progress stream、HTTP API、Scene registry
 - credential、真实网络 backend 或生产副作用
 
 [`runtime/construction`](runtime/construction/API.md) 已提供基于窄 `Host`
-port 的 Experimental 构造生命周期，但普通使用者要获得无需自行提供 Host 的
-开箱即用 Runtime，仍需等待后续根 Runtime construction 工作包。W1 的
+port 的 Experimental 构造生命周期；[`runtime/hostkit`](runtime/hostkit/API.md)
+又已提供无 HS Runner 的真实执行组合。普通使用者要获得无需自行
+提供 Host/Factory 的开箱即用 Runtime，仍需等待后续 construction
+决策。W1 的
 `ExecutionAdapter` 面向扩展作者和集成验证，不等于要求所有业务调用方自行实现
 Runtime。
 
@@ -82,7 +87,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731190850-ed90722a5d77
+  v0.0.0-20260731194902-539922c346d5
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -100,6 +105,7 @@ github.com/wsnacj/agentx-go/runtime
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/execution` 中文 API Reference](runtime/execution/API.md)
+- [`runtime/hostkit` 中文 API Reference](runtime/hostkit/API.md)
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [最小合同示例](examples/contract-basic)
@@ -125,6 +131,7 @@ GOWORK=off go -C runtime mod tidy -diff
 GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C runtime/conformance/hostkit-consumer test ./... -count=1
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime

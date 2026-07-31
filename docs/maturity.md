@@ -7,12 +7,13 @@
 | 仓库 | private validation |
 | 根 contract | W1 候选 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM及20个 Runtime owner，共22个 |
+| agentx-go production packages | 根合同、LLM及21个 Runtime owner，共23个 |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
 | Run/Open Tool Loop mechanism | W5-B～W5-E 已迁移多轮驱动、检测器/fuse、round coordination、phase ordering与 Host-backed assembly；host executor 仍必需 |
 | Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
-| 无需 Host 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
+| Portable Core Host Kit | W5-G 已落地 no-HS-Runner consumer，HS Open Tool Loop production path已切换 canonical owner |
+| 无需 Host/Factory 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
@@ -42,11 +43,17 @@ consumer固定使用 canonical pseudo-version；W5-F又让 `runtime/execution`
 成为根 Client到 Host的 adapter dispatch/result implementation owner。对应通用
 implementation不得在 HS恢复双写。
 
+W5-G 又让 `runtime/hostkit` 统一拥有 per-run portable assembly、
+outcome/result projection、execution adapter与根 Client 组合。新项目已可通过
+substrate-neutral Factory 构建不依赖 HS Runner 的真实执行路径；HS Open
+Tool Loop production path 也消费同一 canonical `hostkit.Execute`，不再直接
+构造 `toolloop.Assembly`。
+
 ## 明确 non-goal
 
 以下能力没有进入 W1，不得根据 package 名、文档愿景或未来目录推断已支持：
 
-- 无需 Host 的官方 embedded Runtime 根构造；
+- 无需 Host/Factory 的开箱即用 embedded Runtime 根构造；
 - Tool Direct Answer 的独立结果策略；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
 - Objective Runtime Loop；
@@ -68,11 +75,12 @@ W2-A 已验证普通使用者需要的窄 Runtime construction形状；W5-A 又�
 循环/重放检测、failure fuse、portable round-result coordination和 phase
 ordering，以及 Host-backed single-run assembly迁入 `runtime/toolloop`，W5-F
 再迁入顶层 adapter dispatch/result assembly，并分别完成 fixed-version consumer
-与 HS production cutover。construction仍要求调用方
-提供具体 `Host`，toolloop assembly仍要求 host提供 `RoundExecutor`及可选 policy；
+与 HS production cutover。W5-G 已把这些 owner 组合为可运行 Host Kit，但
+construction/hostkit仍要求调用方提供具体 `Host` 或 `Factory`，
+toolloop assembly仍要求 host提供 `RoundExecutor`及可选 policy；
 model request、
 concrete tool execution、answer-contract、
-持久化和官方 concrete host kit尚未成为 canonical owner，因此没有解除无需 Host 的
+持久化和官方 concrete provider/tool kit尚未成为 canonical owner，因此没有解除无需 Host/Factory 的
 根 Runtime construction W2-B门禁。当前 Experimental package拥有真实实现和
 consumer，不代表其全部导出符号已经通过 Public API审批。Pre-Beta还必须完成
 无需 Host 的 construction决策、surface consolidation、版本兼容、维护 owner、
