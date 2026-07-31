@@ -149,6 +149,12 @@ func TestCanonicalWorkflowSchemaConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowValidationConsumer(t *testing.T) {
+	if err := canonicalWorkflowValidation(); err != nil {
+		t.Fatalf("canonicalWorkflowValidation(): %v", err)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {

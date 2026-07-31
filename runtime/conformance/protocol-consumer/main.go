@@ -18,6 +18,7 @@ import (
 	agentxorchestration "github.com/wsnacj/agentx-go/runtime/workflow/orchestration"
 	agentxschema "github.com/wsnacj/agentx-go/runtime/workflow/schema"
 	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
+	agentxvalidation "github.com/wsnacj/agentx-go/runtime/workflow/validation"
 )
 
 func canonicalEventJSON() ([]byte, error) {
@@ -153,6 +154,58 @@ func canonicalWorkflowSchema() (map[string]any, error) {
 		return nil, err
 	}
 	return definition, nil
+}
+
+func canonicalWorkflowValidation() error {
+	if err := agentxvalidation.ValidateOptionalField("consumer", "spec id"); err != nil {
+		return err
+	}
+	return agentxvalidation.ValidateSpec(agentxworkflow.Spec{
+		ID:        "consumer-structural-validation",
+		EntryNode: "parallel",
+		Nodes: []agentxworkflow.NodeSpec{{
+			ID:   "parallel",
+			Kind: agentxworkflow.NodeParallel,
+		}},
+	}, consumerValidationPolicy{})
+}
+
+type consumerValidationPolicy struct{}
+
+func (consumerValidationPolicy) ValidatePackScopedContractUsage(agentxworkflow.Spec) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidatePackScopedWorkflowMetadataUsage(agentxworkflow.Spec) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateNodeRuntimeCapabilities(agentxworkflow.NodeSpec) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateNodeConfig(agentxworkflow.NodeSpec) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateEdgeRuntimeCapabilities(agentxworkflow.EdgeSpec, string, string) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateLinearRuntimeEdgeDeterminism([]agentxworkflow.EdgeSpec) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateReachableCycleRuntimeCapability(string) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateBindingTargetShape(string, string) error {
+	return nil
+}
+
+func (consumerValidationPolicy) ValidateBindingSourceShape(string, string) error {
+	return nil
 }
 
 func canonicalWorkflowBindingState() (map[string]any, error) {
