@@ -62,6 +62,30 @@ func TestCanonicalWorkflowTransitionConsumer(t *testing.T) {
 	}
 }
 
+func TestCanonicalWorkflowJournalConsumer(t *testing.T) {
+	operations, err := canonicalWorkflowJournal()
+	if err != nil {
+		t.Fatalf("canonicalWorkflowJournal(): %v", err)
+	}
+	want := []string{
+		"load:run-consumer-1",
+		"create:run-consumer-1",
+		"event:workflow.start",
+		"event:workflow.node.state.input",
+		"node:running",
+		"event:workflow.node.start",
+		"event:workflow.node.state.output",
+		"node:completed",
+		"event:workflow.node.finish",
+		"load:run-consumer-1",
+		"update:run-consumer-1",
+		"event:workflow.finish",
+	}
+	if !reflect.DeepEqual(operations, want) {
+		t.Fatalf("operations = %#v, want %#v", operations, want)
+	}
+}
+
 func TestCanonicalProtocolValidationErrorContract(t *testing.T) {
 	err := agentxprotocol.ValidateRunEvent(agentxprotocol.RunEvent{})
 	if err == nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	agentxtoolerrors "github.com/wsnacj/agentx-go/runtime/toolerrors"
 	agentxworkflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	agentxbindingstate "github.com/wsnacj/agentx-go/runtime/workflow/bindingstate"
+	agentxjournal "github.com/wsnacj/agentx-go/runtime/workflow/journal"
 	agentxtransition "github.com/wsnacj/agentx-go/runtime/workflow/transition"
 )
 
@@ -200,6 +202,111 @@ func canonicalWorkflowTransition() ([]string, error) {
 			return visited, nil
 		}
 	}
+}
+
+func canonicalWorkflowJournal() ([]string, error) {
+	port := &consumerJournalPort{runs: map[string]agentxjournal.Run{}}
+	ids := []string{
+		"run-consumer-1",
+		"workflow-start",
+		"node-input",
+		"node-start",
+		"node-output",
+		"node-finish",
+		"workflow-finish",
+	}
+	nextID := func() string {
+		value := ids[0]
+		ids = ids[1:]
+		return value
+	}
+	journal := agentxjournal.New(agentxjournal.Dependencies{
+		Port:         port,
+		NewRunID:     nextID,
+		NewEventID:   nextID,
+		NowUnixMilli: func() int64 { return 100 },
+	})
+	runID, err := journal.EnsureRun(context.Background(), agentxjournal.EnsureRunRequest{
+		WorkflowID:      "consumer-workflow",
+		WorkflowVersion: "1",
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := journal.AppendRunStart(context.Background(), agentxjournal.StartRunEventRequest{
+		RunID:      runID,
+		WorkflowID: "consumer-workflow",
+		EntryNode:  "collect",
+	}); err != nil {
+		return nil, err
+	}
+	node := agentxjournal.NodeExecution{
+		NodeExecutionID: "node-consumer-1",
+		RunID:           runID,
+		NodeID:          "collect",
+		Status:          "running",
+		Attempt:         1,
+		StartedAt:       101,
+	}
+	inputRef, err := journal.StartNode(context.Background(), agentxjournal.StartNodeRequest{
+		Node:  node,
+		State: map[string]any{"query": "risk"},
+	})
+	if err != nil {
+		return nil, err
+	}
+	node.InputStateRef = inputRef
+	node.Status = "completed"
+	node.FinishedAt = 102
+	if _, err := journal.FinishNode(context.Background(), agentxjournal.FinishNodeRequest{
+		Node:  node,
+		State: map[string]any{"report": "ready"},
+	}); err != nil {
+		return nil, err
+	}
+	if err := journal.FinishRun(context.Background(), agentxjournal.FinishRunRequest{
+		RunID:           runID,
+		WorkflowID:      "consumer-workflow",
+		WorkflowVersion: "1",
+		Status:          "completed",
+		FinishedAt:      102,
+	}); err != nil {
+		return nil, err
+	}
+	return port.operations, nil
+}
+
+type consumerJournalPort struct {
+	runs       map[string]agentxjournal.Run
+	operations []string
+}
+
+func (p *consumerJournalPort) LoadRun(_ context.Context, runID string) (agentxjournal.Run, bool, error) {
+	p.operations = append(p.operations, "load:"+runID)
+	run, found := p.runs[runID]
+	return run, found, nil
+}
+
+func (p *consumerJournalPort) CreateRun(_ context.Context, run agentxjournal.Run) error {
+	p.operations = append(p.operations, "create:"+run.RunID)
+	p.runs[run.RunID] = run
+	return nil
+}
+
+func (p *consumerJournalPort) UpdateRun(_ context.Context, run agentxjournal.Run) error {
+	p.operations = append(p.operations, "update:"+run.RunID)
+	p.runs[run.RunID] = run
+	return nil
+}
+
+func (p *consumerJournalPort) UpsertNodeExecution(_ context.Context, node agentxjournal.NodeExecution) error {
+	p.operations = append(p.operations, "node:"+node.Status)
+	return nil
+}
+
+func (p *consumerJournalPort) AppendEvent(_ context.Context, event agentxjournal.Event) error {
+	p.operations = append(p.operations, "event:"+event.Name)
+	return nil
 }
 
 func main() {
