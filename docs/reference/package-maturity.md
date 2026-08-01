@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的29个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的30个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -48,7 +48,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-29个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+30个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 

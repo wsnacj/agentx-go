@@ -5,9 +5,9 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前里程碑：**M3E Core Developer Preview candidate / private validation**。这里的
-> candidate只表示 Open Tool Loop与 Workflow代码、consumer和中文文档已进入候选闭环；它不是 Public、
-> Beta、Stable或 production-ready发布。
+> 当前里程碑：**M5B Domain Module Developer Preview foundation / private validation**。
+> M3E Core两条标准路径保持候选闭环；M5B新增portable Domain Module注册编排和
+> multi-Scene合同切换。它不是 Public、Beta、Stable或 production-ready发布。
 
 ## 当前提供：根合同
 
@@ -96,7 +96,7 @@ github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260801051155-7203f1b5be0a
 
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801051155-7203f1b5be0a
+  v0.0.0-20260801054929-4cae9842b02a
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -125,10 +125,12 @@ github.com/wsnacj/agentx-go/extensions
 - [`runtime/workflow/hostkit` 中文 API Reference](runtime/workflow/hostkit/API.md)
 - [`runtime/assetfs` 中文 API Reference](runtime/assetfs/API.md)
 - [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
+- [`extensions/domainmodule` 中文 API Reference](extensions/domainmodule/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
 - [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
+- [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
 
 ## 本地验证
 
@@ -156,6 +158,7 @@ GOWORK=off go -C extensions test -race ./... -count=1
 GOWORK=off go -C extensions vet ./...
 GOWORK=off go -C extensions mod tidy -diff
 GOWORK=off GOPROXY=off go -C extensions/conformance/astock-contract-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C extensions/conformance/domain-module-consumer test ./... -count=1
 GOWORK=off go run scripts/check_developer_preview_api.go
 ```
 

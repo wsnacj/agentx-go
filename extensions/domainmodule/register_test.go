@@ -4,7 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"go/parser"
+	"go/token"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -131,6 +135,32 @@ func TestDiagnosticJSONAndNormalization(t *testing.T) {
 	for _, fragment := range []string{`"module_id":"demo"`, `"severity":"warning"`, `"code":"code"`, `"key":"value"`} {
 		if !strings.Contains(text, fragment) {
 			t.Fatalf("JSON %s missing %s", text, fragment)
+		}
+	}
+}
+
+func TestProductionImportsDoNotDependOnHostOrScene(t *testing.T) {
+	_, source, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("runtime.Caller failed")
+	}
+	files, err := filepath.Glob(filepath.Join(filepath.Dir(source), "*.go"))
+	if err != nil {
+		t.Fatalf("Glob: %v", err)
+	}
+	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
+		parsed, err := parser.ParseFile(token.NewFileSet(), file, nil, parser.ImportsOnly)
+		if err != nil {
+			t.Fatalf("ParseFile(%s): %v", file, err)
+		}
+		for _, imported := range parsed.Imports {
+			path := strings.Trim(imported.Path.Value, `"`)
+			if path == "hs" || strings.HasPrefix(path, "hs/") || strings.Contains(path, "/scene/") {
+				t.Fatalf("production import %q in %s crosses the owner boundary", path, filepath.Base(file))
+			}
 		}
 	}
 }

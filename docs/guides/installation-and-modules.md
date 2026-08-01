@@ -8,13 +8,13 @@ module：
 | `github.com/wsnacj/agentx-go` | 根 Client、Run、错误和 ExecutionAdapter合同 |
 | `github.com/wsnacj/agentx-go/components` | provider-neutral LLM合同 |
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
-| `github.com/wsnacj/agentx-go/extensions` | 可选 portable领域扩展合同；首批为 A股 contracts |
+| `github.com/wsnacj/agentx-go/extensions` | 可选 portable领域扩展合同；当前含 A股 contracts与 Domain Module注册编排 |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
 和 Runtime类型。Workflow Host Kit路径只需要 Runtime module。A股 portable
-contracts只需要 extensions module；若同时使用 immutable asset loader，再显式
-加入 runtime module。
+contracts和 host-neutral Domain Module注册编排只需要 extensions module；若同时
+使用 immutable asset loader，再显式加入 runtime module。
 
 ## 当前固定验证版本
 
@@ -26,7 +26,7 @@ github.com/wsnacj/agentx-go/components
 github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260801051155-7203f1b5be0a
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801051155-7203f1b5be0a
+  v0.0.0-20260801054929-4cae9842b02a
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -35,7 +35,7 @@ github.com/wsnacj/agentx-go/extensions
 go get github.com/wsnacj/agentx-go@v0.0.0-20260729101644-c7c26d427ac2
 go get github.com/wsnacj/agentx-go/components@v0.0.0-20260729125257-bb6949793309
 go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801051155-7203f1b5be0a
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801051155-7203f1b5be0a
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801054929-4cae9842b02a
 ```
 
 ## Private 仓库访问
@@ -64,6 +64,8 @@ GOWORK=off go -C extensions test ./...
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
 `extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
 用于验证无 HS、无长期 `replace` 的组合接入。
+`extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以
+在无 HS、无 Runner、无长期 `replace` 时实现 config resolver和注册 callback。
 长期 consumer不得依赖本地 `replace`；本地 `replace`只能用于临时开发测量，不能
 作为 fixed-version或发布证据。
 

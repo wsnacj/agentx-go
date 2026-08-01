@@ -1,8 +1,8 @@
 # AgentX Go 中文文档
 
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
-HTTP owner、M5A AssetFS/首个 portable extension合同、LLM组件和已迁 Runtime
-owner，目标是让调用方
+HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module
+portable注册编排、LLM组件和已迁 Runtime owner，目标是让调用方
 能够准确判断：
 
 1. 根 `agentx` 包现在真实提供什么；
@@ -31,15 +31,16 @@ owner，目标是让调用方
 14. [`extensions` 中文 package 导航](../extensions/README.md)
 15. [`runtime/assetfs` 中文 API Reference](../runtime/assetfs/API.md)
 16. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
-17. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
-18. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
-19. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
-20. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
-21. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
-22. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
-23. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
-24. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
-25. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+17. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
+18. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
+19. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
+20. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
+21. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
+22. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
+23. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
+24. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+25. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+26. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
 
 可运行验证位于：
 
@@ -53,6 +54,7 @@ owner，目标是让调用方
 - [`runtime/conformance/toolloop-consumer`](../runtime/conformance/toolloop-consumer)
 - [`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)
 - [`extensions/conformance/astock-contract-consumer`](../extensions/conformance/astock-contract-consumer)
+- [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；

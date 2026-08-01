@@ -85,6 +85,22 @@ production consumer直接使用 canonical contracts。
 pseudo-version，以无 HS、无 `replace`方式组合 `assetfs`与 A股 JSON合同。该
 consumer只证明 portable合同可独立消费，不表示完整 A股 Scene已经迁仓或可发布。
 
+## M5B Domain Module注册编排收口
+
+portable manifest、module-scoped config、diagnostics、config resolver、重复ID检查、
+顺序注册和 report聚合的 source authority现位于
+`extensions/domainmodule`。HS `core/agentx/domainmodule`对这些类型只保留
+Deprecated alias/forwarder，并把既有 `RegisterAll`委托给 canonical coordinator。
+
+HS adapter继续拥有 `Target`、Runner sealed检查、extension filesystem/runtime、
+pack registry、tool executor与 skill投影。九个现有 Scene module已直接使用canonical
+Manifest/ConfigRequirement/Diagnostics，同时继续通过 HS Target helper接入具体宿主。
+迁移没有改变注册顺序、错误文本、diagnostic JSON或“失败前的 mutation不回滚”语义。
+
+`extensions/conformance/domain-module-consumer`固定 extensions pseudo-version，证明
+外部项目无需 HS、Runner或 `replace`即可使用portable coordinator；它不包含具体
+Scene、pack、tool executor、provider或credential。
+
 ## 尚未迁移
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
