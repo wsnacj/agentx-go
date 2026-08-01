@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5P Portable Objective Completion, Durable Projection and Delegation Coordination：`active_implementation` |
+| 当前产品里程碑 | M5P Portable Objective Completion, Durable Projection and Delegation Coordination：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5P canonical landing：43个package、219个production source、86,780行；仍为8个Developer Preview candidate |
@@ -21,7 +21,7 @@
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5P controlcontract consumer覆盖Host adapter/Ingress、Objective durable projection/final answer与delegation coordination；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A～M5O production consumer已使用固定 private pseudo-version；M5P canonical landing与fixed consumer已完成，HS cutover执行中 |
+| HS canonical import | W1-C、M5A～M5P production consumer已使用固定 private pseudo-version；M5P cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -269,11 +269,16 @@ HS119/canonical33/Scene0。当前状态为
 `not_ready_for_hostless_w2b`；Owner已于2026-08-02接受，该接受不构成成熟度晋级或
 发行授权。
 
-M5P随后以单一cohort准入7个、4,210行现有portable Objective completion、durable-store
-projection、async delegation/controller/handoff和strategy metadata source。隔离runtime
-module已组合当前canonical owner与原合同测试并通过。concrete store/backend、LLM/provider、
-worker scheduler/dispatch、`observation_normalizer`、Runner、Scene和真实副作用继续留在HS；
-M5P尚处于`active_implementation`，不得从准入事实推断新增成熟度承诺。
+M5P随后以单一cohort迁入7个、4,210行portable Objective completion、durable-store
+projection、async delegation/controller/handoff和strategy metadata真实implementation，
+使canonical达到43个package、219个production source、86,780行。fixed runtime为
+`v0.0.0-20260801192832-e4c46c0a6b76`；HS 4,210行基线收缩为296行alias/forwarder，
+净减3,914行。fixed consumer、中文Reference、四module、43/8 API/doc gate和有效完整
+回归均已闭合，closure为407/57/2460/65、HS119/canonical33/Scene0。concrete
+store/backend、LLM/provider、worker scheduler/dispatch、`observation_normalizer`、Runner、
+Scene和真实副作用继续留在HS。当前状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`；该checkpoint不构成新增成熟度
+承诺或发行授权。
 
 ## 明确 non-goal
 
