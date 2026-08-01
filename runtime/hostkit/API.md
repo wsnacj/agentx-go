@@ -97,6 +97,111 @@ func New(Config) (*agentx.Client, error)
 bounded/idempotent `Shutdown(ctx)` 继续由根 Client、execution adapter 和
 Factory 的现有合同共同保证。
 
+## `ModelToolRoundAdapter`
+
+`ModelToolRoundAdapter` 是 W5-H 的真实 portable model/tool round
+implementation。它复用 `runtime/toolloop.RoundPhaseCoordinator`，固定执行：
+
+```text
+RequestModel -> ObserveResponse -> no tools
+                                 -> BeforeTools -> host stopped
+                                                -> ExecuteTools
+```
+
+它不选择 provider、不做授权或持久化，只负责调用顺序、model/tool结果的
+defensive copy，以及到 portable round outcome/continuation的投影。
+
+```go
+type ModelToolRoundConfig struct {
+    RequestModel func(
+        context.Context,
+        toolloop.RoundExecutionInput,
+    ) (ModelResult, error)
+
+    ObserveResponse func(
+        context.Context,
+        ModelToolRoundExchange,
+    ) (string, error)
+
+    BeforeTools func(
+        context.Context,
+        ModelToolRoundExchange,
+    ) (bool, error)
+
+    ExecuteTools func(
+        context.Context,
+        ModelToolRoundExchange,
+    ) (ToolResult, error)
+}
+
+func NewModelToolRoundAdapter(
+    ModelToolRoundConfig,
+) (*ModelToolRoundAdapter, error)
+```
+
+- `RequestModel`必填，返回 canonical `components/llm.ChatResponse`；
+- `ObserveResponse`可选，默认直接使用 `Response.Content`；
+- `BeforeTools`可选，默认允许执行；authorization、approval、budget等规则应由
+  Host在这里调用既有 owner，不得复制进 adapter；
+- `ExecuteTools`只在模型返回 tool calls时需要；没有 tool calls时不会调用；
+- 所有 port error identity原样传播，`ModelToolRoundResult.Phase.LastPhase`
+  保留失败阶段。
+
+```go
+type ModelResult struct {
+    Response  llm.ChatResponse
+    Model     string
+    Recovered bool
+}
+
+type ModelToolRoundExchange struct {
+    Input toolloop.RoundExecutionInput
+    Model ModelResult
+    Reply string
+}
+
+type ToolResult struct {
+    Runs             []toolloop.RunObservation
+    Failures         []toolloop.FailureObservation
+    NextChunks       []string
+    ForceNoToolCalls bool
+}
+```
+
+`ModelToolRoundExchange`和所有返回 slice均为防御性副本。provider私有 payload、
+recovery plan、RunStore handle或具体 tool executor不得塞入这些合同；Host可在
+各函数闭包中保留自己的单轮状态。
+
+### `Execute` 与 `ExecuteRound`
+
+```go
+func (*ModelToolRoundAdapter) Execute(
+    context.Context,
+    toolloop.RoundExecutionInput,
+) (ModelToolRoundResult, error)
+
+func (*ModelToolRoundAdapter) ExecuteRound(
+    context.Context,
+    toolloop.RoundExecutionInput,
+) (toolloop.RoundExecutionResult, error)
+```
+
+`Execute`面向仍需在执行后保留 answer-contract、recovery、budget、telemetry等
+产品策略的 Host；它返回 phase/model/tool事实，产品投影继续由 Host完成。
+
+`ExecuteRound`直接实现 `toolloop.RoundExecutor`，适合普通新项目：
+
+- 无 tool call → `OutcomeCompleted`；
+- Host gate停止 → `OutcomeTerminated`；
+- tool batch完成 → `OutcomeContinue`，并自动投影 Calls、Runs、Failures、
+  NextChunks和 ForceNoToolCalls。
+
+因此 Host Kit调用方可以直接把 adapter放入
+`toolloop.CoordinatorConfig.Executor`，不再自行编写 `RoundExecutor`或复制
+round phase ordering。
+
+adapter自身无单轮可变状态；并发安全性只取决于调用方提供的函数是否安全。
+
 ## 明确 non-goal
 
 本 package 不提供：
