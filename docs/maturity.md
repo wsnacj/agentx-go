@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5O Portable Host Adapter, Managed Objective Ingress and Closeout Projection：`active_implementation` |
+| 当前产品里程碑 | M5O Portable Host Adapter, Managed Objective Ingress and Closeout Projection：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5O canonical landing：43个package、212个production source、82,570行；仍为8个Developer Preview candidate |
@@ -21,7 +21,7 @@
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5O controlcontract consumer覆盖Host adapter catalog/registry与Managed Objective Ingress；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A～M5N production consumer已使用固定 private pseudo-version；M5O cutover进行中 |
+| HS canonical import | W1-C、M5A～M5O production consumer已使用固定 private pseudo-version；M5O cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -260,8 +260,13 @@ M5O在同一Experimental package内落地31个、23,158行portable Host adapter�
 Objective Ingress与closeout projection source，使canonical达到43个package、212个
 production source、82,570行。原31组合同测试和external-package fail-closed测试通过；
 该cohort只拥有display-safe request/result/readback、gate和composition，不执行真实
-adapter、authorization、store、Runner或UI副作用。具体Host实现继续留在HS，production
-cutover与最终checkpoint仍在进行。
+adapter、authorization、store、Runner或UI副作用。具体Host实现继续留在HS。fixed
+runtime为`v0.0.0-20260801184120-1fdddbc8d76f`；HS 23,217行基线已收缩为1,276行
+alias/forwarder/private Host seam，净减21,941行。fixed consumer、中文Reference、四module、
+43/8 API/doc gate与有效完整回归均闭合，closure为407/57/2453/65、
+HS119/canonical33/Scene0。当前状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
+`not_ready_for_hostless_w2b`；这不构成成熟度晋级或发行授权。
 
 ## 明确 non-goal
 
