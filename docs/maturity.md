@@ -5,10 +5,10 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5M Portable Host Effect Contract, Admission and Invocation Kernel：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5N Portable Objective Runtime Step, Executor Contract and Productization Projection：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5M canonical landing：43个package、168个production source、50,885行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5N canonical landing：43个package、181个production source、59,412行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5M controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe/Objective Graph、verification/recovery及Host effect gate；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A～M5M production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5N controlcontract consumer固定版本并覆盖Objective runtime/executor/productization；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A～M5N production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -242,7 +242,14 @@ authorization、ProductShellRuntime与Scene继续由HS拥有。四module、fixed
 2个既有治理FAIL、20 SKIP且无新增失败，closure为407/57/2407/65、
 HS119/canonical33/Scene0。当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`；不构成成熟度晋级或发行授权，
-Owner接受前不创建后续wave。
+Owner已于2026-08-02接受；该接受不构成成熟度晋级或发行授权。
+
+M5N继续在同一Experimental package内迁入13个production source、8,527行真实Objective
+runtime step、auto-delegation、Host-owned executor request/result/readback、adapter gate和
+runtime productization implementation，使canonical达到43个package、181个production
+source、59,412行。具体adapter/executor、authorization、RunStore/backend、durable write、
+ProductShellRuntime与Scene仍由HS拥有；当前状态为`active_implementation`，须以fixed
+consumer、中文Reference、四module、完整HS回归和closure checkpoint结束。
 
 ## 明确 non-goal
 

@@ -41,7 +41,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/budget` | Experimental extension | [API](../../runtime/budget/API.md) | 预算判定 mechanism |
 | `runtime/cases` | Experimental extension | [API](../../runtime/cases/API.md) | Case数据合同、规范化/复制 helper与最小Store port |
 | `runtime/construction` | Experimental extension | [API](../../runtime/construction/API.md) | 高级 Host 构造生命周期 |
-| `runtime/controlcontract` | Experimental extension | [API](../../runtime/controlcontract/API.md) | 执行控制合同、Objective Spec/verification/replanning及Host effect contract/admission/invocation kernel |
+| `runtime/controlcontract` | Experimental extension | [API](../../runtime/controlcontract/API.md) | 执行控制合同、Objective Spec/verification/replanning、Host effect及Objective runtime/executor/productization kernel |
 | `runtime/mediaartifact` | Experimental extension | [API](../../runtime/mediaartifact/API.md) | 媒体产物描述合同 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |

@@ -8,10 +8,10 @@ import controlcontract "github.com/wsnacj/agentx-go/runtime/controlcontract"
 
 成熟度：**Experimental extension / private validation**。
 
-`runtime/controlcontract` 是 AgentX 公共执行控制语义、Objective定义/策略/图合同、
-验证/恢复/重规划机制与确定性 reducer 的 portable source authority。它只处理数据合同、
-复制/规范化、display-safe 校验、严格解码和纯判定，不执行 Runner、模型、工具、调度、
-存储或 Host副作用。
+`runtime/controlcontract` 是 AgentX 公共执行控制语义、Objective定义/策略/图、验证/恢复/
+重规划、auto-delegation、runtime step、Host executor request/result/readback与确定性 reducer
+的 portable source authority。它只处理数据合同、复制/规范化、display-safe校验、严格
+解码和纯判定，不执行Runner、模型、工具、调度、存储或Host副作用。
 
 ## 核心状态合同
 
@@ -299,8 +299,58 @@ func BuildHostOwnedMemoryProposalApplyInvocation(HostOwnedMemoryProposalApplyInv
 ```
 
 它不会写skill、workflow或template，不执行install/reload，也不拥有memory backend。
-Delegation worker gate仍与HS具体observation normalization owner耦合，未进入本次canonical
-landing；不能根据independent gate kind推断已有canonical delegation execution API。
+## Objective Runtime step、delegation 与 Host executor合同
+
+Objective runtime step把已经准备好的Run、verification、ledger patch与可选auto-delegation
+合同归并为下一步纯状态投影：
+
+```go
+type AutoDelegationPolicy struct { ... }
+type AutoDelegationPlan struct { ... }
+type AutoDelegationParentMerge struct { ... }
+type ObjectiveRuntimeLoopInput struct { ... }
+type ObjectiveRuntimeLoopStep struct { ... }
+
+func BuildAutoDelegationPolicyReview(AutoDelegationPolicy) AutoDelegationPolicyReview
+func BuildAutoDelegationPlanReview(AutoDelegationPolicyReview, AutoDelegationPlan) AutoDelegationPlanReview
+func BuildAutoDelegationHostBridge(AutoDelegationHostBridgeInput) AutoDelegationHostBridge
+func BuildAutoDelegationParentMerge(AutoDelegationParentMergeInput) AutoDelegationParentMerge
+func BuildObjectiveRuntimeLoopStep(ObjectiveRuntimeLoopInput) ObjectiveRuntimeLoopStep
+```
+
+planner candidate JSON使用严格解码和行为固定的fenced-JSON抽取；未知字段、尾随内容、unsafe
+raw output和不完整plan都会fail closed。本包不生成planner prompt、不调用模型，也不创建
+真实child session。
+
+Host-owned executor合同只描述请求、结果、readback与adapter调用报告：
+
+```go
+type HostOwnedObjectiveExecutorStepRequest struct { ... }
+type HostOwnedObjectiveExecutorStepResult struct { ... }
+type HostOwnedObjectiveExecutorStepReadback struct { ... }
+type ObjectiveRuntimeProductizationReport struct { ... }
+
+func BuildHostOwnedObjectiveExecutorStepRequest(HostOwnedObjectiveExecutorStepRequestInput) HostOwnedObjectiveExecutorStepRequest
+func BuildHostOwnedObjectiveExecutorStepResult(HostOwnedObjectiveExecutorStepResultInput) HostOwnedObjectiveExecutorStepResult
+func BuildHostOwnedObjectiveExecutorStepReadback(HostOwnedObjectiveExecutorStepReadbackInput) HostOwnedObjectiveExecutorStepReadback
+func BuildHostOwnedObjectiveExecutorAdapterReadiness(HostOwnedObjectiveExecutorAdapterReadinessInput) HostOwnedObjectiveExecutorAdapterReadiness
+func BuildHostOwnedObjectiveExecutorAdapterInvocation(HostOwnedObjectiveExecutorAdapterInvocationInput) HostOwnedObjectiveExecutorAdapterInvocation
+func BuildObjectiveRuntimeProductization(ObjectiveRuntimeProductizationInput) ObjectiveRuntimeProductizationReport
+```
+
+所有`Core*Executed`、dispatch、scheduler、store mutation和compensation flag保持false；
+`ReadyForHostExecution`或`ReadyForHostProductization`只表示显式Host输入满足合同，不执行、
+不授权、不持久化。concrete executor/adapter、authorization、RunStore和durable write仍由Host
+拥有。
+
+已结构化Observation可直接进入portable normalizer：
+
+```go
+func BuildStructuredObservationNormalization(StructuredObservationNormalizationInput) ObservationNormalizationResult
+```
+
+它不接受具体`RuntimeAdapterExecutionResult`。provider/backend输出到结构化Observation的
+翻译仍是Host职责。
 
 ## Approval、budget、幂等与生命周期
 
@@ -350,10 +400,11 @@ if !result.Allowed {
 
 [`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
 是独立 nested module，固定依赖
-`v0.0.0-20260801172253-9a3f0e5e1d5c`，不使用 `replace`，也不 import HS、Runner、
+`v0.0.0-20260801180223-57ea36658ea2`，不使用 `replace`，也不 import HS、Runner、
 Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
 lifecycle transition、unsafe-ref fail-closed、单节点Objective Graph validation，以及
-Objective evidence verification/recovery proposal和Host effect gate fail-closed路径：
+Objective evidence verification/recovery proposal、Host effect gate，以及Objective runtime/
+executor/productization fail-closed路径：
 
 ```bash
 cd runtime/conformance/controlcontract-consumer
@@ -364,14 +415,14 @@ GOWORK=off go run .
 预期输出：
 
 ```text
-agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready:objective_runtime_contract_ready
 ```
 
 ## 非目标
 
-- 不提供 Objective executor、runtime loop dispatch、scheduler backend/execution 或 RunStore；
+- 不提供具体Objective executor、runtime loop dispatch、scheduler backend/execution或RunStore；
 - 不提供具体runtime/production adapter或adapter-result normalization input翻译；
-- 不提供delegation worker runtime gate的canonical owner；
+- 不创建真实delegation worker/session，不执行child dispatch或parent durable merge；
 - 不探测真实capability，不选择provider，不执行strategy或graph node；
 - 不执行 approval、authorization、sandbox、model/tool 或 backend；
 - 不包含 ProductShellRuntime、Scene、provider、credential 或真实网络；

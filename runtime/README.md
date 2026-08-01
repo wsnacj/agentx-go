@@ -130,4 +130,4 @@ GOWORK=off go list -m all
 验证；根 module 的 `go test ./...` 不会自动跨越 nested module。M5J/M5K 的
 `controlcontract-consumer`固定 pseudo-version、无长期 `replace`，覆盖 projection、
 budget、lifecycle、display-safe fail-closed、Objective Graph validation、verification/
-recovery proposal及Host effect gate路径。
+recovery proposal、Host effect gate以及Objective runtime/executor/productization路径。

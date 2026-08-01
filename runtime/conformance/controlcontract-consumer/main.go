@@ -65,9 +65,13 @@ func run() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	objectiveRuntimeStatus, err := validateObjectiveRuntimeProjection()
+	if err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(
-		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s",
+		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s:%s",
 		projection.Status,
 		budget.RetryBudgetRemaining,
 		lifecycle.To,
@@ -75,7 +79,52 @@ func run() (string, error) {
 		graphStatus,
 		verificationStatus,
 		hostEffectStatus,
+		objectiveRuntimeStatus,
 	), nil
+}
+
+func validateObjectiveRuntimeProjection() (string, error) {
+	policy := controlcontract.BuildAutoDelegationPolicyReview(controlcontract.AutoDelegationPolicy{
+		PolicyRef: "policy:fixed-consumer-auto-delegation",
+		Enabled:   true,
+		Mode:      controlcontract.AutoDelegationObserve,
+	})
+	if !policy.Ready || policy.Status != controlcontract.VerificationSatisfied || policy.RunnerEffect != "none" {
+		return "", fmt.Errorf("auto-delegation policy is not ready: %#v", policy)
+	}
+
+	loop := controlcontract.BuildObjectiveRuntimeLoopStep(controlcontract.ObjectiveRuntimeLoopInput{})
+	if loop.Available || loop.Status != "inactive" || loop.RunnerEffect != "none" {
+		return "", fmt.Errorf("hostless runtime loop did not fail closed: %#v", loop)
+	}
+	request := controlcontract.BuildHostOwnedObjectiveExecutorStepRequest(controlcontract.HostOwnedObjectiveExecutorStepRequestInput{RuntimeLoop: loop})
+	if !request.RequestOnly || request.ReadyForHostExecution || request.Status != controlcontract.HostActionBlocked {
+		return "", fmt.Errorf("hostless executor request did not fail closed: %#v", request)
+	}
+	report := controlcontract.BuildObjectiveRuntimeProductization(controlcontract.ObjectiveRuntimeProductizationInput{RuntimeLoop: loop})
+	if report.Available || report.ReadyForHostProductization || report.Status != "inactive" {
+		return "", fmt.Errorf("hostless productization did not fail closed: %#v", report)
+	}
+
+	normalization := controlcontract.BuildStructuredObservationNormalization(controlcontract.StructuredObservationNormalizationInput{
+		Frame:      controlcontract.ObjectiveFrame{ID: "objective:fixed-consumer-runtime"},
+		SourceKind: "delegation_worker_result",
+		SourceRef:  "result:fixed-consumer-worker",
+		Observations: []controlcontract.Observation{{
+			Kind:     "metric",
+			Source:   "adapter:fixed-consumer-worker",
+			Subject:  "objective:fixed-consumer-runtime",
+			Strength: controlcontract.EvidenceStrong,
+			EvidenceRefs: []controlcontract.EvidenceRef{{
+				Ref: "evidence:fixed-consumer-runtime", Kind: "metric", Strength: controlcontract.EvidenceStrong,
+				Source: "adapter:fixed-consumer-worker",
+			}},
+		}},
+	})
+	if !normalization.ReadyForVerification || normalization.Status != controlcontract.VerificationSatisfied {
+		return "", fmt.Errorf("structured observation normalization is not ready: %#v", normalization)
+	}
+	return "objective_runtime_contract_ready", nil
 }
 
 func validateHostEffectKernel() (string, error) {
