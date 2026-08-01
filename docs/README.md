@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
-当前文档对应 M3E Core Developer Preview candidate、LLM组件和已迁
-Runtime owner，目标是让调用方
+当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
+HTTP owner、LLM组件和已迁 Runtime owner，目标是让调用方
 能够准确判断：
 
 1. 根 `agentx` 包现在真实提供什么；
@@ -9,7 +9,8 @@ Runtime owner，目标是让调用方
 3. Open Tool Loop与 Workflow两类标准执行路径应该如何选择；
 4. `ExecutionAdapter`、Model/Tool Adapter和 Host分别拥有什么责任；
 5. Workflow Host Kit如何组合已经进入 Runtime module的 portable mechanism；
-6. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
+6. shared Host HTTP transport与具体 Scene HTTP API之间如何分工；
+7. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
 
 建议阅读顺序：
 
@@ -29,9 +30,12 @@ Runtime owner，目标是让调用方
 14. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
 15. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
 16. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
-17. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
-18. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
-19. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+17. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
+18. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
+19. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
+20. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+21. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+22. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
 
 可运行验证位于：
 

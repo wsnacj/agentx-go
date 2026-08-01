@@ -5,10 +5,11 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M3E Workflow Developer Preview vertical closure |
+| 当前产品里程碑 | M4A Database Inspection Developer Preview HTTP pilot |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM及22个 Runtime owner，共24个 |
+| agentx-go production packages | 根合同、LLM及25个 Runtime owner，共27个 |
+| Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
 | Run/Open Tool Loop mechanism | W5-B～W5-E 已迁移多轮驱动、检测器/fuse、round coordination、phase ordering与 Host-backed assembly；host executor 仍必需 |
@@ -19,14 +20,14 @@
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 24个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 27个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前24个 production package均有中文 Reference；只说明
+- **API文档正文覆盖**：当前27个 production package均有中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -64,9 +65,16 @@ M3E又让 `runtime/workflow/hostkit`组合已经迁入的 Workflow真实 owner�
 identity、clock和可选 durable port；HS `ExecuteInline`已切到同一入口。Host Kit
 不复制 lowering/orchestration语义，也不提供 concrete policy或 backend。
 
+M4A将原 HS shared Host HTTP实现迁入 `runtime/hosthttp/hostserver`、
+`requestjson`和 `resourcepolicy`。它们拥有 bounded transport、request identity、
+严格 JSON解码和 Host资源收窄 mechanism；HS旧路径只保留 Deprecated薄转发。
+数据库检查的 handler、SQLite collector、readiness policy、OpenAPI和产品错误投影
+继续由 HS Scene拥有，因此这三个 package仍是 Experimental extension，而不是通用
+Scene Facade或发布承诺。
+
 ## 明确 non-goal
 
-以下能力没有进入 M3E 根 Facade，不得根据 package名、文档愿景或未来目录推断
+以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
 已支持：
 
 - 无需 host-provided model/tool adapter和 policy的完整 embedded Runtime根构造；
@@ -75,12 +83,12 @@ identity、clock和可选 durable port；HS `ExecuteInline`已切到同一入口
 - Objective Runtime Loop；
 - 长任务调度、子 Session 和 durable lifecycle；
 - Resume、progress/event stream；
-- Scene、HTTP、CLI、provider、credential；
+- Scene领域 handler/service、CLI、provider、credential；
 - 真实网络或生产副作用。
 
 ## 后续晋级
 
-M3D/M3E checkpoint只证明：
+M3D/M3E/M4A checkpoint只证明：
 
 - 公共合同可以作为独立零第三方依赖 module 构建和测试；
 - external-style consumer 能通过 canonical import 使用它；
