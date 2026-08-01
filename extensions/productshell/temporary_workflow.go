@@ -143,6 +143,7 @@ type TemporaryWorkflowPlanningInput struct {
 type TemporaryWorkflowPlanningResult struct {
 	Input        Input
 	WorkflowSpec *agentxworkflow.Spec
+	Applied      bool
 	Metrics      TemporaryWorkflowPlanningMetrics
 }
 
@@ -213,6 +214,7 @@ func (p *TemporaryWorkflowPlanningPipeline) Plan(ctx context.Context, request Te
 	}
 	out.Input = rt.ApplyTemporaryWorkflowPlan(request.Input, prepared)
 	out.WorkflowSpec = prepared.Workflow
+	out.Applied = true
 	return out, nil
 }
 

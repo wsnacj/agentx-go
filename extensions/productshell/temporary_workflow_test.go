@@ -55,7 +55,7 @@ func TestTemporaryWorkflowPlanningPipelineOrder(t *testing.T) {
 	if got, want := strings.Join(runtime.calls, ","), "should,resolve,apply"; got != want {
 		t.Fatalf("calls = %q, want %q", got, want)
 	}
-	if result.WorkflowSpec != &spec || result.Input.WorkflowSpec == nil || !result.Input.RawWorkflowOptIn {
+	if !result.Applied || result.WorkflowSpec != &spec || result.Input.WorkflowSpec == nil || !result.Input.RawWorkflowOptIn {
 		t.Fatalf("result = %#v", result)
 	}
 }
