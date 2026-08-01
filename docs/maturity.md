@@ -298,6 +298,13 @@ production consumer已直接使用canonical owner。完整回归为149 PASS、2�
 `technical_checkpoint_complete_awaiting_owner_acceptance`；该checkpoint不构成成熟度晋级
 或发行授权。
 
+M5Q已于2026-08-02获Owner接受；该接受不构成成熟度晋级或发行授权。M5R随后准入
+HS `runtime/channel`中除pairing外的8个production source、1,400行portable message、
+sender/runner port、routing、chunking、in-memory dedupe、bounded ingress runtime与
+session delivery contract。隔离module复用全部非pairing原合同测试后通过；production只
+依赖标准库与canonical safeerror。pairing challenge/approval、durable state、access policy、
+具体platform sender/SDK、credential、backend和真实网络副作用不进入M5R。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
