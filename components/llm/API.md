@@ -2,6 +2,9 @@
 
 ## 当前定位
 
+M3D 分级：**Developer Preview candidate / private validation**。该分级用于
+focused签名/文档漂移门禁，不构成 Public、Beta、Stable兼容承诺。
+
 导入路径：
 
 ```go

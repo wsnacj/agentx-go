@@ -1,11 +1,12 @@
 # `runtime/hostkit` 中文 API Reference
 
-状态：**Experimental / private validation**。
+状态：**Developer Preview candidate / private validation**。当前进入 focused
+签名/文档漂移门禁，但未获得 Public、Beta、Stable兼容承诺。
 
 本 package 把 canonical `runtime/toolloop` assembly、`runtime/execution`
-adapter 和根 `agentx.Client` 组合成一个 portable Host Kit。它让新项目
-只提供每次 Run 的 concrete round executor 和已解析 policy ports，无需
-导入 HS Runner 或重新实现 portable round ordering。
+adapter 和根 `agentx.Client` 组合成一个 portable Host Kit。普通新项目只需
+提供每次 Run 的 model/tool函数，无需导入 HS Runner、实现 Factory或重新实现
+portable round ordering；需要完整 assembly policy的高级 Host仍可使用 Factory。
 
 ## `Config`
 

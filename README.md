@@ -5,8 +5,9 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前成熟度：**private validation / Experimental Runtime**。这不是 Public、
-> Beta 或 Stable 发布，也还不是开箱即用的完整 embedded Agent SDK。
+> 当前里程碑：**Core Developer Preview candidate / private validation**。这里的
+> candidate只表示 M3D 代码、consumer和中文文档已进入候选闭环；它不是 Public、
+> Beta、Stable或 production-ready发布。
 
 ## 当前提供：根合同
 
@@ -34,9 +35,10 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - [`runtime/execution`](runtime/execution/API.md) 的根 Client→Host Run分派、
   adapter result组装、Shutdown转发与 error classification委托；具体 engine
   request/result投影仍由 host拥有
-- [`runtime/hostkit`](runtime/hostkit/API.md) 的 per-run portable assembly、
-  outcome/result projection、execution adapter与根 Client组合；新项目可
-  通过窄 Factory 使用 canonical toolloop，无需 HS Runner
+- [`runtime/hostkit`](runtime/hostkit/API.md) 的 portable model/tool round
+  adapter、per-run assembly、outcome/result projection、execution adapter与根
+  Client组合；普通新项目通过 `NewModelToolClient`显式注入 model/tool函数，无需
+  手写 Factory、RoundExecutor或依赖 HS Runner
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
   收口/continuation state 更新、request→observe→action phase编排、循环/重放
   检测与连续工具失败熔断，以及把 driver/coordinator/termination/final state
@@ -50,7 +52,8 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 
 ## 当前不提供
 
-- 无需宿主 Factory 的开箱即用 Runtime 或官方模型/provider 接入
+- 无需任何 host-provided model/tool adapter和 policy的开箱即用 Runtime
+- 官方模型/provider、credential或生产网络接入
 - 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口
 - concrete Workflow validation/mapping policy、executor和 RunStore backend
 - progress stream、HTTP API、Scene registry
@@ -58,9 +61,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 
 [`runtime/construction`](runtime/construction/API.md) 已提供基于窄 `Host`
 port 的 Experimental 构造生命周期；[`runtime/hostkit`](runtime/hostkit/API.md)
-又已提供无 HS Runner 的真实执行组合。普通使用者要获得无需自行
-提供 Host/Factory 的开箱即用 Runtime，仍需等待后续 construction
-决策。W1 的
+又已提供无 HS Runner 的真实执行组合和低样板 `NewModelToolClient`。普通使用者
+仍需显式提供 concrete model/tool adapter；无需这些 host能力的完整 embedded
+Runtime结论保持 `not_ready_for_hostless_w2b`。根合同的
 `ExecutionAdapter` 面向扩展作者和集成验证，不等于要求所有业务调用方自行实现
 Runtime。
 
@@ -87,7 +90,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260731194902-539922c346d5
+  v0.0.0-20260801024524-d545bfb941c5
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -96,10 +99,14 @@ github.com/wsnacj/agentx-go/runtime
 
 - [文档入口](docs/README.md)
 - [快速开始](docs/quickstart.md)
+- [安装与多 Module 引用](docs/guides/installation-and-modules.md)
 - [执行模型](docs/concepts/execution-model.md)
 - [Go API Reference](docs/reference/agentx.md)
 - [自定义 Adapter](docs/guides/custom-adapter.md)
+- [Host Kit + Model/Tool Adapter](docs/guides/model-tool-hostkit.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
+- [Package API 索引与成熟度矩阵](docs/reference/package-maturity.md)
+- [HS 迁移说明](docs/guides/hs-migration.md)
 - [成熟度与兼容边界](docs/maturity.md)
 - [`components/llm` 中文 API Reference](components/llm/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
@@ -132,6 +139,7 @@ GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -c
 GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/hostkit-consumer test ./... -count=1
+GOWORK=off go run scripts/check_developer_preview_api.go
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime

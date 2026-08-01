@@ -6,7 +6,8 @@
 import toolloop "github.com/wsnacj/agentx-go/runtime/toolloop"
 ```
 
-成熟度：**Experimental / private validation**。
+成熟度：**Developer Preview candidate / private validation**。当前进入 focused
+签名/文档漂移门禁，但未获得 Public、Beta、Stable兼容承诺。
 
 该 package 是 portable Run/Open Tool Loop mechanism owner，负责：
 

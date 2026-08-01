@@ -1,7 +1,8 @@
 # `agentx` Go API Reference
 
-本页是 W1 根 contract 的中文 Reference。API 目前处于 private validation，
-不是 Public、Beta 或 Stable 兼容性承诺。
+本页是 M3D 根 contract Developer Preview candidate 的中文 Reference。正文覆盖和
+签名漂移已经进入 focused gate，但 API仍处于 private validation，不构成 Public、
+Beta、Stable或 semver兼容性承诺。
 
 ## 创建与 Client
 
@@ -15,7 +16,7 @@ type Config struct {
 }
 ```
 
-`Adapter` 必填。`Profile` 为零值时解析为 W1 唯一支持的默认画像。`New` 成功后，
+`Adapter` 必填。`Profile` 为零值时解析为当前根合同唯一支持的默认画像。`New` 成功后，
 调用方不得继续直接调用同一个 adapter。
 
 <!-- api:New -->
@@ -147,7 +148,7 @@ type ExecutionProfile struct {
 }
 ```
 
-W1 唯一支持：
+当前根合同唯一支持：
 
 ```text
 off / tool / l2_bounded_tool_loop /
@@ -187,7 +188,7 @@ Client 已开始关闭、已经关闭，或底层 owner 报告对应状态。
 <!-- api:CodeUnsupportedProfile -->
 ### `CodeUnsupportedProfile`
 
-请求的六维画像不属于 W1 支持范围。
+请求的六维画像不属于当前根合同支持范围。
 
 <!-- api:CodeExecutionFailed -->
 ### `CodeExecutionFailed`

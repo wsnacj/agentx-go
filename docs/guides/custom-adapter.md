@@ -1,7 +1,9 @@
 # 实现自定义 ExecutionAdapter
 
-`ExecutionAdapter` 是 W1 唯一的 extension-authoring seam。它用于把已有 Runtime
-或确定性执行器接到公共合同，不用于把 provider、credential 或业务策略塞进根包。
+`ExecutionAdapter` 是 M3D 两条标准接入路径中的高级扩展接缝。它用于把已有
+Runtime或确定性执行器接到公共合同，不用于把 provider、credential或业务策略
+塞进根包。新项目需要 canonical Open Tool Loop时，优先使用
+[Host Kit + Model/Tool Adapter](model-tool-hostkit.md)。
 
 ## 责任边界
 
@@ -39,5 +41,5 @@ Client 负责：
 Client，也不要在外部并发调用其 Run/Shutdown。需要共享底层资源时，应由 Runtime
 owner 提供明确的线程安全资源层，而不是绕过合同。
 
-W1-B 将提供可运行的 `custom-adapter` example；当前页面只固定实现责任，不把示例
-当作完整 Runtime 能力证明。
+可运行示例位于 [`examples/custom-adapter`](../../examples/custom-adapter)。该示例
+只固定实现责任，不把确定性 adapter当作完整 Runtime能力证明。

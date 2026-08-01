@@ -5,25 +5,33 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 根 contract | W1 候选 |
+| 当前产品里程碑 | M3D Core Developer Preview candidate |
+| 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | 根合同、LLM及21个 Runtime owner，共23个 |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
 | Run/Open Tool Loop mechanism | W5-B～W5-E 已迁移多轮驱动、检测器/fuse、round coordination、phase ordering与 Host-backed assembly；host executor 仍必需 |
 | Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
-| Portable Core Host Kit | W5-G 已落地 no-HS-Runner consumer，HS Open Tool Loop production path已切换 canonical owner |
-| 无需 Host/Factory 的根 Runtime construction | W2-A 已测量，W2-B 仍未 ready |
+| Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
+| 普通新项目接入 | `NewModelToolClient`无需自定义 Factory/BuildRun/RoundExecutor，但仍显式要求 model/tool adapter |
+| 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
 | HS canonical import | W1-C 已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| Public/Beta/Stable | 未授权 |
+| 当前 package surface | 23个全部有中文 Reference；5个进入 Developer Preview candidate signature/doc gate |
+| Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
-W1 的 exact export、签名、中文 Reference、examples 和 external-style consumer
-用于发现意外漂移，但它们是
-候选合同门禁，不等同于长期兼容承诺。
+## 三类结论必须分开
+
+- **API文档正文覆盖**：当前23个 production package均有中文 Reference；只说明
+  实际签名、语义和 non-goal已经被描述。
+- **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
+  candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
+- **正式发布成熟度**：tag、license/NOTICE、security/legal、维护 owner和 release
+  authorization仍未完成，继续 fail closed。
 
 根合同的 authoring/source authority 已在 W1-C 后转移到本仓库。HS 旧
 `experimental/facade` 只保留 Deprecated alias/forwarder，不再接受独立行为修改。
@@ -44,16 +52,19 @@ consumer固定使用 canonical pseudo-version；W5-F又让 `runtime/execution`
 implementation不得在 HS恢复双写。
 
 W5-G 又让 `runtime/hostkit` 统一拥有 per-run portable assembly、
-outcome/result projection、execution adapter与根 Client 组合。新项目已可通过
-substrate-neutral Factory 构建不依赖 HS Runner 的真实执行路径；HS Open
-Tool Loop production path 也消费同一 canonical `hostkit.Execute`，不再直接
-构造 `toolloop.Assembly`。
+outcome/result projection、execution adapter与根 Client组合。W5-H继续迁入真实
+`ModelToolRoundAdapter`，固定 model request、response observe、before-tools gate
+和 tool execution的 portable协调机制；HS Open Tool Loop production path已消费
+该 owner并删除同义通用 phase executor。`NewModelToolClient`进一步让普通新项目
+无需自定义 Factory、BuildRun assembly或 RoundExecutor，但 provider、授权、
+backend和产品策略仍由调用方显式注入。
 
 ## 明确 non-goal
 
-以下能力没有进入 W1，不得根据 package 名、文档愿景或未来目录推断已支持：
+以下能力没有进入 M3D 根 Facade，不得根据 package名、文档愿景或未来目录推断
+已支持：
 
-- 无需 Host/Factory 的开箱即用 embedded Runtime 根构造；
+- 无需 host-provided model/tool adapter和 policy的完整 embedded Runtime根构造；
 - Tool Direct Answer 的独立结果策略；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
 - Objective Runtime Loop；
@@ -64,7 +75,7 @@ Tool Loop production path 也消费同一 canonical `hostkit.Execute`，不再�
 
 ## 后续晋级
 
-W1 checkpoint 只证明：
+M3D checkpoint只证明：
 
 - 公共合同可以作为独立零第三方依赖 module 构建和测试；
 - external-style consumer 能通过 canonical import 使用它；
@@ -75,14 +86,12 @@ W2-A 已验证普通使用者需要的窄 Runtime construction形状；W5-A 又�
 循环/重放检测、failure fuse、portable round-result coordination和 phase
 ordering，以及 Host-backed single-run assembly迁入 `runtime/toolloop`，W5-F
 再迁入顶层 adapter dispatch/result assembly，并分别完成 fixed-version consumer
-与 HS production cutover。W5-G 已把这些 owner 组合为可运行 Host Kit，但
-construction/hostkit仍要求调用方提供具体 `Host` 或 `Factory`，
-toolloop assembly仍要求 host提供 `RoundExecutor`及可选 policy；
-model request、
-concrete tool execution、answer-contract、
-持久化和官方 concrete provider/tool kit尚未成为 canonical owner，因此没有解除无需 Host/Factory 的
-根 Runtime construction W2-B门禁。当前 Experimental package拥有真实实现和
+与 HS production cutover。W5-G/W5-H 已把这些 owner组合为可运行 Host Kit和
+portable model/tool round adapter；低样板路径仍要求调用方显式提供 model request、
+concrete tool execution及可选 policy。answer-contract、持久化和官方 concrete
+provider/tool kit尚未成为 canonical owner，因此 W2-B结论保持
+`not_ready_for_hostless_w2b`。当前 Experimental package拥有真实实现和
 consumer，不代表其全部导出符号已经通过 Public API审批。Pre-Beta还必须完成
-无需 Host 的 construction决策、surface consolidation、版本兼容、维护 owner、
+hostless construction决策、surface consolidation、版本兼容、维护 owner、
 Changelog、license、security和发布授权门禁。任何一个步骤都不能自动把当前合同
 升级为 Public、Beta或 Stable。
