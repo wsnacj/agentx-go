@@ -155,6 +155,26 @@ if !result.Allowed {
 }
 ```
 
+## Fixed-version external consumer
+
+[`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
+是独立 nested module，固定依赖
+`v0.0.0-20260801153451-11cc3fc9419e`，不使用 `replace`，也不 import HS、Runner、
+Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
+lifecycle transition 与 unsafe-ref fail-closed 路径：
+
+```bash
+cd runtime/conformance/controlcontract-consumer
+GOWORK=off go test ./...
+GOWORK=off go run .
+```
+
+预期输出：
+
+```text
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak
+```
+
 ## 非目标
 
 - 不提供 Objective graph、executor、runtime loop、scheduler 或 RunStore；

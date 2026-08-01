@@ -154,6 +154,7 @@ github.com/wsnacj/agentx-go/extensions
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
+- [Control Contract external-style consumer](runtime/conformance/controlcontract-consumer)
 - [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
 - [A 股组合 external-style consumer](extensions/conformance/astock-consumer)
@@ -179,6 +180,7 @@ GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -c
 GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/hostkit-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C runtime/conformance/controlcontract-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/workflow-hostkit-consumer test ./... -count=1
 GOWORK=off go -C extensions test ./... -count=1
 GOWORK=off go -C extensions test -race ./... -count=1

@@ -125,4 +125,6 @@ GOWORK=off go list -m all
 ```
 
 `conformance/` 下的 external-style consumer 是独立 nested module，必须单独
-验证；根 module 的 `go test ./...` 不会自动跨越 nested module。
+验证；根 module 的 `go test ./...` 不会自动跨越 nested module。M5J 的
+`controlcontract-consumer`固定 pseudo-version、无长期 `replace`，覆盖 projection、
+budget、lifecycle 与 display-safe fail-closed 路径。
