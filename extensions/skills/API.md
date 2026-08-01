@@ -4,6 +4,28 @@
 本地目录或只读 `fs.FS`加载 `SKILL.md`，解析 frontmatter与资源目录，并提供缓存、
 activation path、requested-skill semantics、deep clone和资源引用检查。
 
+完整接入示例见[Portable Skills 接入指南](../../docs/guides/portable-skills.md)和
+[fixed-version consumer](../conformance/skills-consumer)。
+
+## 数据合同
+
+- `Source`标记 `custom`、`extra`、`bundled`、`managed`和 `workspace`来源；它描述
+  provenance，不授权来源中的脚本或安装指令。
+- `Skill`是解析后的主合同，包含名称、描述、内容、location/base dir、路径与工具提示、
+  invocation/dispatch、requires/install、resources和 metadata。`InvocationPolicy`、
+  `Requires`、`InstallSpec`、`Resources`、`DispatchSpec`只是数据；尤其
+  `InstallSpec`不执行命令。
+- `SkillConfig`、`Eligibility`、`RuntimeEligibility`和 `Decision`为 HS兼容所需的
+  eligibility数据合同；本包不提供产品化 filter evaluator，调用方必须在 Host层实现。
+- `FSSource`以 `ID`、`FS`和 `Fingerprint`声明只读来源；`Valid`只检查字段完整，只有
+  `runtime/assetfs` provider能够进一步证明 immutable identity并启用共享缓存。
+- `LoadOptions`声明目录/FS来源、strict/fail-fast模式及三个加载上限；零值上限使用实现的
+  有界默认值。
+- `LoadIssue`和 `LoadReport`保留加载阶段、路径、稳定 code/message、计数、cache hit和
+  generation；`HasIssues`同时检查 issue列表与 parse-failed计数。
+- `RequestedSkillSemantic`只投影显式请求的 name、execution context、allowed tools和
+  effort，不代表授权已经通过。
+
 ## 推荐入口
 
 - `Load`、`LoadWithReport`：按 `LoadOptions`加载多类 source；
@@ -16,9 +38,35 @@ activation path、requested-skill semantics、deep clone和资源引用检查。
   tools/effort提示元数据；
 - `ExtractReferencedResourcePaths`、`MissingReferencedResourcePaths`：检查正文中的
   scripts/references/assets引用。
+- `ResolveSkillKey`及 `NormalizeToolHintsMatch`、`EffectiveToolHintsMatch`、
+  `NormalizeSkillExecutionContext`、`NormalizeSkillAllowedTools`、
+  `NormalizeSkillExecutionEffort`：提供确定性的 authoring normalization。
 
 `Skill.ExecutionContext`、`AllowedTools`与 `Effort`只是请求和提示元数据，不拥有
 authorization、approval或 sandbox语义。
+
+## 最小目录加载
+
+```go
+items, report, err := skills.LoadWithReport(skills.LoadOptions{
+    ExtraDirs:                []string{"./skills"},
+    StrictFrontmatter:        true,
+    MaxCandidatesPerRoot:     64,
+    MaxSkillsLoadedPerSource: 32,
+    MaxSkillFileBytes:        256 << 10,
+})
+if err != nil {
+    return err
+}
+if report.HasIssues() {
+    // Host决定记录、拒绝或降级；loader不替 Host做产品策略。
+}
+_ = items
+```
+
+若资源来自 `embed.FS`或其它内存文件系统，推荐先用 `runtime/assetfs.New`创建 immutable
+provider，再把 `provider.ID()`、`provider.FS()`和 `provider.Fingerprint()`放入
+`FSSource`。不要用调用方自报 fingerprint伪装 immutable source。
 
 ## Source顺序与错误
 

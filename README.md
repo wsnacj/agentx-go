@@ -5,9 +5,10 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前里程碑：**M5D A-Stock Portable Domain Extension technical checkpoint complete / awaiting Owner acceptance**。
-> M3E Core两条标准路径与 M5C Pack Core已获接受；M5D已经闭合首个可独立消费的
-> A股 extension。代码、固定 consumer、HS cutover和中文文档已完成，等待人工接受；
+> 当前里程碑：**M5E Portable Skills Core technical checkpoint complete / awaiting Owner acceptance**。
+> M3E Core两条标准路径、M5C Pack Core与 M5D A股 extension已获接受；M5E已经把
+> portable Skill合同、loader/cache、activation/semantics和资源引用迁入新仓。
+> 代码、固定 consumer、HS cutover和中文文档已完成，等待人工接受；
 > 它不是 Public、Beta、Stable或 production-ready发布。
 
 ## 当前提供：根合同
@@ -63,6 +64,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
   handler的 intent、readiness与回答格式化
 - [`extensions/domainmodule`](extensions/domainmodule/API.md)与
   [`extensions/pack`](extensions/pack/API.md)：portable注册、选择、binding与物化机制
+- [`extensions/skills`](extensions/skills/API.md)：Skill数据合同、目录与 immutable
+  `fs.FS` loader/cache、activation、requested semantics和资源引用检查；保持
+  Experimental，不包含 prompt catalog/filter、安全策略、安装执行或 bundled内容
 - extension不安装 provider、credential、Runner、网络或生产 backend
 
 ## 当前不提供
@@ -108,7 +112,7 @@ github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260801061901-08fdf1038850
 
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801071806-57b903334bf5
+  v0.0.0-20260801100244-e9b2f8a65ee4
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -124,6 +128,7 @@ github.com/wsnacj/agentx-go/extensions
 - [Host Kit + Model/Tool Adapter](docs/guides/model-tool-hostkit.md)
 - [Workflow Host Kit](docs/guides/workflow-hostkit.md)
 - [A 股 Portable Domain Extension](docs/guides/astock-extension.md)
+- [Portable Skills 接入](docs/guides/portable-skills.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
 - [Package API 索引与成熟度矩阵](docs/reference/package-maturity.md)
 - [HS 迁移说明](docs/guides/hs-migration.md)
@@ -141,12 +146,14 @@ github.com/wsnacj/agentx-go/extensions
 - [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
 - [`extensions/astock/hostkit` 中文 API Reference](extensions/astock/hostkit/API.md)
 - [`extensions/domainmodule` 中文 API Reference](extensions/domainmodule/API.md)
+- [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
 - [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
 - [A 股组合 external-style consumer](extensions/conformance/astock-consumer)
+- [Skills external-style consumer](extensions/conformance/skills-consumer)
 
 ## 本地验证
 
@@ -176,6 +183,7 @@ GOWORK=off go -C extensions mod tidy -diff
 GOWORK=off GOPROXY=off go -C extensions/conformance/astock-contract-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C extensions/conformance/domain-module-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C extensions/conformance/astock-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C extensions/conformance/skills-consumer test ./... -count=1
 GOWORK=off go run scripts/check_developer_preview_api.go
 ```
 

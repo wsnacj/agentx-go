@@ -2,8 +2,9 @@
 
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
-已获 Owner接受的 M5C Portable Pack Core，以及技术 checkpoint已完成、等待
-Owner接受的 M5D A股 portable Domain Extension、LLM组件和已迁 Runtime owner，
+已获 Owner接受的 M5C Portable Pack Core与 M5D A股 portable Domain Extension，
+以及技术 checkpoint已完成、等待 Owner接受的 M5E Portable Skills Core、LLM组件
+和已迁 Runtime owner，
 目标是让调用方
 能够准确判断：
 
@@ -14,7 +15,9 @@ Owner接受的 M5D A股 portable Domain Extension、LLM组件和已迁 Runtime o
 5. Workflow Host Kit如何组合已经进入 Runtime module的 portable mechanism；
 6. shared Host HTTP transport与具体 Scene HTTP API之间如何分工；
 7. A股推荐 extension入口如何组合 Manifest、Pack、tool schema和 Host handler；
-8. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
+8. 新项目如何从目录或 immutable `fs.FS`加载 Skill，同时把 catalog/filter、安全和
+   安装副作用保留在 Host；
+9. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
 
 建议阅读顺序：
 
@@ -27,28 +30,30 @@ Owner接受的 M5D A股 portable Domain Extension、LLM组件和已迁 Runtime o
 7. [Host Kit + Model/Tool Adapter](guides/model-tool-hostkit.md)
 8. [Workflow Host Kit](guides/workflow-hostkit.md)
 9. [A 股 Portable Domain Extension](guides/astock-extension.md)
-10. [Package API 索引与成熟度矩阵](reference/package-maturity.md)
-11. [成熟度与兼容边界](maturity.md)
-12. [HS 迁移说明](guides/hs-migration.md)
-13. [`components/llm` 中文 API Reference](../components/llm/API.md)
-14. [`runtime` 中文 package 导航](../runtime/README.md)
-15. [`extensions` 中文 package 导航](../extensions/README.md)
-16. [`runtime/assetfs` 中文 API Reference](../runtime/assetfs/API.md)
-17. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
-18. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
-19. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
-20. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
-21. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
-22. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
-23. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
-24. [`runtime/executionpolicy` 中文 API Reference](../runtime/executionpolicy/API.md)
-25. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
-26. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
-27. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
-28. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
-29. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
-30. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
-31. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+10. [Portable Skills 接入](guides/portable-skills.md)
+11. [Package API 索引与成熟度矩阵](reference/package-maturity.md)
+12. [成熟度与兼容边界](maturity.md)
+13. [HS 迁移说明](guides/hs-migration.md)
+14. [`components/llm` 中文 API Reference](../components/llm/API.md)
+15. [`runtime` 中文 package 导航](../runtime/README.md)
+16. [`extensions` 中文 package 导航](../extensions/README.md)
+17. [`runtime/assetfs` 中文 API Reference](../runtime/assetfs/API.md)
+18. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
+19. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
+20. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
+21. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
+22. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
+23. [`extensions/skills` 中文 API Reference](../extensions/skills/API.md)
+24. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
+25. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
+26. [`runtime/executionpolicy` 中文 API Reference](../runtime/executionpolicy/API.md)
+27. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
+28. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
+29. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
+30. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
+31. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+32. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+33. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
 
 可运行验证位于：
 
@@ -65,10 +70,13 @@ Owner接受的 M5D A股 portable Domain Extension、LLM组件和已迁 Runtime o
 - [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)
 - [`extensions/conformance/pack-consumer`](../extensions/conformance/pack-consumer)
 - [`extensions/conformance/astock-consumer`](../extensions/conformance/astock-consumer)
+- [`extensions/conformance/skills-consumer`](../extensions/conformance/skills-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；
 `extensions/**/API.md`描述获准迁入的 portable extension合同。
-M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片；
+M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片。M5E
+只迁入 Skill contracts、loader/cache、activation、requested semantics与 resource
+refs；prompt catalog/filter、安全规则、安装执行、bundled内容和 Runner仍由 Host拥有。
 尚未落地的 hostless完整 Runtime construction、A股 livekit/provider、更多
 components、其它 extensions和 Scene不会预先获得虚假 API 页面。

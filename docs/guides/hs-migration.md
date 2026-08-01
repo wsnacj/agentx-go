@@ -128,6 +128,23 @@ command/risk metadata是独立分发合同，不得用 canonical lookup manifest
 `extensions/conformance/astock-consumer`以固定版本证明无 HS、Runner、`replace`和
 网络的 Manifest→asset→Pack→binding→fixture Host Kit→evaluator路径。
 
+## M5E Portable Skills Core收口
+
+`extensions/skills`现在拥有 Skill types/normalization、`SKILL.md` loader、source
+precedence、cache/generation/watcher、activation path、requested semantics、deep
+clone和 resource refs的 source authority。HS `core/agentx/skills`对这些能力只保留
+canonical type alias与薄 forwarder；新的通用 loader/cache/activation修改必须先落在
+`extensions/skills`，不得在 HS恢复双写。
+
+HS继续拥有 prompt catalog/ranking及 memory/browser启发式、eligibility/filter、
+safety规则、install plan/apply、approval/rollback/命令执行、bundled Skill内容和
+Runner/ProductShell集成。这些是产品策略或真实副作用，不能为了减少旧 import而下沉
+到 canonical extension。
+
+`extensions/conformance/skills-consumer`固定 extensions/runtime pseudo-version，
+证明新项目可在无 HS、Runner、`replace`、网络和命令执行时完成 immutable source
+加载、缓存、activation、requested semantics、资源完整性与 deep clone。
+
 ## 尚未迁移
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool

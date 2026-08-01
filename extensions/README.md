@@ -32,9 +32,10 @@ extensions -> contract/runtime/components
 contract/runtime/components -X-> extensions
 ```
 
-M5C Portable Pack Core checkpoint已经 Owner接受；M5D `extensions/astock`技术
-checkpoint已完成并等待 Owner接受。`extensions/astock`是 Developer Preview candidate，
-`astock/hostkit`与其它 extension owner仍为 Experimental，三组 Pack implementation
+M5C Portable Pack Core与 M5D `extensions/astock` checkpoint已经 Owner接受；M5E
+`extensions/skills`技术 checkpoint已完成并等待 Owner接受。`extensions/astock`是
+Developer Preview candidate，`skills`、`astock/hostkit`与其它 extension owner仍为
+Experimental，三组 Pack implementation
 位于 `astock/internal`且不允许外部直接依赖。共享 module不表示其它 Scene获得独立
 发行资格，也不构成 Public/Beta/Stable、正式 tag或 semver承诺。
 
@@ -44,10 +45,13 @@ checkpoint已完成并等待 Owner接受。`extensions/astock`是 Developer Prev
 - [`conformance/domain-module-consumer`](conformance/domain-module-consumer)；
 - [`conformance/pack-consumer`](conformance/pack-consumer)；
 - [`conformance/astock-consumer`](conformance/astock-consumer)：组合完整 portable A股
-  Manifest、资产、三组 Pack、fixture Host Kit与 evaluator。
+  Manifest、资产、三组 Pack、fixture Host Kit与 evaluator；
+- [`conformance/skills-consumer`](conformance/skills-consumer)：使用固定版本验证
+  immutable AssetFS加载、缓存、路径激活、requested semantics、资源完整性和 deep clone。
 
-前三个 consumer分别证明 contracts、Domain Module和 Pack机制可独立消费；最后一个
-consumer证明 M5D A股组合路径可在无 HS、Runner、长期 `replace`和网络时运行。
+这些 consumer分别证明 contracts、Domain Module、Pack、A股组合路径与 Portable
+Skills可以在无 HS、Runner、长期 `replace`和网络时运行；Skills consumer也不执行
+命令或安装副作用。
 
 本地验证：
 

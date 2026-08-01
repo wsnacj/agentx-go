@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5D A-Stock Portable Domain Extension技术 checkpoint complete / awaiting Owner acceptance |
+| 当前产品里程碑 | M5E Portable Skills Core技术 checkpoint complete / awaiting Owner acceptance |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5D technical checkpoint：根合同、LLM、27个 Runtime owner及8个 Extension owner，共37个 package、104个 production source、20,674行 |
+| agentx-go production packages | M5E technical checkpoint：根合同、LLM、27个 Runtime owner及9个 Extension owner，共38个 package、112个 production source、24,176行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；M5C Pack Core已获接受，M5D已落地 A股推荐入口、Host Kit及3个 internal Pack owner |
+| Extensions module | 单一 private-preview共享 module；M5C/M5D已获接受，M5E已落地 Experimental Portable Skills Core |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -19,17 +19,17 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股组合 consumer无 HS/Runner/replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C及 M5D A股 production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股与 M5E Skills consumer均无 HS/Runner/replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D及 M5E production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 37个全部有中文 Reference；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 38个全部有中文 Reference；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前37个 production package均有中文 Reference；只说明
+- **API文档正文覆盖**：当前38个 production package均有中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -102,9 +102,20 @@ fixed extensions版本为 `v0.0.0-20260801071806-57b903334bf5`，无 HS/Runner/�
 通过。HS本 cohort production由3,079行收缩为452行，整个 cutover提交净减少
 2,631行；保留的是具体 registry/executor、Host adapter、provider/livekit以及
 兼容资产入口。唯一一次 HS完整回归中新出现的陈旧 owner guard已迁到 canonical
-source并 focused复测通过，剩余仍只有既有三个 evidence stale/mismatch；当前
-状态只等待 Owner人工接受。A股 provider、livekit、credential、cache、source
+source并 focused复测通过，剩余仍只有既有三个 evidence stale/mismatch；该
+checkpoint已经 Owner接受。A股 provider、livekit、credential、cache、source
 priority和真实网络继续由 HS拥有。
+
+M5E又把7份、3,497行 Portable Skills真实实现迁入 `extensions/skills`，使 canonical
+production增至38个 package、112个 source、24,176行。canonical owner覆盖 types/
+normalization、loader/cache/generation/watcher、activation、requested semantics、
+clone和 resource refs；HS删除对应实现，仅保留155行 alias/薄 forwarder及其合法的
+catalog/filter/install/safety产品 owner。HS Skills从11个 source、5,781行降为5个
+source、2,439行，净减3,342行，并已有真实 production consumer直接使用固定
+`v0.0.0-20260801100244-e9b2f8a65ee4`。fixed consumer在无 HS、Runner、长期
+`replace`、网络或命令执行时验证 immutable loader/cache、activation、semantics、
+资源完整性和 deep clone。`extensions/skills`因目录 watcher尚无公共 `Shutdown`
+合同而保持 Experimental，不自动成为第九个 Developer Preview candidate。
 
 ## 明确 non-goal
 
