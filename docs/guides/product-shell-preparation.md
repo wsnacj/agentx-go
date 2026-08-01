@@ -1,8 +1,9 @@
 # ProductShell 两阶段准备
 
 `extensions/productshell`把“用户/Host输入如何成为可执行的Case和Workflow上下文”收口为
-一个 Experimental portable owner。它只负责准备，不拥有执行器，也不会把 HS产品策略
-迁入通用 Runtime。
+一个Experimental portable owner。除两阶段preparation外，它还提供一个可选的临时
+Workflow planning mechanism；具体模型、工具策略、执行器和HS产品策略仍不进入通用
+Runtime。
 
 ```go
 import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
@@ -13,7 +14,7 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 当前 private-preview验证版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801133815-af05058a8a7f
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801144943-16d9426fd82a
 ```
 
 如果代码直接导入 `runtime/cases`，当前验证版本为：
@@ -125,6 +126,62 @@ Case输入 → Shell Binding → Command Dispatch → Skills/Paths
 - `PrepareResult`只表示“准备完成”，不会启动 Open Tool Loop、Workflow或Objective；
 - nil runtime只提供无副作用 pass-through，不等于完整ProductShell已配置。
 
+## 准备后可选：临时 Workflow 规划
+
+没有显式Workflow且没有Pack binding时，Host可以选择进入temporary planning。启用判断
+必须显式：typed `AutoWorkflowPlanning`或受支持option优先，产品默认值由Host传入
+`ShouldAttemptTemporaryWorkflowPlanning`，canonical package不会根据自然语言或
+ProductShell名称自行开启。
+
+接入分成三步：
+
+1. Host从raw visible tools应用自身alias、denylist、authorization和产品策略，转换为
+   `[]TemporaryWorkflowPlanningTool`，并单独决定是否允许LLM step；
+2. `TemporaryWorkflowPlanner`通过Host提供的generator生成typed plan，完成有限重试、
+   binding lowering、Workflow Spec构造和validator调用；
+3. `TemporaryWorkflowPlanningPipeline`固定`Should → Resolve → Apply`顺序，成功后由Host
+   继续编译execution snapshot、过滤capability并执行Workflow。
+
+```go
+planner := productshell.NewTemporaryWorkflowPlanner(
+    productshell.TemporaryWorkflowPlannerConfig{
+        Generator:         generator, // Host model adapter；可用确定性fixture测试
+        Validator:         validator,
+        WorkflowIDFactory: workflowIDFactory,
+        NormalizeToolName: normalizeToolName,
+    },
+)
+
+prepared, err := planner.ResolveTemporaryWorkflowPlan(
+    ctx,
+    productshell.TemporaryWorkflowPlannerInput{
+        Input:            preparedInput,
+        UserMessage:      userMessage,
+        PlanningTools:    hostFilteredTools,
+        AllowLLMSteps:    hostAllowsLLMSteps,
+        VisibleToolCount: len(rawVisibleTools),
+        LLMTaskTimeoutMs: timeoutMs,
+    },
+)
+```
+
+代码片段只展示portable planner。完整stage adapter和可运行fixture见
+[`extensions/conformance/productshell-consumer`](../../extensions/conformance/productshell-consumer)。
+该consumer固定`v0.0.0-20260801144943-16d9426fd82a`，直接通过私有module版本消费，
+不使用HS、Runner、长期`replace`、真实provider、credential或网络。
+
+### 失败和生命周期
+
+- generation request timeout默认45秒，由Host generator负责执行；只对generator返回的
+  deadline重试一次，retry最多90秒，取消不重试；
+- 当前request存在非空session input清单时，引用清单外的`session.input.*`会得到一次
+  带可用路径的planning feedback；
+- generator、binding、validator失败统一成为`TemporaryWorkflowPlanningError`，cause可用
+  `errors.Is/As`读取；
+- planner不启动goroutine也不持有backend；generator、validator和identity由Host管理；
+- `PreparedTemporaryWorkflowPlan`和metrics表示plan已经生成/校验，不表示Workflow已经
+  执行或持久化。
+
 ## Workflow接入
 
 若 Host同时支持显式 Workflow和Pack绑定Workflow，可复用
@@ -148,8 +205,10 @@ execution semantics一致。该检查只保护绑定边界，完整 structural v
 HS production consumer应把 canonical package作为portable source authority，只保留：
 
 - ProductShell选择、command/skill推断和产品默认值；
+- 临时规划的tool alias/denylist、可见性和启用策略；
+- 具体model/provider adapter、credential和LLM输出解码；
 - Pack/Workflow registry及具体 materializer；
-- Case草拟、LLM调用、timeout policy和validation policy；
+- Case草拟、产品timeout policy和validation policy；
 - session binding持久化、RunStore及其它 backend adapter；
 - authorization、approval、sandbox、provider、credential和观测产品投影。
 
@@ -158,7 +217,8 @@ Shell Binding算法形成长期双写。
 
 ## 明确 non-goal
 
-- 自然语言规划、LLM、provider或model/tool执行；
+- 默认自然语言模型、具体LLM/provider调用、credential或model/tool执行；
+- tool policy、默认planning启用策略、execution snapshot/capability filter；
 - 默认Pack/Workflow/Case产品策略；
 - concrete Store、registry、durable backend或网络；
 - Objective、Scene、CLI/HTTP和真实副作用；

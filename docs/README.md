@@ -4,8 +4,9 @@
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
 已获 Owner接受的 M5C Portable Pack Core与 M5D A股 portable Domain Extension，
 已获 Owner接受的 M5E Portable Skills Core与 M5F Run/Artifact Data Plane，以及
-M5G已落地的 Experimental Case合同和 ProductShell Preparation owner，以及M5H
-新增的 typed Observation / display-safe Host Handoff机制、LLM组件和
+M5G已落地的 Experimental Case合同和 ProductShell Preparation owner、M5H
+新增的 typed Observation / display-safe Host Handoff机制，以及M5I新增的portable
+temporary Workflow planning机制、LLM组件和
 已迁 Runtime owner，
 目标是让调用方
 能够准确判断：
@@ -100,5 +101,8 @@ M5G新增 `runtime/cases`和 `extensions/productshell`两个 Experimental owner�
 M5H继续在同一个 `extensions/productshell` Experimental package内增加typed session/
 host-process/operator-line observation与display-safe Host UI handoff；raw parser、完整
 ObservationSnapshot、inventory、readback和真实delivery继续由Host拥有。
+M5I继续在同一package内增加临时Workflow typed plan、prompt/schema构造、有限重试、
+binding lowering、Workflow Spec构造和固定`Should → Resolve → Apply`阶段；具体model/
+provider、tool policy、validator policy、execution snapshot和Workflow执行继续由Host拥有。
 尚未落地的 hostless完整 Runtime construction、A股 livekit/provider、更多
 components、其它 extensions和 Scene不会预先获得虚假 API 页面。

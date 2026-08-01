@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5G Portable ProductShell Preparation已获Owner接受；M5H Observation / Host Handoff技术checkpoint完成，等待Owner接受；当前没有新的active implementation |
+| 当前产品里程碑 | M5I Portable ProductShell Temporary Workflow Planning canonical landing、fixed consumer与HS production cutover完成；最终module/回归/closure gate待执行 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5H canonical landing：42个package、137个production source、28,567行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5I canonical landing：42个package、139个production source、29,588行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一private-preview共享module；M5C～M5G均已获Owner接受，Skills及M5H ProductShell observation/handoff保持Experimental |
+| Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5D A股、M5E Skills、M5F Run Data Plane、M5G ProductShell preparation及M5H observation/handoff consumer均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G及M5H production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；ProductShell consumer已覆盖M5G preparation和M5I temporary planning，M5H observation/handoff使用独立consumer；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H及M5I production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 42个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -178,6 +178,23 @@ stale/mismatch产生，没有新增功能回归。W2-A closure为 `406/57/2374/6
 package owner分布或 `not_ready_for_hostless_w2b`。本状态是
 `technical_checkpoint_complete_awaiting_owner_acceptance`，不是Developer Preview、
 Public、Beta、Stable或发行授权。
+
+M5I继续复用`extensions/productshell`，迁入临时Workflow规划的typed DTO、确定性
+prompt/schema构造、deadline有限重试、session binding feedback、binding lowering、
+Workflow Spec构造、metrics和`Should → Resolve → Apply`固定stage。canonical提交为
+`d6bac55`和`16d9426`，fixed extensions版本为
+`v0.0.0-20260801144943-16d9426fd82a`。本轮新增2个production source、1,021行，使
+canonical实测增至42个package、139个production source、29,588行；package数和8个
+Developer Preview candidate均不变。
+
+`extensions/conformance/productshell-consumer`使用上述fixed版本，在既有preparation路径
+之外增加无HS、Runner、Scene、长期`replace`、真实provider、credential或网络的临时
+Workflow规划路径。Host显式提供确定性generator、validator、Workflow ID factory、
+tool normalization和raw-tool到planning-tool转换；consumer验证generation request、
+binding、metrics和stage顺序。具体LLM/provider、tool alias/denylist、authorization、
+execution snapshot、capability filter及Workflow执行继续留在Host。HS production cutover
+已把旧portable主体删除或降为薄adapter；在最终module、完整AgentX回归和closure gate
+完成前仍不声明M5I最终checkpoint，也不改变`not_ready_for_hostless_w2b`或任何发布门禁。
 
 ## 明确 non-goal
 

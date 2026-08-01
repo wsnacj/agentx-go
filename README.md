@@ -67,6 +67,9 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - [`extensions/skills`](extensions/skills/API.md)：Skill数据合同、目录与 immutable
   `fs.FS` loader/cache、activation、requested semantics和资源引用检查；保持
   Experimental，不包含 prompt catalog/filter、安全策略、安装执行或 bundled内容
+- [`extensions/productshell`](extensions/productshell/API.md)：输入/preparation、临时
+  Workflow planning、typed observation和display-safe Host handoff；具体model/tool
+  policy、provider、backend与执行继续由Host显式注入
 - extension不安装 provider、credential、Runner、网络或生产 backend
 
 ## 当前不提供

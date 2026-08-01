@@ -9,9 +9,11 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 成熟度：**Experimental extension / private validation**。
 
 本包拥有 ProductShell 在进入执行前的 portable 输入投影、Case/Shell Binding helper、
-Workflow 绑定检查和确定性准备顺序；同时提供 typed session/host-process observation 的
-归一化，以及从 display-safe operator line 到 Host UI handoff envelope 的确定性投影。
-产品路由、Pack registry、Case 草拟、Workflow物化、持久化、raw诊断解析、真实观测聚合
+Workflow绑定检查和确定性准备顺序，也拥有可选临时Workflow规划的typed计划、固定阶段
+顺序、prompt/schema构造、有限重试、binding lowering、Workflow Spec构造和metrics；
+同时提供typed session/host-process observation归一化，以及从display-safe operator
+line到Host UI handoff envelope的确定性投影。产品路由、工具可见性策略、具体模型/
+provider、Pack registry、Case草拟、Workflow物化、持久化、raw诊断解析、真实观测聚合
 和交付副作用必须由Host拥有。
 
 完整接入说明见 [ProductShell 两阶段准备指南](../../docs/guides/product-shell-preparation.md)、
@@ -24,7 +26,7 @@ Workflow 绑定检查和确定性准备顺序；同时提供 typed session/host-
 当前 private-preview 固定版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801133815-af05058a8a7f
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801144943-16d9426fd82a
 ```
 
 该 pseudo-version 只用于当前验证，可以在后续 checkpoint 更新；它不是正式 semver，
@@ -144,6 +146,102 @@ type PreparationRuntime interface {
 `NewPreparationPipeline(nil)`和 nil pipeline均返回 pass-through结果，不能被解释为
 Pack、Workflow或Case能力已经配置。
 
+## 可选临时 Workflow 规划
+
+M5I在同一个Experimental package内提供两层合同，不改变preparation的既有顺序：
+
+1. `TemporaryWorkflowPlanner`拥有portable planning mechanism；
+2. `TemporaryWorkflowPlanningPipeline`拥有`Should → Resolve → Apply`的固定阶段顺序。
+
+第一层只接收Host已经完成策略过滤的工具描述：
+
+```go
+planner := productshell.NewTemporaryWorkflowPlanner(
+    productshell.TemporaryWorkflowPlannerConfig{
+        Generator:               generator,
+        Validator:               validator,
+        WorkflowIDFactory:       workflowIDFactory,
+        NormalizeToolName:       normalizeHostToolName,
+        DefaultLLMTaskTimeoutMs: 45_000,
+    },
+)
+
+prepared, err := planner.ResolveTemporaryWorkflowPlan(
+    ctx,
+    productshell.TemporaryWorkflowPlannerInput{
+        Input:            input,
+        UserMessage:      userMessage,
+        PlanningTools:    planningTools,
+        AllowLLMSteps:    allowLLMSteps,
+        VisibleToolCount: len(rawVisibleTools),
+        LLMTaskTimeoutMs: requestTimeoutMs,
+    },
+)
+```
+
+`TemporaryWorkflowPlanGenerator`是model/provider边界。canonical planner向它发送
+`TemporaryWorkflowPlanGenerationRequest`，其中包含确定性instruction、JSON input、
+schema、strict标志和本次timeout；调用方返回typed `TemporaryWorkflowPlan`。本包不提供
+默认generator，不读取credential，也不发起网络请求。
+
+`TemporaryWorkflowPlannerConfig`的其它依赖也必须显式提供：
+
+- `Validator`校验最终canonical `runtime/workflow.Spec`，错误identity原样保留；
+- `WorkflowIDFactory`由Host提供identity；HS兼容adapter可继续生成
+  `temp_workflow_<uuid>`，本包不固定UUID实现；
+- `NormalizeToolName`承载Host已有的alias/名称规范化策略；nil时只trim；
+- `DefaultLLMTaskTimeoutMs`仅作为调用级timeout未提供时的默认值。
+
+### Typed计划、binding和metrics
+
+- generation schema要求`TemporaryWorkflowPlan`包含1到5个线性
+  `TemporaryWorkflowStep`；Host generator仍应严格执行schema并拒绝无法解码的输出；
+- tool step必须引用`PlanningTools`中的名称；LLM step只有在`AllowLLMSteps`为true时
+  才允许；canonical package不决定哪个runtime tool可见；
+- `UsePreviousOutput`默认绑定到`args.input`；显式input binding支持
+  `previous.*`、`session.input.*`、`case.input.*`和`state.*`；output binding只接受
+  `output`、`result`、`status`、`error`及`result.*`来源；
+- `PreparedTemporaryWorkflowPlan`同时携带generator原始typed plan、validated
+  Workflow Spec、applied状态、skip reason和`TemporaryWorkflowPlanningMetrics`；
+- metrics记录attempt/extract/apply、Workflow identity、node/tool/binding数量、Host报告的
+  visible tool数量和实际planning tool名称，不是授权、审计或执行成功证据。
+
+### 有界重试和typed error
+
+单次generation request中的timeout为调用值、config默认值或45秒，按该顺序选择。
+canonical planner不会自行创建计时器或child context，Generator必须执行该timeout并返回
+对应错误。只有`context.DeadlineExceeded`或等价wrapped文本会重试一次；retry timeout
+翻倍且不超过90秒。`context.Canceled`不会重试。
+
+如果当前request存在非空session input清单，而首次plan引用了清单外的
+`session.input.*`，planner会把可用路径作为feedback再生成一次；其它lowering/validator
+错误不触发该feedback。每次feedback generation仍遵守上述单次timeout上限，不存在
+无限重试。
+
+规划失败返回`*TemporaryWorkflowPlanningError`。`Reason`和metrics用于当前
+Experimental诊断，`Cause`通过`Unwrap`保留，调用方应使用`errors.Is/As`或
+`AsTemporaryWorkflowPlanningError`，不要把错误文本作为稳定wire protocol。
+
+### Stage pipeline与Host继续执行
+
+`TemporaryWorkflowPlanningPipeline`不会直接接收planner config，而是调用
+`TemporaryWorkflowPlanningRuntime`：
+
+```text
+ShouldAttemptTemporaryWorkflowPlanning
+→ ResolveTemporaryWorkflowPlan
+→ ApplyTemporaryWorkflowPlan
+```
+
+Stage可以透传canonical `components/llm.Tool`给Host runtime，但不会解析tool policy。
+Host负责把raw visible tools转换为`TemporaryWorkflowPlanningTool`，并决定LLM step是否
+允许。成功后`TemporaryWorkflowPlanningResult.Applied`为true，`Input`获得浅复制的
+Workflow Spec和显式raw opt-in；execution snapshot编译、capability filter、ToolNames、
+Workflow执行和持久化仍是Host continuation。
+
+完整、无HS且无长期`replace`的确定性示例见
+[`conformance/productshell-consumer`](../conformance/productshell-consumer)。
+
 ## Workflow 绑定
 
 `WorkflowResolutionRuntime`提供独立的 portable绑定检查：
@@ -234,20 +332,26 @@ token/display line只允许有限字符；URL、换行或其它不安全值会�
 
 - `PreparationPipeline`构造后只保存一个 `PreparationRuntime`引用；多个 goroutine并发
   使用时，Host实现及其依赖必须自行保证并发安全；
+- `TemporaryWorkflowPlanner`和`TemporaryWorkflowPlanningPipeline`不持有后台任务；并发
+  使用时，Generator、Validator、ID factory、名称规范化函数和Host runtime必须并发安全；
 - observation与handoff builder不持有共享状态；返回值包含调用方slice的规范化副本，
   调用方仍应把每次构建结果视为独立快照值；
 - 本包没有共享 registry、后台任务或 `Shutdown`；backend生命周期由 Host拥有；
 - pipeline按固定顺序返回首个错误，不包装 Host错误，因此 `errors.Is/As` identity得以
   保留；
+- temporary planning把generator/lowering/validator失败包装为typed planning error，
+  但通过`Unwrap`保留cause identity；
 - codec/Workflow绑定错误包含当前输入上下文，但其文本仍处于 Experimental，不能作为
   正式稳定协议依赖。
 
 ## 明确 non-goal
 
-- 自然语言规划、LLM调用、model/tool round或 provider选择；
+- 默认自然语言模型、具体LLM/provider调用、credential或model/tool round执行；
+- tool alias/denylist、可见性/授权策略、默认 planning启用策略或具体validation policy；
 - ProductShell路由策略、command/skill推断策略、authorization、approval或sandbox；
 - Pack registry、Case Store、Workflow registry、RunStore或其它具体 backend；
-- Workflow执行、Objective Runtime、Resume、scheduler或durable lifecycle；
+- execution snapshot/capability filter、Workflow执行、Objective Runtime、Resume、scheduler
+  或durable lifecycle；
 - raw Host diagnostics/tool output parser、完整 `ObservationSnapshot`、process inventory、
   observation storage/stream、readback或真实delivery；
 - credential、Scene、HTTP/CLI、真实网络或生产副作用；
