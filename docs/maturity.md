@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5J Portable Control Contract and Deterministic Reducer：`active_implementation`；M5I已获Owner接受 |
+| 当前产品里程碑 | M5J Portable Control Contract and Deterministic Reducer：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5J canonical landing：43个package、141个production source、32,447行；仍为8个Developer Preview candidate |
@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；ProductShell consumer已覆盖M5G preparation和M5I temporary planning，M5H observation/handoff使用独立consumer；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H及M5I production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5J controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H、M5I及M5J production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -194,10 +194,17 @@ fixed consumer及API/doc/import gate均通过；完整HS回归为149个package P
 Public/Beta/Stable、正式tag、semver或任何发行授权。
 
 M5J在独立准入后新增Experimental `runtime/controlcontract`，canonical production
-暂时达到43个package、141个source、32,447行；新增2,859行真实 status/evidence/
+达到43个package、141个source、32,447行；新增2,859行真实 status/evidence/
 blocker/next-action、display-safe、projection与approval/budget/idempotency/lifecycle
-implementation。该数字只证明canonical landing，HS production cutover、fixed consumer、
-最终回归与closure仍需在M5J checkpoint前闭合。
+implementation。runtime fixed版本为
+`v0.0.0-20260801153451-11cc3fc9419e`，fixed consumer、module zip/cache、中文
+Reference与43/8 API/doc gate已通过。HS对应2,856行通用source收缩为1,164行
+alias/薄forwarder和未迁移文件仍需的private compatibility helper，production净减
+1,692行；exported type identity、方法可调用性、JSON与reducer行为由focused
+differential保持。完整AgentX回归中的no-space连锁失败经释放本轮临时cache后focused
+复测全部通过，最终仍只有2个既有治理package/3个evidence stale测试失败，没有新增
+功能回归。当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，仍不
+构成Developer Preview晋级、Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 
