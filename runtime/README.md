@@ -10,18 +10,25 @@ github.com/wsnacj/agentx-go/runtime
 
 - [`assetfs`](./assetfs/API.md)：immutable filesystem snapshot、content
   fingerprint、atomic resolver registration与 `assetfs://`解析。
+- [`artifact`](./artifact/API.md)：Run/Session/Node关联的 Artifact identity、
+  metadata、lineage与 registry/blob port，并提供并发安全的 `MemoryRegistry`；
+  concrete文件、对象存储和清理策略继续由 Host拥有。
 - [`protocol`](./protocol/API.md)：版本化 Runtime wire/schema、normalization
   与 validation。
 - [`telemetry/safeerror`](./telemetry/safeerror/API.md)：observation-safe
   error projection、identity 与 cause-preserving wrapper。
 - [`mediaartifact`](./mediaartifact/API.md)：跨 browser、PDF、video、nodes
-  capability 共享的媒体产物元数据 wire descriptor。
+  capability 共享的媒体产物元数据 wire descriptor。它不负责 Artifact注册、
+  lineage或持久化；需要保存和查询执行产物时使用 `artifact`，两者不会自动互转。
 - [`toolerrors`](./toolerrors/API.md)：结构化工具参数错误、cause chain 与
   deterministic repair hint 数据合同。
 - [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的
   预算阶段、停止原因与近限额警告判定。
 - [`promptcontext`](./promptcontext/API.md)：构造 prompt rendering 所需的时间、
   timezone、session/model identity，并提供 fail-soft RFC3339 时间投影。
+- [`runstore`](./runstore/API.md)：Run、NodeExecution和Event的数据合同、存储 port、
+  node execution投影，以及并发安全的 `MemoryStore`；durable backend、事务、保留期、
+  跨进程一致性和恢复策略继续由 Host拥有。
 - [`construction`](./construction/API.md)：通过窄 `Host` port组合 model、
   runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。

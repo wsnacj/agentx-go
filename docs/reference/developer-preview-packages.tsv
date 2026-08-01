@@ -11,6 +11,7 @@ extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-
 extensions/skills	experimental_extension	extensions/skills/API.md	-
 runtime/assetfs	experimental_extension	runtime/assetfs/API.md	-
+runtime/artifact	experimental_extension	runtime/artifact/API.md	-
 runtime/budget	experimental_extension	runtime/budget/API.md	-
 runtime/construction	experimental_extension	runtime/construction/API.md	-
 runtime/execution	developer_preview_candidate	runtime/execution/API.md	9b14badccb2147b8229bd030e8e6e6144c35f6f47884bae300da8d97127341bb
@@ -22,6 +23,7 @@ runtime/hosthttp/resourcepolicy	experimental_extension	runtime/hosthttp/resource
 runtime/mediaartifact	experimental_extension	runtime/mediaartifact/API.md	-
 runtime/promptcontext	experimental_extension	runtime/promptcontext/API.md	-
 runtime/protocol	experimental_extension	runtime/protocol/API.md	-
+runtime/runstore	experimental_extension	runtime/runstore/API.md	-
 runtime/telemetry	experimental_extension	runtime/telemetry/API.md	-
 runtime/telemetry/safeerror	experimental_extension	runtime/telemetry/safeerror/API.md	-
 runtime/toolerrors	experimental_extension	runtime/toolerrors/API.md	-

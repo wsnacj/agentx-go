@@ -5,16 +5,17 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5E Portable Skills Core技术 checkpoint complete / awaiting Owner acceptance |
+| 当前产品里程碑 | M5E Portable Skills Core已获 Owner接受；M5F Run/Artifact Data Plane Source-Authority Migration active |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5E technical checkpoint：根合同、LLM、27个 Runtime owner及9个 Extension owner，共38个 package、112个 production source、24,176行 |
+| agentx-go production packages | M5F当前为40个 package；仍为8个 Developer Preview candidate。M5F最终 production source/LOC待完成 cutover后统一实测，不沿用或外推旧值 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；M5C/M5D已获接受，M5E已落地 Experimental Portable Skills Core |
+| Extensions module | 单一 private-preview共享 module；M5C/M5D/M5E均已获 Owner接受，Portable Skills Core保持 Experimental |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
 | Run/Open Tool Loop mechanism | W5-B～W5-E 已迁移多轮驱动、检测器/fuse、round coordination、phase ordering与 Host-backed assembly；host executor 仍必需 |
+| Run/Artifact数据平面 | M5F active：`runtime/runstore`与`runtime/artifact`按 Experimental owner落地 portable合同和内存实现；durable/file/object backend仍由 Host拥有 |
 | Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
@@ -22,14 +23,14 @@
 | Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股与 M5E Skills consumer均无 HS/Runner/replace/network |
 | HS canonical import | W1-C、M5A、M5B、M5C、M5D及 M5E production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 38个全部有中文 Reference；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 40个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前38个 production package均有中文 Reference；只说明
+- **API文档正文覆盖**：当前40个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -115,7 +116,16 @@ source、2,439行，净减3,342行，并已有真实 production consumer直接�
 `v0.0.0-20260801100244-e9b2f8a65ee4`。fixed consumer在无 HS、Runner、长期
 `replace`、网络或命令执行时验证 immutable loader/cache、activation、semantics、
 资源完整性和 deep clone。`extensions/skills`因目录 watcher尚无公共 `Shutdown`
-合同而保持 Experimental，不自动成为第九个 Developer Preview candidate。
+合同而保持 Experimental，不自动成为第九个 Developer Preview candidate。该
+checkpoint已经 Owner接受；上述source/LOC是M5E历史实测，不代表M5F最终规模。
+
+M5F当前把Run数据合同、NodeExecution/Event存储port与内存实现收口到
+`runtime/runstore`，并把Artifact metadata、lineage、registry/blob port与内存实现
+收口到 `runtime/artifact`。两个package均保持 Experimental，Developer Preview
+candidate仍为8个。HS的durable RunStore backend、Store adapter、文件BlobStore、
+private file安全写入和具体Artifact runtime投影继续由Host拥有。M5F尚在执行，最终
+production source/LOC、HS closure、fixed consumer和cutover证据必须在checkpoint
+统一实测后填写；当前文档不预先宣称这些结果已经完成。
 
 ## 明确 non-goal
 

@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的38个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的40个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -21,6 +21,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行 policy DTO与 Host编译 port |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model/Tool Adapter 组合与低样板 Client 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
+| `runtime/artifact` | Experimental extension | [API](../../runtime/artifact/API.md) | Artifact identity、lineage、registry合同与并发安全内存实现 |
 | `extensions/astock` | Developer Preview candidate | [A股 Extension API](../../extensions/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
 | `extensions/astock/contracts` | Experimental extension | [API](../../extensions/astock/contracts/API.md) | A股 portable DTO、JSON normalization与 assessment |
 | `extensions/astock/hostkit` | Experimental extension | [API](../../extensions/astock/hostkit/API.md) | 无 provider的 A股 intent、handler协调、readiness与回答格式化 |
@@ -41,6 +42,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/mediaartifact` | Experimental extension | [API](../../runtime/mediaartifact/API.md) | 媒体产物描述合同 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |
+| `runtime/runstore` | Experimental extension | [API](../../runtime/runstore/API.md) | Run、NodeExecution、Event存储合同、投影与并发安全内存实现 |
 | `runtime/telemetry` | Experimental extension | [API](../../runtime/telemetry/API.md) | portable event 与 replay |
 | `runtime/telemetry/safeerror` | Experimental extension | [API](../../runtime/telemetry/safeerror/API.md) | observation-safe error 投影 |
 | `runtime/toolerrors` | Experimental extension | [API](../../runtime/toolerrors/API.md) | 结构化工具参数错误 |
@@ -56,7 +58,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-38个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+40个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
