@@ -139,6 +139,7 @@ github.com/wsnacj/agentx-go/extensions
 - [`components/llm` 中文 API Reference](components/llm/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
+- [`runtime/controlcontract` 中文 API Reference](runtime/controlcontract/API.md)
 - [`runtime/execution` 中文 API Reference](runtime/execution/API.md)
 - [`runtime/hostkit` 中文 API Reference](runtime/hostkit/API.md)
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)

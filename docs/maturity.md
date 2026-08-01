@@ -5,10 +5,10 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5I Portable ProductShell Temporary Workflow Planning：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5J Portable Control Contract and Deterministic Reducer：`active_implementation`；M5I已获Owner接受 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5I canonical landing：42个package、139个production source、29,588行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5J canonical landing：43个package、141个production source、32,447行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -23,14 +23,14 @@
 | Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；ProductShell consumer已覆盖M5G preparation和M5I temporary planning，M5H observation/handoff使用独立consumer；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H及M5I production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 42个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前42个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前43个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -189,9 +189,15 @@ HS cutover提交`9adb1d460`已让production consumer使用canonical planner，�
 删除或降为薄adapter。root、components、runtime、extensions的test/race/vet/tidy/list、
 fixed consumer及API/doc/import gate均通过；完整HS回归为149个package PASS、2个既有
 治理package FAIL、20个无测试package SKIP，没有新增失败。W2-A closure为
-`406/57/2377/65`。本状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，
+`406/57/2377/65`。M5I已于2026-08-01获Owner接受，
 仍保持Experimental和`not_ready_for_hostless_w2b`，不构成Developer Preview晋级、
 Public/Beta/Stable、正式tag、semver或任何发行授权。
+
+M5J在独立准入后新增Experimental `runtime/controlcontract`，canonical production
+暂时达到43个package、141个source、32,447行；新增2,859行真实 status/evidence/
+blocker/next-action、display-safe、projection与approval/budget/idempotency/lifecycle
+implementation。该数字只证明canonical landing，HS production cutover、fixed consumer、
+最终回归与closure仍需在M5J checkpoint前闭合。
 
 ## 明确 non-goal
 

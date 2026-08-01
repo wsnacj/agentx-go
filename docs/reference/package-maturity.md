@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的42个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的43个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -41,6 +41,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/budget` | Experimental extension | [API](../../runtime/budget/API.md) | 预算判定 mechanism |
 | `runtime/cases` | Experimental extension | [API](../../runtime/cases/API.md) | Case数据合同、规范化/复制 helper与最小Store port |
 | `runtime/construction` | Experimental extension | [API](../../runtime/construction/API.md) | 高级 Host 构造生命周期 |
+| `runtime/controlcontract` | Experimental extension | [API](../../runtime/controlcontract/API.md) | 执行控制合同、display-safe投影与确定性gate/reducer |
 | `runtime/mediaartifact` | Experimental extension | [API](../../runtime/mediaartifact/API.md) | 媒体产物描述合同 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |
@@ -60,7 +61,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-42个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+43个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
