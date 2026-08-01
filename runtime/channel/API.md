@@ -81,6 +81,25 @@ if !result.Accepted {
 }
 ```
 
+## Fixed-version external consumer
+
+[`runtime/conformance/channel-consumer`](../conformance/channel-consumer)固定依赖
+`v0.0.0-20260801203033-9f67493e1e32`，不使用`replace`，也不import HS、Runner、Scene、
+platform SDK或backend。它以调用方提供的内存runner/sender验证消息所有权转移、回复、
+有界Shutdown和session delivery合同：
+
+```bash
+cd runtime/conformance/channel-consumer
+GOWORK=off go test ./...
+GOWORK=off go run .
+```
+
+预期输出：
+
+```text
+agentx-channel-ok:sent:channel-conformance:session_channel_ready
+```
+
 ## 非目标
 
 - pairing challenge、账号审批、allowlist和durable pairing state；
