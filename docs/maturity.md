@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5M Portable Host Effect Contract, Admission and Invocation Kernel：`active_implementation` |
+| 当前产品里程碑 | M5M Portable Host Effect Contract, Admission and Invocation Kernel：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5M canonical landing：43个package、168个production source、50,885行；仍为8个Developer Preview candidate |
@@ -237,9 +237,12 @@ memory proposal和memory apply gate。canonical提交`9a3f0e5e1d5c`使总量达�
 alias/forwarder/private compatibility seam，净减7,076行，42个alias method退出HS manifest，
 stable symbols由1,964降为1,922，stable debt保持590/590。managed ingress、Objective runtime
 loop/executor/productization、delegation observation normalization、具体adapter/backend、
-authorization、ProductShellRuntime与Scene继续由HS拥有。当前仍为active implementation，
-须以最终四module、fixed consumer、完整HS回归和closure checkpoint结束；不构成成熟度晋级
-或发行授权。
+authorization、ProductShellRuntime与Scene继续由HS拥有。四module、fixed consumer、
+43/8 API/doc gate、module zip/cache与单次完整HS回归均已闭合；完整回归为149 PASS、
+2个既有治理FAIL、20 SKIP且无新增失败，closure为407/57/2407/65、
+HS119/canonical33/Scene0。当前状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`；不构成成熟度晋级或发行授权，
+Owner接受前不创建后续wave。
 
 ## 明确 non-goal
 
