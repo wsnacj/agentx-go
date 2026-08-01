@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5P Portable Objective Completion, Durable Projection and Delegation Coordination：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5Q Portable Execution Decision, Retry and Snapshot Metadata Kernel：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5P canonical landing：43个package、219个production source、86,780行；仍为8个Developer Preview candidate |
@@ -279,6 +279,12 @@ store/backend、LLM/provider、worker scheduler/dispatch、`observation_normaliz
 Scene和真实副作用继续留在HS。当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`；该checkpoint不构成新增成熟度
 承诺或发行授权。
+
+M5P已于2026-08-02获Owner接受；该接受不构成成熟度晋级或发行授权。M5Q随后准入
+现有`runtime/executionpolicy`类型直接需要的6-source、1,487行portable Snapshot
+metadata、bounded retry command、runtime decision/packet、execution-loop report与
+soft-rejection kernel。compiler/derive、authorization、sandbox、具体browser/network/
+gateway policy、Host backend和真实副作用不进入M5Q。
 
 ## 明确 non-goal
 
