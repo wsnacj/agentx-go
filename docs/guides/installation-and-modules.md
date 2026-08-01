@@ -10,7 +10,8 @@ module：
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
-路径需要三个 module，因为配置显式使用根合同、LLM响应和 Runtime类型。
+路径需要三个 module，因为配置显式使用根合同、LLM响应和 Runtime类型。Workflow
+Host Kit路径只需要 Runtime module。
 
 ## 当前固定验证版本
 
@@ -20,7 +21,7 @@ github.com/wsnacj/agentx-go
 github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801024524-d545bfb941c5
+  v0.0.0-20260801034947-76ad19f58c76
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -28,7 +29,7 @@ github.com/wsnacj/agentx-go/runtime
 ```bash
 go get github.com/wsnacj/agentx-go@v0.0.0-20260729101644-c7c26d427ac2
 go get github.com/wsnacj/agentx-go/components@v0.0.0-20260729125257-bb6949793309
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801024524-d545bfb941c5
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801034947-76ad19f58c76
 ```
 
 ## Private 仓库访问

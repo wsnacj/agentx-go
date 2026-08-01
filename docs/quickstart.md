@@ -1,13 +1,14 @@
 # 快速开始
 
-M3D 提供两条标准接入路径：
+M3E 提供两类标准执行路径、三个接入选择：
 
-1. 已有完整 Runtime时，实现自定义 `ExecutionAdapter`；
-2. 新项目需要 portable Open Tool Loop时，使用 Host Kit并显式提供 Model/Tool
-   Adapter。
+1. Open Tool Loop：已有完整 Runtime时实现自定义 `ExecutionAdapter`，普通新项目
+   使用 Host Kit并显式提供 Model/Tool Adapter；
+2. Workflow：使用 Workflow Host Kit并显式提供 validator、mapper、executor、
+   identity、clock和可选 durable port。
 
-两条路径最终都返回同一个根 `Client`，共享 Run、typed error、context、并发和
-Shutdown合同。
+Open Tool Loop两种接入最终都返回根 `Client`，共享 Run、typed error、context、
+并发和 Shutdown合同。Workflow保持独立显式图 Runtime，不伪装成根 Client mode。
 
 ## 路径一：自定义 ExecutionAdapter
 
@@ -106,13 +107,37 @@ client, err := hostkit.NewModelToolClient(hostkit.ModelToolClientConfig{
 [Host Kit接入指南](guides/model-tool-hostkit.md)，fixed-version运行证据见
 [`runtime/conformance/hostkit-consumer`](../runtime/conformance/hostkit-consumer)。
 
+## 路径三：Workflow Host Kit
+
+Workflow调用方只需导入 `workflow`和 `workflow/hostkit`，不再手工组合六个低层
+package：
+
+```go
+runtime, err := workflowhostkit.New(workflowhostkit.Config{
+    Validator:          validator,
+    Mapper:             mapper,
+    BasicExecutor:      executor,
+    NewRunID:           newRunID,
+    NewNodeExecutionID: newNodeExecutionID,
+    NowUnixMilli:       nowUnixMilli,
+})
+result, err := runtime.Run(ctx, spec, workflowhostkit.Inputs{})
+```
+
+Host Kit复用 canonical validation/lowering/journal/nodeexec/orchestration/composition，
+不安装产品 policy、provider或 backend。完整示例与 durable、取消、并发边界见
+[Workflow Host Kit指南](guides/workflow-hostkit.md)，fixed-version证据见
+[`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)。
+
 安装前先阅读[安装与多 Module 引用](guides/installation-and-modules.md)。
 
 重要边界：
 
+- 以下 Client/Shutdown条目只适用于路径一和路径二；Workflow Host Kit不拥有 Host
+  资源，因此没有虚假的 Shutdown。
 - `New` 成功后，不再绕过 `Client` 直接调用同一个 adapter。
 - 同一 `Client` 上的重叠 `Run` 会被串行化。
 - `Shutdown` 可以与正在执行的 `Run` 并发；adapter 应取消并收敛该执行。
 - `Shutdown` 一旦开始，新的 `Run` 返回 `CodeClientClosed`。
-- 两个示例只证明候选合同和 portable Runtime切片可用，不证明 hostless完整 Agent
+- 这些示例只证明候选合同和 portable Runtime切片可用，不证明 hostless完整 Agent
   Runtime或正式发布已交付。

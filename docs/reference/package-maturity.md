@@ -7,7 +7,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 | 分级 | 本阶段含义 | 兼容性含义 |
 | --- | --- | --- |
-| Developer Preview candidate | M3D 选定的两条标准接入路径直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
+| Developer Preview candidate | M3E 选定的 Open Tool Loop与 Workflow标准路径直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
 | Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定伪版本并评估升级差异 |
 | internalization candidate | 当前为迁移和 source-authority 收口而导出，Beta 前优先评估收进 internal 或由上层 Facade 隐藏 | 不建议新项目直接依赖 |
 
@@ -20,6 +20,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/execution` | Developer Preview candidate | [Execution API](../../runtime/execution/API.md) | 根 Client 与 Host 之间的 typed dispatch |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model/Tool Adapter 组合与低样板 Client 构造 |
 | `runtime/toolloop` | Developer Preview candidate | [Tool Loop API](../../runtime/toolloop/API.md) | portable 多轮驱动、phase、检测和 assembly |
+| `runtime/workflow` | Developer Preview candidate | [API](../../runtime/workflow/API.md) | Workflow Spec 数据合同与 Host admission seam |
 | `runtime/workflow/hostkit` | Developer Preview candidate | [Workflow Host Kit API](../../runtime/workflow/hostkit/API.md) | Workflow标准构造入口；组合 portable lowering、journal、node execution和orchestration |
 | `runtime/budget` | Experimental extension | [API](../../runtime/budget/API.md) | 预算判定 mechanism |
 | `runtime/construction` | Experimental extension | [API](../../runtime/construction/API.md) | 高级 Host 构造生命周期 |
@@ -29,7 +30,6 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/telemetry` | Experimental extension | [API](../../runtime/telemetry/API.md) | portable event 与 replay |
 | `runtime/telemetry/safeerror` | Experimental extension | [API](../../runtime/telemetry/safeerror/API.md) | observation-safe error 投影 |
 | `runtime/toolerrors` | Experimental extension | [API](../../runtime/toolerrors/API.md) | 结构化工具参数错误 |
-| `runtime/workflow` | Developer Preview candidate | [API](../../runtime/workflow/API.md) | Workflow Spec 数据合同与 Host admission seam |
 | `runtime/workflow/composition` | Experimental extension | [API](../../runtime/workflow/composition/API.md) | lower→run 组合入口 |
 | `runtime/workflow/journal` | Experimental extension | [API](../../runtime/workflow/journal/API.md) | durable 顺序与 host port |
 | `runtime/workflow/lowering` | Experimental extension | [API](../../runtime/workflow/lowering/API.md) | portable lowering |
@@ -42,7 +42,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-23个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+24个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 

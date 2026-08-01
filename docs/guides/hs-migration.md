@@ -36,7 +36,7 @@ HS `core/agentx/engine` production path已切换到该 implementation。HS仍拥
 phase executor；它只保留上述具体 host闭包和结果投影。后续修改 portable阶段顺序
 应先进入 agentx-go并通过 compatibility differential，不得在 HS恢复分叉。
 
-## 两类 consumer
+## Open Tool Loop 两类 consumer
 
 - HS production consumer：验证现有 Open Tool Loop业务行为不变；
 - `runtime/conformance/hostkit-consumer`：用固定版本验证无 HS、无 Runner、无长期
@@ -46,9 +46,24 @@ phase executor；它只保留上述具体 host闭包和结果投影。后续修�
 RoundExecutor。它仍显式提供 Model/Tool Adapter，避免把 provider、credential和
 产品策略下沉到通用 Runtime。
 
+## M3E Workflow Host Kit 收口
+
+HS `core/agentx/workflow.ExecuteInline`现在固定使用
+`runtime/workflow/hostkit.New`。HS只保留：
+
+- validation和 tool/model/task mapping policy；
+- concrete executor capability adapter；
+- RunStore到 portable `JournalPort`的 backend adapter；
+- identity、clock、error display与结果兼容投影。
+
+lowering、journal construction、node executor能力优先级、orchestration和
+composition继续由 agentx-go owner持有。fixed-version
+`runtime/conformance/workflow-hostkit-consumer`证明新项目无需 HS、Runner或长期
+`replace`即可运行显式 Workflow。
+
 ## 尚未迁移
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
-adapter、policy或 backend的完整 embedded Runtime；Workflow composition也还未
-成为根 `Client` 的稳定 Facade入口。Scene、Objective、Resume、durable backend、
-正式发行和 Public/Beta/Stable均不在 M3D范围。
+adapter、policy或 backend的完整 embedded Runtime；Workflow已有独立 Developer
+Preview Host Kit，但没有成为根 `Client` mode。Scene、Objective、Resume、concrete
+durable backend、正式发行和 Public/Beta/Stable均不在 M3E范围。

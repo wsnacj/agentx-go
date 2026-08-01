@@ -5,8 +5,8 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前里程碑：**Core Developer Preview candidate / private validation**。这里的
-> candidate只表示 M3D 代码、consumer和中文文档已进入候选闭环；它不是 Public、
+> 当前里程碑：**M3E Core Developer Preview candidate / private validation**。这里的
+> candidate只表示 Open Tool Loop与 Workflow代码、consumer和中文文档已进入候选闭环；它不是 Public、
 > Beta、Stable或 production-ready发布。
 
 ## 当前提供：根合同
@@ -93,7 +93,7 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801024524-d545bfb941c5
+  v0.0.0-20260801034947-76ad19f58c76
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -107,6 +107,7 @@ github.com/wsnacj/agentx-go/runtime
 - [Go API Reference](docs/reference/agentx.md)
 - [自定义 Adapter](docs/guides/custom-adapter.md)
 - [Host Kit + Model/Tool Adapter](docs/guides/model-tool-hostkit.md)
+- [Workflow Host Kit](docs/guides/workflow-hostkit.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
 - [Package API 索引与成熟度矩阵](docs/reference/package-maturity.md)
 - [HS 迁移说明](docs/guides/hs-migration.md)
@@ -143,6 +144,7 @@ GOWORK=off GOPROXY=off go -C runtime/conformance/protocol-consumer test ./... -c
 GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/hostkit-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C runtime/conformance/workflow-hostkit-consumer test ./... -count=1
 GOWORK=off go run scripts/check_developer_preview_api.go
 ```
 

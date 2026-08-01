@@ -1,6 +1,6 @@
 # 公共执行模型
 
-## M3D 代码合同
+## M3E 代码合同
 
 自定义 Adapter路径：
 
@@ -26,6 +26,19 @@ RunRequest
 的 identity、状态、回复、证据、blocker、next action 和执行画像。底层 Runner
 状态、provider 响应、credential、Scene registry 和内部 diagnostics 不进入根合同。
 
+Workflow保持独立显式图路径：
+
+```text
+workflow.Spec
+  -> workflow/hostkit
+  -> validation + lowering
+  -> journal + nodeexec + orchestration
+  -> composition.Result
+```
+
+它与根 Client共享 context/error identity等原则，但不虚构根 Client的 Workflow
+mode或 Shutdown；Host继续拥有 concrete policy、executor和 backend生命周期。
+
 ## 六维执行画像
 
 AgentX 使用六个正交维度描述执行，而不是把所有能力折叠为一个不断增长的 mode
@@ -45,19 +58,18 @@ AgentX 使用六个正交维度描述执行，而不是把所有能力折叠为�
 
 ## 与既有七种“模式”的关系
 
-| 既有概念 | M3D 状态 |
+| 既有概念 | M3E 状态 |
 | --- | --- |
 | A0 控制面关闭 | 进入画像：`Activation=off` |
 | Open Tool Loop | 进入画像：`Driver=open_tool_loop`；Host Kit已有真实 portable implementation |
 | Tool Direct Answer | 暂不进入首版 ResultPolicy |
-| Workflow | canonical Runtime extensions已有真实实现；尚未进入根 Client Facade |
+| Workflow | canonical Runtime已有真实实现和独立 Host Kit标准入口；不进入根 Client Facade |
 | Objective Runtime Loop | non-goal |
 | 长任务编排 | non-goal |
 | Deterministic Scene | 生态验收路径，不属于根 Client 模式 |
 
-因此，M3D不是把七项删成一种模式，而是为根 Client只选择已经能够稳定解释和验证的
-最小垂直切片。Workflow的 Spec、validation、lowering、orchestration和composition
-可作为 Experimental extension直接使用，但不伪装成根 Facade能力；Objective、
+因此，M3E不是把七项删成一种 mode，也不把 Workflow强塞进根 Client。Open Tool
+Loop通过根 Client/Host Kit接入；Workflow通过独立 Workflow Host Kit接入。Objective、
 Resume和完整 durable lifecycle仍不提供空实现，也不通过文档暗示已支持。
 
 ## Open Tool Loop 与 Workflow 边界
@@ -67,9 +79,9 @@ provider、授权、sandbox、RunStore或产品默认值。`runtime/workflow/*`�
 真实 portable implementation owner，但 concrete executor、backend、产品 validation
 policy和根 Facade construction继续由 Host拥有。
 
-因此“代码已经迁入”与“成为 Developer Preview标准入口”是两项不同结论：当前标准
-入口是自定义 ExecutionAdapter和 Host Kit + Model/Tool Adapter；Workflow包继续按
-Experimental extension使用。
+M3E补齐了“代码已经迁入”与“可被新项目标准接入”之间的缺口：Workflow调用方只
+依赖 `workflow`和 `workflow/hostkit`，低层 composition/journal/nodeexec等 package
+仍按 Experimental或 internalization candidate治理。
 
 ## 状态与下一步
 

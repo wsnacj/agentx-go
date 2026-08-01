@@ -1,6 +1,6 @@
 # 使用 Host Kit 接入 Model/Tool Adapter
 
-这是 M3D 推荐给普通新项目的 Open Tool Loop 接入路径。调用方显式提供模型请求和
+这是 M3E 推荐给普通新项目的 Open Tool Loop 接入路径。调用方显式提供模型请求和
 工具执行函数，Host Kit 负责 portable round 顺序、多轮 assembly、根 Client、
 typed error 和 Shutdown 组合。整个路径不依赖 HS、Runner、Scene 或长期
 `replace`。

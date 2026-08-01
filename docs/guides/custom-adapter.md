@@ -1,6 +1,6 @@
 # 实现自定义 ExecutionAdapter
 
-`ExecutionAdapter` 是 M3D 两条标准接入路径中的高级扩展接缝。它用于把已有
+`ExecutionAdapter` 是 M3E Open Tool Loop路径中的高级扩展接缝。它用于把已有
 Runtime或确定性执行器接到公共合同，不用于把 provider、credential或业务策略
 塞进根包。新项目需要 canonical Open Tool Loop时，优先使用
 [Host Kit + Model/Tool Adapter](model-tool-hostkit.md)。
