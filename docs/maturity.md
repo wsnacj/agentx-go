@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5C Portable Pack Core source-authority closure active |
+| 当前产品里程碑 | M5C Portable Pack Core技术 checkpoint complete / awaiting owner acceptance |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5C canonical landing后为根合同、LLM、27个 Runtime owner及3个 Extension owner，共32个 package |
@@ -20,7 +20,7 @@
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根合同、LLM、Runtime和 Extension fixed-version consumer已提供 |
-| HS canonical import | W1-C、M5A及 M5B consumer已切换固定 private pseudo-version；M5C cutover进行中 |
+| HS canonical import | W1-C、M5A、M5B及 M5C consumer已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 32个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -83,9 +83,12 @@ M5B又迁入 `extensions/domainmodule`真实portable registration coordinator，
 九个 HS Scene module直接使用canonical合同。该 package仍为 Experimental extension；
 HS Target和具体宿主/Scene策略没有被伪装成已迁移或可发布。
 
-M5C继续落地 `runtime/executionpolicy` portable DTO与 `extensions/pack`真实机制。
+M5C已落地 `runtime/executionpolicy` portable DTO与 `extensions/pack`真实机制。
 Pack coordinator通过显式 Validator和 ToolArgumentLowerer ports保留 Host policy与
-mapping边界；`pack/runtime` memory/eval backend及具体 Scene内容仍由 HS拥有。
+mapping边界；HS旧 Pack Core降为薄 compatibility adapter，真实 production与 fixed
+external consumer均已切换。canonical production现为32个 package、90个 source、
+17,685行；`pack/runtime` memory/eval backend及具体 Scene内容仍由 HS拥有。该技术
+checkpoint等待 Owner接受，不构成 Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 
