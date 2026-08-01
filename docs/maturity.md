@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5N Portable Objective Runtime Step, Executor Contract and Productization Projection：`active_implementation` |
+| 当前产品里程碑 | M5N Portable Objective Runtime Step, Executor Contract and Productization Projection：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5N canonical landing：43个package、181个production source、59,412行；仍为8个Developer Preview candidate |
@@ -248,8 +248,13 @@ M5N继续在同一Experimental package内迁入13个production source、8,527行
 runtime step、auto-delegation、Host-owned executor request/result/readback、adapter gate和
 runtime productization implementation，使canonical达到43个package、181个production
 source、59,412行。具体adapter/executor、authorization、RunStore/backend、durable write、
-ProductShellRuntime与Scene仍由HS拥有；当前状态为`active_implementation`，须以fixed
-consumer、中文Reference、四module、完整HS回归和closure checkpoint结束。
+ProductShellRuntime与Scene仍由HS拥有。runtime fixed版本为
+`v0.0.0-20260801180223-57ea36658ea2`；fixed consumer、中文Reference、四module、43/8
+API/doc gate、module zip/cache与单次完整HS回归均已闭合，回归没有新增功能失败。HS按
+完整owner拆分口径由8,396行收缩为795行，净减7,601行；closure为407/57/2421/65、
+HS119/canonical33/Scene0。当前状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
+`not_ready_for_hostless_w2b`；等待Owner接受，不自动进入下一wave。
 
 ## 明确 non-goal
 
