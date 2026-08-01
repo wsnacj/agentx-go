@@ -5,10 +5,10 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5Q Portable Execution Decision, Retry and Snapshot Metadata Kernel：`active_implementation` |
+| 当前产品里程碑 | M5R Portable Session Channel, Bounded Ingress and Delivery Contract：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5Q canonical landing：43个package、225个production source、88,267行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5R canonical landing：44个package、234个production source、89,672行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -20,17 +20,17 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5Q execution consumer覆盖Snapshot metadata、bounded retry与decision/execution-loop kernel；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A～M5P production consumer已使用固定 private pseudo-version；M5P cutover已完成 |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5R channel consumer覆盖bounded ingress、dedupe、Shutdown与display-safe delivery contract；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 44个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前43个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前44个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -304,6 +304,22 @@ sender/runner port、routing、chunking、in-memory dedupe、bounded ingress run
 session delivery contract。隔离module复用全部非pairing原合同测试后通过；production只
 依赖标准库与canonical safeerror。pairing challenge/approval、durable state、access policy、
 具体platform sender/SDK、credential、backend和真实网络副作用不进入M5R。
+
+M5R canonical `9f67493e1e32`已新增Experimental `runtime/channel`，落地8个迁入
+implementation source与1个package doc source，共1,405行；agentx-go达到44个package、
+234个production source、89,672行。runtime fixed版本为
+`v0.0.0-20260801203033-9f67493e1e32`，sum为
+`h1:UjoEhQXVLUgAxv/APnvBpgmwIalAZa8RsId5UeNdxng=`；中文Reference和无HS/Runner/Scene/
+长期`replace`/network的consumer由`02ebc3d`闭合。HS `de3b100d9`已把18个production
+callsite直接切到canonical owner，原8-source、1,400行portable authority收缩为249行
+alias/forwarder，净减1,151行；pairing、durable state、access policy与具体平台发送继续
+留在HS。四module test/race/vet/tidy/list、44/8 API/doc gate、module zip/cache、fixed
+consumer与唯一完整HS回归均已闭合；回归为149 PASS、2个既有治理FAIL、20 SKIP，
+没有新增功能失败。closure保持407/57/2467/65，但owner分布从HS119/canonical33变为
+HS118/canonical34、Scene0，证明HS channel package退出production construction closure。
+当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
+`not_ready_for_hostless_w2b`；本checkpoint不构成Developer Preview晋级、
+Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 
