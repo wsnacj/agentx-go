@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5I Portable ProductShell Temporary Workflow Planning canonical landing、fixed consumer与HS production cutover完成；最终module/回归/closure gate待执行 |
+| 当前产品里程碑 | M5I Portable ProductShell Temporary Workflow Planning：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5I canonical landing：42个package、139个production source、29,588行；仍为8个Developer Preview candidate |
@@ -179,22 +179,19 @@ package owner分布或 `not_ready_for_hostless_w2b`。本状态是
 `technical_checkpoint_complete_awaiting_owner_acceptance`，不是Developer Preview、
 Public、Beta、Stable或发行授权。
 
-M5I继续复用`extensions/productshell`，迁入临时Workflow规划的typed DTO、确定性
-prompt/schema构造、deadline有限重试、session binding feedback、binding lowering、
-Workflow Spec构造、metrics和`Should → Resolve → Apply`固定stage。canonical提交为
-`d6bac55`和`16d9426`，fixed extensions版本为
-`v0.0.0-20260801144943-16d9426fd82a`。本轮新增2个production source、1,021行，使
-canonical实测增至42个package、139个production source、29,588行；package数和8个
-Developer Preview candidate均不变。
+M5I继续复用`extensions/productshell`，canonical提交为`d6bac55`和`16d9426`，fixed
+extensions版本为`v0.0.0-20260801144943-16d9426fd82a`；新增2个production source、
+1,021行，使canonical实测增至42个package、139个production source、29,588行，仍为
+8个Developer Preview candidate。fixed consumer无HS、Runner、Scene、长期`replace`、
+真实provider、credential或网络。
 
-`extensions/conformance/productshell-consumer`使用上述fixed版本，在既有preparation路径
-之外增加无HS、Runner、Scene、长期`replace`、真实provider、credential或网络的临时
-Workflow规划路径。Host显式提供确定性generator、validator、Workflow ID factory、
-tool normalization和raw-tool到planning-tool转换；consumer验证generation request、
-binding、metrics和stage顺序。具体LLM/provider、tool alias/denylist、authorization、
-execution snapshot、capability filter及Workflow执行继续留在Host。HS production cutover
-已把旧portable主体删除或降为薄adapter；在最终module、完整AgentX回归和closure gate
-完成前仍不声明M5I最终checkpoint，也不改变`not_ready_for_hostless_w2b`或任何发布门禁。
+HS cutover提交`9adb1d460`已让production consumer使用canonical planner，旧portable主体
+删除或降为薄adapter。root、components、runtime、extensions的test/race/vet/tidy/list、
+fixed consumer及API/doc/import gate均通过；完整HS回归为149个package PASS、2个既有
+治理package FAIL、20个无测试package SKIP，没有新增失败。W2-A closure为
+`406/57/2377/65`。本状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，
+仍保持Experimental和`not_ready_for_hostless_w2b`，不构成Developer Preview晋级、
+Public/Beta/Stable、正式tag、semver或任何发行授权。
 
 ## 明确 non-goal
 
