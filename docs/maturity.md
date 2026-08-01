@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5A Extension Module Foundation、AssetFS与 A股 portable contracts |
+| 当前产品里程碑 | M5A 技术 checkpoint 已完成，等待 Owner接受 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | 根合同、LLM、26个 Runtime owner及1个 Extension owner，共29个 |
@@ -19,8 +19,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM和 Runtime fixed-version consumer已提供 |
-| HS canonical import | W1-C 已切换固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime和 Extension fixed-version consumer已提供 |
+| HS canonical import | W1-C及 M5A consumer已切换固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 29个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -74,7 +74,7 @@ M4A将原 HS shared Host HTTP实现迁入 `runtime/hosthttp/hostserver`、
 继续由 HS Scene拥有，因此这三个 package仍是 Experimental extension，而不是通用
 Scene Facade或发布承诺。
 
-M5A继续迁入 `runtime/assetfs`真实 immutable asset mechanism，并创建单一
+M5A已迁入 `runtime/assetfs`真实 immutable asset mechanism，并创建单一
 `extensions` private-preview module承载首个 `astock/contracts` portable
 implementation。它们不包含 A股 provider、livekit、pack/workflow、tool executor、
 credential或网络，因此不表示完整 A股 Scene已可外部分发。

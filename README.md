@@ -93,7 +93,10 @@ github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801034947-76ad19f58c76
+  v0.0.0-20260801051155-7203f1b5be0a
+
+github.com/wsnacj/agentx-go/extensions
+  v0.0.0-20260801051155-7203f1b5be0a
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。

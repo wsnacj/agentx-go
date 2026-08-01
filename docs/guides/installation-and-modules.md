@@ -1,6 +1,6 @@
 # 安装与多 Module 引用
 
-`agentx-go`当前采用一个仓库、三个独立 Go module。调用方只引入实际使用的
+`agentx-go`当前采用一个仓库、四个独立 Go module。调用方只引入实际使用的
 module：
 
 | Module | 用途 |
@@ -8,10 +8,13 @@ module：
 | `github.com/wsnacj/agentx-go` | 根 Client、Run、错误和 ExecutionAdapter合同 |
 | `github.com/wsnacj/agentx-go/components` | provider-neutral LLM合同 |
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
+| `github.com/wsnacj/agentx-go/extensions` | 可选 portable领域扩展合同；首批为 A股 contracts |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
-路径需要三个 module，因为配置显式使用根合同、LLM响应和 Runtime类型。Workflow
-Host Kit路径只需要 Runtime module。
+路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
+和 Runtime类型。Workflow Host Kit路径只需要 Runtime module。A股 portable
+contracts只需要 extensions module；若同时使用 immutable asset loader，再显式
+加入 runtime module。
 
 ## 当前固定验证版本
 
@@ -21,7 +24,9 @@ github.com/wsnacj/agentx-go
 github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801034947-76ad19f58c76
+  v0.0.0-20260801051155-7203f1b5be0a
+github.com/wsnacj/agentx-go/extensions
+  v0.0.0-20260801051155-7203f1b5be0a
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -29,7 +34,8 @@ github.com/wsnacj/agentx-go/runtime
 ```bash
 go get github.com/wsnacj/agentx-go@v0.0.0-20260729101644-c7c26d427ac2
 go get github.com/wsnacj/agentx-go/components@v0.0.0-20260729125257-bb6949793309
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801034947-76ad19f58c76
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801051155-7203f1b5be0a
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801051155-7203f1b5be0a
 ```
 
 ## Private 仓库访问
@@ -52,9 +58,12 @@ URL rewrite不得写入源码、`go.mod`、示例或日志。
 GOWORK=off go test ./...
 GOWORK=off go -C components test ./...
 GOWORK=off go -C runtime test ./...
+GOWORK=off go -C extensions test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
+`extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
+用于验证无 HS、无长期 `replace` 的组合接入。
 长期 consumer不得依赖本地 `replace`；本地 `replace`只能用于临时开发测量，不能
 作为 fixed-version或发布证据。
 

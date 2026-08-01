@@ -61,9 +61,33 @@ composition继续由 agentx-go owner持有。fixed-version
 `runtime/conformance/workflow-hostkit-consumer`证明新项目无需 HS、Runner或长期
 `replace`即可运行显式 Workflow。
 
+## M5A AssetFS 与 A 股 contracts 收口
+
+immutable asset机制的 source authority现位于 `runtime/assetfs`。它拥有输入
+`fs.FS`快照、content fingerprint、provider identity、startup-only resolver、
+seal和 `assetfs://`解析；HS `core/agentx/assetfs`只保留 Deprecated alias与
+forwarder。Core和现有 Scene consumer均直接固定 canonical runtime版本，不得在
+HS兼容路径恢复 snapshot或 resolver实现。
+
+A股 portable DTO、JSON行为、证券代码 normalization、readiness和 assessment
+机制的 source authority现位于 `extensions/astock/contracts`。HS
+`scene/agentx_a_stock/contracts`只保留 Deprecated alias与四个函数转发；A股
+production consumer直接使用 canonical contracts。
+
+以下能力仍由 HS A股 Scene拥有，不属于 extensions：
+
+- provider、HTTP client、credential、cookie、proxy和缓存；
+- livekit、pack/workflow、工具执行和模型调用；
+- 来源优先级、fallback、freshness核验和最终回答策略；
+- 任何真实网络、交易或其它生产副作用。
+
+`extensions/conformance/astock-contract-consumer`固定 runtime/extensions
+pseudo-version，以无 HS、无 `replace`方式组合 `assetfs`与 A股 JSON合同。该
+consumer只证明 portable合同可独立消费，不表示完整 A股 Scene已经迁仓或可发布。
+
 ## 尚未迁移
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
 adapter、policy或 backend的完整 embedded Runtime；Workflow已有独立 Developer
-Preview Host Kit，但没有成为根 `Client` mode。Scene、Objective、Resume、concrete
-durable backend、正式发行和 Public/Beta/Stable均不在 M3E范围。
+Preview Host Kit，但没有成为根 `Client` mode。完整 Scene、Objective、Resume、
+concrete durable backend、正式发行和 Public/Beta/Stable均不在当前范围。
