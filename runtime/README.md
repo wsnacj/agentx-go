@@ -32,7 +32,8 @@ github.com/wsnacj/agentx-go/runtime
 - [`construction`](./construction/API.md)：通过窄 `Host` port组合 model、
   runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。
-- [`controlcontract`](./controlcontract/API.md)：公共执行控制状态、evidence、
+- [`controlcontract`](./controlcontract/API.md)：公共执行控制状态、evidence、Objective、
+  Host adapter catalog/request/readback、Managed Objective Ingress与closeout projection，
   blocker、next action与display-safe合同，以及Objective Spec/strict JSON、capability/
   strategy catalog、intensity/controller、graph validation、evidence verification、
   recovery/replanning、Host effect request-result-readback及admission/invocation kernel；

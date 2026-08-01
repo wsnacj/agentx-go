@@ -9,9 +9,10 @@ import controlcontract "github.com/wsnacj/agentx-go/runtime/controlcontract"
 成熟度：**Experimental extension / private validation**。
 
 `runtime/controlcontract` 是 AgentX 公共执行控制语义、Objective定义/策略/图、验证/恢复/
-重规划、auto-delegation、runtime step、Host executor request/result/readback与确定性 reducer
-的 portable source authority。它只处理数据合同、复制/规范化、display-safe校验、严格
-解码和纯判定，不执行Runner、模型、工具、调度、存储或Host副作用。
+重规划、auto-delegation、runtime step、Host executor、adapter catalog/request/readback、
+Managed Objective Ingress、compensation/closeout projection与确定性 reducer的 portable
+source authority。它只处理数据合同、复制/规范化、display-safe校验、严格解码和纯判定，
+不执行Runner、模型、工具、调度、存储、授权或Host副作用。
 
 ## 核心状态合同
 
@@ -352,6 +353,71 @@ func BuildStructuredObservationNormalization(StructuredObservationNormalizationI
 它不接受具体`RuntimeAdapterExecutionResult`。provider/backend输出到结构化Observation的
 翻译仍是Host职责。
 
+## Host adapter、Managed Objective Ingress 与 closeout projection
+
+Host adapter metadata、catalog和registry只描述调用方已经提供的能力与合同：
+
+```go
+type ProductionAdapterDescriptor struct { ... }
+type ProductionAdapterCatalogSnapshot struct { ... }
+type ProductionAdapterRegistrySnapshot struct { ... }
+type HostAdapterRegistrySnapshot struct { ... }
+
+func BuildProductionAdapterCatalogSnapshot(ProductionAdapterCatalogSnapshotInput) ProductionAdapterCatalogSnapshot
+func BuildProductionAdapterCatalogSelection(ProductionAdapterCatalogSelectionInput) ProductionAdapterCatalogSelection
+func BuildProductionAdapterRegistrySnapshot(ProductionAdapterRegistrySnapshotInput) ProductionAdapterRegistrySnapshot
+func BuildHostAdapterRegistry(HostAdapterRegistryInput) HostAdapterRegistrySnapshot
+```
+
+这些API校验display-safe ref、descriptor完整性、数量上限、版本/digest、policy、approval、
+budget、idempotency和readback合同。`ReadyForHostSelection`或
+`ReadyForRuntimeRequest`只表示Host可继续准备调用，不发现provider，也不实例化或调用adapter。
+
+Runtime adapter使用显式request-result-readback三段合同：
+
+```go
+type RuntimeAdapterExecutionRequest struct { ... }
+type RuntimeAdapterExecutionResult struct { ... }
+type RuntimeAdapterExecutionReadback struct { ... }
+
+func BuildRuntimeAdapterExecutionRequest(RuntimeAdapterExecutionRequestInput) RuntimeAdapterExecutionRequest
+func BuildRuntimeAdapterExecutionResult(RuntimeAdapterExecutionResultInput) RuntimeAdapterExecutionResult
+func BuildRuntimeAdapterExecutionReadback(RuntimeAdapterExecutionReadbackInput) RuntimeAdapterExecutionReadback
+```
+
+result只接受Host报告的结构化observation、evidence和display-safe ref；readback必须核对显式
+expected ref。所有Core execution、Runner dispatch、store mutation和durable write标志保持
+false。具体adapter结果到该结构的翻译仍由Host负责。
+
+Managed Objective Ingress组合已经迁入的Objective frame、intensity gate、strategy planner、
+adapter registry和runtime request：
+
+```go
+type ManagedObjectiveIngressInput struct { ... }
+type ManagedObjectiveIngressProjection struct { ... }
+
+func BuildManagedObjectiveIngress(ManagedObjectiveIngressInput) ManagedObjectiveIngressProjection
+```
+
+它不读取raw goal，不生成prompt，不选择真实provider，也不执行strategy。缺少managed
+activation、Host approval、catalog、capability或runtime adapter合同时fail closed。
+
+Preflight、authorization packet、store mutation、compensation和closeout/writer/UI handoff
+同样是Host请求、结果、readback或display-safe projection：
+
+```go
+func BuildProductionAdapterPreflight(ProductionAdapterPreflightInput) ProductionAdapterPreflight
+func BuildProductionAdapterInvocationAuthorizationPacket(ProductionAdapterInvocationAuthorizationPacketInput) ProductionAdapterInvocationAuthorizationPacket
+func BuildProductionAdapterStoreMutationRequest(ProductionAdapterStoreMutationRequestInput) ProductionAdapterStoreMutationRequest
+func BuildObjectiveCompensationExecutionRequest(ObjectiveCompensationExecutionRequestInput) ObjectiveCompensationExecutionRequest
+func BuildProductionAdapterObjectiveCloseoutPacket(ProductionAdapterObjectiveCloseoutPacketInput) ProductionAdapterObjectiveCloseoutPacket
+func BuildProductionAdapterObjectiveCloseoutHostView(ProductionAdapterObjectiveCloseoutHostViewInput) ProductionAdapterObjectiveCloseoutHostView
+```
+
+名称中的`authorization`、`store`、`writer`、`runner`和`ui_handoff`不代表本包执行这些
+动作。调用方必须在独立Host边界完成真实决策/副作用，再把结构化结果和readback交回本包；
+缺少confirmation、idempotency、expected-result或readback时始终阻断。
+
 ## Approval、budget、幂等与生命周期
 
 ```go
@@ -400,11 +466,11 @@ if !result.Allowed {
 
 [`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
 是独立 nested module，固定依赖
-`v0.0.0-20260801180223-57ea36658ea2`，不使用 `replace`，也不 import HS、Runner、
+`v0.0.0-20260801184120-1fdddbc8d76f`，不使用 `replace`，也不 import HS、Runner、
 Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
 lifecycle transition、unsafe-ref fail-closed、单节点Objective Graph validation，以及
-Objective evidence verification/recovery proposal、Host effect gate，以及Objective runtime/
-executor/productization fail-closed路径：
+Objective evidence verification/recovery proposal、Host effect gate、Objective runtime/
+executor/productization，以及Host adapter catalog/registry和Managed Objective Ingress路径：
 
 ```bash
 cd runtime/conformance/controlcontract-consumer
@@ -415,15 +481,15 @@ GOWORK=off go run .
 预期输出：
 
 ```text
-agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready:objective_runtime_contract_ready
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready:objective_runtime_contract_ready:host_adapter_ingress_contract_ready
 ```
 
 ## 非目标
 
 - 不提供具体Objective executor、runtime loop dispatch、scheduler backend/execution或RunStore；
-- 不提供具体runtime/production adapter或adapter-result normalization input翻译；
+- 不提供具体runtime/production adapter实例、provider discovery或adapter-result input翻译；
 - 不创建真实delegation worker/session，不执行child dispatch或parent durable merge；
 - 不探测真实capability，不选择provider，不执行strategy或graph node；
-- 不执行 approval、authorization、sandbox、model/tool 或 backend；
+- 不执行 approval、authorization、store/writer/UI delivery、sandbox、model/tool 或 backend；
 - 不包含 ProductShellRuntime、Scene、provider、credential 或真实网络；
 - 不构成 Public、Beta、Stable、production-ready 或正式发行声明。

@@ -69,9 +69,13 @@ func run() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	hostAdapterStatus, err := validateHostAdapterIngressProjection()
+	if err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(
-		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s:%s",
+		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s:%s:%s",
 		projection.Status,
 		budget.RetryBudgetRemaining,
 		lifecycle.To,
@@ -80,7 +84,62 @@ func run() (string, error) {
 		verificationStatus,
 		hostEffectStatus,
 		objectiveRuntimeStatus,
+		hostAdapterStatus,
 	), nil
+}
+
+func validateHostAdapterIngressProjection() (string, error) {
+	descriptor := controlcontract.ProductionAdapterDescriptor{
+		AdapterRef:             "adapter:fixed-consumer-readonly",
+		Owner:                  "host",
+		OwnerRef:               "host:fixed-consumer",
+		Version:                "v1",
+		Kind:                   controlcontract.ProductionAdapterSourceReadback,
+		SupportedSourceKinds:   []controlcontract.ReplannerSourceKind{controlcontract.ReplannerSourceOperations},
+		SupportedCandidateRefs: []controlcontract.DisplaySafeRef{"strategy:fixed-consumer-readonly"},
+		ProvidesCapabilityRefs: []controlcontract.DisplaySafeRef{"capability:fixed-consumer-observation"},
+		RequiresCapabilityRefs: []controlcontract.DisplaySafeRef{"capability:fixed-consumer-host"},
+		InputContractRef:       "contract:fixed-consumer-input",
+		OutputContractRef:      "contract:fixed-consumer-output",
+		ReadbackContractRef:    "contract:fixed-consumer-readback",
+		RequiredPolicyRefs:     []controlcontract.DisplaySafeRef{"policy:fixed-consumer-readonly"},
+		RequiredApprovalRefs:   []controlcontract.DisplaySafeRef{"approval:fixed-consumer-readonly"},
+		RequiredBudgetRef:      "budget:fixed-consumer-readonly",
+		IdempotencyContractRef: "idempotency:fixed-consumer-readonly",
+		RiskRef:                "risk:fixed-consumer-readonly",
+		SideEffectClass:        "read_only",
+		TimeoutPolicyRef:       "timeout:fixed-consumer-short",
+		CompensationHandoffRef: "compensation:fixed-consumer-review",
+		RedactionPolicyRef:     "redaction:fixed-consumer-display-safe",
+		PreflightCheckRefs:     []controlcontract.DisplaySafeRef{"preflight:fixed-consumer-ready"},
+		DisplaySafeInputRefs:   []controlcontract.DisplaySafeRef{"input:fixed-consumer-scope"},
+		DisplaySafeOutputRefs:  []controlcontract.DisplaySafeRef{"output:fixed-consumer-summary"},
+	}
+	catalog := controlcontract.BuildProductionAdapterCatalogSnapshot(controlcontract.ProductionAdapterCatalogSnapshotInput{
+		CatalogSnapshotRef: "catalog:fixed-consumer-adapters",
+		Producer:           "host:fixed-consumer-catalog",
+		ProviderRef:        "provider:fixed-consumer-adapters",
+		CatalogVersionRef:  "version:fixed-consumer-v1",
+		CatalogDigestRef:   "digest:fixed-consumer-v1",
+		MaxDescriptorCount: 2,
+		HostPolicyRefs:     []controlcontract.DisplaySafeRef{"policy:fixed-consumer-catalog"},
+		Descriptors:        []controlcontract.ProductionAdapterDescriptor{descriptor},
+	})
+	if !catalog.ReadyForHostSelection || catalog.Status != controlcontract.HostActionReady || catalog.RunnerEffect != "none" {
+		return "", fmt.Errorf("Host adapter catalog is not ready: %#v", catalog)
+	}
+	registry := controlcontract.BuildHostAdapterRegistry(controlcontract.HostAdapterRegistryInput{
+		RegistryRef: "registry:fixed-consumer-adapters",
+		Descriptors: []controlcontract.ProductionAdapterDescriptor{descriptor},
+	})
+	if !registry.ReadyForRuntimeRequest || registry.Status != controlcontract.HostActionReady || registry.RunnerEffect != "none" {
+		return "", fmt.Errorf("Host adapter registry is not ready: %#v", registry)
+	}
+	ingress := controlcontract.BuildManagedObjectiveIngress(controlcontract.ManagedObjectiveIngressInput{})
+	if !ingress.Projected || ingress.ReadyForRuntimeAdapter || ingress.RunnerEffect != "none" {
+		return "", fmt.Errorf("hostless managed objective ingress did not fail closed: %#v", ingress)
+	}
+	return "host_adapter_ingress_contract_ready", nil
 }
 
 func validateObjectiveRuntimeProjection() (string, error) {

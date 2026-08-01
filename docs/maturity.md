@@ -8,7 +8,7 @@
 | 当前产品里程碑 | M5O Portable Host Adapter, Managed Objective Ingress and Closeout Projection：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5N canonical landing：43个package、181个production source、59,412行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5O canonical landing：43个package、212个production source、82,570行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5N controlcontract consumer固定版本并覆盖Objective runtime/executor/productization；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A～M5N production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5O controlcontract consumer覆盖Host adapter catalog/registry与Managed Objective Ingress；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A～M5N production consumer已使用固定 private pseudo-version；M5O cutover进行中 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -256,11 +256,12 @@ HS119/canonical33/Scene0。当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
 `not_ready_for_hostless_w2b`；Owner已于2026-08-02接受，该接受不构成成熟度晋级或发行授权。
 
-M5O在同一Experimental package内准入31个、约23,217行portable Host adapter、Managed
-Objective Ingress与closeout projection source。隔离runtime module closure proof已通过；
+M5O在同一Experimental package内落地31个、23,158行portable Host adapter、Managed
+Objective Ingress与closeout projection source，使canonical达到43个package、212个
+production source、82,570行。原31组合同测试和external-package fail-closed测试通过；
 该cohort只拥有display-safe request/result/readback、gate和composition，不执行真实
-adapter、authorization、store、Runner或UI副作用。具体Host实现继续留在HS，当前状态为
-`active_implementation`。
+adapter、authorization、store、Runner或UI副作用。具体Host实现继续留在HS，production
+cutover与最终checkpoint仍在进行。
 
 ## 明确 non-goal
 
