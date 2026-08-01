@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5N Portable Objective Runtime Step, Executor Contract and Productization Projection：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5O Portable Host Adapter, Managed Objective Ingress and Closeout Projection：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5N canonical landing：43个package、181个production source、59,412行；仍为8个Developer Preview candidate |
@@ -254,7 +254,13 @@ API/doc gate、module zip/cache与单次完整HS回归均已闭合，回归没�
 完整owner拆分口径由8,396行收缩为795行，净减7,601行；closure为407/57/2421/65、
 HS119/canonical33/Scene0。当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
-`not_ready_for_hostless_w2b`；等待Owner接受，不自动进入下一wave。
+`not_ready_for_hostless_w2b`；Owner已于2026-08-02接受，该接受不构成成熟度晋级或发行授权。
+
+M5O在同一Experimental package内准入31个、约23,217行portable Host adapter、Managed
+Objective Ingress与closeout projection source。隔离runtime module closure proof已通过；
+该cohort只拥有display-safe request/result/readback、gate和composition，不执行真实
+adapter、authorization、store、Runner或UI副作用。具体Host实现继续留在HS，当前状态为
+`active_implementation`。
 
 ## 明确 non-goal
 
