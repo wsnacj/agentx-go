@@ -3,8 +3,8 @@
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
 已获 Owner接受的 M5C Portable Pack Core与 M5D A股 portable Domain Extension，
-已获 Owner接受的 M5E Portable Skills Core，以及当前 active 的 M5F Run/Artifact
-Data Plane Source-Authority Migration、LLM组件和已迁 Runtime owner，
+已获 Owner接受的 M5E Portable Skills Core，以及技术 checkpoint已完成、等待
+Owner接受的 M5F Run/Artifact Data Plane、LLM组件和已迁 Runtime owner，
 目标是让调用方
 能够准确判断：
 
@@ -82,7 +82,8 @@ Data Plane Source-Authority Migration、LLM组件和已迁 Runtime owner，
 M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片。M5E
 只迁入 Skill contracts、loader/cache、activation、requested semantics与 resource
 refs；prompt catalog/filter、安全规则、安装执行、bundled内容和 Runner仍由 Host拥有。
-M5F当前只收口 Run/NodeExecution/Event与 Artifact registry/lineage的 portable合同和
-内存实现；durable backend、文件/对象存储、安全写入、保留期与产品投影仍由 Host拥有。
+M5F只收口 Run/NodeExecution/Event与 Artifact registry/lineage的 portable合同和
+内存实现；fixed consumer与 HS production cutover已经完成，durable backend、文件/
+对象存储、安全写入、保留期与产品投影仍由 Host拥有。
 尚未落地的 hostless完整 Runtime construction、A股 livekit/provider、更多
 components、其它 extensions和 Scene不会预先获得虚假 API 页面。
