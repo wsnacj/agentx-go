@@ -6,7 +6,8 @@
 import workflow "github.com/wsnacj/agentx-go/runtime/workflow"
 ```
 
-成熟度：**Experimental / private validation**。
+成熟度：**Developer Preview candidate / private validation**。当前进入 focused
+签名、文档和 consumer门禁，但不构成 Public、Beta或 Stable承诺。
 
 该 package 定义 AgentX Workflow Spec 数据合同和最小 validator construction
 seam。它不提供 validation 实现、lowering、executor、replanning、RunStore
@@ -218,7 +219,8 @@ func Admit(validator workflow.Validator, spec workflow.Spec) error {
 
 ## 与首版 Facade 的边界
 
-首版 AgentX Facade 仍只提供 `Run`，Workflow 是后续能力。该 package 本身当前不提供：
+根 AgentX Facade仍只提供 Open Tool Loop `Run`，Workflow通过独立的
+[`workflow/hostkit`](./hostkit/API.md)形成标准接入路径。该 package本身不提供：
 
 - `ValidateSpec` 默认函数或实现、`ExecuteInline`；
 - Node executor、LLM/tool/provider wiring；

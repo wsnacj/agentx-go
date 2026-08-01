@@ -70,6 +70,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`workflow/composition`](./workflow/composition/API.md)：构造并保存已验证的
   lowering/orchestration依赖，按固定顺序执行 lower→run，并同时返回 portable
   plan与 partial/full result；具体 policy/backend继续由 host注入。
+- [`workflow/hostkit`](./workflow/hostkit/API.md)：面向普通 Host的标准 Workflow
+  construction/access seam，组合现有 lowering、journal、nodeexec、
+  orchestration和 composition真实 owner，不复制执行语义。
 
 当前成熟度为 **Core Developer Preview candidate / private validation**。本
 module已提供需要调用方注入 `construction.Host`的高级构造生命周期、

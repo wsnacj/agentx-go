@@ -12,9 +12,10 @@ runtime/telemetry	experimental_extension	runtime/telemetry/API.md	-
 runtime/telemetry/safeerror	experimental_extension	runtime/telemetry/safeerror/API.md	-
 runtime/toolerrors	experimental_extension	runtime/toolerrors/API.md	-
 runtime/toolloop	developer_preview_candidate	runtime/toolloop/API.md	ef5ca50321470d3e0fb3ba6f5e250fa11515474c9559cc870eaa5633e0106c43
-runtime/workflow	experimental_extension	runtime/workflow/API.md	-
+runtime/workflow	developer_preview_candidate	runtime/workflow/API.md	893b9715ee14333b445580af13dc3492f66073f16a4bc0479ab0816d6a2e5bb7
 runtime/workflow/bindingstate	internalization_candidate	runtime/workflow/bindingstate/API.md	-
 runtime/workflow/composition	experimental_extension	runtime/workflow/composition/API.md	-
+runtime/workflow/hostkit	developer_preview_candidate	runtime/workflow/hostkit/API.md	dc3967850447c85c776e4804ab7b3dbc5d14fbb47f1d8a9b0971fb72b28b1473
 runtime/workflow/journal	experimental_extension	runtime/workflow/journal/API.md	-
 runtime/workflow/lowering	experimental_extension	runtime/workflow/lowering/API.md	-
 runtime/workflow/nodeexec	internalization_candidate	runtime/workflow/nodeexec/API.md	-

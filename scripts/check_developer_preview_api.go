@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_developer_preview_api verifies the focused M3D package classification,
+// check_developer_preview_api verifies the focused M3E package classification,
 // Chinese Reference coverage, and signatures of Developer Preview candidates.
 package main
 

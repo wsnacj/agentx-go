@@ -45,7 +45,10 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
   组合成单次 Run 的 Host-backed `Assembly`；具体 model/tool执行、持久化和产品
   策略仍由 host注入
 - Workflow Spec、schema、validation、lowering、binding/state、transition、
-  journal、node execution、orchestration与 composition owner
+  journal、node execution、orchestration与 composition owner；
+  [`runtime/workflow/hostkit`](runtime/workflow/hostkit/API.md)把这些真实 owner
+  组合为只需显式注入 validator、mapper、executor、identity、clock和可选
+  durable port的标准入口
 - 每个已迁 production package均提供中文 `API.md`、contract/external tests和
   import-direction gate
 - Runtime production代码不依赖 HS、Scene、具体 provider或 backend
@@ -115,6 +118,7 @@ github.com/wsnacj/agentx-go/runtime
 - [`runtime/hostkit` 中文 API Reference](runtime/hostkit/API.md)
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
+- [`runtime/workflow/hostkit` 中文 API Reference](runtime/workflow/hostkit/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
