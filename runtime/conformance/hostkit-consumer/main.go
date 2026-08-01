@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	agentx "github.com/wsnacj/agentx-go"
+	llm "github.com/wsnacj/agentx-go/components/llm"
 	"github.com/wsnacj/agentx-go/runtime/execution"
 	"github.com/wsnacj/agentx-go/runtime/hostkit"
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
@@ -17,13 +18,33 @@ type consumerFactory struct {
 }
 
 func (factory *consumerFactory) BuildRun(_ context.Context, request execution.Request) (hostkit.RunConfig, error) {
+	round, err := hostkit.NewModelToolRoundAdapter(hostkit.ModelToolRoundConfig{
+		RequestModel: func(_ context.Context, input toolloop.RoundExecutionInput) (hostkit.ModelResult, error) {
+			if input.Round == 1 {
+				return hostkit.ModelResult{Response: llm.ChatResponse{
+					Content: "tool requested",
+					Calls:   []llm.FunctionCall{{Name: "lookup", Arguments: `{"topic":"agentx"}`}},
+				}}, nil
+			}
+			return hostkit.ModelResult{Response: llm.ChatResponse{Content: "hostkit-conformance:2"}}, nil
+		},
+		ExecuteTools: func(context.Context, hostkit.ModelToolRoundExchange) (hostkit.ToolResult, error) {
+			return hostkit.ToolResult{
+				Runs:       []toolloop.RunObservation{{Name: "lookup", Output: "portable result"}},
+				NextChunks: []string{"portable result"},
+			}, nil
+		},
+	})
+	if err != nil {
+		return hostkit.RunConfig{}, err
+	}
 	return hostkit.RunConfig{
 		RunID:     "hostkit-conformance",
 		SessionID: request.SessionID,
 		Assembly: toolloop.AssemblyConfig{
 			MaxRounds: 3,
 			Coordinator: toolloop.CoordinatorConfig{
-				Executor: &scriptedModelToolRound{},
+				Executor: round,
 			},
 			Initial: toolloop.RoundState{Chunks: []string{request.Input}},
 		},
@@ -42,26 +63,6 @@ func (factory *consumerFactory) Shutdown(ctx context.Context) error {
 
 func (*consumerFactory) ClassifyError(error) agentx.ErrorCode {
 	return agentx.CodeExecutionFailed
-}
-
-type scriptedModelToolRound struct{}
-
-func (*scriptedModelToolRound) ExecuteRound(_ context.Context, input toolloop.RoundExecutionInput) (toolloop.RoundExecutionResult, error) {
-	if input.Round == 1 {
-		return toolloop.RoundExecutionResult{
-			Kind:  toolloop.OutcomeContinue,
-			Reply: "tool requested",
-			Continuation: &toolloop.RoundContinuation{
-				Calls:      []toolloop.Call{{Name: "lookup", Arguments: `{"topic":"agentx"}`}},
-				Runs:       []toolloop.RunObservation{{Name: "lookup", Output: "portable result"}},
-				NextChunks: []string{"portable result"},
-			},
-		}, nil
-	}
-	return toolloop.RoundExecutionResult{
-		Kind:  toolloop.OutcomeCompleted,
-		Reply: "hostkit-conformance:2",
-	}, nil
 }
 
 func run(ctx context.Context) (string, error) {
