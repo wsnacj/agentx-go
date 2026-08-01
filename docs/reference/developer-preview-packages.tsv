@@ -5,6 +5,9 @@ runtime/budget	experimental_extension	runtime/budget/API.md	-
 runtime/construction	experimental_extension	runtime/construction/API.md	-
 runtime/execution	developer_preview_candidate	runtime/execution/API.md	9b14badccb2147b8229bd030e8e6e6144c35f6f47884bae300da8d97127341bb
 runtime/hostkit	developer_preview_candidate	runtime/hostkit/API.md	f2d66ffa3b83fd8e534b89477300b0bf584b7f0b30ea87f0d9cf22a3b9d04f1e
+runtime/hosthttp/hostserver	experimental_extension	runtime/hosthttp/hostserver/API.md	-
+runtime/hosthttp/requestjson	experimental_extension	runtime/hosthttp/requestjson/API.md	-
+runtime/hosthttp/resourcepolicy	experimental_extension	runtime/hosthttp/resourcepolicy/API.md	-
 runtime/mediaartifact	experimental_extension	runtime/mediaartifact/API.md	-
 runtime/promptcontext	experimental_extension	runtime/promptcontext/API.md	-
 runtime/protocol	experimental_extension	runtime/protocol/API.md	-

@@ -47,5 +47,5 @@ Runtime owner，目标是让调用方
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner。
-尚未落地的 hostless完整 Runtime construction、更多 components、extensions和
+尚未落地的 hostless完整 Runtime construction、更多 components、其它 extensions和
 Scene不会预先获得虚假 API 页面。

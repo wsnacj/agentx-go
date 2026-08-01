@@ -30,6 +30,12 @@ github.com/wsnacj/agentx-go/runtime
   per-run `toolloop.Assembly`、`execution.Runtime`和根 Client；普通新项目通过
   `NewModelToolClient`提供 model/tool函数，无需手写 Factory、RoundExecutor或
   依赖 HS Runner，高级 Host仍可使用窄 `Factory`注入完整 assembly policy。
+- [`hosthttp/hostserver`](./hosthttp/hostserver/API.md)：Host-deployed Scene的
+  bounded transport、request identity、exposure policy与 graceful shutdown。
+- [`hosthttp/requestjson`](./hosthttp/requestjson/API.md)：有界、拒绝未知字段和
+  trailing data的严格 JSON请求解码。
+- [`hosthttp/resourcepolicy`](./hosthttp/resourcepolicy/API.md)：Host-owned路径、
+  opaque value、permission与预算收窄机制。
 - [`toolloop`](./toolloop/API.md)：通过窄 `Stepper`/`RoundExecutor`/
   `RoundPhaseExecutor` ports驱动确定性多轮执行，拥有 outcome收口、
   continuation state更新、request→observe→before-action→act与
@@ -79,7 +85,7 @@ module已提供需要调用方注入 `construction.Host`的高级构造生命周
 `execution.Runtime`，以及不依赖 HS Runner的 `hostkit.NewModelToolClient`。Host
 Kit仍需调用方提供 concrete model/tool函数；本 module尚未提供无需任何
 host-provided adapter/policy的根 `agentxruntime.New`、真实 backend、provider、
-credential、Scene或
+credential、Scene领域实现或
 完整 embedded Runtime，不能据此宣称 Runtime 已达到 Public、Beta、Stable 或
 production-ready。
 
