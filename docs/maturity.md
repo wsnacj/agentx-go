@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5J controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H、M5I及M5J production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5K controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe/Objective Graph；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H、M5I、M5J及M5K production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -203,8 +203,14 @@ alias/薄forwarder和未迁移文件仍需的private compatibility helper，prod
 1,692行；exported type identity、方法可调用性、JSON与reducer行为由focused
 differential保持。完整AgentX回归中的no-space连锁失败经释放本轮临时cache后focused
 复测全部通过，最终仍只有2个既有治理package/3个evidence stale测试失败，没有新增
-功能回归。当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，仍不
-构成Developer Preview晋级、Public/Beta/Stable或发行授权。
+功能回归。M5J已于2026-08-02获Owner接受，仍不构成Developer Preview晋级、
+Public/Beta/Stable或发行授权。
+
+M5K随后在同一Experimental package内新增8个Objective definition/strategy/graph
+production source与一个private helper source，共6,365行真实implementation。HS对应
+6,322行source已收缩为648行alias/forwarder，并只另留187行未迁移controlplane代码仍需的
+private compatibility seam；fixed consumer现覆盖Objective Graph validation。M5K仍在
+最终验证阶段，不构成Developer Preview晋级、Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 

@@ -33,8 +33,9 @@ github.com/wsnacj/agentx-go/runtime
   runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。
 - [`controlcontract`](./controlcontract/API.md)：公共执行控制状态、evidence、
-  blocker、next action与display-safe合同，以及managed-objective projection、approval、
-  budget、idempotency和lifecycle的无副作用确定性reducer；调度、持久化与产品策略留在Host。
+  blocker、next action与display-safe合同，以及Objective Spec/strict JSON、capability/
+  strategy catalog、intensity/controller与graph validation kernel；executor、调度、持久化
+  与产品策略留在Host。
 - [`execution`](./execution/API.md)：把根 `agentx.Client` 的 adapter request
   确定性分派给窄 `Host` port，组装 adapter result并转发 Shutdown与 error
   classification；具体 engine input/output、model/tool/backend继续由 host拥有。
@@ -125,6 +126,6 @@ GOWORK=off go list -m all
 ```
 
 `conformance/` 下的 external-style consumer 是独立 nested module，必须单独
-验证；根 module 的 `go test ./...` 不会自动跨越 nested module。M5J 的
+验证；根 module 的 `go test ./...` 不会自动跨越 nested module。M5J/M5K 的
 `controlcontract-consumer`固定 pseudo-version、无长期 `replace`，覆盖 projection、
-budget、lifecycle 与 display-safe fail-closed 路径。
+budget、lifecycle、display-safe fail-closed与Objective Graph validation路径。
