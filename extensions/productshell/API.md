@@ -9,18 +9,22 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 成熟度：**Experimental extension / private validation**。
 
 本包拥有 ProductShell 在进入执行前的 portable 输入投影、Case/Shell Binding helper、
-Workflow 绑定检查和确定性准备顺序。产品路由、Pack registry、Case 草拟、Workflow
-物化、持久化和其它副作用必须通过显式 Host port 注入。
+Workflow 绑定检查和确定性准备顺序；同时提供 typed session/host-process observation 的
+归一化，以及从 display-safe operator line 到 Host UI handoff envelope 的确定性投影。
+产品路由、Pack registry、Case 草拟、Workflow物化、持久化、raw诊断解析、真实观测聚合
+和交付副作用必须由Host拥有。
 
-完整接入说明见 [ProductShell 两阶段准备指南](../../docs/guides/product-shell-preparation.md)
-和 [fixed-version consumer](../conformance/productshell-consumer)。
+完整接入说明见 [ProductShell 两阶段准备指南](../../docs/guides/product-shell-preparation.md)、
+[Observation与Host Handoff指南](../../docs/guides/product-shell-observation-handoff.md)、
+[preparation fixed-version consumer](../conformance/productshell-consumer)和
+[observation fixed-version consumer](../conformance/productshell-observation-consumer)。
 
 ## 安装
 
 当前 private-preview 固定版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801114445-cd5d97b84728
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801133815-af05058a8a7f
 ```
 
 该 pseudo-version 只用于当前验证，可以在后续 checkpoint 更新；它不是正式 semver，
@@ -165,10 +169,73 @@ Pack、Workflow或Case能力已经配置。
 触发外部副作用；需要向用户返回严格输入错误时，Host应在进入 pipeline前调用对应的
 `Parse*`/`Decode*`函数并处理错误。
 
+## Typed Observation
+
+M5H新增三组纯构造函数，用于把Host已经读取并解释的typed事实归一化为可观察DTO：
+
+- `BuildSessionObservation(SessionObservationInput)`：归一化session事件计数、最新内容
+  preview、branch摘要和compaction计数；
+- `BuildHostProcessProgressObservation(HostProcessProgressObservationInput)`：归一化Host
+  process view、状态/identity、ready标志和明确边界；
+- `BuildHostDiagnosticOperatorLineObservation(HostDiagnosticOperatorLineObservationInput)`：
+  归一化一条准备展示的operator line。
+
+空输入返回 `nil`；输入字符串会trim，slice会复制；HostProcess的 `ProcessCount`、
+`ActiveCount`、`TerminalCount`和 `HostProcessEventCount`负值会归零。session preview
+有界且压缩空白；session compaction计数保持调用方提供的原值。这些函数不读取engine
+session、transcript、tool output、RunStore、process registry或Host diagnostics JSON，
+也不推断执行权限、生命周期或readback结论。
+
+`SessionObservation`、`HostProcessProgressObservation`和
+`HostDiagnosticOperatorLineObservation`是不同粒度的typed数据合同，不组成由本包长期
+持有的 `ObservationSnapshot`。聚合时刻、历史保留、增量订阅和一致性仍由Host决定。
+
+## Display-safe Host UI Handoff
+
+Host完成产品判断后，可把明确选定的operator line投影为display-safe envelope：
+
+```go
+line := productshell.BuildHostDiagnosticOperatorLineObservation(
+    productshell.HostDiagnosticOperatorLineObservationInput{
+        Source:              "host_adapter",
+        Key:                 "progress.completed",
+        Available:           true,
+        Status:              "completed",
+        OperatorDisplayLine: "kind=progress;status=completed",
+        NextHostAction:      "render_log_fields",
+    },
+)
+
+envelope := productshell.BuildHostUIHandoffEnvelopeFromOperatorLines(
+    []productshell.HostDiagnosticOperatorLineObservation{*line},
+    productshell.HostUIHandoffInput{
+        Target: productshell.HostUIHandoffTargetLog,
+        Source: "host_agent",
+    },
+)
+```
+
+`HostUIHandoffEnvelope`固定schema、surface、target/source、entries、latest entry和边界。
+token/display line只允许有限字符；URL、换行或其它不安全值会被替换为 `redacted`，不会
+原样流向展示层。`RenderHostUIHandoffLogFields`可产生单行display-safe字段，但真正写
+日志、side panel、admin surface或run output仍由Host adapter负责。
+
+可选验证函数：
+
+- `BuildHostUIHandoffConsumerConformanceReport`：验证schema/surface/target/source、
+  entry数量、latest entry、display-safe字段和delivery boundary；
+- `BuildHostUIHandoffRuntimeUseReport`：记录具体Host adapter消费了多少entry，并拒绝
+  raw diagnostics decode或把Runtime误声明为delivery source。
+
+这两类report是接入验证证据，不是全仓inventory/evidence registry，也不授予生产准入。
+它们不发送消息、不写日志、不调用HTTP/UI、不执行readback。
+
 ## 并发、生命周期和错误
 
 - `PreparationPipeline`构造后只保存一个 `PreparationRuntime`引用；多个 goroutine并发
   使用时，Host实现及其依赖必须自行保证并发安全；
+- observation与handoff builder不持有共享状态；返回值包含调用方slice的规范化副本，
+  调用方仍应把每次构建结果视为独立快照值；
 - 本包没有共享 registry、后台任务或 `Shutdown`；backend生命周期由 Host拥有；
 - pipeline按固定顺序返回首个错误，不包装 Host错误，因此 `errors.Is/As` identity得以
   保留；
@@ -181,5 +248,7 @@ Pack、Workflow或Case能力已经配置。
 - ProductShell路由策略、command/skill推断策略、authorization、approval或sandbox；
 - Pack registry、Case Store、Workflow registry、RunStore或其它具体 backend；
 - Workflow执行、Objective Runtime、Resume、scheduler或durable lifecycle；
+- raw Host diagnostics/tool output parser、完整 `ObservationSnapshot`、process inventory、
+  observation storage/stream、readback或真实delivery；
 - credential、Scene、HTTP/CLI、真实网络或生产副作用；
 - Public、Beta、Stable、正式tag、semver或兼容性承诺。

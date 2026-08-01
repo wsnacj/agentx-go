@@ -21,6 +21,8 @@ github.com/wsnacj/agentx-go/extensions
   路由选择与 Binding机制。
 - [`skills`](./skills/API.md)：M5E迁入的 Skill合同、loader/cache、activation、
   requested semantics与资源引用机制。
+- [`productshell`](./productshell/API.md)：M5G迁入的portable input/preparation机制，以及
+  M5H新增的typed observation与display-safe Host UI handoff。
 
 它不包含行情 provider、livekit、具体 Workflow policy、工具执行、`pack/runtime`
 memory/eval backend、Skill prompt ranking/安装执行/安全策略、credential或真实网络。
@@ -48,10 +50,14 @@ Experimental，三组 Pack implementation
   Manifest、资产、三组 Pack、fixture Host Kit与 evaluator；
 - [`conformance/skills-consumer`](conformance/skills-consumer)：使用固定版本验证
   immutable AssetFS加载、缓存、路径激活、requested semantics、资源完整性和 deep clone。
+- [`conformance/productshell-consumer`](conformance/productshell-consumer)：验证portable
+  ProductShell两阶段准备与Host port组合；
+- [`conformance/productshell-observation-consumer`](conformance/productshell-observation-consumer)：
+  验证typed Session/HostProcess/OperatorLine到display-safe handoff及runtime-use。
 
-这些 consumer分别证明 contracts、Domain Module、Pack、A股组合路径与 Portable
-Skills可以在无 HS、Runner、长期 `replace`和网络时运行；Skills consumer也不执行
-命令或安装副作用。
+这些consumer分别证明contracts、Domain Module、Pack、A股组合路径、Portable Skills
+及ProductShell准备/观测路径可以在无HS、Runner、长期`replace`和网络时运行；它们也不
+执行命令、安装或真实UI/log delivery副作用。
 
 本地验证：
 

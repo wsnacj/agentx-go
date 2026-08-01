@@ -13,7 +13,7 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 当前 private-preview验证版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801114445-cd5d97b84728
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801133815-af05058a8a7f
 ```
 
 如果代码直接导入 `runtime/cases`，当前验证版本为：
@@ -168,3 +168,7 @@ Shell Binding算法形成长期双写。
 具体签名和复制/并发语义见
 [`extensions/productshell` API](../../extensions/productshell/API.md)和
 [`runtime/cases` API](../../runtime/cases/API.md)。
+
+准备完成后的typed session/process观测和display-safe Host交接不属于preparation stage；
+需要该路径时继续阅读
+[ProductShell Observation与Host Handoff](product-shell-observation-handoff.md)。
