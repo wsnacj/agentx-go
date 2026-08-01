@@ -19,8 +19,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及 contracts/domainmodule/pack fixed-version consumer已提供；M5D A股组合 consumer仍待闭合 |
-| HS canonical import | W1-C、M5A、M5B及 M5C consumer已切换固定 private pseudo-version；M5D A股 production cutover进行中 |
+| Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股组合 consumer无 HS/Runner/replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C及 M5D A股 production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 37个全部有中文 Reference；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -94,9 +94,10 @@ HS拥有。该接受不构成 Public/Beta/Stable或发行授权。
 M5D正在建立 `extensions/astock`推荐入口与 `extensions/astock/hostkit`，并把三组
 A股 Pack Definition/evaluator放入不可外部导入的 internal owner。当前37个 package
 均已有中文 Reference，`extensions/astock`作为第八个 Developer Preview candidate
-进入 focused签名门禁。该 active状态尚不表示 fixed-version组合 consumer、HS
-production cutover或最终回归已经完成；A股 provider、livekit、credential、cache、
-source priority和真实网络继续由 HS拥有。
+进入 focused签名门禁。fixed-version组合 consumer和 HS production cutover已经完成，
+旧 Pack/tool-schema/Host Kit通用实现已删除或降薄；当前 active状态只表示最终 module
+gate、module zip和完整 AgentX回归尚未 checkpoint。A股 provider、livekit、credential、
+cache、source priority和真实网络继续由 HS拥有。
 
 ## 明确 non-goal
 

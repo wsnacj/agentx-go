@@ -40,11 +40,12 @@ M5C Portable Pack Core checkpoint已经 Owner接受；M5D现以 `extensions/asto
 
 - [`conformance/astock-contract-consumer`](conformance/astock-contract-consumer)；
 - [`conformance/domain-module-consumer`](conformance/domain-module-consumer)；
-- [`conformance/pack-consumer`](conformance/pack-consumer)。
+- [`conformance/pack-consumer`](conformance/pack-consumer)；
+- [`conformance/astock-consumer`](conformance/astock-consumer)：组合完整 portable A股
+  Manifest、资产、三组 Pack、fixture Host Kit与 evaluator。
 
-前三个 consumer分别证明 contracts、Domain Module和 Pack机制可独立消费；M5D仍需
-新增一个组合真实 A股 Manifest、Pack和 fixture Host handler的 fixed-version
-consumer，完成前不得把 A股 Extension描述为完整 checkpoint。
+前三个 consumer分别证明 contracts、Domain Module和 Pack机制可独立消费；最后一个
+consumer证明 M5D A股组合路径可在无 HS、Runner、长期 `replace`和网络时运行。
 
 本地验证：
 

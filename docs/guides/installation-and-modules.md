@@ -8,13 +8,13 @@ module：
 | `github.com/wsnacj/agentx-go` | 根 Client、Run、错误和 ExecutionAdapter合同 |
 | `github.com/wsnacj/agentx-go/components` | provider-neutral LLM合同 |
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
-| `github.com/wsnacj/agentx-go/extensions` | 可选 portable领域扩展合同；当前含 A股 contracts与 Domain Module注册编排 |
+| `github.com/wsnacj/agentx-go/extensions` | 可选 portable领域扩展；当前含 A股推荐入口、Domain Module与 Pack机制 |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
-和 Runtime类型。Workflow Host Kit路径只需要 Runtime module。A股 portable
-contracts和 host-neutral Domain Module注册编排只需要 extensions module；若同时
-使用 immutable asset loader，再显式加入 runtime module。
+和 Runtime类型。Workflow Host Kit路径只需要 Runtime module。A股推荐入口、
+Host Kit、Pack和内嵌资产由 extensions module提供，并通过其固定依赖使用
+runtime/components；调用方只需直接声明自己代码实际 import的 module。
 
 ## 当前固定验证版本
 
@@ -24,9 +24,9 @@ github.com/wsnacj/agentx-go
 github.com/wsnacj/agentx-go/components
   v0.0.0-20260729125257-bb6949793309
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801051155-7203f1b5be0a
+  v0.0.0-20260801061901-08fdf1038850
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801054929-4cae9842b02a
+  v0.0.0-20260801071806-57b903334bf5
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -34,8 +34,8 @@ github.com/wsnacj/agentx-go/extensions
 ```bash
 go get github.com/wsnacj/agentx-go@v0.0.0-20260729101644-c7c26d427ac2
 go get github.com/wsnacj/agentx-go/components@v0.0.0-20260729125257-bb6949793309
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801051155-7203f1b5be0a
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801054929-4cae9842b02a
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801061901-08fdf1038850
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801071806-57b903334bf5
 ```
 
 ## Private 仓库访问
@@ -66,6 +66,8 @@ external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独
 用于验证无 HS、无长期 `replace` 的组合接入。
 `extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以
 在无 HS、无 Runner、无长期 `replace` 时实现 config resolver和注册 callback。
+`extensions/conformance/astock-consumer`固定 extensions/runtime，验证 A股 Manifest、
+嵌入资产、三组 Pack、route/binding、fixture Host Kit和 evaluator的组合路径。
 长期 consumer不得依赖本地 `replace`；本地 `replace`只能用于临时开发测量，不能
 作为 fixed-version或发布证据。
 

@@ -27,6 +27,10 @@ _ = astock.RegisterPacks(registry)
   旧兼容行为，不执行 provider或工具。
 - `ToolDefinitions()`：返回7个 caller-owned `components/llm.Tool` schema。
 
+`ToolDefinitions()`是运行时模型工具合同；`ExtensionFS()`中的 `.tool.json`还包含
+安装/目录元数据。两者共享 tool identity，但保留迁移前各自的字段和说明，不承诺
+完整 JSON逐字节相同。升级时应分别对两类合同做 differential。
+
 ## Pack 与 evaluator
 
 - `ValuationDefinition`、`ResearchDefinition`、`SignalDefinition`返回 caller-owned

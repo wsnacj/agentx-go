@@ -101,6 +101,33 @@ Manifest/ConfigRequirement/Diagnostics，同时继续通过 HS Target helper接�
 外部项目无需 HS、Runner或 `replace`即可使用portable coordinator；它不包含具体
 Scene、pack、tool executor、provider或credential。
 
+## M5C Portable Pack Core收口
+
+Pack Definition、显式 validation协调、并发 registry、route/binding与 Workflow
+materialization的 source authority位于 `extensions/pack`。HS `core/agentx/pack`
+保留旧 Definition方法集及 Host validator/tool-lowering adapter；`pack/runtime`的
+memory/eval backend仍由 HS拥有。
+
+## M5D A股 Portable Extension收口
+
+`extensions/astock`现在拥有 A股 Manifest、compiled skill/tool资产、运行时 tool
+schema、三组 Pack Definition/evaluator和聚合注册；`extensions/astock/hostkit`拥有
+intent转换、显式 handler协调、readiness聚合和确定性回答格式化。
+
+HS `scene/agentx_a_stock/module`已经直接消费 canonical Manifest、资产与 Pack注册；
+原 `packs`、portable `tools` schema和 `hostkit`实现已删除或降为薄转发。HS继续拥有：
+
+- livekit、provider、HTTP/source adapter、credential、cache与 fallback；
+- concrete tool registry/executor、Host Target mutation和 Runner wiring；
+- filesystem plugin bundle、诊断 CLI和真实网络。
+
+root filesystem skill/tool文件暂保留为显式路径 API的 compatibility mirror，并由
+differential测试约束；它们不再是 compiled asset source authority。plugin bundle的
+command/risk metadata是独立分发合同，不得用 canonical lookup manifest覆盖。
+
+`extensions/conformance/astock-consumer`以固定版本证明无 HS、Runner、`replace`和
+网络的 Manifest→asset→Pack→binding→fixture Host Kit→evaluator路径。
+
 ## 尚未迁移
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
