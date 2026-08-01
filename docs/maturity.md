@@ -209,8 +209,9 @@ Public/Beta/Stable或发行授权。
 M5K随后在同一Experimental package内新增8个Objective definition/strategy/graph
 production source与一个private helper source，共6,365行真实implementation。HS对应
 6,322行source已收缩为648行alias/forwarder，并只另留187行未迁移controlplane代码仍需的
-private compatibility seam；fixed consumer现覆盖Objective Graph validation。M5K仍在
-最终验证阶段，不构成Developer Preview晋级、Public/Beta/Stable或发行授权。
+private compatibility seam；fixed consumer现覆盖Objective Graph validation。四module、
+43/8 API/doc gate、module zip/cache与完整HS回归均已闭合，技术checkpoint等待Owner接受。
+M5K不构成Developer Preview晋级、Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 
