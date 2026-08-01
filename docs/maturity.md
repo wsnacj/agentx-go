@@ -288,8 +288,15 @@ gateway policy、Host backend和真实副作用不进入M5Q。
 
 M5Q canonical已在既有Experimental `runtime/executionpolicy`落地上述6个source和原
 合同测试，使agentx-go达到43个package、225个production source、88,267行；新增kernel
-只生成typed command/report/reducer，不执行Host副作用。fixed consumer与HS production
-cutover仍在本wave内继续，当前不构成技术checkpoint。
+只生成typed command/report/reducer，不执行Host副作用。fixed runtime为
+`v0.0.0-20260801195859-a83a74b77995`；无HS/Runner/Scene/长期`replace`的consumer、中文
+Reference、四module test/race/vet/tidy/list、43/8 API/doc gate与module zip/cache均已闭合。
+HS原6-source、1,487行authority已收缩为285行alias/forwarder，并保留57行只服务具体
+browser/network/gateway/runtime policy的private Host seam；engine、hostruntime和hostwiring
+production consumer已直接使用canonical owner。完整回归为149 PASS、2个既有治理FAIL、
+20 SKIP且无新增功能失败，closure为407/57/2467/65、HS119/canonical33/Scene0。状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`；该checkpoint不构成成熟度晋级
+或发行授权。
 
 ## 明确 non-goal
 
