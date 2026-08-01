@@ -120,9 +120,12 @@ github.com/wsnacj/agentx-go/runtime
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [`runtime/workflow/hostkit` 中文 API Reference](runtime/workflow/hostkit/API.md)
+- [`runtime/assetfs` 中文 API Reference](runtime/assetfs/API.md)
+- [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [External-style consumer](conformance/consumer)
+- [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 
 ## 本地验证
 
@@ -145,6 +148,11 @@ GOWORK=off GOPROXY=off go -C runtime/conformance/construction-consumer test ./..
 GOWORK=off GOPROXY=off go -C runtime/conformance/toolloop-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/hostkit-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C runtime/conformance/workflow-hostkit-consumer test ./... -count=1
+GOWORK=off go -C extensions test ./... -count=1
+GOWORK=off go -C extensions test -race ./... -count=1
+GOWORK=off go -C extensions vet ./...
+GOWORK=off go -C extensions mod tidy -diff
+GOWORK=off GOPROXY=off go -C extensions/conformance/astock-contract-consumer test ./... -count=1
 GOWORK=off go run scripts/check_developer_preview_api.go
 ```
 

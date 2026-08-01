@@ -20,6 +20,9 @@ contract/runtime/components -X-> extensions
 当前 package均为 Experimental extension。共享 module不表示每个 Scene都获得独立
 发行资格，也不构成 Public/Beta/Stable、正式 tag或 semver承诺。
 
+固定版本、无 HS、无长期 `replace` 的组合验证位于
+[`conformance/astock-contract-consumer`](conformance/astock-contract-consumer)。
+
 本地验证：
 
 ```bash
