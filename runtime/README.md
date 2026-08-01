@@ -28,6 +28,9 @@ github.com/wsnacj/agentx-go/runtime
 - [`execution`](./execution/API.md)：把根 `agentx.Client` 的 adapter request
   确定性分派给窄 `Host` port，组装 adapter result并转发 Shutdown与 error
   classification；具体 engine input/output、model/tool/backend继续由 host拥有。
+- [`executionpolicy`](./executionpolicy/API.md)：执行身份、可见性、预算、循环、
+  approval、replay、sandbox和 evidence policy DTO及 Host编译 port；不执行授权、
+  审批或具体 backend。
 - [`hostkit`](./hostkit/API.md)：拥有 portable model/tool round adapter，并组合
   per-run `toolloop.Assembly`、`execution.Runtime`和根 Client；普通新项目通过
   `NewModelToolClient`提供 model/tool函数，无需手写 Factory、RoundExecutor或

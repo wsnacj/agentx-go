@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5B Domain Module Developer Preview foundation 技术 checkpoint完成，等待 Owner接受 |
+| 当前产品里程碑 | M5C Portable Pack Core source-authority closure active |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM、26个 Runtime owner及2个 Extension owner，共30个、80个 source、13,216行 |
+| agentx-go production packages | M5C canonical landing后为根合同、LLM、27个 Runtime owner及3个 Extension owner，共32个 package |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；当前含 A股 portable contracts与 Domain Module coordinator |
+| Extensions module | 单一 private-preview共享 module；当前含 A股 portable contracts、Domain Module coordinator与 Portable Pack Core |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -20,16 +20,16 @@
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根合同、LLM、Runtime和 Extension fixed-version consumer已提供 |
-| HS canonical import | W1-C、M5A及 M5B consumer已切换固定 private pseudo-version |
+| HS canonical import | W1-C、M5A及 M5B consumer已切换固定 private pseudo-version；M5C cutover进行中 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 30个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 32个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前30个 production package均有中文 Reference；只说明
+- **API文档正文覆盖**：当前32个 production package均有中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -82,6 +82,10 @@ credential或网络，因此不表示完整 A股 Scene已可外部分发。
 M5B又迁入 `extensions/domainmodule`真实portable registration coordinator，并让
 九个 HS Scene module直接使用canonical合同。该 package仍为 Experimental extension；
 HS Target和具体宿主/Scene策略没有被伪装成已迁移或可发布。
+
+M5C继续落地 `runtime/executionpolicy` portable DTO与 `extensions/pack`真实机制。
+Pack coordinator通过显式 Validator和 ToolArgumentLowerer ports保留 Host policy与
+mapping边界；`pack/runtime` memory/eval backend及具体 Scene内容仍由 HS拥有。
 
 ## 明确 non-goal
 

@@ -12,8 +12,11 @@ github.com/wsnacj/agentx-go/extensions
   normalization、status和 assessment mechanism；
 - [`domainmodule`](./domainmodule/API.md)：编译期 Domain Module的portable
   manifest、config、diagnostics与顺序注册编排。
+- [`pack`](./pack/API.md)：Domain Pack定义、显式校验、注册、Workflow选择/物化、
+  路由选择与 Binding机制。
 
-它不包含行情 provider、livekit、pack/workflow、工具执行、credential、缓存或真实网络。
+它不包含行情 provider、livekit、具体 Workflow policy、工具执行、`pack/runtime`
+memory/eval backend、credential、缓存或真实网络。
 
 依赖方向固定为：
 
