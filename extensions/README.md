@@ -6,9 +6,14 @@
 github.com/wsnacj/agentx-go/extensions
 ```
 
-首批只包含 [`astock/contracts`](./astock/contracts/API.md)：A 股领域 portable
-DTO、JSON normalization、status和 assessment mechanism。它不包含行情 provider、
-livekit、pack/workflow、工具执行、credential、缓存或真实网络。
+当前包含：
+
+- [`astock/contracts`](./astock/contracts/API.md)：A 股领域 portable DTO、JSON
+  normalization、status和 assessment mechanism；
+- [`domainmodule`](./domainmodule/API.md)：编译期 Domain Module的portable
+  manifest、config、diagnostics与顺序注册编排。
+
+它不包含行情 provider、livekit、pack/workflow、工具执行、credential、缓存或真实网络。
 
 依赖方向固定为：
 
