@@ -202,6 +202,45 @@ round phase ordering。
 
 adapter自身无单轮可变状态；并发安全性只取决于调用方提供的函数是否安全。
 
+## `NewModelToolClient`
+
+普通新项目不需要实现 `Factory`、`BuildRun`或 `toolloop.RoundExecutor`：
+
+```go
+type ModelToolClientConfig struct {
+    Profile   agentx.ExecutionProfile
+    MaxRounds int
+
+    BuildRound func(
+        context.Context,
+        execution.Request,
+    ) (ModelToolRoundConfig, error)
+
+    ResolveIdentity func(
+        execution.Request,
+    ) (runID string, sessionID string)
+
+    InitialState  func(execution.Request) toolloop.RoundState
+    Shutdown      func(context.Context) error
+    ClassifyError func(error) agentx.ErrorCode
+}
+
+func NewModelToolClient(ModelToolClientConfig) (*agentx.Client, error)
+```
+
+- `MaxRounds`必须大于0，`BuildRound`必填；
+- `BuildRound`只为一次 Run提供具体 model/tool函数，不组装 Assembly；
+- `ResolveIdentity`可选；未提供时保留 request SessionID，RunID保持空，不伪造
+  identity；
+- `InitialState`可选，默认把 request Input作为唯一初始 chunk；
+- `Shutdown`可选，默认无资源可关闭；`ClassifyError`默认
+  `CodeExecutionFailed`；
+- 该便捷路径不安装 loop detector、failure fuse、authorization、persistence或
+  产品默认值。需要这些已解析 policy ports的高级 Host继续使用 `Config + Factory`。
+
+相比 W5-G consumer，该路径删除了调用方自定义 Factory三个方法、手写
+`BuildRun` Assembly和自定义 `RoundExecutor`，同时保持所有能力显式注入。
+
 ## 明确 non-goal
 
 本 package 不提供：

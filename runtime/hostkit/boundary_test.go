@@ -20,6 +20,7 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 		"Factory",
 		"ModelResult",
 		"ModelToolRoundAdapter",
+		"ModelToolClientConfig",
 		"ModelToolRoundConfig",
 		"ModelToolRoundExchange",
 		"ModelToolRoundResult",
@@ -27,7 +28,7 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 		"RunResult",
 		"ToolResult",
 	})
-	assertStrings(t, "functions", funcs, []string{"Execute", "New", "NewModelToolRoundAdapter"})
+	assertStrings(t, "functions", funcs, []string{"Execute", "New", "NewModelToolClient", "NewModelToolRoundAdapter"})
 	assertStrings(t, "methods", methods, []string{"Execute", "ExecuteRound"})
 
 	content, err := os.ReadFile("API.md")
@@ -46,6 +47,8 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 		"ModelToolRoundAdapter",
 		"ModelToolRoundConfig",
 		"NewModelToolRoundAdapter",
+		"ModelToolClientConfig",
+		"NewModelToolClient",
 		"ExecuteRound",
 		"RequestModel",
 		"ExecuteTools",
