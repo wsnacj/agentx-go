@@ -15,6 +15,7 @@ runtime/assetfs	experimental_extension	runtime/assetfs/API.md	-
 runtime/artifact	experimental_extension	runtime/artifact/API.md	-
 runtime/budget	experimental_extension	runtime/budget/API.md	-
 runtime/cases	experimental_extension	runtime/cases/API.md	-
+runtime/channel	experimental_extension	runtime/channel/API.md	-
 runtime/construction	experimental_extension	runtime/construction/API.md	-
 runtime/controlcontract	experimental_extension	runtime/controlcontract/API.md	-
 runtime/execution	developer_preview_candidate	runtime/execution/API.md	9b14badccb2147b8229bd030e8e6e6144c35f6f47884bae300da8d97127341bb

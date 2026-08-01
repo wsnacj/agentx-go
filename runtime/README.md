@@ -29,6 +29,10 @@ github.com/wsnacj/agentx-go/runtime
 - [`runstore`](./runstore/API.md)：Run、NodeExecution和Event的数据合同、存储 port、
   node execution投影，以及并发安全的 `MemoryStore`；durable backend、事务、保留期、
   跨进程一致性和恢复策略继续由 Host拥有。
+- [`channel`](./channel/API.md)：portable message/target与sender/runner ports、routing、
+  chunking、in-memory dedupe、bounded ingress queue/worker/cancellation/Shutdown和
+  display-safe session delivery合同；pairing、access policy、平台SDK、credential、
+  durable backend与真实网络发送继续由Host拥有。
 - [`construction`](./construction/API.md)：通过窄 `Host` port组合 model、
   runner、adapter和根 Client，拥有阶段顺序、context检查、失败清理与 ownership
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。

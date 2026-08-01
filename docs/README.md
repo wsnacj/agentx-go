@@ -58,13 +58,14 @@ temporary Workflow planning机制、LLM组件和
 32. [`runtime/controlcontract` 中文 API Reference](../runtime/controlcontract/API.md)
 33. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
 34. [`runtime/executionpolicy` 中文 API Reference](../runtime/executionpolicy/API.md)
-35. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
-36. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
-37. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
-38. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
-39. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
-40. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
-41. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+35. [`runtime/channel` 中文 API Reference](../runtime/channel/API.md)
+36. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
+37. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
+38. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
+39. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
+40. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+41. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+42. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
 
 可运行验证位于：
 

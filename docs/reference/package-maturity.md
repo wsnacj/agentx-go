@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的43个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的44个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -19,6 +19,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `components/llm` | Developer Preview candidate | [LLM API](../../components/llm/API.md) | provider-neutral 模型、消息、工具和 usage 合同 |
 | `runtime/execution` | Developer Preview candidate | [Execution API](../../runtime/execution/API.md) | 根 Client 与 Host 之间的 typed dispatch |
 | `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行policy DTO、Host编译port与metadata/retry/decision/report reducer |
+| `runtime/channel` | Experimental extension | [API](../../runtime/channel/API.md) | portable message/sender ports、bounded ingress与session delivery合同 |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model/Tool Adapter 组合与低样板 Client 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
 | `runtime/artifact` | Experimental extension | [API](../../runtime/artifact/API.md) | Artifact identity、lineage、registry合同与并发安全内存实现 |
@@ -61,7 +62,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-43个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+44个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
