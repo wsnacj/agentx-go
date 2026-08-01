@@ -1,7 +1,7 @@
 // Package executionpolicy定义 substrate-neutral 的执行身份、可见性、预算、循环、
-// approval、replay、sandbox和 evidence policy DTO，以及 Host编译 port。
+// approval、replay、sandbox和 evidence policy DTO、Host编译 port及确定性执行reducer。
 //
-// 本 package只拥有合同和 JSON shape，不执行授权、审批、sandbox或真实副作用。
+// 本 package不执行授权、审批、sandbox、工具调用、Host adapter或真实副作用。
 package executionpolicy
 
 import "context"

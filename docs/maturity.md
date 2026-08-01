@@ -8,7 +8,7 @@
 | 当前产品里程碑 | M5Q Portable Execution Decision, Retry and Snapshot Metadata Kernel：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5P canonical landing：43个package、219个production source、86,780行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5Q canonical landing：43个package、225个production source、88,267行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -285,6 +285,11 @@ M5P已于2026-08-02获Owner接受；该接受不构成成熟度晋级或发行�
 metadata、bounded retry command、runtime decision/packet、execution-loop report与
 soft-rejection kernel。compiler/derive、authorization、sandbox、具体browser/network/
 gateway policy、Host backend和真实副作用不进入M5Q。
+
+M5Q canonical已在既有Experimental `runtime/executionpolicy`落地上述6个source和原
+合同测试，使agentx-go达到43个package、225个production source、88,267行；新增kernel
+只生成typed command/report/reducer，不执行Host副作用。fixed consumer与HS production
+cutover仍在本wave内继续，当前不构成技术checkpoint。
 
 ## 明确 non-goal
 

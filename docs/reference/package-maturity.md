@@ -18,7 +18,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `agentx` | Developer Preview candidate | [根 API](agentx.md) | Client、Run、错误、画像和生命周期 |
 | `components/llm` | Developer Preview candidate | [LLM API](../../components/llm/API.md) | provider-neutral 模型、消息、工具和 usage 合同 |
 | `runtime/execution` | Developer Preview candidate | [Execution API](../../runtime/execution/API.md) | 根 Client 与 Host 之间的 typed dispatch |
-| `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行 policy DTO与 Host编译 port |
+| `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行policy DTO、Host编译port与metadata/retry/decision/report reducer |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model/Tool Adapter 组合与低样板 Client 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
 | `runtime/artifact` | Experimental extension | [API](../../runtime/artifact/API.md) | Artifact identity、lineage、registry合同与并发安全内存实现 |
