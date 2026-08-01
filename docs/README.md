@@ -57,6 +57,7 @@ M5C Portable Pack Core、LLM组件和已迁 Runtime owner，目标是让调用�
 - [`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)
 - [`extensions/conformance/astock-contract-consumer`](../extensions/conformance/astock-contract-consumer)
 - [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)
+- [`extensions/conformance/pack-consumer`](../extensions/conformance/pack-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；

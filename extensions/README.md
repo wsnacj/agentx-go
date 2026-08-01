@@ -31,7 +31,8 @@ contract/runtime/components -X-> extensions
 固定版本、无 HS、无长期 `replace` 的组合验证位于：
 
 - [`conformance/astock-contract-consumer`](conformance/astock-contract-consumer)；
-- [`conformance/domain-module-consumer`](conformance/domain-module-consumer)。
+- [`conformance/domain-module-consumer`](conformance/domain-module-consumer)；
+- [`conformance/pack-consumer`](conformance/pack-consumer)。
 
 本地验证：
 
