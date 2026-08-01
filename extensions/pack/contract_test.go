@@ -23,16 +23,20 @@ func testCoordinator(t *testing.T) *Coordinator {
 	t.Helper()
 	coordinator, err := NewCoordinator(
 		validatorFunc(func(workflow.Spec) error { return nil }),
-		lowererFunc(func(node workflow.NodeSpec) (string, error) {
-			args, _ := node.Config["args"].(map[string]any)
-			encoded, err := json.Marshal(args)
-			return string(encoded), err
-		}),
+		testToolArgumentLowerer(),
 	)
 	if err != nil {
 		t.Fatalf("NewCoordinator(): %v", err)
 	}
 	return coordinator
+}
+
+func testToolArgumentLowerer() ToolArgumentLowerer {
+	return lowererFunc(func(node workflow.NodeSpec) (string, error) {
+		args, _ := node.Config["args"].(map[string]any)
+		encoded, err := json.Marshal(args)
+		return string(encoded), err
+	})
 }
 
 func testDefinition() Definition {
