@@ -34,10 +34,13 @@ github.com/wsnacj/agentx-go/runtime
   transfer；具体 provider、Runner、adapter与产品策略继续由 host注入。
 - [`controlcontract`](./controlcontract/API.md)：公共执行控制状态、evidence、Objective、
   Host adapter catalog/request/readback、Managed Objective Ingress与closeout projection，
+  durable-store request/result/readback、trace-backed final answer、async delegation controller/
+  completion/runtime handoff与strategy metadata，
   blocker、next action与display-safe合同，以及Objective Spec/strict JSON、capability/
   strategy catalog、intensity/controller、graph validation、evidence verification、
   recovery/replanning、Host effect request-result-readback及admission/invocation kernel；
-  具体adapter、delegation normalization、执行、调度backend、持久化与产品策略留在Host。
+  具体adapter、delegation normalization、LLM/provider、worker dispatch、执行、调度backend、
+  持久化与产品策略留在Host。
 - [`execution`](./execution/API.md)：把根 `agentx.Client` 的 adapter request
   确定性分派给窄 `Host` port，组装 adapter result并转发 Shutdown与 error
   classification；具体 engine input/output、model/tool/backend继续由 host拥有。

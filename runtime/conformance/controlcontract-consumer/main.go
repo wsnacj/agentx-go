@@ -73,9 +73,13 @@ func run() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	objectiveCompletionStatus, err := validateObjectiveCompletionContract()
+	if err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(
-		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s:%s:%s",
+		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s:%s:%s:%s",
 		projection.Status,
 		budget.RetryBudgetRemaining,
 		lifecycle.To,
@@ -85,7 +89,36 @@ func run() (string, error) {
 		hostEffectStatus,
 		objectiveRuntimeStatus,
 		hostAdapterStatus,
+		objectiveCompletionStatus,
 	), nil
+}
+
+func validateObjectiveCompletionContract() (string, error) {
+	durable := controlcontract.BuildObjectiveRunStoreDurableRequest(controlcontract.ObjectiveRunStoreDurableRequestInput{})
+	if durable.ReadyForHostObjectiveRunStore || durable.HostMayPersistObjectiveRun || durable.DurableWriteByCore || durable.RunnerEffect != "none" {
+		return "", fmt.Errorf("hostless durable projection did not fail closed: %#v", durable)
+	}
+	answer := controlcontract.BuildObjectiveFinalAnswer(nil, controlcontract.ObjectiveFinalAnswerInput{EnableSynthesizer: true})
+	if answer.ReadyForUser || answer.FailureClass != controlcontract.FailureConfigMissing || answer.NextHostAction != "provide_objective_final_answer_synthesizer" {
+		return "", fmt.Errorf("hostless final answer did not require a synthesizer: %#v", answer)
+	}
+	completion := controlcontract.BuildAutoDelegationAsyncCompletionProjection(controlcontract.AutoDelegationAsyncCompletionInput{})
+	if completion.Ready || completion.ReadyForResume || completion.RunnerEffect != "none" {
+		return "", fmt.Errorf("hostless async completion did not fail closed: %#v", completion)
+	}
+	controller := controlcontract.BuildAutoDelegationControllerDecision(controlcontract.AutoDelegationControllerInput{})
+	if controller.Ready || controller.HostMayDispatch || controller.RunnerEffect != "none" || controller.RuntimeEffect != "none" {
+		return "", fmt.Errorf("hostless delegation controller did not fail closed: %#v", controller)
+	}
+	strategy := controlcontract.BuildWorkflowStrategyCatalogEntry(controlcontract.WorkflowStrategyCatalogEntryInput{
+		WorkflowRef:    "workflow:fixed-consumer",
+		CandidateRef:   "strategy:fixed-consumer-workflow",
+		CapabilityRefs: []controlcontract.DisplaySafeRef{"capability:fixed-consumer-workflow-runtime"},
+	})
+	if strategy.Status != controlcontract.VerificationSatisfied || strategy.SourceKind != controlcontract.StrategyCatalogSourceWorkflow {
+		return "", fmt.Errorf("workflow strategy metadata is not ready: %#v", strategy)
+	}
+	return "objective_completion_contract_ready", nil
 }
 
 func validateHostAdapterIngressProjection() (string, error) {

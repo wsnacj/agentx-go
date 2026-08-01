@@ -418,6 +418,53 @@ func BuildProductionAdapterObjectiveCloseoutHostView(ProductionAdapterObjectiveC
 动作。调用方必须在独立Host边界完成真实决策/副作用，再把结构化结果和readback交回本包；
 缺少confirmation、idempotency、expected-result或readback时始终阻断。
 
+## Objective completion、durable projection 与 delegation coordination
+
+Objective durable-store合同把已经完成的runtime step投影为Host request、result和readback：
+
+```go
+type ObjectiveRunStoreDurableRequest struct { ... }
+type ObjectiveRunStoreDurableResult struct { ... }
+type ObjectiveRunStoreDurableReadback struct { ... }
+
+func BuildObjectiveRunStoreDurableRequest(ObjectiveRunStoreDurableRequestInput) ObjectiveRunStoreDurableRequest
+func BuildObjectiveRunStoreDurableResult(ObjectiveRunStoreDurableResultInput) ObjectiveRunStoreDurableResult
+func BuildObjectiveRunStoreDurableReadback(ObjectiveRunStoreDurableReadbackInput) ObjectiveRunStoreDurableReadback
+```
+
+它只核对transaction、idempotency、expected event/state/result和display-safe readback；
+`HostMayPersistObjectiveRun`表示Host输入已满足，不写RunStore/objective store，不执行事务或
+replay。所有`*WriteByCore`字段保持false。
+
+Final-answer API只接受已经结构化、可追溯的trace。默认路径使用确定性fallback draft；若
+显式开启synthesizer，必须由Host注入窄port并接收`context.Context`：
+
+```go
+type ObjectiveFinalAnswerSynthesizer interface {
+    SynthesizeObjectiveFinalAnswer(context.Context, ObjectiveFinalAnswerSynthesisRequest) (ObjectiveFinalAnswerSynthesisResponse, error)
+}
+
+func BuildObjectiveFinalAnswerTrace(ObjectiveFinalAnswerTraceInput) ObjectiveFinalAnswerTrace
+func BuildObjectiveFinalAnswer(context.Context, ObjectiveFinalAnswerInput) ObjectiveFinalAnswer
+```
+
+本包不选择模型/provider，不读取transcript/raw output，也不把synthesizer输出自动当成事实；
+answer必须继续满足trace、evidence和display-safe gate。
+
+异步delegation只拥有child readback/completion、parent resume request和确定性controller：
+
+```go
+func BuildAutoDelegationAsyncCompletionProjection(AutoDelegationAsyncCompletionInput) AutoDelegationAsyncCompletionProjection
+func BuildAutoDelegationControllerDecision(AutoDelegationControllerInput) AutoDelegationControllerDecision
+func BuildDelegationObjectiveRuntimeHandoff(DelegationObjectiveRuntimeHandoffInput) DelegationObjectiveRuntimeHandoff
+func BuildDelegationStrategyCatalogSnapshot(DelegationStrategyCatalogSnapshotInput) StrategyCatalogSnapshot
+func BuildWorkflowStrategyCatalogSnapshot(WorkflowStrategyCatalogSnapshotInput) StrategyCatalogSnapshot
+```
+
+`HostMayDispatch`、`ReadyForResume`和runtime handoff readiness只描述Host下一动作；本包不创建
+worker/subagent、不调度/取消任务、不恢复进程，也不执行Workflow。具体backend与
+`RuntimeAdapterExecutionResult`到Observation的翻译继续由Host拥有。
+
 ## Approval、budget、幂等与生命周期
 
 ```go
@@ -439,8 +486,8 @@ func CheckLifecycleTransition(LifecycleStage, LifecycleStage) LifecycleTransitio
 ## 并发、取消与错误
 
 本包不保存可变全局状态，纯函数可由多个 goroutine 并发调用。只有调用Host port的
-`BuildObjectiveSpecWithBuilder`、`BuildObjectiveGraphWithPlanner`与
-`BuildObjectiveSemanticVerification`接收
+`BuildObjectiveSpecWithBuilder`、`BuildObjectiveGraphWithPlanner`、
+`BuildObjectiveSemanticVerification`与`BuildObjectiveFinalAnswer`接收
 `context.Context`，并把取消/deadline传给Host实现；其余计算是内存中的有界同步判定。
 Shutdown属于上层 Runtime/Host 合同。
 
@@ -466,11 +513,13 @@ if !result.Allowed {
 
 [`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
 是独立 nested module，固定依赖
-`v0.0.0-20260801184120-1fdddbc8d76f`，不使用 `replace`，也不 import HS、Runner、
+`v0.0.0-20260801192832-e4c46c0a6b76`，不使用 `replace`，也不 import HS、Runner、
 Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
 lifecycle transition、unsafe-ref fail-closed、单节点Objective Graph validation，以及
 Objective evidence verification/recovery proposal、Host effect gate、Objective runtime/
-executor/productization，以及Host adapter catalog/registry和Managed Objective Ingress路径：
+executor/productization、Host adapter catalog/registry、Managed Objective Ingress，以及
+durable-store projection、trace-backed final answer、async delegation/controller和strategy
+metadata路径：
 
 ```bash
 cd runtime/conformance/controlcontract-consumer
@@ -481,12 +530,14 @@ GOWORK=off go run .
 预期输出：
 
 ```text
-agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready:objective_runtime_contract_ready:host_adapter_ingress_contract_ready
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready:objective_runtime_contract_ready:host_adapter_ingress_contract_ready:objective_completion_contract_ready
 ```
 
 ## 非目标
 
 - 不提供具体Objective executor、runtime loop dispatch、scheduler backend/execution或RunStore；
+- 不实现RunStore/objective store transaction、durable write、replay或真实parent resume；
+- 不选择或调用具体LLM/provider；final-answer synthesizer只能由Host显式注入；
 - 不提供具体runtime/production adapter实例、provider discovery或adapter-result input翻译；
 - 不创建真实delegation worker/session，不执行child dispatch或parent durable merge；
 - 不探测真实capability，不选择provider，不执行strategy或graph node；
