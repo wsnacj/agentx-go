@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5E Portable Skills Core已获 Owner接受；M5F Run/Artifact Data Plane技术 checkpoint complete / awaiting Owner acceptance |
+| 当前产品里程碑 | M5F Run/Artifact Data Plane已获 Owner接受；M5G Portable ProductShell Preparation技术 checkpoint完成，等待 Owner接受 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5F技术 checkpoint：40个 package、119个 production source、25,369行；仍为8个 Developer Preview candidate |
+| agentx-go production packages | M5G canonical landing：42个 package、132个 production source、27,328行；仍为8个 Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；M5C/M5D/M5E均已获 Owner接受，Portable Skills Core保持 Experimental |
+| Extensions module | 单一 private-preview共享 module；M5C/M5D/M5E均已获 Owner接受，Skills与M5G ProductShell Preparation保持 Experimental |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -20,17 +20,17 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股、M5E Skills与 M5F Run Data Plane consumer均无 HS/Runner/replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E及 M5F production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及 Extension fixed-version consumer已提供；M5D A股、M5E Skills、M5F Run Data Plane与M5G ProductShell consumer均无 HS/Runner/长期replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F及 M5G production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 40个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 42个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前40个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前42个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -127,7 +127,26 @@ candidate仍为8个。canonical code commit为 `075f8158b05a`，fixed runtime版
 输出 `agentx-run-data-plane-ok:event-1:artifact-consumer-1:1:1`。HS的durable
 RunStore backend、Store adapter、文件BlobStore、private file安全写入和具体Artifact
 runtime投影继续由Host拥有。canonical production实测为40个package、119个source、
-25,369行；M5F技术 checkpoint等待Owner接受，不构成成熟度晋级或发行授权。
+25,369行；M5F checkpoint已经Owner接受，但不构成成熟度晋级或发行授权。
+
+M5G在不迁入产品策略的前提下新增两个真实 owner：`runtime/cases`拥有 Case数据合同、
+规范化/复制 helper和最小Store port；`extensions/productshell`拥有无副作用输入投影、
+Shell/Case/Workflow绑定helper，以及通过显式 `PreparationRuntime` Host port运行的固定
+准备顺序。两者均为 **Experimental extension**，没有进入8个 Developer Preview
+candidate，更不构成 Public、Beta或Stable。canonical提交分别为 `651dab4f0a53`和
+`cd5d97b84728`；当前fixed extensions版本为
+`v0.0.0-20260801114445-cd5d97b84728`。M5G新增13个production source、1,959行，
+使canonical实测增至42个package、132个source、27,328行。
+
+ProductShell接入明确分成两阶段：先用canonical helper完成纯输入投影，再由
+`PreparationPipeline`按固定顺序调用Host提供的session binding、command、Pack/Case、
+Workflow和validation port。fixed-version consumer位于
+`extensions/conformance/productshell-consumer`，不依赖HS、Runner、长期`replace`、
+provider或网络。自然语言规划、LLM、产品推断、Pack/Workflow/Case backend、持久化、
+Objective和Scene继续留在Host；`PrepareResult`只表示准备完成，不表示Workflow已经执行。
+当前W2-A closure按既有口径为 `406/57/2369/65`，owner分布为
+`HS 119 / canonical 32 / Scene 0`。该增量只证明source authority边界可迁移，不改变
+`not_ready_for_hostless_w2b`，也不解除任何发行门禁。
 
 ## 明确 non-goal
 

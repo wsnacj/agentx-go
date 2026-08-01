@@ -6,10 +6,12 @@
 import cases "github.com/wsnacj/agentx-go/runtime/cases"
 ```
 
-成熟度：**Experimental / private validation**。
+成熟度：**Experimental extension / private validation**。
 
-本包定义 AgentX 的 Case 数据合同、规范化/复制 helper 和最小存储端口。它不提供
-数据库、文件或远程存储实现，也不拥有 Pack 选择、Workflow 执行或产品策略。
+本包定义 AgentX 的 Case 数据合同、规范化/复制 helper 和最小存储端口。它是
+[`extensions/productshell`](../../extensions/productshell/API.md)准备阶段使用的
+canonical Case source authority，但不提供数据库、文件或远程存储实现，也不拥有
+Pack选择、Workflow执行或产品策略。
 
 ## Case
 
@@ -63,8 +65,10 @@ type Store interface {
 }
 ```
 
-`Store` 只固定可替换 backend 的最小方法集合；错误 identity、排序、并发、事务、
-取消响应和 durable guarantee 由具体实现声明。本包不提供默认 backend。
+`Store`只固定可替换 backend的最小方法集合；错误 identity、排序、并发、事务、
+取消响应和 durable guarantee由具体实现声明。本包不提供默认backend。接口接收
+`context.Context`，但是否以及何时响应取消或deadline取决于具体backend；调用方不得
+假定任意实现都有相同I/O或关闭行为。
 
 ## 示例
 
@@ -89,3 +93,6 @@ if err := store.UpsertCase(ctx, value); err != nil {
 - 不选择 Pack、Workflow、policy 或 provider；
 - 不依赖 HS、Runner、Scene、credential 或网络；
 - 不构成 Public、Beta、Stable 或正式发行声明。
+
+ProductShell接入示例见
+[ProductShell两阶段准备指南](../../docs/guides/product-shell-preparation.md)。

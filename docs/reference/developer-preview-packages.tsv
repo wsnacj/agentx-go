@@ -9,10 +9,12 @@ extensions/astock/internal/packsignal	internalization_candidate	extensions/astoc
 extensions/astock/internal/packvaluation	internalization_candidate	extensions/astock/internal/packvaluation/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-
+extensions/productshell	experimental_extension	extensions/productshell/API.md	-
 extensions/skills	experimental_extension	extensions/skills/API.md	-
 runtime/assetfs	experimental_extension	runtime/assetfs/API.md	-
 runtime/artifact	experimental_extension	runtime/artifact/API.md	-
 runtime/budget	experimental_extension	runtime/budget/API.md	-
+runtime/cases	experimental_extension	runtime/cases/API.md	-
 runtime/construction	experimental_extension	runtime/construction/API.md	-
 runtime/execution	developer_preview_candidate	runtime/execution/API.md	9b14badccb2147b8229bd030e8e6e6144c35f6f47884bae300da8d97127341bb
 runtime/executionpolicy	experimental_extension	runtime/executionpolicy/API.md	-
