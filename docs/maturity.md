@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5G Portable ProductShell Preparation已获Owner接受；M5H Observation / Host Handoff canonical landing、fixed consumer与HS cutover完成，final checkpoint验证进行中 |
+| 当前产品里程碑 | M5G Portable ProductShell Preparation已获Owner接受；M5H Observation / Host Handoff技术checkpoint完成，等待Owner接受；当前没有新的active implementation |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5H canonical landing：42个package、137个production source、28,567行；仍为8个Developer Preview candidate |
@@ -167,6 +167,17 @@ output parser、完整 `ObservationSnapshot`、process inventory、历史存储�
 authorization以及真实log/UI/HTTP delivery继续由Host拥有；本包也不把Runtime声明为
 delivery source。该landing不改变 `not_ready_for_hostless_w2b`，不表示ProductShell
 Runtime已经整体迁入，也不构成任何正式发行或兼容承诺。
+
+M5H最终验证中，root/components/runtime/extensions的test、race、vet、tidy-diff和
+list全部通过；`runtime/hosthttp/hostserver`在受限沙箱内的两项loopback启动测试在
+非沙箱环境复测通过。fixed consumer、42/8 API/doc gate、import direction及module
+cache/zip回读均通过。HS唯一一次完整回归为149个package PASS、2个既有治理package
+FAIL、20个无测试package，3个失败测试仍由同一条既有evidence source-scope
+stale/mismatch产生，没有新增功能回归。W2-A closure为 `406/57/2374/65`、
+`HS119/canonical32/Scene0`；新增的5个source位于既有canonical package内，因此不改变
+package owner分布或 `not_ready_for_hostless_w2b`。本状态是
+`technical_checkpoint_complete_awaiting_owner_acceptance`，不是Developer Preview、
+Public、Beta、Stable或发行授权。
 
 ## 明确 non-goal
 
