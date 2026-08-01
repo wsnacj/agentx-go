@@ -171,3 +171,47 @@ func TestExternalConsumerBuildsObjectiveGraphKernel(t *testing.T) {
 		t.Fatalf("graph validation = %#v", result)
 	}
 }
+
+func TestExternalConsumerBuildsVerificationAndRecoveryKernel(t *testing.T) {
+	frame := controlcontract.ObjectiveFrame{
+		ID: "objective:external-verification",
+		RequiredEvidence: []controlcontract.EvidenceRef{{
+			Ref:      "evidence:metric",
+			Kind:     "metric",
+			Strength: controlcontract.EvidenceStrong,
+			Source:   "adapter:metrics",
+		}},
+	}.Normalize()
+	normalized := (controlcontract.ObservationNormalizationResult{
+		Status: controlcontract.VerificationSatisfied,
+		Frame:  frame,
+		Observations: []controlcontract.Observation{{
+			Kind:     "metric",
+			Source:   "adapter:metrics",
+			Subject:  "objective:external-verification",
+			Strength: controlcontract.EvidenceStrong,
+			EvidenceRefs: []controlcontract.EvidenceRef{{
+				Ref:      "evidence:metric",
+				Kind:     "metric",
+				Strength: controlcontract.EvidenceStrong,
+				Source:   "adapter:metrics",
+			}},
+		}},
+	}).Normalize()
+	verification := controlcontract.BuildObjectiveVerificationGate(controlcontract.ObjectiveVerificationGateInput{
+		Frame:         frame,
+		Normalization: normalized,
+	})
+	if !verification.Satisfied || verification.Status != controlcontract.VerificationSatisfied {
+		t.Fatalf("verification = %#v", verification)
+	}
+
+	recovery := controlcontract.BuildObjectiveRecoveryContractFromJSON(controlcontract.ObjectiveRecoveryContractJSONDecodeInput{
+		RawJSON:     []byte(`{"answer_contract":{"recovery_recommended":true,"recovery_targets":[{"missing_input":"evidence:detail","suggested_tools":["capability:detail_lookup"]}]}}`),
+		ContractRef: "contract:external-recovery",
+		ObjectiveID: "objective:external-verification",
+	})
+	if !recovery.Decoded || !recovery.Contract.Recommended || recovery.Contract.ReplanProposal.Action != controlcontract.ObjectiveReplanProposalActionAddEvidenceNode {
+		t.Fatalf("recovery = %#v", recovery)
+	}
+}
