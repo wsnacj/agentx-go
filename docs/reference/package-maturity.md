@@ -1,15 +1,15 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的32个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的37个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
 
 | 分级 | 本阶段含义 | 兼容性含义 |
 | --- | --- | --- |
-| Developer Preview candidate | M3E 选定的 Open Tool Loop与 Workflow标准路径直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
+| Developer Preview candidate | M3E 选定的 Core标准路径或 M5D选定的 A股推荐入口直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
 | Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定伪版本并评估升级差异 |
-| internalization candidate | 当前为迁移和 source-authority 收口而导出，Beta 前优先评估收进 internal 或由上层 Facade 隐藏 | 不建议新项目直接依赖 |
+| internalization candidate | 当前属于低层迁移 owner，或已位于 `internal`并由上层 Facade隐藏 | 新项目不得或不应直接依赖 |
 
 ## 当前矩阵
 
@@ -21,7 +21,12 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行 policy DTO与 Host编译 port |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model/Tool Adapter 组合与低样板 Client 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
+| `extensions/astock` | Developer Preview candidate | [A股 Extension API](../../extensions/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
 | `extensions/astock/contracts` | Experimental extension | [API](../../extensions/astock/contracts/API.md) | A股 portable DTO、JSON normalization与 assessment |
+| `extensions/astock/hostkit` | Experimental extension | [API](../../extensions/astock/hostkit/API.md) | 无 provider的 A股 intent、handler协调、readiness与回答格式化 |
+| `extensions/astock/internal/packresearch` | internalization candidate | [API](../../extensions/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
+| `extensions/astock/internal/packsignal` | internalization candidate | [API](../../extensions/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
+| `extensions/astock/internal/packvaluation` | internalization candidate | [API](../../extensions/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
 | `runtime/hosthttp/hostserver` | Experimental extension | [API](../../runtime/hosthttp/hostserver/API.md) | Host-deployed HTTP transport、request identity 与有界关闭 |
@@ -50,7 +55,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-32个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+37个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
@@ -62,7 +67,7 @@ GOWORK=off go run scripts/check_developer_preview_api.go
 
 1. 四个 module 当前 production package 与矩阵一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 七个 Developer Preview candidate 的 `go doc -all` 签名未漂移。
+3. 八个 Developer Preview candidate 的 `go doc -all` 签名未漂移。
 
 更新候选签名必须同时完成 focused owner/consumer review、中文 Reference 修订和
 baseline 更新。该门禁不生成完整文档站，也不替代未来 semver/API compatibility

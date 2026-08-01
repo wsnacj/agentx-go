@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5C Portable Pack Core技术 checkpoint complete / awaiting owner acceptance |
+| 当前产品里程碑 | M5D A-Stock Portable Domain Extension Developer Preview Vertical Closure / active |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5C canonical landing后为根合同、LLM、27个 Runtime owner及3个 Extension owner，共32个 package |
+| agentx-go production packages | M5D canonical landing进行中：根合同、LLM、27个 Runtime owner及8个 Extension owner，共37个 package |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；当前含 A股 portable contracts、Domain Module coordinator与 Portable Pack Core |
+| Extensions module | 单一 private-preview共享 module；M5C Pack Core已获接受，M5D正增加 A股推荐入口、Host Kit及3个 internal Pack owner |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -19,17 +19,17 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime和 Extension fixed-version consumer已提供 |
-| HS canonical import | W1-C、M5A、M5B及 M5C consumer已切换固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及 contracts/domainmodule/pack fixed-version consumer已提供；M5D A股组合 consumer仍待闭合 |
+| HS canonical import | W1-C、M5A、M5B及 M5C consumer已切换固定 private pseudo-version；M5D A股 production cutover进行中 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 32个全部有中文 Reference；7个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 37个全部有中文 Reference；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前32个 production package均有中文 Reference；只说明
+- **API文档正文覆盖**：当前37个 production package均有中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -83,12 +83,20 @@ M5B又迁入 `extensions/domainmodule`真实portable registration coordinator，
 九个 HS Scene module直接使用canonical合同。该 package仍为 Experimental extension；
 HS Target和具体宿主/Scene策略没有被伪装成已迁移或可发布。
 
-M5C已落地 `runtime/executionpolicy` portable DTO与 `extensions/pack`真实机制。
+M5C已落地 `runtime/executionpolicy` portable DTO与 `extensions/pack`真实机制，
+并已获 Owner接受。
 Pack coordinator通过显式 Validator和 ToolArgumentLowerer ports保留 Host policy与
 mapping边界；HS旧 Pack Core降为薄 compatibility adapter，真实 production与 fixed
-external consumer均已切换。canonical production现为32个 package、90个 source、
-17,685行；`pack/runtime` memory/eval backend及具体 Scene内容仍由 HS拥有。该技术
-checkpoint等待 Owner接受，不构成 Public/Beta/Stable或发行授权。
+external consumer均已切换。M5C checkpoint时 canonical production为32个 package、
+90个 source、17,685行；`pack/runtime` memory/eval backend及具体 Scene内容仍由
+HS拥有。该接受不构成 Public/Beta/Stable或发行授权。
+
+M5D正在建立 `extensions/astock`推荐入口与 `extensions/astock/hostkit`，并把三组
+A股 Pack Definition/evaluator放入不可外部导入的 internal owner。当前37个 package
+均已有中文 Reference，`extensions/astock`作为第八个 Developer Preview candidate
+进入 focused签名门禁。该 active状态尚不表示 fixed-version组合 consumer、HS
+production cutover或最终回归已经完成；A股 provider、livekit、credential、cache、
+source priority和真实网络继续由 HS拥有。
 
 ## 明确 non-goal
 
@@ -101,7 +109,7 @@ checkpoint等待 Owner接受，不构成 Public/Beta/Stable或发行授权。
 - Objective Runtime Loop；
 - 长任务调度、子 Session 和 durable lifecycle；
 - Resume、progress/event stream；
-- Scene领域 handler/service、CLI、provider、credential；
+- concrete Scene service/CLI/provider/credential与带真实副作用的 handler；
 - 真实网络或生产副作用。
 
 ## 后续晋级

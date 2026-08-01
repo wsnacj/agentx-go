@@ -1,0 +1,118 @@
+{
+  "name": "a_stock_signal_lookup",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": [
+    "read"
+  ],
+  "risk_profile": "low",
+  "audit_tags": [
+    "agentx-a-stock",
+    "signal",
+    "public-evidence"
+  ],
+  "description": "A-share signal lookup. The default livekit supports Tonghuashun hot-topic/reason-tag evidence for hot_reason, Eastmoney subject concept blocks for concept_blocks, Eastmoney stock fund-flow evidence for fund_flow, Eastmoney Dragon Tiger Board evidence for dragon_tiger_board/daily_dragon_tiger, Eastmoney lockup-expiry evidence for lockup_expiry, Eastmoney industry-board evidence for industry_comparison, and host-owned cache evidence for northbound_flow when NorthboundFlowCacheRoot or NorthboundFlowCacheFile is configured. Northbound flow must return an unsupported boundary when that host cache is not configured.",
+  "plugin": "a-stock-data",
+  "groups": [
+    "group:a-stock-data"
+  ],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {
+        "type": "string",
+        "description": "Original user request. Preserve company names, symbols, relative-date hints, requested fields, source constraints, and freshness requirements verbatim."
+      },
+      "entity_name": {
+        "type": "string",
+        "description": "Candidate A-share entity/company name inferred from the request; adapters must verify the subject."
+      },
+      "stock_code": {
+        "type": "string",
+        "description": "A-share stock code or symbol hint from the user or upstream resolver. Candidate only; adapters verify the listed security."
+      },
+      "market": {
+        "type": "string",
+        "enum": [
+          "auto",
+          "sh",
+          "sz",
+          "bj"
+        ],
+        "description": "Candidate A-share market hint. Host adapters normalize and verify the final market."
+      },
+      "signal_types": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "hot_reason",
+            "concept_blocks",
+            "fund_flow",
+            "northbound_flow",
+            "dragon_tiger_board",
+            "daily_dragon_tiger",
+            "lockup_expiry",
+            "industry_comparison"
+          ]
+        },
+        "description": "Signal types requested by the user. These are candidate intent; adapters verify available source evidence."
+      },
+      "trade_date": {
+        "type": "string",
+        "description": "Explicit A-share trade date requested by the user or host policy."
+      },
+      "lookback_days": {
+        "type": "integer",
+        "description": "Number of days to look back for signal evidence when the user asks for recent or rolling-window signals."
+      },
+      "forward_days": {
+        "type": "integer",
+        "description": "Number of future days to inspect for scheduled or upcoming signal events when supported by the host source."
+      },
+      "freshness": {
+        "type": "object",
+        "description": "Freshness constraints from the user. Host adapters must verify source timestamps, trading-day status, and delayed/realtime availability.",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Freshness mode such as latest_available, realtime, delayed_ok, explicit_trade_date, or recent_period."
+          },
+          "relative_date_hint": {
+            "type": "string",
+            "description": "Relative date phrase from the user, kept verbatim for freshness and trading-day guard."
+          },
+          "trade_date": {
+            "type": "string",
+            "description": "Explicit A-share trade date requested by the user or host policy."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Timestamp or date at which the source evidence should be considered current."
+          },
+          "require_realtime": {
+            "type": "boolean",
+            "description": "Whether delayed market data is unacceptable for this request."
+          },
+          "require_latest_trading_day": {
+            "type": "boolean",
+            "description": "Whether the response must use the latest trading day available for the verified market."
+          }
+        }
+      },
+      "source_policy": {
+        "type": "string",
+        "description": "Optional host/source policy hint such as official-only, delayed-data acceptable, or provider preference. This is not an authorization source."
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Maximum number of source records or evidence items requested. Host adapters may cap this to provider-safe limits."
+      }
+    },
+    "required": [
+      "user_message"
+    ]
+  },
+  "records": []
+}
