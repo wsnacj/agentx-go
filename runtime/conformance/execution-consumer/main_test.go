@@ -10,6 +10,9 @@ import (
 )
 
 func TestFixedVersionConsumerRunsAndShutsDownThroughCanonicalExecution(t *testing.T) {
+	if status, err := validateExecutionPolicyKernel(); err != nil || status != "execution_policy_kernel_ready" {
+		t.Fatalf("validateExecutionPolicyKernel() = %q, %v", status, err)
+	}
 	client, err := newClient()
 	if err != nil {
 		t.Fatalf("newClient(): %v", err)

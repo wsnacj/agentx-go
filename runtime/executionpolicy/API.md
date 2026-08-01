@@ -81,6 +81,25 @@ func PrimarySoftRejectionDecision([]SoftRejectionDecision) (SoftRejectionDecisio
 kernel不返回Go error；blocker、missing input、status和next Host action保留为typed字段。
 `RuntimeEnforcementResult.Err`不会进入JSON，调用方不得把raw error写入display-safe refs。
 
+## Fixed-version external consumer
+
+[`runtime/conformance/execution-consumer`](../conformance/execution-consumer)固定依赖
+`v0.0.0-20260801195859-a83a74b77995`，不使用`replace`，也不import HS、Runner、Scene、
+provider或backend。除验证根execution Client的Run/Shutdown外，它还覆盖Snapshot metadata、
+ready bounded retry command、decision packet和no-side-effect execution-loop report：
+
+```bash
+cd runtime/conformance/execution-consumer
+GOWORK=off go test ./...
+GOWORK=off go run .
+```
+
+预期输出：
+
+```text
+agentx-execution-ok:completed:execution-conformance:execution_policy_kernel_ready
+```
+
 ## 非目标
 
 - 具体 authorization/approval执行；

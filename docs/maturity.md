@@ -20,7 +20,7 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5P controlcontract consumer覆盖Host adapter/Ingress、Objective durable projection/final answer与delegation coordination；均无HS/Runner/Scene/长期replace/network |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5Q execution consumer覆盖Snapshot metadata、bounded retry与decision/execution-loop kernel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5P production consumer已使用固定 private pseudo-version；M5P cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
