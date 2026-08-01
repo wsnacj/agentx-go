@@ -17,10 +17,10 @@ credential、缓存、pack/workflow、tool executor或最终回答策略。这�
 
 ## M5D 组合关系
 
-M5D正在把本合同与 `extensions/astock`推荐入口、三组 portable Pack Definition及
-`extensions/astock/hostkit`组合为一个可独立验证的 A股 Domain Extension。该组合
-不会改变本包的 JSON或状态 source authority，也不会把 provider、livekit、网络或
-Host策略下沉到 contracts。
+M5D已把本合同与 `extensions/astock`推荐入口、三组 portable Pack Definition及
+`extensions/astock/hostkit`组合为一个可独立验证的 A股 Domain Extension，并形成
+等待 Owner接受的技术 checkpoint。该组合不会改变本包的 JSON或状态 source
+authority，也不会把 provider、livekit、网络或 Host策略下沉到 contracts。
 
 新项目应从 `extensions/astock`开始接入完整 portable extension；只有只需要 DTO、
 JSON normalization或 readiness/assessment投影时，才直接导入本包。

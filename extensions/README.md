@@ -8,8 +8,8 @@ github.com/wsnacj/agentx-go/extensions
 
 当前包含：
 
-- [`astock`](./astock/API.md)：M5D active的 A股 portable Domain Extension推荐
-  入口，组合 Manifest、immutable assets、tool schema、三组 Pack Definition与
+- [`astock`](./astock/API.md)：M5D technical checkpoint已完成的 A股 portable
+  Domain Extension推荐入口，组合 Manifest、immutable assets、tool schema、三组 Pack Definition与
   确定性 evaluator；
 - [`astock/contracts`](./astock/contracts/API.md)：A 股领域 portable DTO、JSON
   normalization、status和 assessment mechanism；
@@ -30,8 +30,8 @@ extensions -> contract/runtime/components
 contract/runtime/components -X-> extensions
 ```
 
-M5C Portable Pack Core checkpoint已经 Owner接受；M5D现以 `extensions/astock`作为
-唯一 active的领域产品切片。`extensions/astock`是 Developer Preview candidate，
+M5C Portable Pack Core checkpoint已经 Owner接受；M5D `extensions/astock`技术
+checkpoint已完成并等待 Owner接受。`extensions/astock`是 Developer Preview candidate，
 `astock/hostkit`与其它 extension owner仍为 Experimental，三组 Pack implementation
 位于 `astock/internal`且不允许外部直接依赖。共享 module不表示其它 Scene获得独立
 发行资格，也不构成 Public/Beta/Stable、正式 tag或 semver承诺。

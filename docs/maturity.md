@@ -5,12 +5,12 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5D A-Stock Portable Domain Extension Developer Preview Vertical Closure / active |
+| 当前产品里程碑 | M5D A-Stock Portable Domain Extension技术 checkpoint complete / awaiting Owner acceptance |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5D canonical landing进行中：根合同、LLM、27个 Runtime owner及8个 Extension owner，共37个 package |
+| agentx-go production packages | M5D technical checkpoint：根合同、LLM、27个 Runtime owner及8个 Extension owner，共37个 package、104个 production source、20,674行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
-| Extensions module | 单一 private-preview共享 module；M5C Pack Core已获接受，M5D正增加 A股推荐入口、Host Kit及3个 internal Pack owner |
+| Extensions module | 单一 private-preview共享 module；M5C Pack Core已获接受，M5D已落地 A股推荐入口、Host Kit及3个 internal Pack owner |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
 | Workflow portable Runtime | composition及其下游 canonical owner已落地；Workflow Host Kit已形成标准入口 |
 | Runtime construction lifecycle | W5-A 已迁移并完成 HS production cutover |
@@ -91,13 +91,20 @@ external consumer均已切换。M5C checkpoint时 canonical production为32个 p
 90个 source、17,685行；`pack/runtime` memory/eval backend及具体 Scene内容仍由
 HS拥有。该接受不构成 Public/Beta/Stable或发行授权。
 
-M5D正在建立 `extensions/astock`推荐入口与 `extensions/astock/hostkit`，并把三组
+M5D已建立 `extensions/astock`推荐入口与 `extensions/astock/hostkit`，并把三组
 A股 Pack Definition/evaluator放入不可外部导入的 internal owner。当前37个 package
 均已有中文 Reference，`extensions/astock`作为第八个 Developer Preview candidate
 进入 focused签名门禁。fixed-version组合 consumer和 HS production cutover已经完成，
-旧 Pack/tool-schema/Host Kit通用实现已删除或降薄；当前 active状态只表示最终 module
-gate、module zip和完整 AgentX回归尚未 checkpoint。A股 provider、livekit、credential、
-cache、source priority和真实网络继续由 HS拥有。
+旧 Pack/tool-schema/Host Kit通用实现已删除或降薄；canonical production由 M5C的
+32个 package、90个 source、17,685行增至37个 package、104个 source、20,674行。
+fixed extensions版本为 `v0.0.0-20260801071806-57b903334bf5`，无 HS/Runner/长期
+`replace`/网络的组合 consumer、module zip/cache、四 module gate和签名门禁均已
+通过。HS本 cohort production由3,079行收缩为452行，整个 cutover提交净减少
+2,631行；保留的是具体 registry/executor、Host adapter、provider/livekit以及
+兼容资产入口。唯一一次 HS完整回归中新出现的陈旧 owner guard已迁到 canonical
+source并 focused复测通过，剩余仍只有既有三个 evidence stale/mismatch；当前
+状态只等待 Owner人工接受。A股 provider、livekit、credential、cache、source
+priority和真实网络继续由 HS拥有。
 
 ## 明确 non-goal
 

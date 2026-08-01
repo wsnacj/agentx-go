@@ -2,8 +2,9 @@
 
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
-已获 Owner接受的 M5C Portable Pack Core，以及当前 active的 M5D A股 portable
-Domain Extension、LLM组件和已迁 Runtime owner，目标是让调用方
+已获 Owner接受的 M5C Portable Pack Core，以及技术 checkpoint已完成、等待
+Owner接受的 M5D A股 portable Domain Extension、LLM组件和已迁 Runtime owner，
+目标是让调用方
 能够准确判断：
 
 1. 根 `agentx` 包现在真实提供什么；
@@ -68,6 +69,6 @@ Domain Extension、LLM组件和已迁 Runtime owner，目标是让调用方
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；
 `extensions/**/API.md`描述获准迁入的 portable extension合同。
-M5D当前只批准 A股 portable Manifest/assets/tool schema/Pack/hostkit切片；尚未落地
-的 hostless完整 Runtime construction、A股 livekit/provider、更多 components、其它
-extensions和 Scene不会预先获得虚假 API 页面。
+M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片；
+尚未落地的 hostless完整 Runtime construction、A股 livekit/provider、更多
+components、其它 extensions和 Scene不会预先获得虚假 API 页面。
