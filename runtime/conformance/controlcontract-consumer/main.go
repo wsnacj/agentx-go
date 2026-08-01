@@ -57,15 +57,65 @@ func run() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	verificationStatus, err := validateObjectiveVerificationKernel()
+	if err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(
-		"agentx-controlcontract-ok:%s:%d:%s:%s:%s",
+		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s",
 		projection.Status,
 		budget.RetryBudgetRemaining,
 		lifecycle.To,
 		unsafe.FailureClass,
 		graphStatus,
+		verificationStatus,
 	), nil
+}
+
+func validateObjectiveVerificationKernel() (string, error) {
+	frame := controlcontract.ObjectiveFrame{
+		ID: "objective:fixed-consumer-verification",
+		RequiredEvidence: []controlcontract.EvidenceRef{{
+			Ref:      "evidence:verified-metric",
+			Kind:     "metric",
+			Strength: controlcontract.EvidenceStrong,
+			Source:   "adapter:fixed-consumer",
+		}},
+	}.Normalize()
+	normalized := (controlcontract.ObservationNormalizationResult{
+		Status: controlcontract.VerificationSatisfied,
+		Frame:  frame,
+		Observations: []controlcontract.Observation{{
+			Kind:     "metric",
+			Source:   "adapter:fixed-consumer",
+			Subject:  "objective:fixed-consumer-verification",
+			Strength: controlcontract.EvidenceStrong,
+			EvidenceRefs: []controlcontract.EvidenceRef{{
+				Ref:      "evidence:verified-metric",
+				Kind:     "metric",
+				Strength: controlcontract.EvidenceStrong,
+				Source:   "adapter:fixed-consumer",
+			}},
+		}},
+	}).Normalize()
+	verification := controlcontract.BuildObjectiveVerificationGate(controlcontract.ObjectiveVerificationGateInput{
+		Frame:         frame,
+		Normalization: normalized,
+	})
+	if !verification.Satisfied || verification.Status != controlcontract.VerificationSatisfied {
+		return "", fmt.Errorf("objective verification kernel is not satisfied: %#v", verification)
+	}
+
+	recovery := controlcontract.BuildObjectiveRecoveryContractFromJSON(controlcontract.ObjectiveRecoveryContractJSONDecodeInput{
+		RawJSON:     []byte(`{"answer_contract":{"recovery_recommended":true,"recovery_targets":[{"missing_input":"evidence:detail","suggested_tools":["capability:detail_lookup"]}]}}`),
+		ContractRef: "contract:fixed-consumer-recovery",
+		ObjectiveID: "objective:fixed-consumer-verification",
+	})
+	if !recovery.Decoded || !recovery.Contract.Recommended || recovery.Contract.ReplanProposal.Action != controlcontract.ObjectiveReplanProposalActionAddEvidenceNode {
+		return "", fmt.Errorf("objective recovery kernel is not ready: %#v", recovery)
+	}
+	return "objective_verification_recovery_ready", nil
 }
 
 func validateObjectiveGraphKernel() (string, error) {

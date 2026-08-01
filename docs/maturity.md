@@ -8,7 +8,7 @@
 | 当前产品里程碑 | M5J Portable Control Contract and Deterministic Reducer：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5J canonical landing：43个package、141个production source、32,447行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5L canonical landing：43个package、160个production source、43,293行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -20,8 +20,8 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5K controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe/Objective Graph；均无HS/Runner/Scene/长期replace/network |
-| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H、M5I、M5J及M5K production consumer均使用固定 private pseudo-version |
+| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5L controlcontract consumer固定版本并覆盖projection/budget/lifecycle/display-safe/Objective Graph及verification/recovery；均无HS/Runner/Scene/长期replace/network |
+| HS canonical import | W1-C、M5A、M5B、M5C、M5D、M5E、M5F、M5G、M5H、M5I、M5J、M5K及M5L production consumer均使用固定 private pseudo-version |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 43个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -210,8 +210,18 @@ M5K随后在同一Experimental package内新增8个Objective definition/strategy
 production source与一个private helper source，共6,365行真实implementation。HS对应
 6,322行source已收缩为648行alias/forwarder，并只另留187行未迁移controlplane代码仍需的
 private compatibility seam；fixed consumer现覆盖Objective Graph validation。四module、
-43/8 API/doc gate、module zip/cache与完整HS回归均已闭合，技术checkpoint等待Owner接受。
+43/8 API/doc gate、module zip/cache与完整HS回归均已闭合，技术checkpoint已获Owner接受。
 M5K不构成Developer Preview晋级、Public/Beta/Stable或发行授权。
+
+M5L继续在同一Experimental package内迁入8个、4,330行Objective required-evidence、
+semantic verification、verification gate、recovery和replanning完整source，并把portable
+`ObservationNormalizationResult`合同与private helper收口到canonical。canonical新增
+10个production source、4,481行，达到43个package、160个production source、43,293行；
+Developer Preview candidate仍为8个。具体runtime/production adapter result翻译、
+authorization、Objective executor/scheduler、RunStore/backend、ProductShellRuntime与
+Scene继续由HS拥有。fixed runtime版本为
+`v0.0.0-20260801164525-a99d16de1fcd`，consumer覆盖verification与recovery proposal；
+该landing仍不构成Developer Preview晋级、Public/Beta/Stable或发行授权。
 
 ## 明确 non-goal
 

@@ -8,10 +8,10 @@ import controlcontract "github.com/wsnacj/agentx-go/runtime/controlcontract"
 
 成熟度：**Experimental extension / private validation**。
 
-`runtime/controlcontract` 是 AgentX 公共执行控制语义、Objective定义/策略/图合同与
-确定性 reducer 的 portable source authority。它只处理数据合同、复制/规范化、
-display-safe 校验、严格解码和纯判定，不执行 Runner、模型、工具、调度、存储或 Host
-副作用。
+`runtime/controlcontract` 是 AgentX 公共执行控制语义、Objective定义/策略/图合同、
+验证/恢复/重规划机制与确定性 reducer 的 portable source authority。它只处理数据合同、
+复制/规范化、display-safe 校验、严格解码和纯判定，不执行 Runner、模型、工具、调度、
+存储或 Host副作用。
 
 ## 核心状态合同
 
@@ -177,6 +177,63 @@ capability/strategy匹配、side-effect与ready-node判定。它只返回可审�
 `ReadyForRuntimeLoop`不等于已执行。节点executor、runtime loop dispatch、scheduler、
 RunStore和durable write仍由Host拥有。
 
+## Objective evidence 与 verification kernel
+
+Host先把具体adapter、tool或workflow输出翻译为display-safe的
+`ObservationNormalizationResult`；本包不拥有具体输入翻译器：
+
+```go
+type ObservationNormalizationResult struct { ... }
+type ObjectiveRequiredEvidenceContract struct { ... }
+type ObjectiveVerificationGateResult struct { ... }
+
+func CloneObservationNormalizationResult(ObservationNormalizationResult) ObservationNormalizationResult
+func BuildObjectiveRequiredEvidenceContract(ObjectiveRequiredEvidenceContractInput) ObjectiveRequiredEvidenceContract
+func BuildObjectiveVerificationGate(ObjectiveVerificationGateInput) ObjectiveVerificationGateResult
+```
+
+`ObservationNormalizationResult.Normalize`只规范化已经结构化的observation、evidence、
+status和display-safe ref。它不会读取transcript、raw tool output或调用adapter。
+verification gate逐条匹配显式required evidence；没有required-evidence合同、证据强度不足、
+proposal-only observation或unsafe payload都会fail closed，不会仅凭success-criteria文本
+推断Objective已完成。
+
+可选semantic verifier通过窄Host port接入：
+
+```go
+type ObjectiveSemanticVerifier interface {
+    VerifyObjectiveSemantics(context.Context, ObjectiveSemanticVerifierRequest) (ObjectiveSemanticVerifierResponse, error)
+}
+
+func BuildObjectiveSemanticVerificationFromJSON(ObjectiveSemanticVerificationJSONDecodeInput) ObjectiveSemanticVerificationJSONDecodeReport
+func BuildObjectiveSemanticVerification(context.Context, ObjectiveSemanticVerificationInput) ObjectiveSemanticVerificationReport
+```
+
+semantic结果是advisory；它不能单独把Objective标记为satisfied，也不能绕过结构化evidence
+gate。取消与deadline原样传递给Host verifier。
+
+## Recovery 与 replanning kernel
+
+```go
+type ObjectiveRecoveryContract struct { ... }
+type ObjectiveReplannerDecision struct { ... }
+type ObjectiveReplanProposal struct { ... }
+type ObjectiveReplanGraphPatch struct { ... }
+
+func BuildObjectiveRecoveryContract(ObjectiveRecoveryContractInput) ObjectiveRecoveryContract
+func BuildObjectiveRecoveryContractFromJSON(ObjectiveRecoveryContractJSONDecodeInput) ObjectiveRecoveryContractJSONDecodeReport
+func BuildObjectiveSafeDefaultProposal(ObjectiveSafeDefaultProposalInput) ObjectiveSafeDefaultProposal
+func BuildObjectiveSideEffectSplitProposal(ObjectiveSideEffectSplitProposalInput) ObjectiveSideEffectSplitProposal
+func BuildObjectiveNoProgressSwitchGate(ObjectiveNoProgressSwitchGateInput) ObjectiveNoProgressSwitchGate
+func BuildObjectiveReplannerDecision(ObjectiveReplannerDecisionInput) ObjectiveReplannerDecision
+func BuildObjectiveReplanProposal(ObjectiveReplanProposalInput) ObjectiveReplanProposal
+func BuildObjectiveReplanGraphPatch(ObjectiveReplanGraphPatchInput) ObjectiveReplanGraphPatch
+```
+
+这些API只形成display-safe、可审阅的恢复与重规划建议。它们不会修改现有graph、切换
+strategy、安装capability、请求credential、执行side effect或写入RunStore；Host必须在
+独立的authorization、budget、scheduler和durable-write边界内审阅并应用proposal。
+
 ## Approval、budget、幂等与生命周期
 
 ```go
@@ -198,7 +255,8 @@ func CheckLifecycleTransition(LifecycleStage, LifecycleStage) LifecycleTransitio
 ## 并发、取消与错误
 
 本包不保存可变全局状态，纯函数可由多个 goroutine 并发调用。只有调用Host port的
-`BuildObjectiveSpecWithBuilder`与`BuildObjectiveGraphWithPlanner`接收
+`BuildObjectiveSpecWithBuilder`、`BuildObjectiveGraphWithPlanner`与
+`BuildObjectiveSemanticVerification`接收
 `context.Context`，并把取消/deadline传给Host实现；其余计算是内存中的有界同步判定。
 Shutdown属于上层 Runtime/Host 合同。
 
@@ -224,9 +282,10 @@ if !result.Allowed {
 
 [`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
 是独立 nested module，固定依赖
-`v0.0.0-20260801161030-3caf5393525d`，不使用 `replace`，也不 import HS、Runner、
+`v0.0.0-20260801164525-a99d16de1fcd`，不使用 `replace`，也不 import HS、Runner、
 Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
-lifecycle transition、unsafe-ref fail-closed与单节点Objective Graph validation路径：
+lifecycle transition、unsafe-ref fail-closed、单节点Objective Graph validation，以及
+Objective evidence verification与recovery proposal路径：
 
 ```bash
 cd runtime/conformance/controlcontract-consumer
@@ -237,12 +296,13 @@ GOWORK=off go run .
 预期输出：
 
 ```text
-agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready
 ```
 
 ## 非目标
 
 - 不提供 Objective executor、runtime loop dispatch、scheduler 或 RunStore；
+- 不提供具体runtime/production adapter或adapter-result normalization input翻译；
 - 不探测真实capability，不选择provider，不执行strategy或graph node；
 - 不执行 approval、authorization、sandbox、model/tool 或 backend；
 - 不包含 ProductShellRuntime、Scene、provider、credential 或真实网络；
