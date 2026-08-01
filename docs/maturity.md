@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5O Portable Host Adapter, Managed Objective Ingress and Closeout Projection：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5P Portable Objective Completion, Durable Projection and Delegation Coordination：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5O canonical landing：43个package、212个production source、82,570行；仍为8个Developer Preview candidate |
@@ -266,7 +266,14 @@ alias/forwarder/private Host seam，净减21,941行。fixed consumer、中文Ref
 43/8 API/doc gate与有效完整回归均闭合，closure为407/57/2453/65、
 HS119/canonical33/Scene0。当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
-`not_ready_for_hostless_w2b`；这不构成成熟度晋级或发行授权。
+`not_ready_for_hostless_w2b`；Owner已于2026-08-02接受，该接受不构成成熟度晋级或
+发行授权。
+
+M5P随后以单一cohort准入7个、4,210行现有portable Objective completion、durable-store
+projection、async delegation/controller/handoff和strategy metadata source。隔离runtime
+module已组合当前canonical owner与原合同测试并通过。concrete store/backend、LLM/provider、
+worker scheduler/dispatch、`observation_normalizer`、Runner、Scene和真实副作用继续留在HS；
+M5P尚处于`active_implementation`，不得从准入事实推断新增成熟度承诺。
 
 ## 明确 non-goal
 
