@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_developer_preview_api verifies the focused M3E package classification,
+// check_developer_preview_api verifies the focused Developer Preview package classification,
 // Chinese Reference coverage, and signatures of Developer Preview candidates.
 package main
 
@@ -129,7 +129,7 @@ func readManifest(path string) ([]entry, error) {
 
 func discoverPackages(root string) ([]string, error) {
 	set := map[string]bool{}
-	for _, module := range []string{".", "components", "runtime"} {
+	for _, module := range []string{".", "components", "runtime", "extensions"} {
 		command := exec.Command("go", "list", "-f", "{{.Dir}}", "./...")
 		command.Dir = filepath.Join(root, module)
 		command.Env = append(os.Environ(), "GOWORK=off")

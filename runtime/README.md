@@ -8,6 +8,8 @@ github.com/wsnacj/agentx-go/runtime
 
 当前落地的无外部依赖叶子 package：
 
+- [`assetfs`](./assetfs/API.md)：immutable filesystem snapshot、content
+  fingerprint、atomic resolver registration与 `assetfs://`解析。
 - [`protocol`](./protocol/API.md)：版本化 Runtime wire/schema、normalization
   与 validation。
 - [`telemetry/safeerror`](./telemetry/safeerror/API.md)：observation-safe
