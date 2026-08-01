@@ -5,10 +5,10 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5B Domain Module Developer Preview foundation active |
+| 当前产品里程碑 | M5B Domain Module Developer Preview foundation 技术 checkpoint完成，等待 Owner接受 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 根合同、LLM、26个 Runtime owner及2个 Extension owner，共30个 |
+| agentx-go production packages | 根合同、LLM、26个 Runtime owner及2个 Extension owner，共30个、80个 source、13,216行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一 private-preview共享 module；当前含 A股 portable contracts与 Domain Module coordinator |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
