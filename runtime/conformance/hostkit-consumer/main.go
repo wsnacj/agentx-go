@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	agentx "github.com/wsnacj/agentx-go"
 	llm "github.com/wsnacj/agentx-go/components/llm"
@@ -12,13 +11,8 @@ import (
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
 )
 
-type consumerFactory struct {
-	mu     sync.Mutex
-	closed bool
-}
-
-func (factory *consumerFactory) BuildRun(_ context.Context, request execution.Request) (hostkit.RunConfig, error) {
-	round, err := hostkit.NewModelToolRoundAdapter(hostkit.ModelToolRoundConfig{
+func buildRound(context.Context, execution.Request) (hostkit.ModelToolRoundConfig, error) {
+	return hostkit.ModelToolRoundConfig{
 		RequestModel: func(_ context.Context, input toolloop.RoundExecutionInput) (hostkit.ModelResult, error) {
 			if input.Round == 1 {
 				return hostkit.ModelResult{Response: llm.ChatResponse{
@@ -29,44 +23,19 @@ func (factory *consumerFactory) BuildRun(_ context.Context, request execution.Re
 			return hostkit.ModelResult{Response: llm.ChatResponse{Content: "hostkit-conformance:2"}}, nil
 		},
 		ExecuteTools: func(context.Context, hostkit.ModelToolRoundExchange) (hostkit.ToolResult, error) {
-			return hostkit.ToolResult{
-				Runs:       []toolloop.RunObservation{{Name: "lookup", Output: "portable result"}},
-				NextChunks: []string{"portable result"},
-			}, nil
-		},
-	})
-	if err != nil {
-		return hostkit.RunConfig{}, err
-	}
-	return hostkit.RunConfig{
-		RunID:     "hostkit-conformance",
-		SessionID: request.SessionID,
-		Assembly: toolloop.AssemblyConfig{
-			MaxRounds: 3,
-			Coordinator: toolloop.CoordinatorConfig{
-				Executor: round,
-			},
-			Initial: toolloop.RoundState{Chunks: []string{request.Input}},
+			return hostkit.ToolResult{NextChunks: []string{"portable result"}}, nil
 		},
 	}, nil
 }
 
-func (factory *consumerFactory) Shutdown(ctx context.Context) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	factory.mu.Lock()
-	defer factory.mu.Unlock()
-	factory.closed = true
-	return nil
-}
-
-func (*consumerFactory) ClassifyError(error) agentx.ErrorCode {
-	return agentx.CodeExecutionFailed
-}
-
 func run(ctx context.Context) (string, error) {
-	client, err := hostkit.New(hostkit.Config{Factory: &consumerFactory{}})
+	client, err := hostkit.NewModelToolClient(hostkit.ModelToolClientConfig{
+		MaxRounds: 3,
+		ResolveIdentity: func(request execution.Request) (string, string) {
+			return "hostkit-conformance", request.SessionID
+		},
+		BuildRound: buildRound,
+	})
 	if err != nil {
 		return "", err
 	}
