@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的37个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的38个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -29,6 +29,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `extensions/astock/internal/packvaluation` | internalization candidate | [API](../../extensions/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
+| `extensions/skills` | Experimental extension | [API](../../extensions/skills/API.md) | Skill合同、加载、缓存、activation、semantics与资源引用机制 |
 | `runtime/hosthttp/hostserver` | Experimental extension | [API](../../runtime/hosthttp/hostserver/API.md) | Host-deployed HTTP transport、request identity 与有界关闭 |
 | `runtime/hosthttp/requestjson` | Experimental extension | [API](../../runtime/hosthttp/requestjson/API.md) | 有界严格 JSON 请求解码 |
 | `runtime/hosthttp/resourcepolicy` | Experimental extension | [API](../../runtime/hosthttp/resourcepolicy/API.md) | Host 资源 allowlist 与预算收窄 |
@@ -55,7 +56,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-37个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+38个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
