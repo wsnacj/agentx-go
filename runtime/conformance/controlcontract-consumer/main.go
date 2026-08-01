@@ -61,16 +61,51 @@ func run() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	hostEffectStatus, err := validateHostEffectKernel()
+	if err != nil {
+		return "", err
+	}
 
 	return fmt.Sprintf(
-		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s",
+		"agentx-controlcontract-ok:%s:%d:%s:%s:%s:%s:%s",
 		projection.Status,
 		budget.RetryBudgetRemaining,
 		lifecycle.To,
 		unsafe.FailureClass,
 		graphStatus,
 		verificationStatus,
+		hostEffectStatus,
 	), nil
+}
+
+func validateHostEffectKernel() (string, error) {
+	gate := controlcontract.BuildProductionAdapterIndependentEffectGate(controlcontract.ProductionAdapterIndependentEffectGateSpec{
+		Kind:                  controlcontract.ProductionAdapterEffectGateRuntimeExecutor,
+		GateRef:               "gate:fixed-consumer-runtime",
+		AdapterRef:            "adapter:fixed-consumer-runtime",
+		ContractRef:           "contract:fixed-consumer-runtime",
+		PolicyRef:             "policy:fixed-consumer-runtime",
+		ApprovalRef:           "approval:fixed-consumer-runtime",
+		BudgetRef:             "budget:fixed-consumer-runtime",
+		IdempotencyRef:        "idempotency:fixed-consumer-runtime",
+		ReadbackRef:           "readback:fixed-consumer-runtime",
+		EvalRef:               "eval:fixed-consumer-runtime",
+		FailureReviewRef:      "review:fixed-consumer-runtime-failure",
+		CompensationReviewRef: "review:fixed-consumer-runtime-compensation",
+	})
+	if !gate.ReadyForIndependentGatePlan || gate.Status != controlcontract.HostActionReady {
+		return "", fmt.Errorf("host effect gate is not ready: %#v", gate)
+	}
+
+	blocked := controlcontract.BuildProductionAdapterIndependentEffectGatePlan(controlcontract.ProductionAdapterIndependentEffectGatePlanInput{
+		PlanRef:                    "plan:fixed-consumer-host-effects",
+		AggregateExecutorRequested: true,
+		AggregateExecutorRef:       "executor:fixed-consumer-aggregate",
+	})
+	if blocked.ReadyForIndependentGatePlan || !blocked.AggregateExecutorBlocked || blocked.Status != controlcontract.HostActionBlocked {
+		return "", fmt.Errorf("aggregate host effect executor did not fail closed: %#v", blocked)
+	}
+	return "host_effect_gate_ready", nil
 }
 
 func validateObjectiveVerificationKernel() (string, error) {

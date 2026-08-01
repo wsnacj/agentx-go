@@ -234,6 +234,74 @@ func BuildObjectiveReplanGraphPatch(ObjectiveReplanGraphPatchInput) ObjectiveRep
 strategy、安装capability、请求credential、执行side effect或写入RunStore；Host必须在
 独立的authorization、budget、scheduler和durable-write边界内审阅并应用proposal。
 
+## Host副作用合同、准入与调用门控
+
+统一 independent-effect gate 用独立、显式的 policy、approval、budget、idempotency、
+readback、eval 与 failure/compensation review ref 描述 Host-owned 副作用：
+
+```go
+type ProductionAdapterEffectGateKind string
+type ProductionAdapterIndependentEffectGateSpec struct { ... }
+type ProductionAdapterIndependentEffectGatePlan struct { ... }
+type ProductionAdapterIndependentEffectGate struct { ... }
+
+func KnownProductionAdapterEffectGateKinds() []ProductionAdapterEffectGateKind
+func NormalizeProductionAdapterEffectGateKind(string) ProductionAdapterEffectGateKind
+func BuildProductionAdapterIndependentEffectGatePlan(ProductionAdapterIndependentEffectGatePlanInput) ProductionAdapterIndependentEffectGatePlan
+func BuildProductionAdapterIndependentEffectGate(ProductionAdapterIndependentEffectGateSpec) ProductionAdapterIndependentEffectGate
+```
+
+完整 plan 要求 scheduler、installer、workflow retry、runtime executor、delegation worker、
+memory apply 与 compensation executor 各自拥有 gate；请求单一 aggregate auto-executor 会
+fail closed。`ReadyForIndependentGatePlan`只表示合同输入完整，不授权或执行任何副作用。
+
+本包同时拥有 workflow executor 的 Host 准入，以及 capability/scheduler 的完整
+request-result-readback 和 adapter readiness/invocation 投影：
+
+```go
+func BuildHostOwnedWorkflowRuntimeExecutorReadiness(HostOwnedWorkflowRuntimeExecutorReadinessInput) HostOwnedWorkflowRuntimeExecutorReadiness
+func BuildHostOwnedWorkflowRuntimeExecutorInvocation(HostOwnedWorkflowRuntimeExecutorInvocationInput) HostOwnedWorkflowRuntimeExecutorInvocation
+
+type CapabilityApplyAction string
+func BuildHostOwnedCapabilityApplyDescriptor(HostOwnedCapabilityApplyDescriptor) HostOwnedCapabilityApplyDescriptor
+func BuildHostOwnedCapabilityApplyRequest(HostOwnedCapabilityApplyRequestInput) HostOwnedCapabilityApplyRequest
+func BuildHostOwnedCapabilityApplyResult(HostOwnedCapabilityApplyResultInput) HostOwnedCapabilityApplyResult
+func BuildHostOwnedCapabilityApplyReadback(HostOwnedCapabilityApplyReadbackInput) HostOwnedCapabilityApplyReadback
+func BuildHostOwnedCapabilityApplyAdapterReadiness(HostOwnedCapabilityApplyAdapterReadinessInput) HostOwnedCapabilityApplyAdapterReadiness
+func BuildHostOwnedCapabilityApplyAdapterInvocation(HostOwnedCapabilityApplyAdapterInvocationInput) HostOwnedCapabilityApplyAdapterInvocation
+
+type SchedulerApplyAction string
+func BuildHostOwnedSchedulerApplyDescriptor(HostOwnedSchedulerApplyDescriptor) HostOwnedSchedulerApplyDescriptor
+func BuildHostOwnedSchedulerApplyRequest(HostOwnedSchedulerApplyRequestInput) HostOwnedSchedulerApplyRequest
+func BuildHostOwnedSchedulerApplyResult(HostOwnedSchedulerApplyResultInput) HostOwnedSchedulerApplyResult
+func BuildHostOwnedSchedulerApplyReadback(HostOwnedSchedulerApplyReadbackInput) HostOwnedSchedulerApplyReadback
+func BuildHostOwnedSchedulerApplyAdapterReadiness(HostOwnedSchedulerApplyAdapterReadinessInput) HostOwnedSchedulerApplyAdapterReadiness
+func BuildHostOwnedSchedulerApplyAdapterInvocation(HostOwnedSchedulerApplyAdapterInvocationInput) HostOwnedSchedulerApplyAdapterInvocation
+```
+
+Capability与scheduler API只核对显式descriptor、action、final intensity gate、approval、
+dry-run、幂等、结果与readback ref；所有`Core*Executed`、dispatch和mutation flag保持
+false。具体安装器、package manager、scheduler backend、取消/删除实现与真实readback仍
+由Host拥有。
+
+Repeated-success memory proposal只从结构化、已成功的attempt和strategy catalog生成
+proposal；review/apply gate继续要求显式Host审核和独立memory gate：
+
+```go
+type MemoryProposalKind string
+type RepeatedSuccessMemoryProposalSet struct { ... }
+type MemoryProposalReviewPacket struct { ... }
+
+func BuildRepeatedSuccessMemoryProposal(RepeatedSuccessMemoryProposalInput) RepeatedSuccessMemoryProposalSet
+func BuildMemoryProposalReviewPacket(MemoryProposalReviewPacketInput) MemoryProposalReviewPacket
+func BuildHostOwnedMemoryProposalApplyReadiness(HostOwnedMemoryProposalApplyReadinessInput) HostOwnedMemoryProposalApplyReadiness
+func BuildHostOwnedMemoryProposalApplyInvocation(HostOwnedMemoryProposalApplyInvocationInput) HostOwnedMemoryProposalApplyInvocation
+```
+
+它不会写skill、workflow或template，不执行install/reload，也不拥有memory backend。
+Delegation worker gate仍与HS具体observation normalization owner耦合，未进入本次canonical
+landing；不能根据independent gate kind推断已有canonical delegation execution API。
+
 ## Approval、budget、幂等与生命周期
 
 ```go
@@ -282,10 +350,10 @@ if !result.Allowed {
 
 [`runtime/conformance/controlcontract-consumer`](../conformance/controlcontract-consumer)
 是独立 nested module，固定依赖
-`v0.0.0-20260801164525-a99d16de1fcd`，不使用 `replace`，也不 import HS、Runner、
+`v0.0.0-20260801172253-9a3f0e5e1d5c`，不使用 `replace`，也不 import HS、Runner、
 Scene、provider 或 backend。它组合 managed-objective projection、retry budget、
 lifecycle transition、unsafe-ref fail-closed、单节点Objective Graph validation，以及
-Objective evidence verification与recovery proposal路径：
+Objective evidence verification/recovery proposal和Host effect gate fail-closed路径：
 
 ```bash
 cd runtime/conformance/controlcontract-consumer
@@ -296,13 +364,14 @@ GOWORK=off go run .
 预期输出：
 
 ```text
-agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready
+agentx-controlcontract-ok:ready_for_host_action:1:applied:evidence_weak:objective_graph_ready:objective_verification_recovery_ready:host_effect_gate_ready
 ```
 
 ## 非目标
 
-- 不提供 Objective executor、runtime loop dispatch、scheduler 或 RunStore；
+- 不提供 Objective executor、runtime loop dispatch、scheduler backend/execution 或 RunStore；
 - 不提供具体runtime/production adapter或adapter-result normalization input翻译；
+- 不提供delegation worker runtime gate的canonical owner；
 - 不探测真实capability，不选择provider，不执行strategy或graph node；
 - 不执行 approval、authorization、sandbox、model/tool 或 backend；
 - 不包含 ProductShellRuntime、Scene、provider、credential 或真实网络；
