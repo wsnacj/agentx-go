@@ -46,8 +46,8 @@ func main() {
 	if nav.Version == "" || nav.SourceCommit == "" {
 		check(fmt.Errorf("portal navigation is missing version or source commit"))
 	}
-	if len(nav.Packages) != 50 {
-		check(fmt.Errorf("portal has %d packages, want 50", len(nav.Packages)))
+	if len(nav.Packages) != 51 {
+		check(fmt.Errorf("portal has %d packages, want 51", len(nav.Packages)))
 	}
 	candidates := 0
 	for _, entry := range nav.Packages {

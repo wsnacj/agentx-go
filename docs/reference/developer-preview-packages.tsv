@@ -7,6 +7,7 @@ extensions/astock/hostkit	experimental_extension	extensions/astock/hostkit/API.m
 extensions/astock/internal/packresearch	internalization_candidate	extensions/astock/internal/packresearch/API.md	-
 extensions/astock/internal/packsignal	internalization_candidate	extensions/astock/internal/packsignal/API.md	-
 extensions/astock/internal/packvaluation	internalization_candidate	extensions/astock/internal/packvaluation/API.md	-
+extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-
 extensions/productshell	experimental_extension	extensions/productshell/API.md	-

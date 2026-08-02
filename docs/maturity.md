@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-D Scheduler/Resume/Long Task纵向闭环完成；P1-E由HS规划继续推进；仍处于private validation |
-| Developer Portal | 95个静态页面；50 package/10 candidate；搜索与source backlink由`docs:check`验证 |
+| 当前产品里程碑 | M7A P1-D完成；P1-E Deterministic Domain Kit统一conformance实施中；仍处于private validation |
+| Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 当前50个package；10个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
+| agentx-go production packages | 当前51个package；10个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -28,14 +28,14 @@
 | Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 50个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
+| 当前 package surface | 51个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前50个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前51个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -455,6 +455,15 @@ child worker与resume路径；HS production已经切到canonical scheduler和res
 四module test/race/vet/tidy/list、50 package/10 candidate API gate、fixed consumer与分发
 检查均通过；HS有效完整回归为149 PASS、2个既有治理FAIL、20 SKIP且无新增功能失败。
 P1-D状态为`completed_checkpoint`，不构成Public/Beta/Stable或正式发行授权。
+
+## P1-E Deterministic Domain Kit implementation landing
+
+P1-E新增Experimental `extensions/domainkit`真实implementation：构造时统一规范化manifest、
+拒绝重复module、manifest外handler与缺失handler；运行时按显式module/tool exact-once调用
+Host handler，不调用模型、不进行自然语言路由或provider选择，并输出稳定SHA-256 digest。
+typed error保留cause identity，同时提供独立display-safe message。当前只完成canonical
+implementation landing；fixed consumer、HS A股production cutover和最终回归将在本wave
+checkpoint前闭合。
 
 ## 明确 non-goal
 

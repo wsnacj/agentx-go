@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
 M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径、
-50个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
+51个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
 版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
@@ -65,10 +65,11 @@ temporary Workflow planning机制、LLM组件和
 30. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
 31. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
 32. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
-33. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
-34. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
-35. [`extensions/productshell` 中文 API Reference](../extensions/productshell/API.md)
-36. [`extensions/skills` 中文 API Reference](../extensions/skills/API.md)
+33. [`extensions/domainkit` 中文 API Reference](../extensions/domainkit/API.md)
+34. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
+35. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
+36. [`extensions/productshell` 中文 API Reference](../extensions/productshell/API.md)
+37. [`extensions/skills` 中文 API Reference](../extensions/skills/API.md)
 37. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
 38. [`runtime/controlcontract` 中文 API Reference](../runtime/controlcontract/API.md)
 39. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)

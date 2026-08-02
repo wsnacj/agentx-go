@@ -9,10 +9,11 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
 > 当前里程碑：**M7A P1-D Scheduler/Resume/Long Task纵向闭环已完成，P1-E
-> Deterministic Domain Kit统一conformance由HS规划继续推进**；M6D Core
+> Deterministic Domain Kit统一conformance实施中**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受；P1-D已新增bounded Scheduler/Resume Host Kit、50包分类，并扩展第10个候选API。
+> 已获Owner接受；P1-D已新增bounded Scheduler/Resume Host Kit；P1-E现新增
+> Experimental Domain Kit无模型执行边界，当前为51包分类/10个候选API。
 > M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
 > M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
 > 搜索的85页Developer Portal Candidate。M6C已经证明Ubuntu真实运行与跨平台分发；
@@ -97,6 +98,8 @@ npm run docs:check
   focused签名门禁
 - [`extensions/astock/hostkit`](extensions/astock/hostkit/API.md)：显式注入 Host
   handler的 intent、readiness与回答格式化
+- [`extensions/domainkit`](extensions/domainkit/API.md)：无模型module/tool dispatch、typed
+  error与deterministic output digest；provider与真实副作用必须由Host handler注入
 - [`extensions/domainmodule`](extensions/domainmodule/API.md)与
   [`extensions/pack`](extensions/pack/API.md)：portable注册、选择、binding与物化机制
 - [`extensions/skills`](extensions/skills/API.md)：Skill数据合同、目录与 immutable
@@ -188,6 +191,7 @@ github.com/wsnacj/agentx-go/extensions
 - [`extensions/astock` 中文 API Reference](extensions/astock/API.md)
 - [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
 - [`extensions/astock/hostkit` 中文 API Reference](extensions/astock/hostkit/API.md)
+- [`extensions/domainkit` 中文 API Reference](extensions/domainkit/API.md)
 - [`extensions/domainmodule` 中文 API Reference](extensions/domainmodule/API.md)
 - [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
 - [最小合同示例](examples/contract-basic)
