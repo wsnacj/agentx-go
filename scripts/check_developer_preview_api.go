@@ -201,7 +201,7 @@ func readManifest(path string) ([]entry, error) {
 
 func discoverPackages(root string, selected target) ([]string, error) {
 	set := map[string]bool{}
-	for _, module := range []string{".", "components", "runtime", "extensions"} {
+	for _, module := range []string{".", "components", "runtime", "extensions", "scenes"} {
 		command := exec.Command("go", "list", "-f", "{{.Dir}}", "./...")
 		command.Dir = filepath.Join(root, module)
 		command.Env = commandEnv(selected)

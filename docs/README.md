@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
 M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；P2-A/P2-B又完成OpenAI-compatible、Anthropic和Codex三个provider protocol纵向闭环，P2-C完成首个通用Tool vertical slice；
-51个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
+52个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
 版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
@@ -62,9 +62,9 @@ temporary Workflow planning机制、LLM组件和
 27. [`runtime/runstore` 中文 API Reference](../runtime/runstore/API.md)
 28. [`runtime/artifact` 中文 API Reference](../runtime/artifact/API.md)
 29. [`runtime/cases` 中文 API Reference](../runtime/cases/API.md)
-30. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
-31. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
-32. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
+30. [`scenes/astock` 推荐入口中文 API Reference](../scenes/astock/API.md)
+31. [`scenes/astock/contracts` 中文 API Reference](../scenes/astock/contracts/API.md)
+32. [`scenes/astock/hostkit` 中文 API Reference](../scenes/astock/hostkit/API.md)
 33. [`extensions/domainkit` 中文 API Reference](../extensions/domainkit/API.md)
 34. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
 35. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
@@ -115,10 +115,10 @@ temporary Workflow planning机制、LLM组件和
 - [`runtime/conformance/objective-hostkit-consumer`](../runtime/conformance/objective-hostkit-consumer)
 - [`runtime/conformance/session-hostkit-consumer`](../runtime/conformance/session-hostkit-consumer)
 - [`runtime/conformance/run-data-plane-consumer`](../runtime/conformance/run-data-plane-consumer)
-- [`extensions/conformance/astock-contract-consumer`](../extensions/conformance/astock-contract-consumer)
+- [`scenes/conformance/astock-consumer`](../scenes/conformance/astock-consumer)
 - [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)
 - [`extensions/conformance/pack-consumer`](../extensions/conformance/pack-consumer)
-- [`extensions/conformance/astock-consumer`](../extensions/conformance/astock-consumer)
+- [`scenes/conformance/astock-consumer`](../scenes/conformance/astock-consumer)
 - [`extensions/conformance/skills-consumer`](../extensions/conformance/skills-consumer)
 - [`extensions/conformance/productshell-consumer`](../extensions/conformance/productshell-consumer)
 - [`extensions/conformance/productshell-observation-consumer`](../extensions/conformance/productshell-observation-consumer)

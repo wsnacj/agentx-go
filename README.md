@@ -131,15 +131,15 @@ npm run docs:check
   HS production consumer已开始使用固定版本
 - [`browser/host/browserd`](browser/host/browserd/API.md)提供显式Plan/StatusProbe驱动的
   browserd process manager、内置Node资产和Playwright bootstrap/cache；构造阶段无副作用
-- 当前默认不启动browserd、不访问网络、不读取credential；`browser/tools`和统一consumer
-  仍在P3-A后续节点，不能从runtime/host landing推导Browser Platform已经完成
+- [`browser/tools`](browser/tools/API.md)与统一fixed consumer已完成P3-A闭环；默认仍不启动
+  browserd、不访问网络、不读取credential，真实代理、登录态和企业网络由Host注入
 
-## 当前提供：Experimental Extensions
+## 当前提供：Experimental Extensions 与 Portable Scenes
 
-- [`extensions/astock`](extensions/astock/API.md)：A股 Manifest、不可变资产、7个
+- [`scenes/astock`](scenes/astock/API.md)：A股 Manifest、不可变资产、7个
   tool schema、3组 Pack与 evaluator推荐入口；进入 Developer Preview candidate
   focused签名门禁
-- [`extensions/astock/hostkit`](extensions/astock/hostkit/API.md)：显式注入 Host
+- [`scenes/astock/hostkit`](scenes/astock/hostkit/API.md)：显式注入 Host
   handler的 intent、readiness与回答格式化
 - [`extensions/domainkit`](extensions/domainkit/API.md)：无模型module/tool dispatch、typed
   error与deterministic output digest；provider与真实副作用必须由Host handler注入
@@ -151,7 +151,7 @@ npm run docs:check
 - [`extensions/productshell`](extensions/productshell/API.md)：输入/preparation、临时
   Workflow planning、typed observation和display-safe Host handoff；具体model/tool
   policy、provider、backend与执行继续由Host显式注入
-- extension不安装 provider、credential、Runner、网络或生产 backend
+- extension与portable Scene不安装 provider、credential、Runner、网络或生产 backend
 
 ## 当前不提供
 
@@ -247,9 +247,9 @@ github.com/wsnacj/agentx-go/browser
 - [`runtime/objective` 中文 API Reference](runtime/objective/API.md)
 - [`runtime/objective/hostkit` 中文 API Reference](runtime/objective/hostkit/API.md)
 - [`runtime/assetfs` 中文 API Reference](runtime/assetfs/API.md)
-- [`extensions/astock` 中文 API Reference](extensions/astock/API.md)
-- [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
-- [`extensions/astock/hostkit` 中文 API Reference](extensions/astock/hostkit/API.md)
+- [`scenes/astock` 中文 API Reference](scenes/astock/API.md)
+- [`scenes/astock/contracts` 中文 API Reference](scenes/astock/contracts/API.md)
+- [`scenes/astock/hostkit` 中文 API Reference](scenes/astock/hostkit/API.md)
 - [`extensions/domainkit` 中文 API Reference](extensions/domainkit/API.md)
 - [`extensions/domainmodule` 中文 API Reference](extensions/domainmodule/API.md)
 - [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
@@ -259,9 +259,8 @@ github.com/wsnacj/agentx-go/browser
 - [Objective Host Kit external-style consumer](runtime/conformance/objective-hostkit-consumer)
 - [Session/Subagent Host Kit external-style consumer](runtime/conformance/session-hostkit-consumer)
 - [Control Contract external-style consumer](runtime/conformance/controlcontract-consumer)
-- [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
-- [A 股组合 external-style consumer](extensions/conformance/astock-consumer)
+- [A 股组合 external-style consumer](scenes/conformance/astock-consumer)
 - [Skills external-style consumer](extensions/conformance/skills-consumer)
 - [Tool catalog/diffs external-style consumer](tools/conformance/catalog-diffs-consumer)
 
@@ -291,10 +290,13 @@ GOWORK=off go -C extensions test ./... -count=1
 GOWORK=off go -C extensions test -race ./... -count=1
 GOWORK=off go -C extensions vet ./...
 GOWORK=off go -C extensions mod tidy -diff
-GOWORK=off GOPROXY=off go -C extensions/conformance/astock-contract-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C extensions/conformance/domain-module-consumer test ./... -count=1
-GOWORK=off GOPROXY=off go -C extensions/conformance/astock-consumer test ./... -count=1
+GOWORK=off GOPROXY=off go -C scenes/conformance/astock-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C extensions/conformance/skills-consumer test ./... -count=1
+GOWORK=off go -C scenes test ./... -count=1
+GOWORK=off go -C scenes test -race ./... -count=1
+GOWORK=off go -C scenes vet ./...
+GOWORK=off go -C scenes mod tidy -diff
 GOWORK=off go run scripts/check_developer_preview_api.go
 GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
 GOWORK=off go run scripts/check_docs_links.go

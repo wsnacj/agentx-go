@@ -6,13 +6,13 @@ import (
 
 	agentx "github.com/wsnacj/agentx-go"
 	llm "github.com/wsnacj/agentx-go/components/llm"
-	astock "github.com/wsnacj/agentx-go/extensions/astock"
-	astockcontracts "github.com/wsnacj/agentx-go/extensions/astock/contracts"
 	"github.com/wsnacj/agentx-go/runtime/execution"
 	"github.com/wsnacj/agentx-go/runtime/hostkit"
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
 	workflow "github.com/wsnacj/agentx-go/runtime/workflow"
 	workflowhostkit "github.com/wsnacj/agentx-go/runtime/workflow/hostkit"
+	astock "github.com/wsnacj/agentx-go/scenes/astock"
+	astockcontracts "github.com/wsnacj/agentx-go/scenes/astock/contracts"
 )
 
 func buildModelToolRound(context.Context, execution.Request) (hostkit.ModelToolRoundConfig, error) {

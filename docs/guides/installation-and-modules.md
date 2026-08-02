@@ -1,6 +1,6 @@
 # 安装与多 Module 引用
 
-`agentx-go`当前采用一个仓库、六个独立 Go library module。调用方只引入实际使用的
+`agentx-go`当前采用一个仓库、九个独立 Go library module。调用方只引入实际使用的
 module：
 
 | Module | 用途 |
@@ -8,14 +8,17 @@ module：
 | `github.com/wsnacj/agentx-go` | 根 Client、Run、错误和 ExecutionAdapter合同 |
 | `github.com/wsnacj/agentx-go/components` | provider-neutral LLM合同 |
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
-| `github.com/wsnacj/agentx-go/extensions` | 可选 portable extension机制；当前含 A股推荐入口、Domain Module、Pack与 Skills |
+| `github.com/wsnacj/agentx-go/extensions` | 可选 portable extension机制；当前含Domain Module、Pack、Skills与ProductShell |
 | `github.com/wsnacj/agentx-go/providers` | 可选模型provider；当前含OpenAI-compatible、Anthropic Messages、Codex Responses client与transport/fault/retry/usage机制 |
 | `github.com/wsnacj/agentx-go/tools` | 可选通用tool catalog与实现；当前含线程安全Registry、保守名称修复和纯文本diffs |
+| `github.com/wsnacj/agentx-go/browser` | 可选Browser runtime、browserd host与推荐Browser tools |
+| `github.com/wsnacj/agentx-go/document` | 可选OCR、Document pipeline、PDF与推荐Document tools |
+| `github.com/wsnacj/agentx-go/scenes` | 可移植Domain Kits；当前首个真实owner为A股kit |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
 和 Runtime类型。Workflow Host Kit路径只需要 Runtime module。A股推荐入口、
-Host Kit、Pack和内嵌资产由 extensions module提供，并通过其固定依赖使用
+Host Kit、Pack和内嵌资产由 scenes module提供，并通过其固定依赖使用
 runtime/components；调用方只需直接声明自己代码实际 import的 module。只从目录
 加载 Skill时直接声明 extensions即可；若代码直接构造经 `runtime/assetfs`证明身份的
 immutable `FSSource`，还应把 runtime列为直接依赖。
@@ -38,7 +41,13 @@ github.com/wsnacj/agentx-go/extensions
 github.com/wsnacj/agentx-go/providers
   v0.0.0-20260802124746-c7f90139a1cc
 github.com/wsnacj/agentx-go/tools
-  v0.0.0-20260802131439-56dd598eef59
+  v0.0.0-20260802165151-c51d7391dbb4
+github.com/wsnacj/agentx-go/browser
+  v0.0.0-20260802183055-f15e2f99ed1a
+github.com/wsnacj/agentx-go/document
+  v0.0.0-20260802203835-ec74047cbe60
+github.com/wsnacj/agentx-go/scenes
+  v0.0.0-20260802210630-68ea44b615cc
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -49,7 +58,10 @@ go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/providers@v0.0.0-20260802124746-c7f90139a1cc
-go get github.com/wsnacj/agentx-go/tools@v0.0.0-20260802131439-56dd598eef59
+go get github.com/wsnacj/agentx-go/tools@v0.0.0-20260802165151-c51d7391dbb4
+go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802183055-f15e2f99ed1a
+go get github.com/wsnacj/agentx-go/document@v0.0.0-20260802203835-ec74047cbe60
+go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260802210630-68ea44b615cc
 ```
 
 ## Private 仓库访问
@@ -75,19 +87,20 @@ GOWORK=off go -C runtime test ./...
 GOWORK=off go -C extensions test ./...
 GOWORK=off go -C providers test ./...
 GOWORK=off go -C tools test ./...
+GOWORK=off go -C browser test ./...
+GOWORK=off go -C document test ./...
+GOWORK=off go -C scenes test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
-根[`conformance/consumer`](../../conformance/consumer)同时固定根、components、runtime
-和extensions四module版本，在一个无HS、无Runner、无长期`replace`、无网络副作用的
+根[`conformance/consumer`](../../conformance/consumer)同时固定根、components、runtime、
+extensions和scenes五module版本，在一个无HS、无Runner、无长期`replace`、无网络副作用的
 consumer中验证自定义ExecutionAdapter、Model/Tool Host Kit、Workflow Host Kit三条
 标准construction路径以及A股推荐extension入口。
-`extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
-用于验证无 HS、无长期 `replace` 的组合接入。
 `extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以
 在无 HS、无 Runner、无长期 `replace` 时实现 config resolver、注册 callback和
 无模型Domain Kit fixture执行。
-`extensions/conformance/astock-consumer`固定 extensions/runtime，验证 A股 Manifest、
+`scenes/conformance/astock-consumer`固定 scenes/extensions/runtime，验证 A股 Manifest、
 嵌入资产、三组 Pack、route/binding、fixture Host Kit和 evaluator的组合路径。
 `extensions/conformance/skills-consumer`固定 extensions/runtime，验证 immutable
 Skill加载、缓存、activation、requested semantics和资源引用；它不依赖 HS、Runner、
@@ -113,12 +126,12 @@ Scene、真实网络、文件、credential或scheduler backend；生产Host仍�
 Browser Runtime使用独立可选module：
 
 ```bash
-go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802154551-56dc2b2c3a2b
+go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802183055-f15e2f99ed1a
 ```
 
-当前版本只承诺P3-A private-validation的`browser/runtime`事实；它不自动启动browserd，
-也不提供默认credential、proxy、登录态、网络或tool注册。Browser host/tools与统一consumer
-仍属于P3-A后续节点。
+P3-A已完成`browser/runtime`、`browser/host/browserd`、`browser/tools`与统一fixed consumer。
+module不会自动启动browserd，也不提供默认credential、proxy、登录态或网络；这些继续由Host
+显式注入和授权。
 
 ## Ubuntu实机复跑
 

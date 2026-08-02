@@ -6,3 +6,5 @@ github.com/wsnacj/agentx-go/extensions v0.0.0-20260802113655-f41de95ec5be h1:ucR
 github.com/wsnacj/agentx-go/extensions v0.0.0-20260802113655-f41de95ec5be/go.mod h1:OqCoGJBt743S3MTMyuRdapGqMky65CxAst5CCFd8LWU=
 github.com/wsnacj/agentx-go/runtime v0.0.0-20260802113655-f41de95ec5be h1:1Rx+A81KKZ1W6G2TdT7m4JMxS0EFQlHJ/UdleuSMKgc=
 github.com/wsnacj/agentx-go/runtime v0.0.0-20260802113655-f41de95ec5be/go.mod h1:OgsFIwN+Yf+xl8YhkaIeiB26dKDtjX6szM21xaAE4gs=
+github.com/wsnacj/agentx-go/scenes v0.0.0-20260802210630-68ea44b615cc h1:4bIoddlZtgilNX5yLBhBwhxNxffWouU38UKQ8/FxFi4=
+github.com/wsnacj/agentx-go/scenes v0.0.0-20260802210630-68ea44b615cc/go.mod h1:EwRFgTUJ4/vhaUfiuInaJxvHOku1IXaqTigD92v+aa8=

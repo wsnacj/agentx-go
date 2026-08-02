@@ -1,6 +1,6 @@
 # A 股 Portable Domain Extension 接入
 
-`github.com/wsnacj/agentx-go/extensions/astock`是 A股 portable能力的推荐 Go入口。
+`github.com/wsnacj/agentx-go/scenes/astock`是 A股 portable能力的推荐 Go入口。
 它可以离线提供 Manifest、不可变 skill/tool资产、7个模型工具定义、3组 Pack、
 确定性 evaluator和一个显式注入 handler的 Host Kit。
 
@@ -9,8 +9,7 @@
 ## 安装
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801071806-57b903334bf5
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801061901-08fdf1038850
+go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260802210630-68ea44b615cc
 ```
 
 当前版本是 private validation pseudo-version，不是正式 tag或 semver承诺。
@@ -82,7 +81,7 @@ task frame协调调用并聚合 readiness。未注入的能力会产生结构化
 
 ## 可运行证据
 
-[`extensions/conformance/astock-consumer`](../../extensions/conformance/astock-consumer)
+[`scenes/conformance/astock-consumer`](../../scenes/conformance/astock-consumer)
 是独立 nested module，固定远端 pseudo-version，不使用 HS、Runner、长期 `replace`
 或网络。它完整验证：
 
@@ -92,9 +91,12 @@ Manifest → embedded asset → 三 Pack注册 → route/binding/materialize
 ```
 
 ```bash
-GOWORK=off go -C extensions/conformance/astock-consumer test ./...
-GOWORK=off go -C extensions/conformance/astock-consumer run .
+GOWORK=off go -C scenes/conformance/astock-consumer test ./...
+GOWORK=off go -C scenes/conformance/astock-consumer run .
 ```
+
+`scenes`会固定其所需的`extensions`与`runtime`依赖；只有调用方源码直接import这些module时
+才需要把它们列为直接依赖。
 
 需要真实行情/研报/信号时，HS继续通过 `scene/agentx_a_stock/module`与 `livekit`
 提供具体 Host adapter。该路径的 provider、credential、cache、source priority、

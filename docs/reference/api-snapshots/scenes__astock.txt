@@ -1,4 +1,4 @@
-package astock // import "github.com/wsnacj/agentx-go/extensions/astock"
+package astock // import "github.com/wsnacj/agentx-go/scenes/astock"
 
 Package astock provides the portable A-share domain manifest, immutable assets,
 tool catalog, Pack definitions and deterministic evaluators.

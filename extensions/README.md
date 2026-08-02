@@ -8,13 +8,6 @@ github.com/wsnacj/agentx-go/extensions
 
 当前包含：
 
-- [`astock`](./astock/API.md)：M5D technical checkpoint已完成的 A股 portable
-  Domain Extension推荐入口，组合 Manifest、immutable assets、tool schema、三组 Pack Definition与
-  确定性 evaluator；
-- [`astock/contracts`](./astock/contracts/API.md)：A 股领域 portable DTO、JSON
-  normalization、status和 assessment mechanism；
-- [`astock/hostkit`](./astock/hostkit/API.md)：Host显式注入 handler的 A股 intent、
-  investigation、readiness与回答格式化机制；
 - [`domainmodule`](./domainmodule/API.md)：编译期 Domain Module的portable
   manifest、config、diagnostics与顺序注册编排。
 - [`pack`](./pack/API.md)：Domain Pack定义、显式校验、注册、Workflow选择/物化、
@@ -25,8 +18,9 @@ github.com/wsnacj/agentx-go/extensions
   M5H新增的typed observation与display-safe Host UI handoff，以及M5I新增的临时
   Workflow typed plan、有限重试、binding lowering与固定planning stage。
 
-它不包含行情 provider、livekit、具体 Workflow policy、工具执行、`pack/runtime`
-memory/eval backend、Skill prompt ranking/安装执行/安全策略、credential或真实网络。
+它不包含领域Scene、行情 provider、livekit、具体 Workflow policy、工具执行、`pack/runtime`
+memory/eval backend、Skill prompt ranking/安装执行/安全策略、credential或真实网络。A股领域
+owner已在P4-A迁入独立[`scenes/astock`](../scenes/astock/API.md)。
 
 依赖方向固定为：
 
@@ -35,20 +29,15 @@ extensions -> contract/runtime/components
 contract/runtime/components -X-> extensions
 ```
 
-M5C Portable Pack Core与 M5D `extensions/astock` checkpoint已经 Owner接受；M5E
-`extensions/skills`技术 checkpoint已完成并等待 Owner接受。`extensions/astock`是
-Developer Preview candidate，`skills`、`astock/hostkit`与其它 extension owner仍为
-Experimental，三组 Pack implementation
-位于 `astock/internal`且不允许外部直接依赖。共享 module不表示其它 Scene获得独立
+M5C Portable Pack Core与M5E Skills、ProductShell等checkpoint已经完成；A股pilot已在P4-A
+迁入`scenes` module并删除本module的重复source authority。`skills`与其它 extension owner仍为
+Experimental。共享 module不表示任意 Scene获得独立
 发行资格，也不构成 Public/Beta/Stable、正式 tag或 semver承诺。
 
 固定版本、无 HS、无长期 `replace` 的组合验证位于：
 
-- [`conformance/astock-contract-consumer`](conformance/astock-contract-consumer)；
 - [`conformance/domain-module-consumer`](conformance/domain-module-consumer)；
 - [`conformance/pack-consumer`](conformance/pack-consumer)；
-- [`conformance/astock-consumer`](conformance/astock-consumer)：组合完整 portable A股
-  Manifest、资产、三组 Pack、fixture Host Kit与 evaluator；
 - [`conformance/skills-consumer`](conformance/skills-consumer)：使用固定版本验证
   immutable AssetFS加载、缓存、路径激活、requested semantics、资源完整性和 deep clone。
 - [`conformance/productshell-consumer`](conformance/productshell-consumer)：验证portable
@@ -56,7 +45,7 @@ Experimental，三组 Pack implementation
 - [`conformance/productshell-observation-consumer`](conformance/productshell-observation-consumer)：
   验证typed Session/HostProcess/OperatorLine到display-safe handoff及runtime-use。
 
-这些consumer分别证明contracts、Domain Module、Pack、A股组合路径、Portable Skills
+这些consumer分别证明Domain Module、Pack、Portable Skills
 及ProductShell准备/临时规划/观测路径可以在无HS、Runner、长期`replace`和网络时运行；
 它们也不执行命令、安装或真实UI/log delivery副作用。
 

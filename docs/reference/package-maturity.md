@@ -1,6 +1,7 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的51个 production package。它不是历史
+本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
+52个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -17,18 +18,19 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | --- | --- | --- | --- |
 | `agentx` | Developer Preview candidate | [根 API](agentx.md) | Client、Run、错误、画像和生命周期 |
 | `components/llm` | Developer Preview candidate | [LLM API](../../components/llm/API.md) | provider-neutral 模型、消息、工具和 usage 合同 |
+| `components/tool` | Experimental extension | [Tool Contract API](../../components/tool/API.md) | provider-neutral工具声明、调用、结果与执行合同 |
 | `runtime/execution` | Developer Preview candidate | [Execution API](../../runtime/execution/API.md) | 根 Client 与 Host 之间的 typed dispatch |
 | `runtime/executionpolicy` | Experimental extension | [API](../../runtime/executionpolicy/API.md) | 执行policy DTO、Host编译port与metadata/retry/decision/report reducer |
 | `runtime/channel` | Experimental extension | [API](../../runtime/channel/API.md) | portable message/sender ports、bounded ingress与session delivery合同 |
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model Conversation、Model/Tool Adapter 与 Tool Direct Answer 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
 | `runtime/artifact` | Experimental extension | [API](../../runtime/artifact/API.md) | Artifact identity、lineage、registry合同与并发安全内存实现 |
-| `extensions/astock` | Developer Preview candidate | [A股 Extension API](../../extensions/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
-| `extensions/astock/contracts` | Experimental extension | [API](../../extensions/astock/contracts/API.md) | A股 portable DTO、JSON normalization与 assessment |
-| `extensions/astock/hostkit` | Experimental extension | [API](../../extensions/astock/hostkit/API.md) | 无 provider的 A股 intent、handler协调、readiness与回答格式化 |
-| `extensions/astock/internal/packresearch` | internalization candidate | [API](../../extensions/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
-| `extensions/astock/internal/packsignal` | internalization candidate | [API](../../extensions/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
-| `extensions/astock/internal/packvaluation` | internalization candidate | [API](../../extensions/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
+| `scenes/astock` | Developer Preview candidate | [A股 Extension API](../../scenes/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
+| `scenes/astock/contracts` | Experimental extension | [API](../../scenes/astock/contracts/API.md) | A股 portable DTO、JSON normalization与 assessment |
+| `scenes/astock/hostkit` | Experimental extension | [API](../../scenes/astock/hostkit/API.md) | 无 provider的 A股 intent、handler协调、readiness与回答格式化 |
+| `scenes/astock/internal/packresearch` | internalization candidate | [API](../../scenes/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
+| `scenes/astock/internal/packsignal` | internalization candidate | [API](../../scenes/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
+| `scenes/astock/internal/packvaluation` | internalization candidate | [API](../../scenes/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
 | `extensions/domainkit` | Experimental extension | [API](../../extensions/domainkit/API.md) | 无模型module/tool dispatch、typed error与deterministic output digest |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
@@ -69,7 +71,8 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 ## 可选 Providers module
 
-下列8个package不进入当前四module的51包Core gate，全部保持Experimental：
+下列8个package不进入当前root/components/runtime/extensions/scenes五module的52包focused
+gate，全部保持Experimental：
 
 | Package | 分级 | 中文 Reference | 主要用途 |
 | --- | --- | --- | --- |
@@ -87,7 +90,7 @@ Developer Preview candidate、Public、Beta或Stable。
 
 ## 可选 Tools module
 
-下列2个package不进入当前四module的51包Core gate，全部保持Experimental：
+下列tools module package不进入当前五module的52包focused gate，全部保持Experimental：
 
 | Package | 分级 | 中文 Reference | 主要用途 |
 | --- | --- | --- | --- |
@@ -99,7 +102,7 @@ backend，也不因出现在本表而升级为Developer Preview candidate、Publ
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-51个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+52个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 

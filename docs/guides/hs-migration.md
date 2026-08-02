@@ -103,18 +103,18 @@ forwarder。Core和现有 Scene consumer均直接固定 canonical runtime版本�
 HS兼容路径恢复 snapshot或 resolver实现。
 
 A股 portable DTO、JSON行为、证券代码 normalization、readiness和 assessment
-机制的 source authority现位于 `extensions/astock/contracts`。HS
+机制的 source authority现位于 `scenes/astock/contracts`。HS
 `scene/agentx_a_stock/contracts`只保留 Deprecated alias与四个函数转发；A股
 production consumer直接使用 canonical contracts。
 
-以下能力仍由 HS A股 Scene拥有，不属于 extensions：
+以下能力仍由 HS A股 Scene拥有，不属于portable `scenes/astock`：
 
 - provider、HTTP client、credential、cookie、proxy和缓存；
 - livekit、pack/workflow、工具执行和模型调用；
 - 来源优先级、fallback、freshness核验和最终回答策略；
 - 任何真实网络、交易或其它生产副作用。
 
-`extensions/conformance/astock-contract-consumer`固定 runtime/extensions
+`scenes/conformance/astock-consumer`固定 scenes/runtime/extensions
 pseudo-version，以无 HS、无 `replace`方式组合 `assetfs`与 A股 JSON合同。该
 consumer只证明 portable合同可独立消费，不表示完整 A股 Scene已经迁仓或可发布。
 
@@ -143,8 +143,8 @@ memory/eval backend仍由 HS拥有。
 
 ## M5D A股 Portable Extension收口
 
-`extensions/astock`现在拥有 A股 Manifest、compiled skill/tool资产、运行时 tool
-schema、三组 Pack Definition/evaluator和聚合注册；`extensions/astock/hostkit`拥有
+`scenes/astock`现在拥有 A股 Manifest、compiled skill/tool资产、运行时 tool
+schema、三组 Pack Definition/evaluator和聚合注册；`scenes/astock/hostkit`拥有
 intent转换、显式 handler协调、readiness聚合和确定性回答格式化。
 
 HS `scene/agentx_a_stock/module`已经直接消费 canonical Manifest、资产与 Pack注册；
@@ -158,7 +158,7 @@ root filesystem skill/tool文件暂保留为显式路径 API的 compatibility mi
 differential测试约束；它们不再是 compiled asset source authority。plugin bundle的
 command/risk metadata是独立分发合同，不得用 canonical lookup manifest覆盖。
 
-`extensions/conformance/astock-consumer`以固定版本证明无 HS、Runner、`replace`和
+`scenes/conformance/astock-consumer`以固定版本证明无 HS、Runner、`replace`和
 网络的 Manifest→asset→Pack→binding→fixture Host Kit→evaluator路径。
 
 ## M5E Portable Skills Core收口
@@ -251,8 +251,8 @@ Model/Tool Host Kit和Workflow Host Kit固定为三条标准接入路径，并�
 fixed-version external consumer统一验收。HS继续固定各owner已验收的不可变
 pseudo-version；本轮不为了版本外观一致而触碰Scene或重写业务consumer。
 
-A股evaluator DTO的canonical定义已收口到`extensions/astock/contracts`，
-`extensions/astock`和三组内部Pack只保留同一类型身份的alias。该调整用于消除候选
+A股evaluator DTO的canonical定义已收口到`scenes/astock/contracts`，
+`scenes/astock`和三组内部Pack只保留同一类型身份的alias。该调整用于消除候选
 公开类型对Go`internal`路径的泄漏，不改变HS evaluator调用、JSON或产品策略。
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool

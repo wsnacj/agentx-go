@@ -5,17 +5,17 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A/P2-B三个provider protocol和P2-C/P2-D通用Tool纵向闭环完成；仍处于private validation |
-| Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
+| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools与P3 Browser/Document闭环完成；P4-A首批Portable Scenes迁移中；仍处于private validation |
+| Developer Portal | 当前生成站点基线待P4-A最终checkpoint刷新；52 package/10 candidate focused API gate已通过 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | Core四module当前51个package、10个Developer Preview candidate；可选providers module另有8个Experimental package、19个production source、2,934行 |
+| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前52个package、10个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
-| Experimental browser | P3-A首个`browser/runtime`真实owner已落地30,906行portable implementation并开始HS fixed-version cutover；browserd host、browser tools、统一consumer和最终平台gate仍pending |
+| Experimental browser | P3-A已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -100,9 +100,9 @@ external consumer均已切换。M5C checkpoint时 canonical production为32个 p
 90个 source、17,685行；`pack/runtime` memory/eval backend及具体 Scene内容仍由
 HS拥有。该接受不构成 Public/Beta/Stable或发行授权。
 
-M5D已建立 `extensions/astock`推荐入口与 `extensions/astock/hostkit`，并把三组
+M5D已建立 `scenes/astock`推荐入口与 `scenes/astock/hostkit`，并把三组
 A股 Pack Definition/evaluator放入不可外部导入的 internal owner。当前37个 package
-均已有中文 Reference，`extensions/astock`作为第八个 Developer Preview candidate
+均已有中文 Reference，`scenes/astock`作为第八个 Developer Preview candidate
 进入 focused签名门禁。fixed-version组合 consumer和 HS production cutover已经完成，
 旧 Pack/tool-schema/Host Kit通用实现已删除或降薄；canonical production由 M5C的
 32个 package、90个 source、17,685行增至37个 package、104个 source、20,674行。
@@ -349,7 +349,7 @@ vet、tidy、offline run和darwin/arm64、linux/amd64 CGO-disabled build均通�
 检查44个package分类、中文Reference、公开类型不得泄漏`hs/`、Go`internal`或
 `runtime/controlcontract`，并比较darwin/arm64与linux/amd64签名。为关闭唯一真实泄漏，
 A股六个evaluator DTO的source authority从三组`internal` Pack移到
-`extensions/astock/contracts`，顶层推荐入口和内部实现均使用type alias；evaluator逻辑、
+`scenes/astock/contracts`，顶层推荐入口和内部实现均使用type alias；evaluator逻辑、
 JSON字段和调用顺序未改变。Markdown门禁验证68个文件、248个本地链接。
 
 同一fixed commit的root/components/runtime/extensions module zip分别为102,907、
