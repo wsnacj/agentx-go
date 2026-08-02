@@ -64,6 +64,28 @@ observation阶段只生成大小、schema drift、敏感key、binary payload、t
 才产生summary envelope；error result始终保留。Host可以用`ClassifyContent`注入Browser、
 Document、process或网络的产品信任分类，canonical module不拥有这些策略。
 
+## Catalog metadata
+
+```go
+type ToolMetadata struct {
+    Plugin          string
+    Groups          []string
+    Type            string
+    Source          string
+    Capabilities    []string
+    AuditTags       []string
+    RiskProfile     string
+    ReadOnly        *bool
+    ConcurrencySafe *bool
+    Destructive     *bool
+}
+```
+
+`ToolMetadata`只描述catalog条目，不执行authorization、approval、sandbox或backend选择。
+三个布尔字段使用指针，确保“明确为false”和“未声明”可以区分。`ToolSourceBuiltin`、
+`ToolSourceExtension`、`ToolSourceProject`、`ToolSourceCustom`和`ToolSourceUnknown`提供稳定
+source值。
+
 ## 当前通用tool
 
 - [`tools/diffs`](./diffs/API.md)：纯文本diff，不读取文件、Git或网络，不产生副作用。
