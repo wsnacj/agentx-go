@@ -247,6 +247,8 @@ type PDFOCRRequest struct {
 // the existing deterministic fallback path.
 type PDFHost struct {
 	Inputs          PDFInputResolver
+	LayoutName      string
+	Layout          func(context.Context, string, []int) (PDFTextResult, error)
 	Chat            func(context.Context, llm.ChatInput) (*llm.ChatResponse, error)
 	Vision          func(context.Context, llm.VisionInput) (*llm.VisualResponse, error)
 	Native          func(context.Context, PDFNativeRequest) (string, error)

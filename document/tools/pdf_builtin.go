@@ -213,6 +213,18 @@ func (rt pdfBackendRuntime) runText(ctx context.Context, op func(PDFBackend) (PD
 }
 
 func (rt pdfBackendRuntime) runLayoutText(ctx context.Context, path string, pages []int) (PDFTextResult, string, bool, error) {
+	host := pdfHostFromContext(ctx)
+	if host.Layout != nil {
+		result, err := host.Layout(ctx, path, pages)
+		name := strings.TrimSpace(host.LayoutName)
+		if name == "" {
+			name = "host"
+		}
+		if err == nil {
+			return result, name, true, nil
+		}
+		return PDFTextResult{}, "", true, fmt.Errorf("layout backend %s failed: %w", name, err)
+	}
 	type candidate struct {
 		backend      PDFBackend
 		availability PDFBackendAvailability

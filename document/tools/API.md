@@ -53,6 +53,8 @@ type DocumentHost struct {
 ```go
 type PDFHost struct {
     Inputs          PDFInputResolver
+    LayoutName      string
+    Layout          func(context.Context, string, []int) (PDFTextResult, error)
     Chat            func(context.Context, llm.ChatInput) (*llm.ChatResponse, error)
     Vision          func(context.Context, llm.VisionInput) (*llm.VisualResponse, error)
     Native          func(context.Context, PDFNativeRequest) (string, error)
@@ -62,7 +64,8 @@ type PDFHost struct {
 }
 ```
 
-`Inputs` 是必需项，统一处理 workspace path、`file://` 和远程 PDF 的授权与物化。其余能力
+`Inputs` 是必需项，统一处理 workspace path、`file://` 和远程 PDF 的授权与物化。`Layout`
+用于 Host 显式提供 layout-preserving 文本提取；其余能力
 按实际路由可选；缺少能力时保持 fail closed 或走既有 deterministic fallback，不会读取环境
 变量、发起网络请求或启动进程。
 
