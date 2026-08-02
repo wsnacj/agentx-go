@@ -1,0 +1,26 @@
+{
+  "name": "docparse_guard",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": ["read", "orchestration"],
+  "risk_profile": "low",
+  "audit_tags": ["agentx-docparse", "guard", "document-evidence"],
+  "read_only": true,
+  "concurrency_safe": true,
+  "destructive": false,
+  "description": "Convert document extraction diagnostics into readiness, review_required, failure_class, and answer-boundary status.",
+  "plugin": "agentx-docparse",
+  "groups": ["group:docparse-document-operations"],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {"type": "string", "description": "Original user request or short task note used for answer-boundary context."},
+      "result_path": {"type": "string", "description": "Workspace-local JSON result produced by document_parse or a host parser adapter."},
+      "parse_result": {"type": "object", "description": "Inline parse result or projected extraction payload to guard."},
+      "validation": {"type": "object", "description": "Validation payload produced by docparse_validate or an equivalent host validator."},
+      "review_policy": {"type": "object", "description": "Host-provided policy for deciding whether incomplete evidence should be review_required, failed, or answer_ready."}
+    }
+  },
+  "records": []
+}

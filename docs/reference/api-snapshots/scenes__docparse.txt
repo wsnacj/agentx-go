@@ -1,0 +1,91 @@
+package docparse // import "github.com/wsnacj/agentx-go/scenes/docparse"
+
+Package docparse provides a portable document-understanding Domain Kit.
+
+It owns the deterministic Pack, tool schemas, profile/planning/fusion mechanisms
+and evidence projection. Hosts keep filesystem access, OCR/PDF providers,
+private schemas, credentials and concrete parser backends.
+
+CONSTANTS
+
+const (
+	PackID = "docparse-document-pack"
+
+	CaseTypeProfileProbe  = "document.profile_probe"
+	CaseTypeExtractFields = "document.extract_fields"
+	CaseTypeExtractTable  = "document.extract_table"
+	CaseTypeVerifyFields  = "document.verify_fields"
+	CaseTypeEvidenceTrace = "document.evidence_trace"
+	CaseTypeGuard         = "document.guard"
+
+	ProfileProbeWorkflow  = "docparse_profile_probe_v1"
+	ExtractFieldsWorkflow = "docparse_extract_fields_v1"
+	ExtractTableWorkflow  = "docparse_extract_table_v1"
+	VerifyFieldsWorkflow  = "docparse_verify_fields_v1"
+	EvidenceTraceWorkflow = "docparse_evidence_trace_v1"
+	GuardWorkflow         = "docparse_guard_v1"
+
+	DefaultPolicy       = "docparse_workspace_document_review"
+	DefaultEvaluator    = "docparse_evidence_guard"
+	DefaultSuccessSuite = "docparse_document_success_suite"
+
+	ArtifactTypeEvidenceBundle = "docparse.evidence_bundle"
+)
+
+FUNCTIONS
+
+func Definition() agentxpack.Definition
+func DomainRoot() (string, error)
+    DomainRoot no longer derives a package source directory.
+
+    Deprecated: use ExtensionFS or LocateAssetsAt.
+
+func ExtensionFS() fs.FS
+    ExtensionFS returns the immutable skills and declarative tool manifests
+    compiled into the docparse package.
+
+func PackDefinition() agentxpack.Definition
+    PackDefinition returns a caller-owned copy of the Docparse Pack definition.
+
+func RegisterInto(reg agentxpack.Registry) error
+func RegisterPacksIntoRegistry(reg agentxpack.Registry) error
+    RegisterPacksIntoRegistry registers the Docparse Pack into a canonical
+    registry.
+
+func SkillNames() []string
+    SkillNames returns the embedded skill identities exposed by this kit.
+
+func ToolNames() []string
+    ToolNames returns the semantic tool identities exposed by this kit.
+
+
+TYPES
+
+type AssetRoots struct {
+	DomainRoot string
+	SkillsRoot string
+	ToolsRoot  string
+	PacksRoot  string
+	DocsRoot   string
+}
+    AssetRoots lists filesystem locations for reusable docparse module assets.
+
+func LocateAssets() (AssetRoots, error)
+    LocateAssets is retained for source compatibility only.
+
+    Deprecated: implicit source-checkout discovery is not distribution safe.
+    Use ExtensionFS or LocateAssetsAt.
+
+func LocateAssetsAt(root string) (AssetRoots, error)
+    LocateAssetsAt returns filesystem roots below an explicit host-owned root.
+
+func (r AssetRoots) ExtensionRoot() string
+    ExtensionRoot returns the root that exposes reusable docparse skills and
+    tools.
+
+func (r AssetRoots) SkillPath(name string) string
+    SkillPath returns the SKILL.md path for a docparse skill name.
+
+func (r AssetRoots) ToolManifestPath(name string) string
+    ToolManifestPath returns the .tool.json path for a docparse tool name.
+

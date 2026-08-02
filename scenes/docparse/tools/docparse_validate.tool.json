@@ -1,0 +1,27 @@
+{
+  "name": "docparse_validate",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": ["read", "orchestration"],
+  "risk_profile": "low",
+  "audit_tags": ["agentx-docparse", "validation", "document-evidence"],
+  "read_only": true,
+  "concurrency_safe": true,
+  "destructive": false,
+  "description": "Validate extracted document fields and tables against caller-provided expected values, unit/period requirements, and evidence completeness rules.",
+  "plugin": "agentx-docparse",
+  "groups": ["group:docparse-document-operations"],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {"type": "string", "description": "Original user request or short task note used for validation context."},
+      "result_path": {"type": "string", "description": "Workspace-local JSON result produced by document_parse or a host parser adapter."},
+      "parse_result": {"type": "object", "description": "Inline parse result or projected extraction payload to validate."},
+      "expected_fields": {"type": "array", "items": {"type": "object"}, "description": "Expected field assertions, accepted values, units, periods, or evidence requirements."},
+      "expected_tables": {"type": "array", "items": {"type": "object"}, "description": "Expected table assertions such as table names, columns, rows, or required cells."},
+      "required_evidence": {"type": "object", "description": "Structured evidence requirements such as page refs, bbox refs, snippets, table cells, or field-level provenance."}
+    }
+  },
+  "records": []
+}

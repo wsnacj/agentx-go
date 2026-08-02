@@ -1,0 +1,28 @@
+{
+  "name": "docparse_spec_select",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": ["read", "orchestration"],
+  "risk_profile": "low",
+  "audit_tags": ["agentx-docparse", "spec-selection", "document-evidence"],
+  "read_only": true,
+  "concurrency_safe": true,
+  "destructive": false,
+  "description": "Rank caller-provided docparse spec candidates for a host-approved local document. Host projects own private spec registries and document roots.",
+  "plugin": "agentx-docparse",
+  "groups": ["group:docparse-document-operations"],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {"type": "string", "description": "Original user request or short task note used only for ranking context."},
+      "document_path": {"type": "string", "description": "Workspace-local or host-approved document artifact reference to inspect."},
+      "spec_paths": {"type": "array", "items": {"type": "string"}, "description": "Caller-provided workspace-local candidate specs."},
+      "spec_path": {"type": "string", "description": "Single candidate spec path when the caller wants to rank or validate one spec."},
+      "page_limit": {"type": "integer", "minimum": 1, "description": "Maximum number of leading pages to inspect for spec ranking."},
+      "artifact_policy": {"type": "string", "description": "Host artifact policy hint such as summary, full, or none."}
+    },
+    "required": ["document_path"]
+  },
+  "records": []
+}

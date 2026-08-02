@@ -10,6 +10,15 @@ scenes/astock/internal/packsignal	internalization_candidate	scenes/astock/intern
 scenes/astock/internal/packvaluation	internalization_candidate	scenes/astock/internal/packvaluation/API.md	-
 scenes/companyresearch	developer_preview_candidate	scenes/companyresearch/API.md	c60ff08c8725aa30f62e5f20f77df53721ffe6c3c11e3df436817b8803d81e8b
 scenes/companyresearch/hostkit	experimental_extension	scenes/companyresearch/hostkit/API.md	-
+scenes/docparse	developer_preview_candidate	scenes/docparse/API.md	a6a6cd75b2a1abe9292559419e7b109f84284f818eb76360fb0ff5d60e68a96c
+scenes/docparse/adapters	internalization_candidate	scenes/docparse/adapters/API.md	-
+scenes/docparse/fusion	internalization_candidate	scenes/docparse/fusion/API.md	-
+scenes/docparse/hostkit	experimental_extension	scenes/docparse/hostkit/API.md	-
+scenes/docparse/planner	internalization_candidate	scenes/docparse/planner/API.md	-
+scenes/docparse/profile	internalization_candidate	scenes/docparse/profile/API.md	-
+scenes/docparse/qualityevidence	internalization_candidate	scenes/docparse/qualityevidence/API.md	-
+scenes/docparse/representation	internalization_candidate	scenes/docparse/representation/API.md	-
+scenes/docparse/understanding	internalization_candidate	scenes/docparse/understanding/API.md	-
 scenes/publicnews	developer_preview_candidate	scenes/publicnews/API.md	5f5d3bfa101d3edbb54f79dd558adcf6555fcca2fee14fbf29e9a6a9a8a625ad
 scenes/publicnews/hostkit	experimental_extension	scenes/publicnews/hostkit/API.md	-
 extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-

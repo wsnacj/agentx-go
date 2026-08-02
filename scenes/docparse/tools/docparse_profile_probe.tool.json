@@ -1,0 +1,35 @@
+{
+  "name": "docparse_profile_probe",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": ["read", "orchestration"],
+  "risk_profile": "low",
+  "audit_tags": ["agentx-docparse", "profile-probe", "document-classification"],
+  "read_only": true,
+  "concurrency_safe": false,
+  "destructive": false,
+  "description": "Classify a host-approved local document or parse result into a review-required profile proposal without extracting final fields or table rows.",
+  "plugin": "agentx-docparse",
+  "groups": ["group:docparse-document-operations"],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {"type": "string", "description": "Original user request or short task note used for profile-probe context."},
+      "document_path": {"type": "string", "description": "Workspace-local or host-approved document artifact reference to inspect."},
+      "result_path": {"type": "string", "description": "Workspace-local JSON profile-probe or parser result produced by document_parse or a host parser adapter."},
+      "parse_result": {"type": "object", "description": "Inline parser or profile-probe result when the caller already has host-produced output."},
+      "document_type": {"type": "string", "description": "Caller-provided document type hint; unknown values keep proposal-only routing."},
+      "profile_id": {"type": "string", "description": "Optional host profile identifier; when present the host may skip public discovery."},
+      "page_limit": {"type": "integer", "minimum": 1, "description": "Maximum number of pages to inspect for profile probing."},
+      "page_range": {"type": "string", "description": "Optional 1-based contiguous page range such as 2 or 2-4 when probing part of a bundled document."},
+      "profile_probe_only": {"type": "boolean", "description": "Force classify-only profile probing; do not extract final fields or table rows."},
+      "classify_only": {"type": "boolean", "description": "Alias for profile_probe_only when callers ask only for document type classification."},
+      "profile_discovery_search": {"type": "boolean", "description": "Allow host-owned public discovery search when the host explicitly configured a search provider."},
+      "enable_profile_discovery_search": {"type": "boolean", "description": "Alias for profile_discovery_search used by host playbooks."},
+      "disable_profile_discovery_search": {"type": "boolean", "description": "Disable host-owned public discovery search for this profile probe request."},
+      "artifact_policy": {"type": "string", "description": "Artifact retention hint such as summary, full, or none; host remains the policy owner."}
+    }
+  },
+  "records": []
+}

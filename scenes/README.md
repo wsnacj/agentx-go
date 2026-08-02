@@ -15,7 +15,9 @@ Stable兼容承诺。
   无provider Host Kit；搜索、页面读取和站点策略由Host注入。
 - [`companyresearch`](./companyresearch/API.md)：公司研究合同、任务分解、证据guard、
   Pack与无provider Host Kit；财报、行情、新闻和主体解析backend由Host注入。
-- `docparse`：P4-A下一 cohort；目录只在真实 implementation ready时创建。
+- [`docparse`](./docparse/API.md)：文档 profile/planner/adapter/fusion/understanding、
+  evidence evaluator、Pack与无文件/无provider Host Kit；OCR/PDF、私有schema和真实文件由
+  Host显式注入。
 
 ## 依赖方向
 

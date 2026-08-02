@@ -1,0 +1,64 @@
+{
+  "chapters": {
+    "invoice": {
+      "key": "invoice",
+      "text_size": 120,
+      "fields": {
+        "invoice_id": {
+          "key": "invoice_id",
+          "chapter": "invoice",
+          "value": "INV-001",
+          "normalized_value": "INV-001",
+          "source": "synthetic",
+          "confidence": 0.98,
+          "evidence": "Invoice: INV-001",
+          "page_refs": [1],
+          "bounding_boxes": [
+            {
+              "page": 1,
+              "x0": 0.1,
+              "y0": 0.1,
+              "x1": 0.4,
+              "y1": 0.2,
+              "unit": "ratio",
+              "coordinate_system": "page",
+              "source": "synthetic"
+            }
+          ],
+          "selection_reason": "single_candidate"
+        },
+        "total_amount": {
+          "key": "total_amount",
+          "chapter": "invoice",
+          "value": "123.45",
+          "normalized_value": "123.45",
+          "unit": "USD",
+          "period": "2026-05",
+          "source": "synthetic_table",
+          "confidence": 0.95,
+          "evidence": "Total USD 123.45",
+          "page_refs": [1],
+          "table_cells": [
+            {
+              "page": 1,
+              "table_index": 0,
+              "start_row": 2,
+              "start_col": 1,
+              "end_row": 2,
+              "end_col": 1,
+              "source": "synthetic"
+            }
+          ],
+          "selection_reason": "single_candidate"
+        }
+      }
+    }
+  },
+  "chapter_order": ["invoice"],
+  "output_dir": "fixtures/out",
+  "diagnostics": {
+    "status": "ok",
+    "page_count": 1,
+    "text_quality": "good"
+  }
+}

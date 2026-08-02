@@ -1,0 +1,31 @@
+{
+  "name": "docparse_extract_table",
+  "source": "extension",
+  "type": "lookup",
+  "schema_version": "v2",
+  "capabilities": ["read", "orchestration"],
+  "risk_profile": "medium",
+  "audit_tags": ["agentx-docparse", "table-extraction", "document-evidence"],
+  "read_only": false,
+  "concurrency_safe": false,
+  "destructive": false,
+  "description": "Extract table structure and cell evidence from a host-approved local document or parse result fixture using caller-provided specs.",
+  "plugin": "agentx-docparse",
+  "groups": ["group:docparse-document-operations"],
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {"type": "string", "description": "Original user request or short task note used for table extraction context."},
+      "document_path": {"type": "string", "description": "Workspace-local or host-approved document artifact reference to parse."},
+      "result_path": {"type": "string", "description": "Workspace-local JSON result produced by document_parse or a host parser adapter."},
+      "parse_result": {"type": "object", "description": "Inline parse result object when the caller already has parser output and wants projection without re-parsing."},
+      "spec_path": {"type": "string", "description": "Workspace-local docparse spec directory or main.yaml path selected by caller or spec selection."},
+      "expected_tables": {"type": "array", "items": {"type": "object"}, "description": "Expected table assertions such as table names, columns, rows, or required cells."},
+      "output_dir": {"type": "string", "description": "Optional workspace-local artifact directory for parser outputs."},
+      "artifact_policy": {"type": "string", "description": "Artifact retention hint such as summary, full, or none; host remains the policy owner."},
+      "page_limit": {"type": "integer", "minimum": 1, "description": "Maximum number of pages to parse or inspect for this request."},
+      "pdf_parse_mode": {"type": "string", "description": "PDF extraction mode hint, for example default, simple, fast, normal, ocr, or force_ocr."}
+    }
+  },
+  "records": []
+}
