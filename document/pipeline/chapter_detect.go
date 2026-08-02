@@ -36,9 +36,17 @@ type DetectOptions struct {
 	RetryOptions *RetryOptions
 }
 
-// LLMDetectChaptersPriority 采用“优先级分组 + 分批并发 + 区间输出”的方式识别章节页码。
-// 返回 map[key][]int（1-based 页码）。
-func (r *Runtime) LLMDetectChaptersPriority(ctx context.Context, pages []string, modelName string, spec *configs.DocSpec, opt *DetectOptions) (map[string][]int, error) {
+// DetectChaptersPriority uses priority groups and bounded parallel batches to
+// identify 1-based chapter pages with an explicitly supplied model adapter.
+func DetectChaptersPriority(ctx context.Context, model Model, pages []string, modelName string, spec *configs.DocSpec, opt *DetectOptions) (map[string][]int, error) {
+	if model == nil {
+		return nil, fmt.Errorf("model adapter is required")
+	}
+	runtime := &Runtime{model: model}
+	return runtime.detectChaptersPriority(ctx, pages, modelName, spec, opt)
+}
+
+func (r *Runtime) detectChaptersPriority(ctx context.Context, pages []string, modelName string, spec *configs.DocSpec, opt *DetectOptions) (map[string][]int, error) {
 	if spec == nil {
 		return nil, fmt.Errorf("spec is nil")
 	}

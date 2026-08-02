@@ -591,11 +591,7 @@ func autoCleanup(ctx context.Context, pages []string, maxHeaderLines, maxFooterL
 
 	// 如果程序算法没有识别出模式，使用LLM进行补充判断
 	if !hasHeaderPattern || !hasFooterPattern {
-		llmSamplePages := 8
-		if len(pages) < llmSamplePages {
-			llmSamplePages = len(pages)
-		}
-		llmHeaderPatterns, llmFooterPatterns, err := analyzePatternsWithLLM(ctx, pages[:llmSamplePages], llmModel, request) // LLM固定8页采样
+		llmHeaderPatterns, llmFooterPatterns, err := analyzePatternsWithLLM(ctx, pages[:8], llmModel, request) // 保持既有固定8页采样语义
 		if err == nil {
 			// 如果程序算法没找到页眉模式，使用LLM的结果
 			if !hasHeaderPattern && len(llmHeaderPatterns) > 0 {

@@ -438,7 +438,7 @@ func (r *Runtime) run(ctx context.Context, req ParseRequest) (*types.DocumentRes
 					BackoffJitter:     0.2,
 				},
 			}
-			pagesMap, derr = r.LLMDetectChaptersPriority(ctx, pages, opts.ModelName, &specForDetect, detOpt)
+			pagesMap, derr = r.detectChaptersPriority(ctx, pages, opts.ModelName, &specForDetect, detOpt)
 			// 兜底：若新方案失败且无优先级配置，则回退旧实现（同样仅缺失章节）
 			if derr != nil && len(spec.Meta.DetectPriorityGroups) == 0 {
 				pagesMap, derr = r.llmDetectChapters(ctx, pages, opts.ModelName, &specForDetect)
