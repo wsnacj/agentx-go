@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5T Core Developer Preview Version Alignment, Upgrade Compatibility and Clean-Room Adoption Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M6A Core Pre-Beta Contract and Distribution Preflight Closure：`active` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
@@ -366,8 +366,12 @@ clean-room gate均通过。HS只修改`go.mod/go.sum`并统一同一版本，未
 API gate、69文件/254链接文档gate和cache Origin回读通过；完整HS回归保持149 PASS、
 2个既有治理FAIL、20 SKIP，仍只有原3条evidence stale/mismatch。production规模与
 closure保持44包、235 source、89,691行及407/57/2467/65、HS118/canonical34/Scene0。
-当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`；不构成
+M5T已于2026-08-02获Owner接受，状态为`accepted_checkpoint`；该接受不构成
 Public/Beta/Stable、semver、tag、Scene迁移或发行授权。
+
+M6A随后只补Developer Preview兼容、维护、支持、安全报告、版本epoch和分发预检合同，
+并将private validation与Public Beta readiness分开。M6A不新增Runtime owner、不修改
+公共行为、不进入Scene或完整文档站，也不擅自选择license或创建tag/release。
 
 ## 明确 non-goal
 
