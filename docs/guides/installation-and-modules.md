@@ -104,6 +104,12 @@ canonical consumer。
 `replace`、HS、Runner、Scene、网络或credential；它验证catalog注册、保守名称修复和
 纯文本diffs真实执行。该consumer不证明Host授权、sandbox或具体backend已经迁入。
 
+`tools/conformance/general-tools-consumer`固定P2-D tools版本和其直接依赖，在独立module中
+组合invocation registry、diffs以及message/filesystem/HTTP/memory/scheduler五类工具。它
+通过内存workspace和显式fake ports执行全部10个注册入口，不使用`replace`、HS、Runner、
+Scene、真实网络、文件、credential或scheduler backend；生产Host仍必须显式提供并治理
+这些能力。
+
 ## Ubuntu实机复跑
 
 仓库内当前候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module

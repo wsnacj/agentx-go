@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A/P2-B三个provider protocol和P2-C首个通用Tool vertical slice纵向闭环完成；仍处于private validation |
+| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A/P2-B三个provider protocol和P2-C/P2-D通用Tool纵向闭环完成；仍处于private validation |
 | Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
@@ -14,7 +14,7 @@
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | Core四module当前51个package、10个Developer Preview candidate；可选providers module另有8个Experimental package、19个production source、2,934行 |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
-| Experimental tools | P2-C已落地tool合同、线程安全catalog、保守名称修复和纯文本diffs，并完成fixed consumer与HS production cutover；授权、sandbox与具体backend仍由Host拥有 |
+| Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -27,7 +27,7 @@
 | Portable Scheduler/Resume | P1-D已落地queue、dispatcher、lease heartbeat与bounded Resume Host Kit；生产durable backend、process与产品policy仍由Host拥有 |
 | 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`，bounded Resume可用`session/hostkit.NewResumeRuntime`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
+| Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension、channel、provider及P2-D十个tool入口；均无HS/Runner/Scene/长期replace，P2-D consumer也无真实副作用 |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 51个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |

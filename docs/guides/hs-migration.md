@@ -226,6 +226,24 @@ network、memory、retrieval和task的具体backend/policy。后续迁移不能�
 新项目可以在无HS、Runner、Scene、长期`replace`和真实副作用时完成catalog注册、名称修复
 及diffs执行。该证据不代表其余通用tool已经迁移完成。
 
+## P2-D 通用Tool Invocation与五类工具收口
+
+canonical `tools`现在进一步拥有chain、schema sanitizer、result middleware/controlled
+transform，以及message、filesystem、HTTP、memory和scheduler五类portable coordination。
+这些package提供真实参数解析、稳定definition/result、取消传播和确定性路由；所有副作用
+均通过`TextSender`、`Workspace`、HTTP `Preparer`/`HTTPDoer`、memory `Backend`与scheduler
+`Backend`显式注入。
+
+HS production tools已经固定引用canonical pseudo-version。原有通用协调、schema、result
+middleware和五类handler被删除或降为薄Host adapter；HS继续拥有channel credential、
+workspace root/symlink/atomic transaction、SSRF/proxy/network policy、memory store/visibility/
+ranking、scheduler/RunStore/queue、authorization、approval与产品默认。owner gate禁止已迁
+机制回流，canonical也不得反向导入HS、Runner或Scene。
+
+`tools/conformance/general-tools-consumer`在无HS、Runner、Scene、长期`replace`和真实副作用
+的独立module中注册、执行全部10个工具入口。它证明外部Host可组合P2-D合同，不表示任何
+默认网络、文件、memory或scheduler backend，也不形成Public/Beta/Stable承诺。
+
 ## 尚未迁移
 
 M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、

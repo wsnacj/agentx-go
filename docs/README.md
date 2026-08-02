@@ -123,6 +123,7 @@ temporary Workflow planning机制、LLM组件和
 - [`providers/conformance/openaicompat-consumer`](../providers/conformance/openaicompat-consumer)
 - [`providers/conformance/provider-cohort-consumer`](../providers/conformance/provider-cohort-consumer)
 - [`tools/conformance/catalog-diffs-consumer`](../tools/conformance/catalog-diffs-consumer)
+- [`tools/conformance/general-tools-consumer`](../tools/conformance/general-tools-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；

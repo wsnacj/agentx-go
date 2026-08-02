@@ -80,3 +80,10 @@ Document、process或网络的产品信任分类，canonical module不拥有这�
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
+
+固定版本组合验证位于
+[`tools/conformance/general-tools-consumer`](./conformance/general-tools-consumer)：它在一个
+独立module中注册并执行`diffs`、`message`、`http_request`、四个filesystem入口、两个
+memory入口和`cron`，只使用内存/fake ports，不依赖HS、Runner、Scene、长期`replace`或
+真实副作用。该consumer证明portable coordination可被外部Host组合，不证明Host授权、
+sandbox、credential或具体backend已经迁入。
