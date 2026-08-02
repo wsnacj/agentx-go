@@ -71,6 +71,8 @@ Document、process或网络的产品信任分类，canonical module不拥有这�
   广播、转发、编辑、删除和reaction协调；不拥有credential、平台选择或真实网络。
 - [`tools/httprequest`](./httprequest/API.md)：拥有request/response协调与预算收窄，通过显式
   `Preparer`/`HTTPDoer`接入Host URL/redirect/proxy/network policy。
+- [`tools/filesystem`](./filesystem/API.md)：拥有`read/write/edit/apply_patch`的参数、schema、
+  文本选择、精确替换和patch语法，通过显式`Workspace`接入Host安全/原子文件后端。
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
