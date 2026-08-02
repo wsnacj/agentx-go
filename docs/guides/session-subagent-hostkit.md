@@ -40,23 +40,61 @@ result, err := kit.Run(ctx, sessionhostkit.RunRequest{
 `result.Backend.FailureClass`、`MissingInputs`与`NextHostAction`。`err == nil`并不自动代表
 child结果已通过parent verification；被策略或证据门禁阻断的路径使用结构化结果表达。
 
-## 与长任务的边界
+## Scheduler / Resume / Long Task
+
+需要把display-safe continuation ref入队，并按有界service loop恢复执行时，组合同一
+Host Kit中的`ResumeRuntime`：
+
+```go
+resume, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
+    Queue:  myQueue,
+    Worker: myResumeWorker,
+    Lane:   scheduler.LaneBackground,
+})
+if err != nil {
+    return err
+}
+
+_, err = resume.Enqueue(ctx, sessionhostkit.ResumeEnqueueRequest{
+    Enabled:       true,
+    Payload:       payload,
+    TrustedCaller: true,
+})
+if err != nil {
+    return err
+}
+
+report, err := resume.Run(ctx, sessionhostkit.ResumeRunRequest{
+    Enabled:          true,
+    MaxCycles:        4,
+    MaxTicksPerCycle: 8,
+})
+```
+
+`myQueue`可以是测试用`runtime/scheduler.NewMemoryQueue`，生产环境则应是Host提供的
+durable backend。`myResumeWorker`显式提供continuation readback和wake dispatch；canonical
+不解析credential、不选择provider，也不直接调用Runner、LLM或Scene。
+
+## 与长任务平台的边界
 
 本入口拥有一次child worker invoke/record/readback/verification生命周期。以下仍由Host或
-后续P1-D Scheduler/Resume入口负责：
+canonical Scheduler/Resume入口负责enqueue、bounded tick处理和terminal coordination；
+以下继续由Host负责：
 
-- enqueue、lane、priority和并发配额；
+- 产品priority、租户配额和动态lane policy；
 - process/container生命周期；
 - retry/backoff、dead letter和cancel cascade；
-- wake signal、resume token、跨进程恢复；
+- concrete wake transport、resume token存储和跨进程恢复；
 - production durable backend与运维。
 
-因此它可以作为长任务的一次安全执行单元，但本身不是完整scheduler。
+因此它已经提供长任务的portable调度/恢复内核，但不是完整系统scheduler或生产平台。
 
 ## 取消与关闭
 
-`Run`的context必须传到Worker和Store。Host Kit自身不拥有后台goroutine，
-`Shutdown(ctx)`只关闭接入面且幂等；Worker、Store与process由创建它们的Host关闭。
+child `Run`的context必须传到Worker和Store。`ResumeRuntime`同一时刻只允许运行一个
+service loop，重入返回`ErrResumeRuntimeBusy`；`Shutdown(ctx)`幂等、取消活动loop并有界
+等待，关闭后的`Enqueue`和`Run`返回`ErrResumeRuntimeClosed`。Queue、Worker、Store与
+process仍由创建它们的Host关闭。
 
 ## 可运行consumer
 

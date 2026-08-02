@@ -20,6 +20,11 @@ var (
 	// ErrClosed identifies Run calls made after Shutdown.
 	ErrClosed = errors.New("session hostkit: closed")
 )
+var (
+	ErrInvalidResumeConfig = errors.New("agentx session hostkit: invalid resume config")
+	ErrResumeRuntimeClosed = errors.New("agentx session hostkit: resume runtime closed")
+	ErrResumeRuntimeBusy   = errors.New("agentx session hostkit: resume runtime already running")
+)
 
 FUNCTIONS
 
@@ -282,6 +287,43 @@ type ObjectiveRuntimeClosureProfileReport struct {
 func RunObjectiveRuntimeClosureProfile(ctx context.Context, profile ObjectiveRuntimeClosureProfile) (ObjectiveRuntimeClosureProfileReport, error)
 
 func (report ObjectiveRuntimeClosureProfileReport) Normalize() ObjectiveRuntimeClosureProfileReport
+
+type ResumeConfig struct {
+	Queue  scheduler.Queue
+	Worker resume.Worker
+	Lane   scheduler.Lane
+	Wait   resume.ServiceWaitFunc
+}
+    ResumeConfig wires the portable scheduler and wake-continuation mechanism.
+    The Host still owns the concrete continuation store, runtime dispatch,
+    authorization, credentials, process lifecycle, and durable queue backend.
+
+type ResumeEnqueueRequest = resume.EnqueueRequest
+
+type ResumeEnqueueResult = resume.EnqueueResult
+
+type ResumeRunRequest = resume.ServiceInput
+
+type ResumeRunResult = resume.ServiceReport
+
+type ResumeRuntime struct {
+	// Has unexported fields.
+}
+    ResumeRuntime is a bounded Host Kit for enqueueing wake-continuation ticks
+    and processing them through a single service loop.
+
+func NewResumeRuntime(cfg ResumeConfig) (*ResumeRuntime, error)
+
+func (r *ResumeRuntime) Enqueue(ctx context.Context, request ResumeEnqueueRequest) (ResumeEnqueueResult, error)
+    Enqueue records a display-safe resume tick in the Host-provided queue.
+
+func (r *ResumeRuntime) Run(ctx context.Context, request ResumeRunRequest) (ResumeRunResult, error)
+    Run processes a bounded resume service loop. Only one loop may execute at a
+    time; callers can continue enqueueing through the concurrent-safe Queue.
+
+func (r *ResumeRuntime) Shutdown(ctx context.Context) error
+    Shutdown is idempotent. It prevents future Enqueue/Run calls, cancels an
+    active service loop, and waits until that loop exits or ctx expires.
 
 type RunRequest struct {
 	BackendInput BackendInput

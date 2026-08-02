@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
-M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-C当前扩展为五条标准construction路径、
-48个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
+M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D当前扩展为六条标准construction路径、
+50个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer已经闭合。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
 版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
@@ -86,6 +86,8 @@ temporary Workflow planning机制、LLM组件和
 51. [`runtime/objective/hostkit` 中文 API Reference](../runtime/objective/hostkit/API.md)
 52. [`runtime/session` 中文 API Reference](../runtime/session/API.md)
 53. [`runtime/session/hostkit` 中文 API Reference](../runtime/session/hostkit/API.md)
+54. [`runtime/scheduler` 中文 API Reference](../runtime/scheduler/API.md)
+55. [`runtime/session/resume` 中文 API Reference](../runtime/session/resume/API.md)
 
 可运行验证位于：
 

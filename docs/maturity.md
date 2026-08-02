@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-C Task/Session/Subagent纵向闭环；仍处于private validation |
-| Developer Portal | 93个静态页面；48 package/10 candidate；搜索与source backlink由`docs:check`验证 |
+| 当前产品里程碑 | M7A P1-D Scheduler/Resume/Long Task纵向闭环；仍处于private validation |
+| Developer Portal | 95个静态页面；50 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 当前48个package；10个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
+| agentx-go production packages | 当前50个package；10个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -22,19 +22,20 @@
 | Run/Artifact数据平面 | M5F已完成 `runtime/runstore`与`runtime/artifact` Experimental owner、fixed consumer和 HS production cutover；durable/file/object backend仍由 Host拥有 |
 | Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
-| 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`；均显式要求 Host capabilities |
+| Portable Scheduler/Resume | P1-D已落地queue、dispatcher、lease heartbeat与bounded Resume Host Kit；生产durable backend、process与产品policy仍由Host拥有 |
+| 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`，bounded Resume可用`session/hostkit.NewResumeRuntime`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 48个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
+| 当前 package surface | 50个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前48个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前50个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -438,6 +439,18 @@ record、按ref回读、一致性校验、parent verification以及可选Objecti
 1,483行，并有owner gate防止实现回流。concrete worker、queue、scheduler、
 credential、backend和产品policy仍属于Host。P1-C闭合C6的child worker lifecycle
 垂直切片，不声称Scheduler/Resume/long-task orchestration或正式发行已完成。
+
+## P1-D Scheduler / Resume / Long Task implementation landing
+
+P1-D新增Experimental `runtime/scheduler`真实实现，并在Developer Preview candidate
+`runtime/session/hostkit`内组合bounded `ResumeRuntime`。canonical当前拥有typed Job/Result、
+三lane并发安全Queue、QueueProxy、Dispatcher、lease heartbeat、cancellation、terminal
+coordination、metrics，以及continuation readback到Host wake dispatch的有界service loop。
+
+Host仍显式拥有concrete durable queue/store、process/service lifecycle、authorization、
+credential、backend与产品retry/priority policy。该landing不等于系统scheduler或无Host的
+完整long-task平台；fixed-version consumer、HS production cutover和最终回归将在本wave
+checkpoint前闭合。
 
 ## 明确 non-goal
 

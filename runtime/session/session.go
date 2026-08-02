@@ -89,6 +89,10 @@ func NormalizeDisplaySafeRef(raw string) (DisplaySafeRef, bool) {
 	return controlcontract.NormalizeDisplaySafeRef(raw)
 }
 
+func DisplaySafeRefs(raw []string) []DisplaySafeRef {
+	return controlcontract.DisplaySafeRefs(raw)
+}
+
 func NormalizeAttemptRef(raw string) (AttemptRef, bool) {
 	return controlcontract.NormalizeAttemptRef(raw)
 }
@@ -111,6 +115,10 @@ func NormalizeAutoDelegationChildRole(raw string) AutoDelegationChildRole {
 
 func AppendBoundaries(base []Boundary, values ...Boundary) []Boundary {
 	return controlcontract.AppendBoundaries(base, values...)
+}
+
+func MergeBoundaries(groups ...[]Boundary) []Boundary {
+	return controlcontract.MergeBoundaries(groups...)
 }
 
 func AppendMissingInputs(base []MissingInput, values ...MissingInput) []MissingInput {

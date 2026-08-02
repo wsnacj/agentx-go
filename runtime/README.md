@@ -28,8 +28,13 @@ github.com/wsnacj/agentx-go/runtime
 - [`session`](./session/API.md)：Task/Session/Subagent的identity、delegation、parent
   verification与async completion推荐命名边界；不执行worker或scheduler。
 - [`session/hostkit`](./session/hostkit/API.md)：协调一次Host-owned child worker的invoke、
-  durable record、readback、parent verification与可选Objective handoff；具体process、
-  scheduler、queue、authorization和backend继续由Host拥有。
+  durable record、readback、parent verification与可选Objective handoff，并组合bounded
+  scheduler/resume service；具体process、系统scheduler、authorization和backend继续由Host拥有。
+- [`scheduler`](./scheduler/API.md)：portable Job/Result、内存Queue、QueueProxy、bounded
+  Dispatcher、lease heartbeat、cancellation、terminal coordination与metrics；具体durable
+  backend、平台service和产品policy由Host拥有。
+- [`session/resume`](./session/resume/API.md)：continuation readback、Host wake dispatch、
+  bounded daemon/service机制；普通调用方通过`session/hostkit.NewResumeRuntime`组合。
 - [`toolerrors`](./toolerrors/API.md)：结构化工具参数错误、cause chain 与
   deterministic repair hint 数据合同。
 - [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的

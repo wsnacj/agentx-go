@@ -8,10 +8,10 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1-C Task/Session/Subagent纵向闭环实施中**；M6D Core
+> 当前里程碑：**M7A P1-D Scheduler/Resume/Long Task纵向闭环实施中**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受；P1-C现新增第五条Session/Subagent Host Kit、48包分类和第10个候选API。
+> 已获Owner接受；P1-D现新增bounded Scheduler/Resume Host Kit、50包分类，并扩展第10个候选API。
 > M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
 > M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
 > 搜索的85页Developer Portal Candidate。M6C已经证明Ubuntu真实运行与跨平台分发；
@@ -69,8 +69,12 @@ npm run docs:check
   Client组合；普通新项目通过 `NewModelToolClient`显式注入 model/tool函数，无需
   手写 Factory、RoundExecutor或依赖 HS Runner
 - [`runtime/session/hostkit`](runtime/session/hostkit/API.md) 的Host-owned child worker
-  invoke、record/readback、parent verification与可选Objective handoff；具体process、
-  scheduler、queue、authorization和backend由Host注入
+  invoke、record/readback、parent verification与可选Objective handoff，以及bounded
+  Scheduler/Resume组合；具体process、系统scheduler、authorization和backend由Host注入
+- [`runtime/scheduler`](runtime/scheduler/API.md) 的portable queue、dispatcher、lease
+  heartbeat、terminal coordination与metrics；生产durable backend和产品policy由Host注入
+- [`runtime/session/resume`](runtime/session/resume/API.md) 的continuation readback、Host
+  wake dispatch与bounded service实现；普通调用方优先使用`session/hostkit.NewResumeRuntime`
 - [`runtime/toolloop`](runtime/toolloop/API.md) 的确定性多轮驱动、round 结果
   收口/continuation state 更新、request→observe→action phase编排、循环/重放
   检测与连续工具失败熔断，以及把 driver/coordinator/termination/final state
@@ -106,7 +110,8 @@ npm run docs:check
 
 - 无需任何 host-provided model/tool adapter和 policy的开箱即用 Runtime
 - 官方模型/provider、credential或生产网络接入
-- 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口
+- 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口；当前Resume位于
+  Experimental Runtime Host Kit
 - concrete Workflow validation/mapping policy、executor和 RunStore backend
 - progress stream、HTTP API、Scene registry
 - credential、真实网络 backend 或生产副作用

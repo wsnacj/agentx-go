@@ -8,8 +8,9 @@ readiness -> invoke exactly once -> durable record -> record readback
 -> worker result readback -> parent verification -> optional Objective handoff
 ```
 
-当前成熟度是 **Developer Preview candidate / private validation**。它不是进程管理器、
-scheduler、队列、Runner或开箱即用provider，也不构成Public/Beta/Stable承诺。
+当前成熟度是 **Developer Preview candidate / private validation**。它同时提供一次child
+worker闭环和P1-D bounded Resume Runtime；它不是进程管理器、系统scheduler、Runner或
+开箱即用provider，也不构成Public/Beta/Stable承诺。
 
 ## 最小入口
 
@@ -97,6 +98,42 @@ type StateStore interface {
 `NewInMemoryStateStore`只用于测试、示例和单进程短生命周期。它是并发安全实现，但不提供
 durability、事务、跨进程恢复、retention或生产备份。
 
+## Scheduler / Resume / Long Task入口
+
+```go
+runtime, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
+    Queue:  queue,
+    Worker: resumeWorker,
+    Lane:   scheduler.LaneBackground,
+})
+
+_, err = runtime.Enqueue(ctx, sessionhostkit.ResumeEnqueueRequest{
+    Enabled:       true,
+    Payload:       payload,
+    TrustedCaller: true,
+})
+result, err := runtime.Run(ctx, sessionhostkit.ResumeRunRequest{
+    Enabled:          true,
+    MaxCycles:        4,
+    MaxTicksPerCycle: 8,
+})
+```
+
+`ResumeRuntime`组合`runtime/scheduler`、continuation readback和Host wake dispatch：
+
+- Queue、continuation store readback和dispatch必须由Host显式注入；
+- tick payload只接受display-safe refs，并按kind-aware queue租约；
+- 每个tick固定执行readback→validation→dispatch request→Ack/Fail；
+- `MaxCycles`和`MaxTicksPerCycle`保证单次`Run`有界；
+- 同一runtime只允许一个service loop，重入返回`ErrResumeRuntimeBusy`；
+- `Shutdown(ctx)`幂等、取消当前loop并有界等待；关闭后Enqueue/Run返回
+  `ErrResumeRuntimeClosed`；
+- `HostRuntimeDispatchByHost=true`只说明Host callback记录了dispatch，不表示canonical直接
+  调用了LLM、Runner、tool或workflow。
+
+内存Queue只适合测试或单进程短生命周期。生产Host必须注入durable queue/continuation
+store，并拥有lease、retention、backup、operator approval和process/service管理。
+
 ## 取消、并发和关闭
 
 - `Run`将调用方`context.Context`原样传给Worker和Store；Host实现必须响应取消与deadline；
@@ -116,14 +153,15 @@ record mismatch或readback mismatch都会阻断完成。Host不得把原始child
 
 ## 明确不拥有
 
-- task queue、scheduler、retry policy、wake/resume和跨进程long-run orchestration；
+- 系统scheduler、平台service、具体queue/store backend和产品retry/priority policy；
 - child prompt、model routing、tool catalog、approval与authorization策略；
 - Runner、process、container、remote worker或provider；
 - concrete RunStore/SQL/object-store backend；
 - credential、Scene、网络和生产副作用；
 - 自动接受child输出为parent事实。
 
-上述scheduler/resume属于P1-D；provider/tools/browser/document/Scene分别属于P2-P4。
+provider/tools/browser/document/Scene分别属于P2-P4；launchd/systemd、真实durable backend
+和生产运行授权仍由Host/发行阶段负责。
 
 ## 验证
 
@@ -135,5 +173,6 @@ GOWORK=off go vet ./session/hostkit
 ```
 
 `hostkit_external_test.go`覆盖成功、cancellation、readback mismatch、typed-nil config、
-幂等Shutdown和关闭后调用；同包测试复用迁移前HS差分用例验证record/readback顺序、
-parent verification、async completion与Objective handoff。
+幂等Shutdown和关闭后调用；`resume_hostkit_external_test.go`覆盖enqueue/run、typed busy、
+bounded shutdown和关闭后调用；同包测试复用迁移前HS差分用例验证record/readback顺序、
+parent verification、async completion、Objective handoff和resume daemon状态聚合。

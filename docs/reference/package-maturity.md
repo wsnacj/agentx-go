@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的48个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的50个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -47,10 +47,12 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/objective` | Experimental extension | [API](../../runtime/objective/API.md) | Objective推荐类型入口；保持kernel类型与JSON identity |
 | `runtime/objective/hostkit` | Developer Preview candidate | [API](../../runtime/objective/hostkit/API.md) | Managed ingress、显式Host dispatch、observation normalization与verification标准入口 |
 | `runtime/session` | Experimental extension | [API](../../runtime/session/API.md) | Task/Session/Subagent identity、delegation与parent verification推荐命名边界 |
-| `runtime/session/hostkit` | Developer Preview candidate | [API](../../runtime/session/hostkit/API.md) | child worker invoke、record/readback、parent verification与Objective handoff标准入口 |
+| `runtime/session/hostkit` | Developer Preview candidate | [API](../../runtime/session/hostkit/API.md) | child worker闭环与bounded Scheduler/Resume标准入口 |
+| `runtime/session/resume` | Experimental extension | [API](../../runtime/session/resume/API.md) | continuation readback、Host wake dispatch与bounded service机制 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |
 | `runtime/runstore` | Experimental extension | [API](../../runtime/runstore/API.md) | Run、NodeExecution、Event存储合同、投影与并发安全内存实现 |
+| `runtime/scheduler` | Experimental extension | [API](../../runtime/scheduler/API.md) | portable queue、dispatcher、lease heartbeat、终态协调与metrics |
 | `runtime/telemetry` | Experimental extension | [API](../../runtime/telemetry/API.md) | portable event 与 replay |
 | `runtime/telemetry/safeerror` | Experimental extension | [API](../../runtime/telemetry/safeerror/API.md) | observation-safe error 投影 |
 | `runtime/toolerrors` | Experimental extension | [API](../../runtime/toolerrors/API.md) | 结构化工具参数错误 |
@@ -66,7 +68,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-48个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+50个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
