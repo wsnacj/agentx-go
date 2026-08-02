@@ -10,7 +10,7 @@ deterministic document pipeline、PDF adapter 和推荐工具入口。当前处�
 - `ocr`：OCR split/cache/worker/diff/processor/pipeline 与显式 provider；
 - `pipeline`：spec、expression、derive、extract/preprocess 和 document orchestration；
 - `pdf`：PDF Go mechanism 及显式 Python/native adapter；
-- `tools`：AgentX document/PDF 推荐工具入口。
+- [`tools`](./tools/API.md)：AgentX document/PDF 推荐工具入口、显式 Host ports 与统一 PDF 协调。
 
 ## Host 边界
 
