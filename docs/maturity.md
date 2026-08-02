@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5T Core Developer Preview Version Alignment, Upgrade Compatibility and Clean-Room Adoption Closure：`active` |
+| 当前产品里程碑 | M5T Core Developer Preview Version Alignment, Upgrade Compatibility and Clean-Room Adoption Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
@@ -358,6 +358,16 @@ M5T随后只关闭消费与升级层面的版本偏差：以
 `v0.0.0-20260802021959-5a41fb0ccb87`作为四module候选统一基线，补中文升级/回滚说明、
 轻量版本一致性门禁与clean-room/no-replace验证，并在兼容差分通过后统一HS要求。
 M5T不新增Runtime owner、不改变Scene业务逻辑，也不进入完整文档站或正式发行。
+
+M5T技术checkpoint现已完成。根`conformance/consumer`直接固定四module统一版本，并
+使用fixture覆盖三条标准construction和A股推荐extension入口；版本gate与仓库外
+clean-room gate均通过。HS只修改`go.mod/go.sum`并统一同一版本，未修改Core或Scene
+生产源码；外部依赖集合不变。canonical四module test/race/vet/tidy/list、44/8双平台
+API gate、69文件/254链接文档gate和cache Origin回读通过；完整HS回归保持149 PASS、
+2个既有治理FAIL、20 SKIP，仍只有原3条evidence stale/mismatch。production规模与
+closure保持44包、235 source、89,691行及407/57/2467/65、HS118/canonical34/Scene0。
+当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`；不构成
+Public/Beta/Stable、semver、tag、Scene迁移或发行授权。
 
 ## 明确 non-goal
 

@@ -6,9 +6,9 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
 > 当前里程碑：**M5T Core Developer Preview Version Alignment, Upgrade Compatibility and
-> Clean-Room Adoption Closure**。
+> Clean-Room Adoption Closure technical checkpoint complete / awaiting Owner acceptance**。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受。M5T只收口四module固定版本、升级/回滚说明与独立消费证据；
+> 已获Owner接受。M5T已收口四module固定版本、升级/回滚说明与独立消费证据；
 > 它不新增Runtime能力，也不是Public、Beta、Stable或production-ready发布。
 
 ## 当前提供：根合同
