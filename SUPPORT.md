@@ -24,7 +24,7 @@ AgentX Go当前只提供private Developer Preview的best-effort开发支持，�
 | 当前安全候选工具链 | Go 1.25.12；M6D发现Go 1.25.5标准库可达漏洞后已fail closed升级 |
 | 已接受完整测试主机 | macOS arm64，以及M6C的Ubuntu 24.04.4 amd64/Go 1.25.5历史证据 |
 | API/build surface | darwin/arm64与linux/amd64，`CGO_ENABLED=0` |
-| Ubuntu真实运行 | M6C run `30732109611`在`3c3c7fa46a28`完成四module normal/race/vet/tidy/list、fixed consumer与artifact gate |
+| Ubuntu真实运行 | M6D run `30733996721`在`2034622f991e`、Go 1.25.12上重跑四module normal/race/vet/tidy/list、fixed consumer、候选zip与安全扫描 |
 | CGO/native | Ubuntu批准矩阵以`CGO_ENABLED=1`通过；Core推荐路径仍不要求CGO，未声明的native能力不属于支持面 |
 
 M6C只证明上述单一Ubuntu/amd64/Go版本矩阵；它不自动承诺其它发行版、架构、Go版本、

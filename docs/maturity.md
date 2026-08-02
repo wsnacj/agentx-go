@@ -5,10 +5,11 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M6B Core中文Developer Portal与API Reference交付闭环：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M6D Core Pre-Beta候选安全与发行工程闭环：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | Developer Portal | 85个静态页面；44 package/8 candidate；本地搜索、响应式和source backlink已验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
-| Public Beta readiness | `false`；license、安全复核、Ubuntu实机和release authorization仍阻断 |
+| Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
+| Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |

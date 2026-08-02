@@ -12,7 +12,8 @@ semver兼容承诺或Public/Beta/Stable声明。
 - 保留extensions中Windows-only `GO-2026-5024`不可达module finding，等待具名
   security approver决定升级或接受残余平台边界；
 - 新增无PR依赖的M6D Ubuntu workflow和value-safe候选manifest；不创建tag/release，
-  `public_beta_ready=false`。
+  run `30733996721`已在revision `2034622f991e`完成技术复验并上传artifact
+  `8829013105`；`pre_beta_technical_candidate_ready=true`、`public_beta_ready=false`。
 
 ## v0.0.0-20260802021959-5a41fb0ccb87（M5S / M5T基线）
 

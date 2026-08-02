@@ -8,8 +8,8 @@
 | --- | --- | --- |
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
 | `developer_portal_build_ready` | `true` | 85页中文Portal可由lockfile本地重建；不是公共托管结论 |
-| `ubuntu_runtime_ready` | `true` | Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1实机矩阵已通过；不扩张到其它平台 |
-| `pre_beta_technical_candidate_ready` | `pending_remote_readback` | 本地Go 1.25.12同版四module候选、安全扫描与只读cache已通过；只有最终远端run可读通过后才改为`true` |
+| `ubuntu_runtime_ready` | `true` | M6D已在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验；不扩张到其它平台 |
+| `pre_beta_technical_candidate_ready` | `true` | 本地与远端Go 1.25.12同版四module候选、安全扫描和只读cache均已通过；不等于发行授权 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
@@ -33,6 +33,12 @@
   module zip，完成四module test/vet/tidy、固定`govulncheck@v1.6.0`、无replace consumer
   和`GOPROXY=off`只读cache复验；0个可达漏洞。该模拟版本和zip仅用于临时技术验证，
   不进入正式分发。
+- M6D GitHub Actions run `30733996721`在Ubuntu 24.04/amd64、Go 1.25.12、CGO=1与
+  revision `2034622f991e0b704f2ac65fd2dfb36b0e97d2b2`上再次通过M6C runtime gate、
+  44 package/8 candidate/2 target API gate、72文件/263链接文档gate、四module候选、
+  漏洞扫描和离线consumer。artifact `8829013105`的归档digest为
+  `sha256:7c97adf45c301856ad7c160e2c47326170d26bda4dee4d1d950004677cf69237`；
+  四个module zip SHA-256与本地结果逐一一致。
 - extensions依赖图仍包含`golang.org/x/sys@v0.13.0`的Windows-only
   `GO-2026-5024` module-level finding；当前10个extension package没有import或调用该
   漏洞。它不阻断当前darwin/linux技术候选，但必须由具名security approver在Beta前决定

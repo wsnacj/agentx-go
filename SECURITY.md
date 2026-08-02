@@ -32,9 +32,10 @@ pseudo-version安全回补。
 ## 自动扫描边界
 
 Pre-Beta候选使用固定
-`golang.org/x/vuln/cmd/govulncheck@v1.6.0`扫描四module全部package。扫描工具链固定为
-Go 1.25.12；M6D曾在Go 1.25.5上命中10个标准库可达漏洞并按fail-closed停止，升级到
-Go 1.25.12后当前可达漏洞为0。漏洞数据库或工具下载不可达时只允许有界重试，不能把
+`golang.org/x/vuln/cmd/govulncheck@v1.6.0`扫描四module全部package。执行工具链与
+source-mode标准库模型均显式固定为Go 1.25.12；仅用新版Go启动扫描器不能替代后者。
+M6D曾在Go 1.25.5上命中10个标准库可达漏洞并按fail-closed停止，升级到Go 1.25.12后
+当前可达漏洞为0。漏洞数据库或工具下载不可达时只允许有界重试，不能把
 执行失败写成零漏洞。
 
 当前extensions graph另有1个不可达module-level finding：`GO-2026-5024`位于

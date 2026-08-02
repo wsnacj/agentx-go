@@ -74,3 +74,5 @@ native支持承诺。
 `private_validation_ready=true`。Public Beta还要求Owner选择并批准license/NOTICE、
 具名security和release approver、正式tag/release授权、正式兼容等级以及剩余Pre-Beta
 门禁。M6C已关闭Ubuntu实机证据项，但缺其它任一项时`public_beta_ready=false`。
+M6D又关闭同版四module候选、漏洞扫描、离线消费与当前Go 1.25.12 Ubuntu复验的技术项；
+该结论仍不代替Owner对License、具名security/release责任和正式兼容等级的批准。
