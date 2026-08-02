@@ -69,12 +69,14 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 ## 可选 Providers module
 
-下列6个package不进入当前四module的51包Core gate，全部保持Experimental：
+下列8个package不进入当前四module的51包Core gate，全部保持Experimental：
 
 | Package | 分级 | 中文 Reference | 主要用途 |
 | --- | --- | --- | --- |
 | `providers` | Experimental extension | [API](../../providers/API.md) | provider错误与capability sentinel |
 | `providers/openaicompat` | Experimental extension | [API](../../providers/openaicompat/API.md) | OpenAI-compatible HTTP与SSE真实client |
+| `providers/anthropic` | Experimental extension | [API](../../providers/anthropic/API.md) | Anthropic Messages真实client |
+| `providers/codex` | Experimental extension | [API](../../providers/codex/API.md) | Codex Responses/SSE真实client |
 | `providers/transport` | Experimental extension | [API](../../providers/transport/API.md) | request settings、headers与hooks |
 | `providers/fault` | Experimental extension | [API](../../providers/fault/API.md) | 稳定错误分类与retryability |
 | `providers/retry` | Experimental extension | [API](../../providers/retry/API.md) | bounded context-aware retry |

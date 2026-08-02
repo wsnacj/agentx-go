@@ -8,8 +8,8 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A首个provider
-> 纵向闭环已完成**；M6D Core
+> 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A/P2-B三个provider
+> protocol owner纵向闭环已完成**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受；P1-D新增bounded Scheduler/Resume Host Kit；P1-E新增
@@ -98,6 +98,8 @@ npm run docs:check
   `github.com/wsnacj/agentx-go/providers`
 - [`providers/openaicompat`](providers/openaicompat/API.md) 提供真实 OpenAI-compatible
   chat、vision、embedding、bot和SSE stream实现
+- [`providers/anthropic`](providers/anthropic/API.md) 提供真实Anthropic Messages实现；
+  [`providers/codex`](providers/codex/API.md) 提供真实Codex Responses/SSE实现
 - `transport`、`fault`、`retry`和`usage`提供provider-neutral机制；固定版本
   external consumer不依赖HS、Runner、Scene、`replace`或真实网络
 - endpoint、credential、proxy、配额、审计、模型选择和生产出网授权仍由Host显式注入；
@@ -169,7 +171,7 @@ github.com/wsnacj/agentx-go/extensions
   v0.0.0-20260802113655-f41de95ec5be
 
 github.com/wsnacj/agentx-go/providers
-  v0.0.0-20260802121436-b8b4d7efb134
+  v0.0.0-20260802124746-c7f90139a1cc
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。

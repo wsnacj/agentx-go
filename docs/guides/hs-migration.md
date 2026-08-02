@@ -34,6 +34,21 @@ protocol实现已删除；fault/retry/transport/usage旧包降为alias或薄forw
 长期`replace`或真实网络。新的通用OpenAI-compatible协议行为必须先进入canonical module，
 不得在HS adapter恢复双写。
 
+## P2-B Anthropic/Codex provider收口
+
+`providers/anthropic`现在拥有Messages payload、tool use/result、响应与usage解码；
+`providers/codex`拥有Responses payload、SSE terminal/fallback、function call和usage解码。
+两者都复用P2-A transport/error seam并通过显式`Authorizer`获取Host解析后的认证信息。
+
+HS `core/llmx/provider/anthropic`只保留原`Provider`接口和Config/auth映射；
+`core/llmx/provider/codex`只保留同一兼容adapter以及具体token store/OAuth refresh。旧Codex
+payload、response和stream实现已删除。token文件、环境变量、用户目录、refresh写入、模型
+发现与account identity投影继续是Host责任，不得迁入canonical protocol package。
+
+固定consumer位于`providers/conformance/provider-cohort-consumer`，无HS、Runner、Scene、
+长期`replace`或真实网络。新Anthropic/Codex协议行为必须先进入canonical module；HS只能
+增加credential、routing、audit或其它明确Host-owned policy。
+
 ## W5-H round owner 收口
 
 `runtime/hostkit.ModelToolRoundAdapter`现在拥有：

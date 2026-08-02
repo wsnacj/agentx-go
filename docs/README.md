@@ -1,6 +1,6 @@
 # AgentX Go 中文文档
 
-M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；P2-A又完成首个OpenAI-compatible provider纵向闭环；
+M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；P2-A/P2-B又完成OpenAI-compatible、Anthropic和Codex三个provider protocol纵向闭环；
 51个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
@@ -91,6 +91,8 @@ temporary Workflow planning机制、LLM组件和
 55. [`runtime/session/resume` 中文 API Reference](../runtime/session/resume/API.md)
 56. [`providers` 中文 API Reference](../providers/API.md)
 57. [`providers/openaicompat` 中文 API Reference](../providers/openaicompat/API.md)
+58. [`providers/anthropic` 中文 API Reference](../providers/anthropic/API.md)
+59. [`providers/codex` 中文 API Reference](../providers/codex/API.md)
 
 可运行验证位于：
 
@@ -116,6 +118,7 @@ temporary Workflow planning机制、LLM组件和
 - [`extensions/conformance/productshell-consumer`](../extensions/conformance/productshell-consumer)
 - [`extensions/conformance/productshell-observation-consumer`](../extensions/conformance/productshell-observation-consumer)
 - [`providers/conformance/openaicompat-consumer`](../providers/conformance/openaicompat-consumer)
+- [`providers/conformance/provider-cohort-consumer`](../providers/conformance/provider-cohort-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；

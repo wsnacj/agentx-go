@@ -3,6 +3,17 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802124746-c7f90139a1cc（P2-B Remaining Provider Cohort）
+
+- 新增真实`providers/anthropic` Messages和`providers/codex` Responses/SSE client；
+- Codex token store、OAuth刷新、用户目录、credential、模型路由和生产网络授权继续留在Host，
+  canonical只通过显式`Authorizer`与`HTTPDoer`消费；
+- fixed provider-cohort consumer在无HS、Runner、Scene、长期`replace`和真实网络下同时验证
+  Anthropic文本/usage与Codex文本/tool call/usage/account identity；
+- HS Anthropic/Codex production provider切到固定版本，payload/response/SSE旧通用源码删除，
+  对应production source从1,815行收缩为834行；
+- 本版本仍是private Experimental验证，不授权Public/Beta/Stable、正式tag或发行。
+
 ## v0.0.0-20260802121436-b8b4d7efb134（P2-A OpenAI-compatible Provider）
 
 - 新增独立Experimental `providers` module与真实OpenAI-compatible chat、vision、
