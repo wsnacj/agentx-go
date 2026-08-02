@@ -7,9 +7,10 @@ module：
 github.com/wsnacj/agentx-go/components
 ```
 
-当前只包含 [`llm`](./llm/API.md) 合同类型候选。它来自 HS
-`core/llmx/types` 的机械迁移，用于让 AgentX、HS 业务代码和外部项目共享同一份
-LLM 请求、响应、工具与流式事件合同。
+当前包含 [`llm`](./llm/API.md) 合同类型候选，以及复用同一wire type identity的
+[`tool`](./tool/API.md) catalog/handler/executor合同。它们来自 HS `core/llmx/types`
+和tool调用边界的机械收口，用于让AgentX、HS业务代码和外部项目共享同一份模型、
+流式事件及工具合同，避免复制第二套DTO图。
 
 当前成熟度为 **private validation / Experimental**：
 
@@ -21,7 +22,7 @@ LLM 请求、响应、工具与流式事件合同。
 当前 HS/conformance 固定验证版本：
 
 ```text
-v0.0.0-20260729125257-bb6949793309
+v0.0.0-20260802130858-34ec103e09d9
 ```
 
 这是不可变 private pseudo-version，不是正式 tag 或 semver 发布。

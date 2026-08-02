@@ -85,6 +85,18 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 providers module使用独立fixed pseudo-version与consumer验证；不因出现在本表而升级为
 Developer Preview candidate、Public、Beta或Stable。
 
+## 可选 Tools module
+
+下列2个package不进入当前四module的51包Core gate，全部保持Experimental：
+
+| Package | 分级 | 中文 Reference | 主要用途 |
+| --- | --- | --- | --- |
+| `tools` | Experimental extension | [API](../../tools/API.md) | 并发安全catalog、稳定definition投影与保守名称修复 |
+| `tools/diffs` | Experimental extension | [API](../../tools/diffs/API.md) | 无文件、Git或网络副作用的纯文本diff |
+
+tools module使用独立fixed pseudo-version与consumer验证；不拥有授权、sandbox或具体
+backend，也不因出现在本表而升级为Developer Preview candidate、Public、Beta或Stable。
+
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
 51个 package 的覆盖与漂移门禁，不是新的全仓 API registry。

@@ -9,7 +9,7 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
 > 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A/P2-B三个provider
-> protocol owner纵向闭环已完成**；M6D Core
+> protocol owner与P2-C首个通用Tool vertical slice均已纵向闭环**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受；P1-D新增bounded Scheduler/Resume Host Kit；P1-E新增
@@ -31,7 +31,7 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - 有界、幂等的 `Shutdown(ctx)` 合同
 - 供 Runtime/host 实现的窄 `ExecutionAdapter`
 
-安装、四module固定版本和升级边界见[安装与多 Module 引用](docs/guides/installation-and-modules.md)
+安装、六module固定版本和升级边界见[安装与多 Module 引用](docs/guides/installation-and-modules.md)
 与[版本、升级与回滚](docs/guides/versioning-and-upgrades.md)。当前Developer Preview
 变更摘要见[CHANGELOG](CHANGELOG.md)。
 
@@ -54,6 +54,8 @@ npm run docs:check
 
 - [`components/llm`](components/llm/API.md)：provider-neutral 的 LLM
   request/response、tool、stream、multimodal 与 usage 合同
+- [`components/tool`](components/tool/API.md)：复用同一份 LLM wire type identity 的
+  provider-neutral tool catalog/handler/executor合同
 - 独立 module：`github.com/wsnacj/agentx-go/components`
 - 生产代码只依赖 Go 标准库；不提供 provider、credential、网络客户端或
   AgentX Runtime
@@ -104,6 +106,16 @@ npm run docs:check
   external consumer不依赖HS、Runner、Scene、`replace`或真实网络
 - endpoint、credential、proxy、配额、审计、模型选择和生产出网授权仍由Host显式注入；
   默认构造不读环境变量、文件或credential store
+
+## 当前提供：Experimental Tools
+
+- [`tools`](tools/API.md) 独立可选 module：`github.com/wsnacj/agentx-go/tools`
+- 线程安全Registry、稳定definition排序/version/reset、保守名称修复和typed name error
+  已形成真实implementation owner
+- [`tools/diffs`](tools/diffs/API.md)提供首个真实通用tool：只处理调用方显式传入的
+  before/after文本，不读取文件、Git、网络或工作区
+- authorization、approval、sandbox、credential、filesystem/process/network/store
+  backend和产品allowlist仍由Host拥有；后续通用tool必须继续通过窄port接入这些能力
 
 ## 当前提供：Experimental Extensions
 
@@ -172,6 +184,9 @@ github.com/wsnacj/agentx-go/extensions
 
 github.com/wsnacj/agentx-go/providers
   v0.0.0-20260802124746-c7f90139a1cc
+
+github.com/wsnacj/agentx-go/tools
+  v0.0.0-20260802131439-56dd598eef59
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -194,7 +209,10 @@ github.com/wsnacj/agentx-go/providers
 - [HS 迁移说明](docs/guides/hs-migration.md)
 - [成熟度与兼容边界](docs/maturity.md)
 - [`components/llm` 中文 API Reference](components/llm/API.md)
+- [`components/tool` 中文 API Reference](components/tool/API.md)
 - [`providers` 中文 API Reference](providers/API.md)
+- [`tools` 中文 API Reference](tools/API.md)
+- [`tools/diffs` 中文 API Reference](tools/diffs/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/controlcontract` 中文 API Reference](runtime/controlcontract/API.md)
@@ -222,6 +240,7 @@ github.com/wsnacj/agentx-go/providers
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
 - [A 股组合 external-style consumer](extensions/conformance/astock-consumer)
 - [Skills external-style consumer](extensions/conformance/skills-consumer)
+- [Tool catalog/diffs external-style consumer](tools/conformance/catalog-diffs-consumer)
 
 ## 本地验证
 

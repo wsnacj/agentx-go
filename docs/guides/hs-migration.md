@@ -211,6 +211,21 @@ scheduler/queue、credential和backend。
 invoke→record→readback→verification闭环。Scheduler/Resume、progress/event stream、
 concrete durable backend和真实副作用仍由P1-D或Host拥有。
 
+## P2-C Tool Catalog / Diffs收口
+
+`components/tool`与独立`tools` module现在拥有provider-neutral tool合同、线程安全catalog、
+保守名称修复和纯文本diffs的source authority。HS `core/llmx/tools`只保留同类型alias和
+薄forwarder；`core/agentx/tools`的diffs builtin只负责既有兼容参数归一化，再调用canonical
+`diffs.Run`。owner gate禁止这些机制回流。
+
+HS继续拥有authorization、approval、sandbox、credential，以及filesystem、process、
+network、memory、retrieval和task的具体backend/policy。后续迁移不能把这些Host责任伪装成
+通用tool实现，也不能让canonical module反向导入HS、Runner或Scene。
+
+`tools/conformance/catalog-diffs-consumer`固定components/runtime/tools pseudo-version，证明
+新项目可以在无HS、Runner、Scene、长期`replace`和真实副作用时完成catalog注册、名称修复
+及diffs执行。该证据不代表其余通用tool已经迁移完成。
+
 ## 尚未迁移
 
 M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、

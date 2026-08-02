@@ -1,6 +1,6 @@
 # 安装与多 Module 引用
 
-`agentx-go`当前采用一个仓库、五个独立 Go library module。调用方只引入实际使用的
+`agentx-go`当前采用一个仓库、六个独立 Go library module。调用方只引入实际使用的
 module：
 
 | Module | 用途 |
@@ -10,6 +10,7 @@ module：
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
 | `github.com/wsnacj/agentx-go/extensions` | 可选 portable extension机制；当前含 A股推荐入口、Domain Module、Pack与 Skills |
 | `github.com/wsnacj/agentx-go/providers` | 可选模型provider；当前含OpenAI-compatible、Anthropic Messages、Codex Responses client与transport/fault/retry/usage机制 |
+| `github.com/wsnacj/agentx-go/tools` | 可选通用tool catalog与实现；当前含线程安全Registry、保守名称修复和纯文本diffs |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
@@ -20,6 +21,8 @@ runtime/components；调用方只需直接声明自己代码实际 import的 mod
 immutable `FSSource`，还应把 runtime列为直接依赖。
 需要AgentX提供的模型协议实现时直接声明providers；credential和endpoint
 仍必须由Host显式提供，Core Runtime不会反向依赖providers。
+需要canonical通用tool时直接声明tools；仅使用provider-neutral tool合同的调用方声明
+components即可。Runtime不反向依赖tools，Host仍显式拥有授权、安全策略和具体backend。
 
 ## 当前固定验证版本
 
@@ -34,6 +37,8 @@ github.com/wsnacj/agentx-go/extensions
   v0.0.0-20260802113655-f41de95ec5be
 github.com/wsnacj/agentx-go/providers
   v0.0.0-20260802124746-c7f90139a1cc
+github.com/wsnacj/agentx-go/tools
+  v0.0.0-20260802131439-56dd598eef59
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -44,6 +49,7 @@ go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/providers@v0.0.0-20260802124746-c7f90139a1cc
+go get github.com/wsnacj/agentx-go/tools@v0.0.0-20260802131439-56dd598eef59
 ```
 
 ## Private 仓库访问
@@ -68,6 +74,7 @@ GOWORK=off go -C components test ./...
 GOWORK=off go -C runtime test ./...
 GOWORK=off go -C extensions test ./...
 GOWORK=off go -C providers test ./...
+GOWORK=off go -C tools test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
@@ -93,6 +100,9 @@ chat/tool-call解码和usage合同。
 `providers/conformance/provider-cohort-consumer`固定P2-B版本，并在同一无网络fixture中
 验证Anthropic Messages与Codex Responses/SSE；Codex token store和OAuth刷新不属于
 canonical consumer。
+`tools/conformance/catalog-diffs-consumer`固定components/runtime/tools版本，不使用
+`replace`、HS、Runner、Scene、网络或credential；它验证catalog注册、保守名称修复和
+纯文本diffs真实执行。该consumer不证明Host授权、sandbox或具体backend已经迁入。
 
 ## Ubuntu实机复跑
 

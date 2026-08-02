@@ -3,6 +3,18 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802131439-56dd598eef59（P2-C Tool Catalog / Diffs）
+
+- `components/tool`复用既有LLM wire type identity，提供provider-neutral
+  Definition/Call/Result/Handler/Executor合同，不复制第二套DTO；
+- 新增独立Experimental `tools` module，落地并发安全Registry、稳定definition排序、
+  version/reset、保守名称修复和typed name error真实implementation；
+- 新增无文件、Git、网络或进程副作用的`tools/diffs`真实通用tool；fixed consumer不使用
+  HS、Runner、Scene或长期`replace`；
+- HS `core/llmx/tools`与AgentX diffs production consumer切至fixed canonical版本，旧通用
+  source从551行收缩为49行；授权、sandbox和具体backend继续由Host拥有；
+- 本版本仍是private Experimental验证，不授权Public/Beta/Stable、正式tag或发行。
+
 ## v0.0.0-20260802124746-c7f90139a1cc（P2-B Remaining Provider Cohort）
 
 - 新增真实`providers/anthropic` Messages和`providers/codex` Responses/SSE client；

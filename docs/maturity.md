@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A/P2-B三个provider protocol纵向闭环完成；仍处于private validation |
+| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A/P2-B三个provider protocol和P2-C首个通用Tool vertical slice纵向闭环完成；仍处于private validation |
 | Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
@@ -14,6 +14,7 @@
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | Core四module当前51个package、10个Developer Preview candidate；可选providers module另有8个Experimental package、19个production source、2,934行 |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
+| Experimental tools | P2-C已落地tool合同、线程安全catalog、保守名称修复和纯文本diffs，并完成fixed consumer与HS production cutover；授权、sandbox与具体backend仍由Host拥有 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -469,6 +470,20 @@ credential或真实副作用。fixed版本`v0.0.0-20260802113655-f41de95ec5be`�
 83份Markdown/303链接、95页Portal与artifact Origin通过；HS完整回归为149 PASS、2个既有
 治理FAIL、20 SKIP且无新增失败。P1-E状态为`completed_checkpoint`，不构成Scene迁移或
 Public/Beta/Stable授权。
+
+## P2-C Tool Catalog / Diffs implementation landing
+
+P2-C先在`components/tool`收口provider-neutral tool合同，直接复用
+`components/llm`的Definition、Call和Result type identity，避免形成第二套wire DTO图。
+独立`tools` module拥有并发安全Registry、稳定definition排序、version/reset、保守名称
+修复与typed name error的真实source authority；`tools/diffs`拥有首个纯文本通用tool实现。
+
+固定版本`v0.0.0-20260802131439-56dd598eef59`由无HS、Runner、Scene、长期
+`replace`、网络或credential的独立consumer验证。HS `core/llmx/tools`和AgentX diffs
+production consumer已直接使用canonical版本，原551行通用source收缩为49行alias/adapter，
+净减502行。authorization、approval、sandbox及filesystem/process/network/store backend
+仍由Host拥有；P2-C不是“全部通用tools已迁完”的声明，后续cohort只能通过显式窄port继续
+迁入portable mechanism。本checkpoint不构成Public/Beta/Stable或正式发行授权。
 
 ## 明确 non-goal
 
