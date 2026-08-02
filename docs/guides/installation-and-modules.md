@@ -64,9 +64,10 @@ GOWORK=off go -C extensions test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
-根[`conformance/consumer`](../../conformance/consumer)同时固定根、components和
-runtime版本，在一个无HS、无Runner、无长期`replace`、无网络副作用的 consumer中
-验证自定义ExecutionAdapter、Model/Tool Host Kit和Workflow Host Kit三条标准路径。
+根[`conformance/consumer`](../../conformance/consumer)同时固定根、components、runtime
+和extensions四module版本，在一个无HS、无Runner、无长期`replace`、无网络副作用的
+consumer中验证自定义ExecutionAdapter、Model/Tool Host Kit、Workflow Host Kit三条
+标准construction路径以及A股推荐extension入口。
 `extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
 用于验证无 HS、无长期 `replace` 的组合接入。
 `extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以
@@ -82,5 +83,6 @@ Skill加载、缓存、activation、requested semantics和资源引用；它不�
 ## 升级方式
 
 Developer Preview期间，升级应显式修改 pseudo-version，并运行调用方 focused
-tests、API differential和 module cache验证。API正文覆盖不等于兼容承诺；正式
+tests、API differential和 module cache验证。完整步骤、回滚边界和已知非承诺见
+[版本、升级与回滚](versioning-and-upgrades.md)。API正文覆盖不等于兼容承诺；正式
 module path、tag、semver、license和发行授权仍是后续 fail-closed门禁。

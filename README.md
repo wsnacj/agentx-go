@@ -20,6 +20,10 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 - 有界、幂等的 `Shutdown(ctx)` 合同
 - 供 Runtime/host 实现的窄 `ExecutionAdapter`
 
+安装、四module固定版本和升级边界见[安装与多 Module 引用](docs/guides/installation-and-modules.md)
+与[版本、升级与回滚](docs/guides/versioning-and-upgrades.md)。当前Developer Preview
+变更摘要见[CHANGELOG](CHANGELOG.md)。
+
 ## 当前提供：Experimental 组件
 
 - [`components/llm`](components/llm/API.md)：provider-neutral 的 LLM

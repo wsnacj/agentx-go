@@ -6,6 +6,8 @@ import (
 
 	agentx "github.com/wsnacj/agentx-go"
 	llm "github.com/wsnacj/agentx-go/components/llm"
+	astock "github.com/wsnacj/agentx-go/extensions/astock"
+	astockcontracts "github.com/wsnacj/agentx-go/extensions/astock/contracts"
 	"github.com/wsnacj/agentx-go/runtime/execution"
 	"github.com/wsnacj/agentx-go/runtime/hostkit"
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
@@ -114,5 +116,33 @@ func runAllProbes(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("agentx-core-developer-preview-ok:model-tool=%s:workflow=%s", modelTool, workflowResult), nil
+	extensionResult, err := runExtensionProbe()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("agentx-core-developer-preview-ok:model-tool=%s:workflow=%s:extension=%s", modelTool, workflowResult, extensionResult), nil
+}
+
+func runExtensionProbe() (string, error) {
+	manifest := astock.Manifest()
+	if manifest.ID != astock.ModuleID || len(astock.ToolDefinitions()) != 7 {
+		return "", fmt.Errorf("unexpected A-stock surface: manifest=%#v tools=%d", manifest, len(astock.ToolDefinitions()))
+	}
+	evaluation := astock.EvaluateValuationEvidence(astock.ValuationEvaluationInput{
+		ExpectedEntityName: "平安银行",
+		ExpectedStockCode:  "000001",
+		EvidenceEntityName: "平安银行",
+		EvidenceStockCode:  "sz000001",
+		AdapterStatus:      astockcontracts.AdapterStatusOK,
+		FailureCode:        astockcontracts.FailureCodeNone,
+		AnswerReady:        true,
+		RequestedFields:    []string{"price"},
+		FieldValues:        map[string]string{"price": "11.38"},
+		AsOf:               "2026-08-02T15:00:00+08:00",
+		SourceURL:          "https://example.invalid/quote/sz000001",
+	})
+	if !evaluation.Passed {
+		return "", fmt.Errorf("A-stock fixture evaluation failed: %#v", evaluation)
+	}
+	return fmt.Sprintf("%s:%d:%t", manifest.ID, len(astock.ToolDefinitions()), evaluation.Passed), nil
 }

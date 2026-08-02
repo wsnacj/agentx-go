@@ -28,7 +28,7 @@ func TestExternalStyleUnifiedConsumer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("runAllProbes() error = %v", err)
 	}
-	const want = "agentx-core-developer-preview-ok:model-tool=run-model-tool:completed:model-tool-ok:workflow=run-workflow:completed:workflow-ok"
+	const want = "agentx-core-developer-preview-ok:model-tool=run-model-tool:completed:model-tool-ok:workflow=run-workflow:completed:workflow-ok:extension=agentx_a_stock:7:true"
 	if output != want {
 		t.Fatalf("runAllProbes() = %q, want %q", output, want)
 	}
