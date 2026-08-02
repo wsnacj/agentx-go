@@ -126,28 +126,31 @@ func BrowserElementRefForSnapshotElement(element BrowserSnapshotElement, pageURL
 // BrowserInventoryDefinition returns the canonical schema used for catalog
 // inventory without registering a backend or executing a side effect.
 func BrowserInventoryDefinition(name string) (types.Tool, bool) {
-	switch NormalizeToolName(name) {
+	normalized := NormalizeToolName(name)
+	switch normalized {
 	case "browser":
 		return browserUnifiedInventoryDefinition(), true
 	case "browser_runtime":
 		return browserRuntimeDefinition(browserUnifiedInventoryRuntimeActions()), true
 	case "browser_act":
 		return browserActDefinition(browserUnifiedInventoryActKinds()), true
-	case "browser_open":
+	}
+	switch agentxbrowserruntime.BrowserCompatActKindForToolName(normalized) {
+	case "open":
 		return browserOpenDefinition(), true
-	case "browser_navigate":
+	case "navigate":
 		return browserNavigateDefinition(), true
-	case "browser_tabs":
+	case "tabs":
 		return browserTabsDefinition(), true
-	case "browser_extract":
+	case "extract":
 		return browserExtractDefinition(), true
-	case "browser_screenshot":
+	case "screenshot":
 		return browserScreenshotDefinition(), true
-	case "browser_click":
+	case "click":
 		return browserClickDefinition(), true
-	case "browser_type":
+	case "type":
 		return browserTypeDefinition(), true
-	case "browser_eval":
+	case "evaluate":
 		return browserEvalDefinition(), true
 	default:
 		return types.Tool{}, false
