@@ -3,7 +3,7 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
-## v0.0.0-20260802091415-920282587efc（P1-C Task / Session / Subagent Host Kit）
+## v0.0.0-20260802103826-c7d80001682e（P1-C Task / Session / Subagent Host Kit）
 
 - 新增Experimental `runtime/session`和Developer Preview candidate
   `runtime/session/hostkit`，把child worker调用、durable record、回读校验、

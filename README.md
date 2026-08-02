@@ -141,16 +141,16 @@ rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日
 
 ```text
 github.com/wsnacj/agentx-go
-  v0.0.0-20260802091415-920282587efc
+  v0.0.0-20260802103826-c7d80001682e
 
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260802091415-920282587efc
+  v0.0.0-20260802103826-c7d80001682e
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260802091415-920282587efc
+  v0.0.0-20260802103826-c7d80001682e
 
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260802091415-920282587efc
+  v0.0.0-20260802103826-c7d80001682e
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。

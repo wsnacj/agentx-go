@@ -433,7 +433,7 @@ P1-C新增Experimental `runtime/session`和Developer Preview candidate
 control-contract readiness；canonical implementation负责exact-once worker invoke、durable
 record、按ref回读、一致性校验、parent verification以及可选Objective handoff。
 
-固定版本`v0.0.0-20260802091415-920282587efc`由无HS、无Runner、无长期
+固定版本`v0.0.0-20260802103826-c7d80001682e`由无HS、无Runner、无长期
 `replace`的独立consumer验证；HS delegation、ProductShell和interactive CLI生产路径
 已直接使用canonical合同。HS四个通用兼容文件从1,562行收缩为79行，净减
 1,483行，并有owner gate防止实现回流。concrete worker、queue、scheduler、

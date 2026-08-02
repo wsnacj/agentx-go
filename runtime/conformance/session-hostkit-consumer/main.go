@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	scheduler "github.com/wsnacj/agentx-go/runtime/scheduler"
 	session "github.com/wsnacj/agentx-go/runtime/session"
 	sessionhostkit "github.com/wsnacj/agentx-go/runtime/session/hostkit"
+	resume "github.com/wsnacj/agentx-go/runtime/session/resume"
 )
 
 func run(ctx context.Context) (string, error) {
@@ -45,6 +47,122 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(output)
+	resumeOutput, err := runResume(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(resumeOutput)
+}
+
+func runResume(ctx context.Context) (string, error) {
+	queue := scheduler.NewMemoryQueue(scheduler.QueueConfig{})
+	runtime, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
+		Queue:  queue,
+		Worker: readyResumeWorker(),
+		Lane:   scheduler.LaneBackground,
+	})
+	if err != nil {
+		return "", err
+	}
+	request := sessionhostkit.ResumeEnqueueRequest{
+		Enabled:        true,
+		Payload:        readyResumePayload(),
+		TrustedCaller:  true,
+		IdempotencyKey: "resume-conformance",
+	}
+	enqueue, err := runtime.Enqueue(ctx, request)
+	if err != nil || !enqueue.TickEnqueued {
+		return "", fmt.Errorf("resume enqueue blocked: report=%#v err=%v", enqueue, err)
+	}
+	report, err := runtime.Run(ctx, sessionhostkit.ResumeRunRequest{
+		Enabled:          true,
+		MaxCycles:        1,
+		MaxTicksPerCycle: 1,
+	})
+	if err != nil {
+		return "", err
+	}
+	if report.TicksAcked != 1 || !report.HostRuntimeDispatchByHost {
+		return "", fmt.Errorf("resume run blocked: status=%s acked=%d dispatch=%t", report.Status, report.TicksAcked, report.HostRuntimeDispatchByHost)
+	}
+	if err := runtime.Shutdown(context.Background()); err != nil {
+		return "", err
+	}
+	if err := runtime.Shutdown(context.Background()); err != nil {
+		return "", err
+	}
+	if _, err := runtime.Enqueue(context.Background(), request); !errors.Is(err, sessionhostkit.ErrResumeRuntimeClosed) {
+		return "", fmt.Errorf("resume closed call error = %v", err)
+	}
+	return fmt.Sprintf("agentx-resume-hostkit-ok:%s:%d:%t", report.Status, report.TicksAcked, report.HostRuntimeDispatchByHost), nil
+}
+
+func readyResumeWorker() resume.Worker {
+	return resume.Worker{
+		ContinuationReadback: func(_ context.Context, input resume.ObjectiveRuntimeSchedulerResumeContinuationReadbackInput) (resume.ObjectiveRuntimeSchedulerResumeContinuationReadbackResult, error) {
+			return resume.ObjectiveRuntimeSchedulerResumeContinuationReadbackResult{
+				ReadyForWakeContinuationResume: true,
+				Status:                         "wake_continuation_readback_recorded",
+				BackendKind:                    "conformance_durable_store",
+				ContinuationStoreConfigured:    true,
+				ContinuationStoreRef:           input.ContinuationStoreRef,
+				ContinuationApplyRef:           input.ContinuationApplyRef,
+				ContinuationReadbackRef:        input.ContinuationReadbackRef,
+				WakeCursorRef:                  input.ExpectedWakeCursorRef,
+				ObjectiveRunRef:                input.ExpectedObjectiveRunRef,
+				ObjectiveGraphSnapshotRef:      input.ExpectedGraphSnapshotRef,
+				ObjectiveGraphRef:              input.ExpectedObjectiveGraphRef,
+				ObjectiveGraphReadbackRef:      "graph_readback:conformance_resume",
+				ObjectiveGraphState:            "running",
+				ObjectiveGraphRevision:         1,
+				ReadyNodeRefs:                  []session.DisplaySafeRef{"node:conformance_resume"},
+				SchedulerRuntimeQueueRef:       input.ExpectedRuntimeQueueRef,
+				SchedulerWakeContinuationRef:   input.ExpectedContinuationRef,
+				WakeDecision:                   "wake_llm",
+				WakeContinuationEvidenceRefs:   []session.DisplaySafeRef{"evidence:conformance_resume"},
+				WakeCursorVisible:              true,
+				ManifestVisible:                true,
+				DurableReadback:                true,
+				CrossInstanceReadback:          true,
+			}, nil
+		},
+		WakeDispatch: func(_ context.Context, input resume.ObjectiveRuntimeSchedulerResumeWakeDispatchInput) (resume.ObjectiveRuntimeSchedulerResumeWakeDispatchResult, error) {
+			return resume.ObjectiveRuntimeSchedulerResumeWakeDispatchResult{
+				Status:                      "objective_runtime_wake_dispatch_request_ready",
+				ReadyForRuntimeWakeDispatch: true,
+				DispatchRequestRecorded:     true,
+				HostRuntimeDispatchByHost:   true,
+				DispatchRef:                 input.DispatchRef,
+				RuntimeDispatchRef:          input.RuntimeDispatchRef,
+				HostRunnerRef:               input.HostRunnerRef,
+				HostRunnerVersionRef:        input.HostRunnerVersionRef,
+				OperatorApprovalRef:         input.OperatorApprovalRef,
+				NextHostAction:              "host_dispatch_runtime_wake_runner",
+			}, nil
+		},
+	}
+}
+
+func readyResumePayload() resume.ObjectiveRuntimeSchedulerResumeTickPayload {
+	return resume.ObjectiveRuntimeSchedulerResumeTickPayload{
+		TickRef:                      "tick:conformance_resume",
+		SchedulerJobRef:              "job:conformance_resume",
+		SchedulerRuntimeQueueRef:     "queue:conformance_resume",
+		SchedulerWakeContinuationRef: "continuation:conformance_resume",
+		ContinuationStoreRef:         "store:conformance_resume",
+		ContinuationApplyRef:         "apply:conformance_resume",
+		ContinuationReadbackRef:      "readback:conformance_resume",
+		WakeCursorRef:                "cursor:conformance_resume",
+		ObjectiveRunRef:              "objective_run:conformance_resume",
+		ObjectiveGraphSnapshotRef:    "snapshot:conformance_resume",
+		ObjectiveGraphRef:            "graph:conformance_resume",
+		ObjectiveGraphReadbackRef:    "graph_readback:conformance_resume",
+		DispatchRef:                  "dispatch:conformance_resume",
+		RuntimeDispatchRef:           "runtime_dispatch:conformance_resume",
+		HostRunnerRef:                "runner:conformance_resume",
+		HostRunnerVersionRef:         "runner_version:conformance_resume",
+		OperatorApprovalRef:          "approval:conformance_resume",
+	}
 }
 
 type stubWorker struct {
