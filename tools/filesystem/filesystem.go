@@ -51,6 +51,47 @@ type Workspace interface {
 	ApplyPatch(context.Context, ApplyPatchRequest) (PatchSummary, error)
 }
 
+// WorkspaceFuncs adapts four Host functions to Workspace. It keeps Host
+// integration narrow without requiring a public adapter type in the Host.
+type WorkspaceFuncs struct {
+	ReadFunc       func(context.Context, ReadRequest) (ReadResult, error)
+	WriteFunc      func(context.Context, WriteRequest) (WriteResult, error)
+	EditFunc       func(context.Context, EditRequest) (EditResult, error)
+	ApplyPatchFunc func(context.Context, ApplyPatchRequest) (PatchSummary, error)
+}
+
+// Read delegates to ReadFunc and fails closed when it is unavailable.
+func (w WorkspaceFuncs) Read(ctx context.Context, request ReadRequest) (ReadResult, error) {
+	if w.ReadFunc == nil {
+		return ReadResult{}, fmt.Errorf("%s: workspace read is unavailable", ReadName)
+	}
+	return w.ReadFunc(ctx, request)
+}
+
+// Write delegates to WriteFunc and fails closed when it is unavailable.
+func (w WorkspaceFuncs) Write(ctx context.Context, request WriteRequest) (WriteResult, error) {
+	if w.WriteFunc == nil {
+		return WriteResult{}, fmt.Errorf("%s: workspace write is unavailable", WriteName)
+	}
+	return w.WriteFunc(ctx, request)
+}
+
+// Edit delegates to EditFunc and fails closed when it is unavailable.
+func (w WorkspaceFuncs) Edit(ctx context.Context, request EditRequest) (EditResult, error) {
+	if w.EditFunc == nil {
+		return EditResult{}, fmt.Errorf("%s: workspace edit is unavailable", EditName)
+	}
+	return w.EditFunc(ctx, request)
+}
+
+// ApplyPatch delegates to ApplyPatchFunc and fails closed when unavailable.
+func (w WorkspaceFuncs) ApplyPatch(ctx context.Context, request ApplyPatchRequest) (PatchSummary, error) {
+	if w.ApplyPatchFunc == nil {
+		return PatchSummary{}, fmt.Errorf("%s: workspace patch is unavailable", ApplyPatchName)
+	}
+	return w.ApplyPatchFunc(ctx, request)
+}
+
 // ReadRequest is a normalized text selection request.
 type ReadRequest struct {
 	Path         string

@@ -20,6 +20,9 @@ type Workspace interface {
 }
 ```
 
+如果 Host 不希望额外声明一个公开 adapter 类型，可直接使用 `WorkspaceFuncs` 注入四个私有函数；
+未提供的函数会 fail closed，不会回退到本机文件系统。
+
 Host 继续拥有工作区根选择、授权/审批、受保护路径、symlink 与路径逃逸防护、原子落盘、
 durable write、具体 OS/对象存储后端，以及 `assetfs://` URI 的解析。canonical 包不会读取环境
 变量、凭据或默认访问本机文件。
