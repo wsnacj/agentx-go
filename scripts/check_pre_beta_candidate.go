@@ -58,7 +58,7 @@ type securitySummary struct {
 }
 
 var (
-	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilities in packages you import and ([0-9]+)[[:space:]]+vulnerabilities in modules you require`)
+	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilities? in packages you import and ([0-9]+)[[:space:]]+vulnerabilities? in modules you require`)
 	vulnerabilityPattern = regexp.MustCompile(`GO-[0-9]{4}-[0-9]+`)
 )
 
@@ -72,6 +72,7 @@ var candidateModules = []moduleSpec{
 func main() {
 	artifactDir := flag.String("artifact-dir", "", "write the value-safe manifest and scan logs to this directory")
 	flag.Parse()
+	checkSecurityParser()
 
 	root, err := os.Getwd()
 	check(err)
@@ -456,7 +457,24 @@ func parseSecuritySummary(output string) securitySummary {
 		summary.residualIDs = append(summary.residualIDs, id)
 	}
 	sort.Strings(summary.residualIDs)
+	if summary.imported+summary.required != len(summary.residualIDs) {
+		check(fmt.Errorf("govulncheck residual count mismatch: imported=%d required=%d ids=%v",
+			summary.imported, summary.required, summary.residualIDs))
+	}
 	return summary
+}
+
+func checkSecurityParser() {
+	output := `Govulncheck scanned the following 6 modules and the go1.25.12 standard library:
+Vulnerability #1: GO-2026-5024
+Your code is affected by 0 vulnerabilities.
+This scan also found 0 vulnerabilities in packages you import and 1
+vulnerability in modules you require, but your code doesn't appear to call these
+vulnerabilities.`
+	summary := parseSecuritySummary(output)
+	if summary.reachable != 0 || summary.imported != 0 || summary.required != 1 || len(summary.residualIDs) != 1 || summary.residualIDs[0] != "GO-2026-5024" {
+		check(fmt.Errorf("govulncheck parser self-check failed: %+v", summary))
+	}
 }
 
 func isTransientScanFailure(output string) bool {
