@@ -75,6 +75,8 @@ Document、process或网络的产品信任分类，canonical module不拥有这�
   文本选择、精确替换和patch语法，通过显式`Workspace`接入Host安全/原子文件后端。
 - [`tools/memory`](./memory/API.md)：拥有`memory_search/memory_get`的参数、source归一化、
   typed request与预算协调，通过显式`Backend`接入Host store、visibility和ranking策略。
+- [`tools/scheduler`](./scheduler/API.md)：拥有`cron`的action解析与命令路由，通过五个显式
+  Backend方法接入Host scheduler、RunStore、授权和durable lifecycle。
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
