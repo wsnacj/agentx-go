@@ -64,6 +64,14 @@ drag/fill 等能力通过独立小接口按需实现。`BrowserCapabilityProvide
 具体 browserd 进程可由 [`browser/host/browserd`](../host/browserd/API.md) 管理，但本 package
 不会自动构造或启动它。代理 transport、系统浏览器、登录态和真实网络策略属于 Host adapter。
 
+### Experimental Host Adapter seam
+
+具体 backend 若需要 route、artifact、doctor metadata 或 locator 投影，可使用
+`BrowserResolvedExecutionRoute`、`BrowserArtifactResolveRequest`、
+`BrowserDoctorRouteMetadataProvider` 以及 `ResolveBrowserElementTargetWithHint` 等
+`host_adapter.go` 合同。该 seam 只暴露 portable value/helper，不拥有具体 proxy、provider、
+credential 或产品策略；当前仍是 Experimental，Beta 前需要进一步收口。
+
 ## 参数、错误与 identity
 
 - `DecodeToolArguments` 与 `CanonicalizeToolArguments` 接受现有兼容输入并输出 canonical JSON；

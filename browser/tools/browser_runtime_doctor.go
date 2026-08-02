@@ -154,6 +154,13 @@ func browserRuntimeDoctorRouteSummary(
 }
 
 func browserDoctorRouteMetadataForBackend(backend BrowserBackend) browserDoctorRouteMetadata {
+	if provider, ok := backend.(BrowserDoctorRouteMetadataProvider); ok {
+		metadata := provider.BrowserDoctorRouteMetadata()
+		return browserDoctorRouteMetadata{
+			Source:   strings.TrimSpace(metadata.Source),
+			Endpoint: strings.TrimSpace(metadata.Endpoint),
+		}
+	}
 	provider, ok := backend.(browserDoctorRouteMetadataProvider)
 	if !ok {
 		return browserDoctorRouteMetadata{}
