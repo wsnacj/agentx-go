@@ -42,6 +42,7 @@ var releaseModules = []moduleSpec{
 func main() {
 	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer modules from VCS into an empty temporary cache")
 	full := flag.Bool("full", false, "also run test, vet, tidy and list for all four source modules")
+	portal := flag.Bool("portal", false, "also build and validate the optional local Developer Portal (requires npm ci first)")
 	flag.Parse()
 
 	root, err := os.Getwd()
@@ -73,8 +74,11 @@ func main() {
 			printRun(dir, env, "go", "list", "./...")
 		}
 	}
+	if *portal {
+		printRun(root, env, "npm", "run", "docs:check")
+	}
 
-	fmt.Printf("agentx-developer-preview-distribution-ok:version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:full=%t\n", version, len(releaseModules), *freshCache, *full)
+	fmt.Printf("agentx-developer-preview-distribution-ok:version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:full=%t:portal=%t\n", version, len(releaseModules), *freshCache, *full, *portal)
 }
 
 func checkRequiredFiles(root string) {
@@ -87,6 +91,11 @@ func checkRequiredFiles(root string) {
 		".github/CODEOWNERS",
 		"docs/guides/developer-preview-policy.md",
 		"docs/reference/distribution-readiness.md",
+		"docs/architecture/developer-portal-generator.md",
+		"package.json",
+		"package-lock.json",
+		"portal/.vitepress/config.mjs",
+		"portal/content/index.md",
 	} {
 		info, err := os.Stat(filepath.Join(root, relative))
 		if err != nil || info.IsDir() || info.Size() == 0 {

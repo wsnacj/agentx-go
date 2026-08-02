@@ -31,6 +31,16 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 [支持边界](SUPPORT.md)。参与修改请阅读[CONTRIBUTING](CONTRIBUTING.md)；PR不是必需
 流程，本地gate与commit-range人工审阅是一等路径。
 
+中文Developer Portal本地构建：
+
+```bash
+npm ci
+npm run docs:check
+```
+
+站点只投影现有Markdown/API事实源；生成目录和静态产物不提交。工程说明见
+[Portal README](portal/README.md)。
+
 ## 当前提供：Experimental 组件
 
 - [`components/llm`](components/llm/API.md)：provider-neutral 的 LLM

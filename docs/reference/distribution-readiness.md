@@ -39,7 +39,10 @@ License选项目前只作为决策输入，不代表法律建议或默认选择�
 ```bash
 GOWORK=off go run scripts/check_developer_preview_distribution.go
 GOWORK=off go run scripts/check_developer_preview_distribution.go -fresh-cache
+GOWORK=off go run scripts/check_developer_preview_distribution.go -portal
 ```
 
 第二条会使用空临时`GOMODCACHE`和`GOPROXY=direct`从私有远端获取固定版本；需要调用方
 已经配置GitHub私有仓库读取权限，但不会把credential写入仓库或输出。
+第三条是可选Developer Portal lane；需先运行`npm ci`，不会改变普通Go consumer或四
+module验证对Node的零依赖边界。

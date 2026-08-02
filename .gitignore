@@ -1,0 +1,5 @@
+node_modules/
+portal/.generated/
+portal/.vitepress/cache/
+portal/.vitepress/dist/
+
