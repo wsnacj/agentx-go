@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的46个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的48个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -46,6 +46,8 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/mediaartifact` | Experimental extension | [API](../../runtime/mediaartifact/API.md) | 媒体产物描述合同 |
 | `runtime/objective` | Experimental extension | [API](../../runtime/objective/API.md) | Objective推荐类型入口；保持kernel类型与JSON identity |
 | `runtime/objective/hostkit` | Developer Preview candidate | [API](../../runtime/objective/hostkit/API.md) | Managed ingress、显式Host dispatch、observation normalization与verification标准入口 |
+| `runtime/session` | Experimental extension | [API](../../runtime/session/API.md) | Task/Session/Subagent identity、delegation与parent verification推荐命名边界 |
+| `runtime/session/hostkit` | Developer Preview candidate | [API](../../runtime/session/hostkit/API.md) | child worker invoke、record/readback、parent verification与Objective handoff标准入口 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |
 | `runtime/runstore` | Experimental extension | [API](../../runtime/runstore/API.md) | Run、NodeExecution、Event存储合同、投影与并发安全内存实现 |
@@ -64,7 +66,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-46个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+48个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
@@ -78,7 +80,7 @@ GOWORK=off go run scripts/check_docs_links.go
 
 1. 四个 module 当前 production package 与矩阵一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 九个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
+3. 十个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；

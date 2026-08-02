@@ -60,8 +60,8 @@ func main() {
 
 	entries, err := readPackages(filepath.Join(root, "docs", "reference", "developer-preview-packages.tsv"))
 	check(err)
-	if len(entries) != 46 {
-		check(fmt.Errorf("package maturity source has %d entries, want 46", len(entries)))
+	if len(entries) != 48 {
+		check(fmt.Errorf("package maturity source has %d entries, want 48", len(entries)))
 	}
 	candidates := 0
 	for _, entry := range entries {
@@ -69,8 +69,8 @@ func main() {
 			candidates++
 		}
 	}
-	if candidates != 9 {
-		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 9", candidates))
+	if candidates != 10 {
+		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 10", candidates))
 	}
 
 	for index := range entries {

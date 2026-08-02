@@ -46,8 +46,8 @@ func main() {
 	if nav.Version == "" || nav.SourceCommit == "" {
 		check(fmt.Errorf("portal navigation is missing version or source commit"))
 	}
-	if len(nav.Packages) != 46 {
-		check(fmt.Errorf("portal has %d packages, want 46", len(nav.Packages)))
+	if len(nav.Packages) != 48 {
+		check(fmt.Errorf("portal has %d packages, want 48", len(nav.Packages)))
 	}
 	candidates := 0
 	for _, entry := range nav.Packages {
@@ -56,8 +56,8 @@ func main() {
 		}
 		checkFile(routeFile(generated, entry.Route))
 	}
-	if candidates != 9 {
-		check(fmt.Errorf("portal has %d Developer Preview candidates, want 9", candidates))
+	if candidates != 10 {
+		check(fmt.Errorf("portal has %d Developer Preview candidates, want 10", candidates))
 	}
 
 	for _, relative := range []string{

@@ -13,5 +13,5 @@ npm run docs:dev
 - package分类来自`docs/reference/developer-preview-packages.tsv`；
 - `portal/.generated/`、缓存和静态构建产物均被忽略；
 - Portal Candidate不是Public/Beta/Stable或production-ready发布。
-- `docs:audit`需要访问npm registry；production build和46/9 coverage gate可在依赖已经
+- `docs:audit`需要访问npm registry；production build和48/10 coverage gate可在依赖已经
   安装后本地重复运行。

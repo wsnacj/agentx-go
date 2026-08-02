@@ -27,6 +27,8 @@ runtime/hosthttp/resourcepolicy	experimental_extension	runtime/hosthttp/resource
 runtime/mediaartifact	experimental_extension	runtime/mediaartifact/API.md	-
 runtime/objective	experimental_extension	runtime/objective/API.md	-
 runtime/objective/hostkit	developer_preview_candidate	runtime/objective/hostkit/API.md	c47db4a459f2e5faecee930c93882241c766d03c3683c6a3241bdbce2adaea35
+runtime/session	experimental_extension	runtime/session/API.md	-
+runtime/session/hostkit	developer_preview_candidate	runtime/session/hostkit/API.md	b5aded4b2656949c471235c5682e59aeae9514520716351b7aa03703c8d1d5e8
 runtime/promptcontext	experimental_extension	runtime/promptcontext/API.md	-
 runtime/protocol	experimental_extension	runtime/protocol/API.md	-
 runtime/runstore	experimental_extension	runtime/runstore/API.md	-

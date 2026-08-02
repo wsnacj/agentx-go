@@ -1,0 +1,414 @@
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/session/hostkit"
+
+Package hostkit provides the portable coordination layer for one host-owned
+child worker lifecycle.
+
+It invokes a caller-supplied worker exactly once, records and reads back the
+result through a caller-supplied store, and can project the verified child
+result into the parent Objective runtime. It does not own a Runner, process,
+queue, scheduler, credential, authorization policy, or concrete backend.
+
+CONSTANTS
+
+const BackendKind = "host_delegation_worker_runtime"
+
+VARIABLES
+
+var (
+	// ErrInvalidConfig identifies a missing or typed-nil Host Kit dependency.
+	ErrInvalidConfig = errors.New("session hostkit: invalid config")
+	// ErrClosed identifies Run calls made after Shutdown.
+	ErrClosed = errors.New("session hostkit: closed")
+)
+
+FUNCTIONS
+
+func BuildDelegationWorkerAsyncCompletionProjection(input DelegationWorkerAsyncCompletionInput) agentxcontrolplane.AutoDelegationAsyncCompletionProjection
+
+TYPES
+
+type Backend struct {
+	Runtime     WorkerRuntime
+	Store       StateStore
+	BackendRef  agentxcontrolplane.DisplaySafeRef
+	BackendKind string
+	Durable     bool
+	Now         func() time.Time
+}
+
+func (b Backend) RunDelegationWorkerRuntime(ctx context.Context, input BackendInput) (BackendReport, error)
+
+type BackendInput struct {
+	Enabled                 bool
+	Readiness               agentxcontrolplane.HostOwnedDelegationWorkerRuntimeReadiness
+	InvocationReportRef     agentxcontrolplane.DisplaySafeRef
+	ObservedInvocationRef   agentxcontrolplane.DisplaySafeRef
+	HostWorkerRuntimeRunRef agentxcontrolplane.DisplaySafeRef
+	VisibleToolRefs         []agentxcontrolplane.DisplaySafeRef
+	ContextRefs             []agentxcontrolplane.DisplaySafeRef
+	BudgetRef               agentxcontrolplane.DisplaySafeRef
+	TimeoutRef              agentxcontrolplane.DisplaySafeRef
+	ParallelismRef          agentxcontrolplane.DisplaySafeRef
+	FailureRef              agentxcontrolplane.DisplaySafeRef
+	CompensationRef         agentxcontrolplane.DisplaySafeRef
+	EvidenceRefs            []agentxcontrolplane.EvidenceRef
+	Boundaries              []agentxcontrolplane.Boundary
+	RawOutputLoaded         bool
+}
+
+type BackendReport struct {
+	Available                        bool
+	Enabled                          bool
+	Status                           agentxcontrolplane.HostActionStatus
+	BackendKind                      string
+	BackendRef                       agentxcontrolplane.DisplaySafeRef
+	Readiness                        agentxcontrolplane.HostOwnedDelegationWorkerRuntimeReadiness
+	Invocation                       agentxcontrolplane.HostOwnedDelegationWorkerRuntimeInvocation
+	InvocationReportRef              agentxcontrolplane.DisplaySafeRef
+	ObservedInvocationRef            agentxcontrolplane.DisplaySafeRef
+	HostWorkerRuntimeRunRef          agentxcontrolplane.DisplaySafeRef
+	VisibleToolRefs                  []agentxcontrolplane.DisplaySafeRef
+	ContextRefs                      []agentxcontrolplane.DisplaySafeRef
+	BudgetRef                        agentxcontrolplane.DisplaySafeRef
+	TimeoutRef                       agentxcontrolplane.DisplaySafeRef
+	ParallelismRef                   agentxcontrolplane.DisplaySafeRef
+	WorkerRunAttempted               bool
+	WorkerReadbackAttempted          bool
+	WorkerResultRecorded             bool
+	WorkerResultReadbackReady        bool
+	ReadyForWorkerResultReview       bool
+	ReadyForFailureReview            bool
+	WorkerResultRequiresVerification bool
+	WorkerOutputAcceptedAsFact       bool
+	EvidenceRefs                     []agentxcontrolplane.EvidenceRef
+	MissingInputs                    []agentxcontrolplane.MissingInput
+	BlockedReasons                   []string
+	FailureClass                     agentxcontrolplane.FailureClass
+	Boundaries                       []agentxcontrolplane.Boundary
+	NextHostAction                   agentxcontrolplane.NextHostAction
+	RawOutputLoaded                  bool
+}
+
+func (r BackendReport) Normalize() BackendReport
+
+type Config struct {
+	Worker      WorkerRuntime
+	Store       StateStore
+	BackendRef  controlcontract.DisplaySafeRef
+	BackendKind string
+	Durable     bool
+	Now         func() time.Time
+}
+    Config supplies all side-effecting child worker capabilities.
+
+type ConfigError struct {
+	Field string
+}
+    ConfigError reports which explicit Host dependency is missing.
+
+func (e *ConfigError) Error() string
+
+func (*ConfigError) Unwrap() error
+    Unwrap makes ConfigError compatible with errors.Is(err, ErrInvalidConfig).
+
+type DelegationWorkerAsyncCompletionInput struct {
+	Run                   agentxcontrolplane.ObjectiveRun
+	HostBridge            agentxcontrolplane.AutoDelegationHostBridge
+	BackendKind           agentxcontrolplane.AutoDelegationAsyncBackendKind
+	BackendRef            agentxcontrolplane.DisplaySafeRef
+	ParentObjectiveRef    agentxcontrolplane.DisplaySafeRef
+	ParentObjectiveRunRef agentxcontrolplane.DisplaySafeRef
+	ParentLedgerRef       agentxcontrolplane.DisplaySafeRef
+	ParentResumeRef       agentxcontrolplane.DisplaySafeRef
+	RequireDurable        bool
+	ChildRef              agentxcontrolplane.DisplaySafeRef
+	Role                  agentxcontrolplane.AutoDelegationChildRole
+	Status                agentxcontrolplane.AutoDelegationAsyncChildStatus
+	AgeSeconds            int
+	CurrentAction         string
+	CapabilityRefs        []agentxcontrolplane.DisplaySafeRef
+	AllowedToolRefs       []agentxcontrolplane.DisplaySafeRef
+	BoundCapabilityRefs   []agentxcontrolplane.DisplaySafeRef
+	BoundAllowedToolRefs  []agentxcontrolplane.DisplaySafeRef
+	Invocation            agentxcontrolplane.HostOwnedDelegationWorkerRuntimeInvocation
+	ObservationRef        agentxcontrolplane.DisplaySafeRef
+	FailureRef            agentxcontrolplane.DisplaySafeRef
+	FailureReviewRef      agentxcontrolplane.DisplaySafeRef
+	CancellationRef       agentxcontrolplane.DisplaySafeRef
+	InterruptionRef       agentxcontrolplane.DisplaySafeRef
+	CompletionEnvelopeRef agentxcontrolplane.DisplaySafeRef
+	EvidenceRefs          []agentxcontrolplane.EvidenceRef
+	ReadyForFailureReview bool
+	MissingInputs         []agentxcontrolplane.MissingInput
+	BlockedReasons        []string
+	FailureClass          agentxcontrolplane.FailureClass
+	DecisionBasis         []agentxcontrolplane.DisplaySafeRef
+	Boundaries            []agentxcontrolplane.Boundary
+	RawOutputLoaded       bool
+}
+
+type DelegationWorkerObjectiveRuntimeHandoffInput struct {
+	Run                      agentxcontrolplane.ObjectiveRun
+	Invocation               agentxcontrolplane.HostOwnedDelegationWorkerRuntimeInvocation
+	ParentFrame              agentxcontrolplane.ObjectiveFrame
+	ParentLedgerRef          agentxcontrolplane.DisplaySafeRef
+	WorkerAttemptRef         agentxcontrolplane.AttemptRef
+	MergeRef                 agentxcontrolplane.DisplaySafeRef
+	MergePolicyRef           agentxcontrolplane.DisplaySafeRef
+	HandoffRef               agentxcontrolplane.DisplaySafeRef
+	WorkerObservations       []agentxcontrolplane.Observation
+	RequiredEvidence         []agentxcontrolplane.EvidenceRef
+	ExpectedObservationKinds []string
+	EvidenceRefs             []agentxcontrolplane.EvidenceRef
+	DecisionBasis            []agentxcontrolplane.DisplaySafeRef
+	Boundaries               []agentxcontrolplane.Boundary
+	RawOutputLoaded          bool
+}
+
+type DelegationWorkerObjectiveRuntimeHandoffReport struct {
+	Available                        bool     `json:"available"`
+	Status                           string   `json:"status,omitempty"`
+	ParentMergeStatus                string   `json:"parent_merge_status,omitempty"`
+	RuntimeHandoffStatus             string   `json:"runtime_handoff_status,omitempty"`
+	RuntimeLoopStatus                string   `json:"runtime_loop_status,omitempty"`
+	RuntimeLoopState                 string   `json:"runtime_loop_state,omitempty"`
+	RuntimeLoopAction                string   `json:"runtime_loop_action,omitempty"`
+	ReadyForParentMerge              bool     `json:"ready_for_parent_merge"`
+	ReadyForRuntimeLoopInput         bool     `json:"ready_for_runtime_loop_input"`
+	RuntimeLoopReady                 bool     `json:"runtime_loop_ready"`
+	RuntimeLoopHostPersistReady      bool     `json:"runtime_loop_host_persist_ready"`
+	ReadyForNextRuntimeAction        bool     `json:"ready_for_next_runtime_action"`
+	ReadyForFailureReview            bool     `json:"ready_for_failure_review"`
+	WorkerResultRequiresVerification bool     `json:"worker_result_requires_verification"`
+	WorkerOutputAcceptedAsFact       bool     `json:"worker_output_accepted_as_fact"`
+	WorkerDispatchedByCore           bool     `json:"worker_dispatched_by_core"`
+	RunnerDispatchedByCore           bool     `json:"runner_dispatched_by_core"`
+	RuntimeAdapterExecutedByCore     bool     `json:"runtime_adapter_executed_by_core"`
+	StoreMutationExecutedByCore      bool     `json:"store_mutation_executed_by_core"`
+	CoreExecutionExecuted            bool     `json:"core_execution_executed"`
+	RawOutputLoaded                  bool     `json:"raw_output_loaded"`
+	ParentLedgerRef                  string   `json:"parent_ledger_ref,omitempty"`
+	WorkerAttemptRef                 string   `json:"worker_attempt_ref,omitempty"`
+	MergeRef                         string   `json:"merge_ref,omitempty"`
+	HandoffRef                       string   `json:"handoff_ref,omitempty"`
+	WorkerRunRef                     string   `json:"worker_run_ref,omitempty"`
+	WorkerResultRef                  string   `json:"worker_result_ref,omitempty"`
+	WorkerReadbackRef                string   `json:"worker_readback_ref,omitempty"`
+	ObservationRef                   string   `json:"observation_ref,omitempty"`
+	EvidenceRefs                     []string `json:"evidence_refs,omitempty"`
+	MissingInputs                    []string `json:"missing_inputs,omitempty"`
+	BlockedReasons                   []string `json:"blocked_reasons,omitempty"`
+	Boundaries                       []string `json:"boundaries,omitempty"`
+	NextHostAction                   string   `json:"next_host_action,omitempty"`
+	ParentMerge                      agentxcontrolplane.DelegationWorkerParentMerge
+	RuntimeHandoff                   agentxcontrolplane.DelegationObjectiveRuntimeHandoff
+	RuntimeLoopStep                  agentxcontrolplane.ObjectiveRuntimeLoopStep
+}
+
+func BuildDelegationWorkerObjectiveRuntimeHandoff(input DelegationWorkerObjectiveRuntimeHandoffInput) DelegationWorkerObjectiveRuntimeHandoffReport
+
+func (report DelegationWorkerObjectiveRuntimeHandoffReport) Normalize() DelegationWorkerObjectiveRuntimeHandoffReport
+
+type InMemoryStateStore struct {
+	// Has unexported fields.
+}
+
+func NewInMemoryStateStore() *InMemoryStateStore
+
+func (s *InMemoryStateStore) ReadWorkerRun(_ context.Context, workerRunRef agentxcontrolplane.DisplaySafeRef) (WorkerRunRecord, bool, error)
+
+func (s *InMemoryStateStore) WriteWorkerRun(_ context.Context, record WorkerRunRecord) error
+
+type ObjectiveRuntimeClosureInput struct {
+	Run                      agentxcontrolplane.ObjectiveRun
+	ParentFrame              agentxcontrolplane.ObjectiveFrame
+	ParentLedgerRef          agentxcontrolplane.DisplaySafeRef
+	WorkerAttemptRef         agentxcontrolplane.AttemptRef
+	MergeRef                 agentxcontrolplane.DisplaySafeRef
+	MergePolicyRef           agentxcontrolplane.DisplaySafeRef
+	HandoffRef               agentxcontrolplane.DisplaySafeRef
+	WorkerObservations       []agentxcontrolplane.Observation
+	RequiredEvidence         []agentxcontrolplane.EvidenceRef
+	ExpectedObservationKinds []string
+	EvidenceRefs             []agentxcontrolplane.EvidenceRef
+	DecisionBasis            []agentxcontrolplane.DisplaySafeRef
+	Boundaries               []agentxcontrolplane.Boundary
+	RawOutputLoaded          bool
+}
+    ObjectiveRuntimeClosureInput carries the parent objective facts needed after
+    a host-owned delegation worker has executed and read back its result.
+
+type ObjectiveRuntimeClosureProfile struct {
+	Enabled      bool
+	Backend      Backend
+	BackendInput BackendInput
+	ClosureInput ObjectiveRuntimeClosureInput
+	Boundaries   []agentxcontrolplane.Boundary
+}
+    ObjectiveRuntimeClosureProfile composes a host-owned delegation worker
+    backend with the reusable objective-runtime handoff. It does not choose a
+    worker, execute from core, or persist the ObjectiveRun; those remain host
+    responsibilities.
+
+type ObjectiveRuntimeClosureProfileReport struct {
+	Available                        bool                                                       `json:"available"`
+	Enabled                          bool                                                       `json:"enabled"`
+	Ready                            bool                                                       `json:"ready"`
+	Status                           string                                                     `json:"status,omitempty"`
+	BackendReady                     bool                                                       `json:"backend_ready"`
+	RuntimeLoopReady                 bool                                                       `json:"runtime_loop_ready"`
+	RuntimeLoopHostPersistReady      bool                                                       `json:"runtime_loop_host_persist_ready"`
+	HostWorkerRuntimeExecuted        bool                                                       `json:"host_worker_runtime_executed"`
+	WorkerResultRecorded             bool                                                       `json:"worker_result_recorded"`
+	WorkerResultReadbackReady        bool                                                       `json:"worker_result_readback_ready"`
+	ReadyForRuntimeLoopInput         bool                                                       `json:"ready_for_runtime_loop_input"`
+	ReadyForFailureReview            bool                                                       `json:"ready_for_failure_review"`
+	WorkerResultRequiresVerification bool                                                       `json:"worker_result_requires_verification"`
+	WorkerOutputAcceptedAsFact       bool                                                       `json:"worker_output_accepted_as_fact"`
+	WorkerDispatchedByCore           bool                                                       `json:"worker_dispatched_by_core"`
+	RunnerDispatchedByCore           bool                                                       `json:"runner_dispatched_by_core"`
+	RuntimeAdapterExecutedByCore     bool                                                       `json:"runtime_adapter_executed_by_core"`
+	StoreMutationExecutedByCore      bool                                                       `json:"store_mutation_executed_by_core"`
+	CoreExecutionExecuted            bool                                                       `json:"core_execution_executed"`
+	Backend                          BackendReport                                              `json:"backend,omitempty"`
+	Closure                          DelegationWorkerObjectiveRuntimeHandoffReport              `json:"closure,omitempty"`
+	AsyncCompletion                  agentxcontrolplane.AutoDelegationAsyncCompletionProjection `json:"async_completion,omitempty"`
+	MissingInputs                    []string                                                   `json:"missing_inputs,omitempty"`
+	BlockedReasons                   []string                                                   `json:"blocked_reasons,omitempty"`
+	Boundaries                       []string                                                   `json:"boundaries,omitempty"`
+	NextHostAction                   string                                                     `json:"next_host_action,omitempty"`
+}
+
+func RunObjectiveRuntimeClosureProfile(ctx context.Context, profile ObjectiveRuntimeClosureProfile) (ObjectiveRuntimeClosureProfileReport, error)
+
+func (report ObjectiveRuntimeClosureProfileReport) Normalize() ObjectiveRuntimeClosureProfileReport
+
+type RunRequest struct {
+	BackendInput BackendInput
+	Closure      *ObjectiveRuntimeClosureInput
+	Boundaries   []controlcontract.Boundary
+}
+    RunRequest describes one child worker lifecycle. Closure is optional; when
+    present the verified readback is also projected into the parent Objective.
+
+type RunResult struct {
+	Completed bool                                 `json:"completed"`
+	Status    string                               `json:"status,omitempty"`
+	Backend   BackendReport                        `json:"backend"`
+	Closure   ObjectiveRuntimeClosureProfileReport `json:"closure,omitempty"`
+}
+    RunResult is the normalized Host Kit result. Backend is always populated;
+    Closure is populated only when RunRequest.Closure is present.
+
+type Runtime struct {
+	// Has unexported fields.
+}
+    Runtime is safe for concurrent Run calls when the supplied WorkerRuntime and
+    StateStore implementations are safe for the same concurrency.
+
+func New(config Config) (*Runtime, error)
+    New validates the required Host ports and constructs an inert Runtime.
+    It does not start a process, worker, queue, or goroutine.
+
+func (r *Runtime) Run(ctx context.Context, request RunRequest) (RunResult, error)
+    Run invokes one explicitly enabled child worker lifecycle. It never accepts
+    the child output as parent fact without the canonical verification path.
+
+func (r *Runtime) Shutdown(ctx context.Context) error
+    Shutdown prevents future Run calls. It is bounded and idempotent because
+    the Host Kit owns no background worker; the Host remains responsible for its
+    injected worker and store lifecycles.
+
+type StateStore interface {
+	WriteWorkerRun(ctx context.Context, record WorkerRunRecord) error
+	ReadWorkerRun(ctx context.Context, workerRunRef agentxcontrolplane.DisplaySafeRef) (WorkerRunRecord, bool, error)
+}
+
+type WorkerReadback struct {
+	Ready                bool
+	ResultVisible        bool
+	ObservedWorkerRunRef agentxcontrolplane.DisplaySafeRef
+	WorkerResultRef      agentxcontrolplane.DisplaySafeRef
+	WorkerReadbackRef    agentxcontrolplane.DisplaySafeRef
+	ObservationRef       agentxcontrolplane.DisplaySafeRef
+	EvidenceRefs         []agentxcontrolplane.EvidenceRef
+	MissingInputs        []agentxcontrolplane.MissingInput
+	BlockedReasons       []string
+	Boundaries           []agentxcontrolplane.Boundary
+	NextHostAction       agentxcontrolplane.NextHostAction
+	RawOutputLoaded      bool
+}
+
+func (r WorkerReadback) Normalize() WorkerReadback
+
+type WorkerReadbackRequest struct {
+	WorkerRunRef      agentxcontrolplane.DisplaySafeRef
+	WorkerResultRef   agentxcontrolplane.DisplaySafeRef
+	WorkerReadbackRef agentxcontrolplane.DisplaySafeRef
+	Record            WorkerRunRecord
+	Boundaries        []agentxcontrolplane.Boundary
+}
+
+type WorkerRequest struct {
+	Readiness               agentxcontrolplane.HostOwnedDelegationWorkerRuntimeReadiness
+	WorkerRunRef            agentxcontrolplane.DisplaySafeRef
+	WorkerRequestRef        agentxcontrolplane.DisplaySafeRef
+	InvocationRef           agentxcontrolplane.DisplaySafeRef
+	HostWorkerRuntimeRunRef agentxcontrolplane.DisplaySafeRef
+	VisibleToolRefs         []agentxcontrolplane.DisplaySafeRef
+	ContextRefs             []agentxcontrolplane.DisplaySafeRef
+	BudgetRef               agentxcontrolplane.DisplaySafeRef
+	TimeoutRef              agentxcontrolplane.DisplaySafeRef
+	ParallelismRef          agentxcontrolplane.DisplaySafeRef
+	EvidenceRequirements    []agentxcontrolplane.EvidenceRef
+	Boundaries              []agentxcontrolplane.Boundary
+}
+
+type WorkerResult struct {
+	Completed            bool
+	Failed               bool
+	ObservedWorkerRunRef agentxcontrolplane.DisplaySafeRef
+	WorkerResultRef      agentxcontrolplane.DisplaySafeRef
+	WorkerReadbackRef    agentxcontrolplane.DisplaySafeRef
+	ObservationRef       agentxcontrolplane.DisplaySafeRef
+	FailureRef           agentxcontrolplane.DisplaySafeRef
+	CompensationRef      agentxcontrolplane.DisplaySafeRef
+	EvidenceRefs         []agentxcontrolplane.EvidenceRef
+	MissingInputs        []agentxcontrolplane.MissingInput
+	BlockedReasons       []string
+	Boundaries           []agentxcontrolplane.Boundary
+	NextHostAction       agentxcontrolplane.NextHostAction
+	RawOutputLoaded      bool
+}
+
+func (r WorkerResult) Normalize() WorkerResult
+
+type WorkerRunRecord struct {
+	BackendKind             string
+	BackendRef              agentxcontrolplane.DisplaySafeRef
+	WorkerRunRef            agentxcontrolplane.DisplaySafeRef
+	WorkerRequestRef        agentxcontrolplane.DisplaySafeRef
+	InvocationRef           agentxcontrolplane.DisplaySafeRef
+	InvocationReportRef     agentxcontrolplane.DisplaySafeRef
+	HostWorkerRuntimeRunRef agentxcontrolplane.DisplaySafeRef
+	WorkerResultRef         agentxcontrolplane.DisplaySafeRef
+	WorkerReadbackRef       agentxcontrolplane.DisplaySafeRef
+	ObservationRef          agentxcontrolplane.DisplaySafeRef
+	Status                  string
+	VisibleToolRefs         []agentxcontrolplane.DisplaySafeRef
+	ContextRefs             []agentxcontrolplane.DisplaySafeRef
+	BudgetRef               agentxcontrolplane.DisplaySafeRef
+	TimeoutRef              agentxcontrolplane.DisplaySafeRef
+	ParallelismRef          agentxcontrolplane.DisplaySafeRef
+	EvidenceRefs            []agentxcontrolplane.EvidenceRef
+	Boundaries              []agentxcontrolplane.Boundary
+	UpdatedAt               time.Time
+}
+
+func (r WorkerRunRecord) Normalize() WorkerRunRecord
+
+type WorkerRuntime interface {
+	InvokeDelegationWorker(ctx context.Context, request WorkerRequest) (WorkerResult, error)
+	ReadDelegationWorkerResult(ctx context.Context, request WorkerReadbackRequest) (WorkerReadback, error)
+}
+

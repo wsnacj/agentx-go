@@ -25,6 +25,11 @@ github.com/wsnacj/agentx-go/runtime
 - [`objective/hostkit`](./objective/hostkit/API.md)：组合managed ingress、显式Host
   runtime-adapter dispatch、observation normalization和verification；具体handler、policy、
   approval、credential与backend继续由Host拥有。
+- [`session`](./session/API.md)：Task/Session/Subagent的identity、delegation、parent
+  verification与async completion推荐命名边界；不执行worker或scheduler。
+- [`session/hostkit`](./session/hostkit/API.md)：协调一次Host-owned child worker的invoke、
+  durable record、readback、parent verification与可选Objective handoff；具体process、
+  scheduler、queue、authorization和backend继续由Host拥有。
 - [`toolerrors`](./toolerrors/API.md)：结构化工具参数错误、cause chain 与
   deterministic repair hint 数据合同。
 - [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的

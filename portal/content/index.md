@@ -29,7 +29,7 @@ features:
     details: 组合 lowering、validation、journal、node execution 与 orchestration portable mechanism。
     link: /docs/guides/workflow-hostkit
   - title: 成熟度可见
-    details: 46 个 package 与 9 个 Developer Preview candidate 分级展示，不把 exported 误报为 Public API。
+    details: 48 个 package 与 10 个 Developer Preview candidate 分级展示，不把 exported 误报为 Public API。
     link: /docs/reference/package-maturity
   - title: 生命周期合同
     details: 明确并发、context cancellation、deadline、typed error 与有界幂等 Shutdown。
