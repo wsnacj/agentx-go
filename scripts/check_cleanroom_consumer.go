@@ -25,7 +25,11 @@ var expectedModules = []string{
 
 func main() {
 	freshCache := flag.Bool("fresh-cache", false, "download fixed modules into an empty temporary module and build cache")
+	readOnlyCache := flag.Bool("read-only-cache", false, "freeze the fresh module cache before verify, test and run")
 	flag.Parse()
+	if *readOnlyCache && !*freshCache {
+		check(fmt.Errorf("read-only-cache requires fresh-cache"))
+	}
 
 	root, err := os.Getwd()
 	check(err)
@@ -55,13 +59,27 @@ func main() {
 	)
 	if *freshCache {
 		mode = "fresh-vcs-cache"
+		moduleCache := filepath.Join(temporary, "gomodcache")
 		env = append(env,
-			"GOPROXY=direct",
+			"GOPROXY=https://proxy.golang.org,direct",
 			"GOPRIVATE=github.com/wsnacj/agentx-go",
-			"GOMODCACHE="+filepath.Join(temporary, "gomodcache"),
+			"GOMODCACHE="+moduleCache,
 			"GOCACHE="+filepath.Join(temporary, "gocache"),
 		)
-		run(consumerCopy, env, "go", "mod", "download")
+		// Warm the complete transitive graph before freezing the cache. The
+		// no-argument form only guarantees modules named directly by go.mod.
+		run(consumerCopy, env, "go", "mod", "download", "all")
+		run(consumerCopy, env, "go", "list", "-deps", "./...")
+		if *readOnlyCache {
+			check(setTreeWritable(moduleCache, false))
+			defer func() {
+				_ = setTreeWritable(moduleCache, true)
+			}()
+			// A frozen cache is useful only if the consumer also proves it does
+			// not fall back to VCS or the public proxy.
+			env = append(env, "GOPROXY=off")
+			mode = "fresh-vcs-read-only-cache"
+		}
 	}
 	run(consumerCopy, env, "go", "mod", "verify")
 	modules := run(consumerCopy, env, "go", "list", "-m", "-f", "{{.Path}} {{.Version}}", "all")
@@ -77,6 +95,28 @@ func main() {
 		check(fmt.Errorf("unexpected clean-room output %q", output))
 	}
 	fmt.Printf("agentx-cleanroom-consumer-ok:version=%s:modules=%d:source=%s\n", version, len(expectedModules), mode)
+}
+
+func setTreeWritable(root string, writable bool) error {
+	return filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		mode := info.Mode()
+		if writable {
+			mode |= 0o200
+		} else {
+			mode &^= 0o222
+		}
+		return os.Chmod(path, mode)
+	})
 }
 
 func copyConsumer(source, target string) error {

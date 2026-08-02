@@ -41,6 +41,7 @@ var releaseModules = []moduleSpec{
 
 func main() {
 	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer modules from VCS into an empty temporary cache")
+	readOnlyCache := flag.Bool("read-only-cache", false, "freeze the fresh consumer module cache before verify, test and run")
 	full := flag.Bool("full", false, "also run test, vet, tidy and list for all four source modules")
 	portal := flag.Bool("portal", false, "also build and validate the optional local Developer Portal (requires npm ci first)")
 	flag.Parse()
@@ -58,6 +59,12 @@ func main() {
 	cleanroomArgs := []string{"run", "./scripts/check_cleanroom_consumer.go"}
 	if *freshCache {
 		cleanroomArgs = append(cleanroomArgs, "-fresh-cache")
+	}
+	if *readOnlyCache {
+		if !*freshCache {
+			check(fmt.Errorf("read-only-cache requires fresh-cache"))
+		}
+		cleanroomArgs = append(cleanroomArgs, "-read-only-cache")
 	}
 	printRun(root, env, "go", cleanroomArgs...)
 
@@ -78,7 +85,7 @@ func main() {
 		printRun(root, env, "npm", "run", "docs:check")
 	}
 
-	fmt.Printf("agentx-developer-preview-distribution-ok:version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:full=%t:portal=%t\n", version, len(releaseModules), *freshCache, *full, *portal)
+	fmt.Printf("agentx-developer-preview-distribution-ok:version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:read_only_cache=%t:full=%t:portal=%t\n", version, len(releaseModules), *freshCache, *readOnlyCache, *full, *portal)
 }
 
 func checkRequiredFiles(root string) {

@@ -1,0 +1,44 @@
+name: AgentX Core Ubuntu Runtime
+
+on:
+  push:
+    branches:
+      - codex/w4-runtime-foundation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m6c-ubuntu-runtime-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ubuntu-runtime:
+    name: Ubuntu 24.04 / amd64 / Go 1.25.5
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GOPRIVATE: github.com/wsnacj/agentx-go
+      GONOSUMDB: github.com/wsnacj/agentx-go
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: url.https://x-access-token:${{ github.token }}@github.com/.insteadOf
+      GIT_CONFIG_VALUE_0: https://github.com/
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install pinned Go toolchain
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: 1.25.5
+          cache: false
+
+      - name: Run M6C Ubuntu runtime matrix
+        env:
+          GOWORK: "off"
+          CGO_ENABLED: "1"
+        run: go run ./scripts/check_ubuntu_runtime.go
