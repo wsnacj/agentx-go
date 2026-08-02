@@ -265,6 +265,21 @@ func (m *Manager) Close() error {
 	return nil
 }
 
+// ManagedProcessID returns the current child process id for Host diagnostics.
+// Zero means no process is currently attached. The value is observational and
+// must not be used as an ownership or authorization decision.
+func (m *Manager) ManagedProcessID() int {
+	if m == nil {
+		return 0
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.cmd == nil || m.cmd.Process == nil {
+		return 0
+	}
+	return m.cmd.Process.Pid
+}
+
 func (m *Manager) ensureOpen() error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

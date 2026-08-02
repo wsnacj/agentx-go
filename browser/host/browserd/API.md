@@ -35,6 +35,8 @@ manager, err := browserd.NewManager(browserd.ManagerOptions{
 - `EnsureStarted(ctx)` 服从调用方 cancellation/deadline；没有显式 `StatusProbe` 时 fail closed；
 - `Probe(ctx)` 返回 canonical `browser/runtime.BrowserProfileStatusResult`，并校验四类 ownership root；
 - `Close()` 可重复调用，并终止本实例启动的进程；关闭后再次启动返回稳定错误；
+- `ManagedProcessID()` 只为 Host 运维诊断和进程级验收返回当前子进程 PID；`0` 表示没有
+  已附着进程，该观察值不得作为 ownership 或 authorization 决策；
 - bundled bootstrap 对命令输出做有界捕获，错误信息不回显原始 stdout/stderr；
 - `ManagedStarter` 为重复调用提供单实例协调，但不决定业务授权。
 
