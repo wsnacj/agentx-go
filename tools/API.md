@@ -67,6 +67,8 @@ Document、process或网络的产品信任分类，canonical module不拥有这�
 ## 当前通用tool
 
 - [`tools/diffs`](./diffs/API.md)：纯文本diff，不读取文件、Git或网络，不产生副作用。
+- [`tools/message`](./message/API.md)：通过显式`runtime/channel` sender/target执行发送、回复、
+  广播、转发、编辑、删除和reaction协调；不拥有credential、平台选择或真实网络。
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
