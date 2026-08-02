@@ -27,6 +27,7 @@ const (
 	candidateVersion     = "v0.0.0-m6d.0"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
+	candidateGoToolchain = "go1.25.5"
 	fixedVersionFile     = "docs/reference/developer-preview-version.txt"
 	manifestFile         = "pre-beta-candidate-manifest.txt"
 	dependencyGraphFile  = "pre-beta-candidate-modules.txt"
@@ -82,7 +83,7 @@ func main() {
 	check(err)
 	defer os.RemoveAll(work)
 
-	baseEnv := append(os.Environ(), "GOWORK=off")
+	baseEnv := append(os.Environ(), "GOWORK=off", "GOTOOLCHAIN="+candidateGoToolchain)
 	printRun(root, baseEnv, "go", "run", "./scripts/check_developer_preview_distribution.go")
 
 	stagingRoot := filepath.Join(work, "staging")
@@ -117,6 +118,11 @@ func main() {
 	for _, module := range candidateModules {
 		dir := staged[module.path]
 		printRun(dir, candidateEnv, "go", "mod", "tidy")
+		// A second pass is intentional. With lazy module loading, the first pass
+		// may fetch a transitive candidate solely to read its go.mod and leave a
+		// sum that becomes provably unnecessary only after that graph is cached.
+		printRun(dir, candidateEnv, "go", "mod", "tidy")
+		printRun(dir, candidateEnv, "go", "mod", "tidy", "-diff")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		artifact := writeProxyModule(proxyRoot, dir, module, commitTime)
 		artifacts = append(artifacts, artifact)
@@ -373,7 +379,8 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	fmt.Fprintln(&builder, "agentx_pre_beta_candidate_manifest")
 	fmt.Fprintf(&builder, "source_revision=%s\n", revision)
 	fmt.Fprintf(&builder, "source_commit_time=%s\n", commitTime.Format(time.RFC3339))
-	fmt.Fprintf(&builder, "go_version=%s\n", runtime.Version())
+	fmt.Fprintf(&builder, "gate_build_go_version=%s\n", runtime.Version())
+	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
 	fmt.Fprintf(&builder, "candidate_version_scope=disposable_validation_only\n")
 	fmt.Fprintf(&builder, "rollback_version=%s\n", fixedVersion)
