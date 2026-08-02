@@ -205,9 +205,9 @@ func discoverPackages(root string, selected target) ([]string, error) {
 		command := exec.Command("go", "list", "-f", "{{.Dir}}", "./...")
 		command.Dir = filepath.Join(root, module)
 		command.Env = commandEnv(selected)
-		output, err := command.CombinedOutput()
+		output, diagnostics, err := splitOutput(command)
 		if err != nil {
-			return nil, fmt.Errorf("go list %s [%s]: %w: %s", module, selected.label(), err, bytes.TrimSpace(output))
+			return nil, fmt.Errorf("go list %s [%s]: %w: %s", module, selected.label(), err, diagnostics)
 		}
 		for _, path := range strings.Fields(string(output)) {
 			relative, err := filepath.Rel(root, path)
@@ -241,9 +241,9 @@ func docOutput(dir string, selected target) ([]byte, error) {
 	command := exec.Command("go", "doc", "-all", ".")
 	command.Dir = dir
 	command.Env = commandEnv(selected)
-	output, err := command.CombinedOutput()
+	output, diagnostics, err := splitOutput(command)
 	if err != nil {
-		return nil, fmt.Errorf("go doc %s [%s]: %w: %s", dir, selected.label(), err, bytes.TrimSpace(output))
+		return nil, fmt.Errorf("go doc %s [%s]: %w: %s", dir, selected.label(), err, diagnostics)
 	}
 	return output, nil
 }
@@ -286,9 +286,9 @@ func checkPublicDependencies(root, dir string, selected target) {
 	command := exec.Command("go", "list", "-json", ".")
 	command.Dir = filepath.Join(root, dir)
 	command.Env = commandEnv(selected)
-	output, err := command.CombinedOutput()
+	output, diagnostics, err := splitOutput(command)
 	if err != nil {
-		check(fmt.Errorf("go list public dependency closure %s [%s]: %w: %s", dir, selected.label(), err, bytes.TrimSpace(output)))
+		check(fmt.Errorf("go list public dependency closure %s [%s]: %w: %s", dir, selected.label(), err, diagnostics))
 	}
 	var listed packageFiles
 	check(json.Unmarshal(output, &listed))
@@ -296,6 +296,13 @@ func checkPublicDependencies(root, dir string, selected target) {
 	for _, name := range files {
 		checkPublicFile(filepath.Join(listed.Dir, name), dir)
 	}
+}
+
+func splitOutput(command *exec.Cmd) ([]byte, string, error) {
+	var diagnostics bytes.Buffer
+	command.Stderr = &diagnostics
+	output, err := command.Output()
+	return output, strings.TrimSpace(diagnostics.String()), err
 }
 
 func checkPublicFile(path, packageDir string) {
