@@ -2,9 +2,11 @@ package tools
 
 import (
 	"context"
+	"io"
 	"os"
 
 	agentxbrowserruntime "github.com/wsnacj/agentx-go/browser/runtime"
+	types "github.com/wsnacj/agentx-go/components/llm"
 )
 
 // BrowserResolvedExecutionRoute is the Experimental route value returned by a
@@ -109,6 +111,47 @@ func BrowserArtifactPublicationRequestedPath(ctx context.Context, targetPath str
 // BrowserArtifactSamePath compares canonicalized artifact paths.
 func BrowserArtifactSamePath(left string, right string) bool {
 	return browserArtifactSamePath(left, right)
+}
+
+// CopyBrowserArtifactWithContext copies an artifact while honoring cancellation.
+func CopyBrowserArtifactWithContext(ctx context.Context, dst io.Writer, src io.Reader) error {
+	return copyBrowserArtifactWithContext(ctx, dst, src)
+}
+
+// BrowserElementRefForSnapshotElement encodes a stable ref for a host snapshot element.
+func BrowserElementRefForSnapshotElement(element BrowserSnapshotElement, pageURL string, pageTitle string) string {
+	return browserElementRefForSnapshotElement(element, pageURL, pageTitle)
+}
+
+// BrowserInventoryDefinition returns the canonical schema used for catalog
+// inventory without registering a backend or executing a side effect.
+func BrowserInventoryDefinition(name string) (types.Tool, bool) {
+	switch NormalizeToolName(name) {
+	case "browser":
+		return browserUnifiedInventoryDefinition(), true
+	case "browser_runtime":
+		return browserRuntimeDefinition(browserUnifiedInventoryRuntimeActions()), true
+	case "browser_act":
+		return browserActDefinition(browserUnifiedInventoryActKinds()), true
+	case "browser_open":
+		return browserOpenDefinition(), true
+	case "browser_navigate":
+		return browserNavigateDefinition(), true
+	case "browser_tabs":
+		return browserTabsDefinition(), true
+	case "browser_extract":
+		return browserExtractDefinition(), true
+	case "browser_screenshot":
+		return browserScreenshotDefinition(), true
+	case "browser_click":
+		return browserClickDefinition(), true
+	case "browser_type":
+		return browserTypeDefinition(), true
+	case "browser_eval":
+		return browserEvalDefinition(), true
+	default:
+		return types.Tool{}, false
+	}
 }
 
 // BrowserCompatToolErrorf preserves the specialist-tool error prefix.
