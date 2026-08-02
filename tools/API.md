@@ -73,6 +73,8 @@ Document、process或网络的产品信任分类，canonical module不拥有这�
   `Preparer`/`HTTPDoer`接入Host URL/redirect/proxy/network policy。
 - [`tools/filesystem`](./filesystem/API.md)：拥有`read/write/edit/apply_patch`的参数、schema、
   文本选择、精确替换和patch语法，通过显式`Workspace`接入Host安全/原子文件后端。
+- [`tools/memory`](./memory/API.md)：拥有`memory_search/memory_get`的参数、source归一化、
+  typed request与预算协调，通过显式`Backend`接入Host store、visibility和ranking策略。
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
