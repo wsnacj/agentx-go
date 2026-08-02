@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"net/url"
 	"strings"
 
 	control "github.com/wsnacj/agentx-go/runtime/controlcontract"
@@ -272,35 +273,50 @@ func controlTokens(values []string) []string {
 }
 
 func controlToken(value string) string {
-	value = strings.ToLower(strings.TrimSpace(value))
-	value = strings.NewReplacer(" ", "_", "-", "_", ".", "_", "/", "_", ":", "_").Replace(value)
-	for strings.Contains(value, "__") {
-		value = strings.ReplaceAll(value, "__", "_")
+	token := strings.ToLower(strings.TrimSpace(value))
+	token = strings.NewReplacer(" ", "_", "/", "_", "\\", "_", ".", "_", "-", "_").Replace(token)
+	var b strings.Builder
+	for _, r := range token {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '_' || r == ':' {
+			b.WriteRune(r)
+		}
 	}
-	return strings.Trim(value, "_")
+	return strings.Trim(b.String(), "_:")
 }
 
 func queryToken(value string) string {
 	value = strings.TrimSpace(value)
-	value = strings.Map(func(r rune) rune {
+	if value == "" {
+		return ""
+	}
+	var b strings.Builder
+	for _, r := range value {
 		switch {
-		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9', r == '_', r == '-', r == '.', r == ':':
-			return r
-		default:
-			return -1
+		case r >= 'a' && r <= 'z':
+			b.WriteRune(r - 'a' + 'A')
+		case r >= 'A' && r <= 'Z':
+			b.WriteRune(r)
+		case r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case r == '_' || r == '-':
+			b.WriteRune(r)
 		}
-	}, value)
-	return value
+	}
+	token := strings.Trim(b.String(), "_-")
+	if token == "" {
+		return ""
+	}
+	return url.QueryEscape(token)
 }
 
 func makeRef(prefix, raw string) control.DisplaySafeRef {
-	prefix = strings.TrimSpace(prefix)
-	raw = strings.TrimSpace(raw)
-	if prefix == "" || raw == "" {
-		return ""
+	prefix = strings.Trim(strings.TrimSpace(prefix), ":")
+	token := controlToken(raw)
+	if token == "" || len(token) > 48 {
+		token = shortHash(raw)
 	}
-	sum := sha256.Sum256([]byte(raw))
-	return control.DisplaySafeRef(prefix + ":" + hex.EncodeToString(sum[:8]))
+	ref, _ := control.NormalizeDisplaySafeRef(prefix + ":" + token)
+	return ref
 }
 
 func displayText(value string, maxLen int) string {
@@ -322,13 +338,10 @@ func cloneStringMap(values map[string]string) map[string]string {
 	out := make(map[string]string, len(values))
 	for key, value := range values {
 		key = controlToken(key)
-		value = displayText(value, 128)
+		value = displayText(value, 96)
 		if key != "" && value != "" {
 			out[key] = value
 		}
-	}
-	if len(out) == 0 {
-		return nil
 	}
 	return out
 }
@@ -381,4 +394,9 @@ func firstString(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func shortHash(raw string) string {
+	sum := sha256.Sum256([]byte(strings.TrimSpace(raw)))
+	return hex.EncodeToString(sum[:])[:12]
 }

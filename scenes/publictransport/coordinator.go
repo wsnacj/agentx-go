@@ -273,10 +273,10 @@ func runtimeRunRef(request control.RuntimeAdapterExecutionRequest) control.Displ
 }
 
 func objectiveRef(request control.RuntimeAdapterExecutionRequest) control.DisplaySafeRef {
-	if request.Frame.ID == "" {
-		return ""
+	if ref, ok := control.NormalizeDisplaySafeRef(request.Frame.ID); ok {
+		return ref
 	}
-	return makeRef("objective:public_transport_ticket", request.Frame.ID)
+	return "objective:public_transport_ticket"
 }
 
 func firstRef(values []control.DisplaySafeRef) control.DisplaySafeRef {
