@@ -22,22 +22,22 @@ immutable `FSSource`，还应把 runtime列为直接依赖。
 
 ```text
 github.com/wsnacj/agentx-go
-  v0.0.0-20260802021959-5a41fb0ccb87
+  v0.0.0-20260802072349-5311859981e9
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260802021959-5a41fb0ccb87
+  v0.0.0-20260802072349-5311859981e9
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260802021959-5a41fb0ccb87
+  v0.0.0-20260802072349-5311859981e9
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260802021959-5a41fb0ccb87
+  v0.0.0-20260802072349-5311859981e9
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
 
 ```bash
-go get github.com/wsnacj/agentx-go@v0.0.0-20260802021959-5a41fb0ccb87
-go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802021959-5a41fb0ccb87
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802021959-5a41fb0ccb87
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802021959-5a41fb0ccb87
+go get github.com/wsnacj/agentx-go@v0.0.0-20260802072349-5311859981e9
+go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802072349-5311859981e9
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802072349-5311859981e9
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802072349-5311859981e9
 ```
 
 ## Private 仓库访问

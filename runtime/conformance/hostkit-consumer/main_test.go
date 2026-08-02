@@ -10,7 +10,7 @@ func TestNoHSRunnerConsumer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("run() error = %v", err)
 	}
-	const want = "agentx-hostkit-ok:completed:hostkit-conformance:2"
+	const want = "agentx-hostkit-ok:completed:hostkit-conformance:direct:hostkit-conformance:chat"
 	if output != want {
 		t.Fatalf("output = %q, want %q", output, want)
 	}

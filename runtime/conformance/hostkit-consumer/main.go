@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	agentx "github.com/wsnacj/agentx-go"
@@ -13,17 +14,18 @@ import (
 
 func buildRound(context.Context, execution.Request) (hostkit.ModelToolRoundConfig, error) {
 	return hostkit.ModelToolRoundConfig{
-		RequestModel: func(_ context.Context, input toolloop.RoundExecutionInput) (hostkit.ModelResult, error) {
-			if input.Round == 1 {
-				return hostkit.ModelResult{Response: llm.ChatResponse{
-					Content: "tool requested",
-					Calls:   []llm.FunctionCall{{Name: "lookup", Arguments: `{"topic":"agentx"}`}},
-				}}, nil
-			}
-			return hostkit.ModelResult{Response: llm.ChatResponse{Content: "hostkit-conformance:2"}}, nil
+		RequestModel: func(_ context.Context, _ toolloop.RoundExecutionInput) (hostkit.ModelResult, error) {
+			return hostkit.ModelResult{Response: llm.ChatResponse{
+				Content: "tool requested",
+				Calls:   []llm.FunctionCall{{Name: "lookup", Arguments: `{"topic":"agentx"}`}},
+			}}, nil
 		},
 		ExecuteTools: func(context.Context, hostkit.ModelToolRoundExchange) (hostkit.ToolResult, error) {
-			return hostkit.ToolResult{NextChunks: []string{"portable result"}}, nil
+			return hostkit.ToolResult{DirectAnswer: &hostkit.ToolDirectAnswer{
+				Reply:  "hostkit-conformance:direct",
+				Source: "lookup",
+				Reason: "conformance",
+			}}, nil
 		},
 	}, nil
 }
@@ -50,7 +52,26 @@ func run(ctx context.Context) (string, error) {
 	if shutdownErr != nil {
 		return "", shutdownErr
 	}
-	return fmt.Sprintf("agentx-hostkit-ok:%s:%s", result.Status, result.Reply), nil
+	chat, err := hostkit.NewChatClient(hostkit.ChatClientConfig{
+		RequestModel: func(context.Context, llm.ChatRequest) (llm.ChatResponse, error) {
+			return llm.ChatResponse{Content: "hostkit-conformance:chat"}, nil
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	chatResult, chatRunErr := chat.Run(ctx, agentx.RunRequest{Input: "chat"})
+	chatShutdownErr := chat.Shutdown(context.Background())
+	if chatRunErr != nil {
+		return "", chatRunErr
+	}
+	if chatShutdownErr != nil {
+		return "", chatShutdownErr
+	}
+	if _, closedErr := chat.Run(ctx, agentx.RunRequest{Input: "closed"}); !errors.Is(closedErr, &agentx.Error{Code: agentx.CodeClientClosed}) {
+		return "", fmt.Errorf("chat client closed error = %v", closedErr)
+	}
+	return fmt.Sprintf("agentx-hostkit-ok:%s:%s:%s", result.Status, result.Reply, chatResult.Reply), nil
 }
 
 func main() {

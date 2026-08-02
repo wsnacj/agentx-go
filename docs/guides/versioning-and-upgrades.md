@@ -5,10 +5,11 @@ AgentX Go当前仍是private Developer Preview，没有tag、semver或Public/Bet
 使用同一个不可变pseudo-version：
 
 ```text
-v0.0.0-20260802021959-5a41fb0ccb87
+v0.0.0-20260802072349-5311859981e9
 ```
 
-该版本是M5S已验证、M5T统一采用的消费基线，不是正式发行版本。
+该版本是P1-A已验证的当前消费基线，不是正式发行版本。M5S/M5T历史回滚点仍保留在
+changelog和成熟度记录中。
 
 M6D另外使用`v0.0.0-m6d.0`在临时file proxy中验证四module同版发行列车。该版本不会
 写入tracked `go.mod`、tag或下载入口，脚本退出后候选zip被删除；它不能作为项目依赖。
@@ -25,10 +26,10 @@ export GOPRIVATE=github.com/wsnacj/agentx-go
 export GONOSUMDB=github.com/wsnacj/agentx-go
 export GOWORK=off
 
-go get github.com/wsnacj/agentx-go@v0.0.0-20260802021959-5a41fb0ccb87 \
-  github.com/wsnacj/agentx-go/components@v0.0.0-20260802021959-5a41fb0ccb87 \
-  github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802021959-5a41fb0ccb87 \
-  github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802021959-5a41fb0ccb87
+go get github.com/wsnacj/agentx-go@v0.0.0-20260802072349-5311859981e9 \
+  github.com/wsnacj/agentx-go/components@v0.0.0-20260802072349-5311859981e9 \
+  github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802072349-5311859981e9 \
+  github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802072349-5311859981e9
 ```
 
 只直接import部分module的项目，可以只保留实际使用项；如果同时使用多个module，则必须

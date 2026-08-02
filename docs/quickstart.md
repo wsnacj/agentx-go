@@ -1,16 +1,34 @@
 # 快速开始
 
-M3E 提供两类标准执行路径、三个接入选择：
+当前 Core提供三类推荐执行路径、四个接入选择：
 
-1. Open Tool Loop：已有完整 Runtime时实现自定义 `ExecutionAdapter`，普通新项目
+1. Model Conversation：使用`NewChatClient`并显式注入 model requester；
+2. Open Tool Loop：已有完整 Runtime时实现自定义 `ExecutionAdapter`，普通新项目
    使用 Host Kit并显式提供 Model/Tool Adapter；
-2. Workflow：使用 Workflow Host Kit并显式提供 validator、mapper、executor、
+3. Workflow：使用 Workflow Host Kit并显式提供 validator、mapper、executor、
    identity、clock和可选 durable port。
 
 Open Tool Loop两种接入最终都返回根 `Client`，共享 Run、typed error、context、
 并发和 Shutdown合同。Workflow保持独立显式图 Runtime，不伪装成根 Client mode。
 
-## 路径一：自定义 ExecutionAdapter
+## 路径一：模型对话
+
+```go
+client, err := hostkit.NewChatClient(hostkit.ChatClientConfig{
+    Model: "your-model",
+    RequestModel: func(
+        ctx context.Context,
+        request llm.ChatRequest,
+    ) (llm.ChatResponse, error) {
+        return model.Chat(ctx, request)
+    },
+})
+```
+
+默认每个 Run发送一条`user`消息；多轮历史由 Host在`BuildRequest`中按`SessionID`加载。
+完整边界见[模型对话](guides/chat.md)。
+
+## 路径二：自定义 ExecutionAdapter
 
 根合同不创建模型、工具或底层 Runtime；调用方把已有执行系统包装为确定性
 `ExecutionAdapter`。
@@ -80,7 +98,7 @@ completed echo: hello
 
 完整责任边界见[自定义 Adapter](guides/custom-adapter.md)。
 
-## 路径二：Host Kit + Model/Tool Adapter
+## 路径三：Host Kit + Model/Tool Adapter
 
 普通新项目不需要手写 Factory、BuildRun assembly或 RoundExecutor：
 
@@ -109,7 +127,10 @@ client, err := hostkit.NewModelToolClient(hostkit.ModelToolClientConfig{
 [`runtime/conformance/hostkit-consumer`](../runtime/conformance/hostkit-consumer)
 继续保留为 focused compatibility consumer。
 
-## 路径三：Workflow Host Kit
+工具执行函数也可显式返回`ToolDirectAnswer`，由 Host Kit完成 Run且不再调用下一轮模型；
+使用条件和安全责任见[Tool Direct Answer](guides/tool-direct-answer.md)。
+
+## 路径四：Workflow Host Kit
 
 Workflow调用方只需导入 `workflow`和 `workflow/hostkit`，不再手工组合六个低层
 package：

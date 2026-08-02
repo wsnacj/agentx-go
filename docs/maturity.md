@@ -402,6 +402,15 @@ smoke tests全部通过。M6B不改变fixed版本、Go production source、Runti
 故不重复完整AgentX回归；当前状态为
 `technical_checkpoint_complete_awaiting_owner_acceptance`。
 
+## P1-A Model Conversation / Tool Direct Answer checkpoint
+
+P1-A在不增加新module、不引入provider或业务规则的前提下，为`runtime/hostkit`增加
+`NewChatClient`、`ToolDirectAnswer`和统一`ExecutionResult`投影。固定版本
+`v0.0.0-20260802072349-5311859981e9`已由无HS consumer验证；HS Open Tool Loop生产路径
+使用同一portable结果策略，既有`answer_contract` JSON、recovery、persistence、telemetry、
+错误文本与stop reason保持Host owner。8个Developer Preview candidate数量不变，
+`runtime/hostkit`签名基线经审阅更新；这不构成Public/Beta/Stable或正式发行。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断

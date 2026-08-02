@@ -8,7 +8,8 @@ consumer已经闭合。M5T四module统一版本、升级/回滚说明与clean-ro
 搜索的85页Core中文Developer Portal Candidate，并形成等待Owner接受的技术checkpoint。
 这些结论仍处于private validation，不构成Public、Beta、Stable、semver或正式发行。
 
-当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
+P1-A又补齐Model Conversation与Tool Direct Answer推荐路径；当前文档对应 M3E Core
+Developer Preview candidate、M4A Experimental Host
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
 已获 Owner接受的 M5C Portable Pack Core与 M5D A股 portable Domain Extension，
 已获 Owner接受的 M5E Portable Skills Core与 M5F Run/Artifact Data Plane，以及
@@ -21,7 +22,7 @@ temporary Workflow planning机制、LLM组件和
 
 1. 根 `agentx` 包现在真实提供什么；
 2. `Run`、context、并发、错误和关闭行为如何工作；
-3. Open Tool Loop与 Workflow两类标准执行路径应该如何选择；
+3. Model Conversation、Open Tool Loop、Tool Direct Answer与 Workflow路径应该如何选择；
 4. `ExecutionAdapter`、Model/Tool Adapter和 Host分别拥有什么责任；
 5. Workflow Host Kit如何组合已经进入 Runtime module的 portable mechanism；
 6. shared Host HTTP transport与具体 Scene HTTP API之间如何分工；
@@ -42,41 +43,43 @@ temporary Workflow planning机制、LLM组件和
 8. [生命周期与错误处理](guides/lifecycle-and-errors.md)
 9. [自定义 Adapter](guides/custom-adapter.md)
 10. [Host Kit + Model/Tool Adapter](guides/model-tool-hostkit.md)
-11. [Workflow Host Kit](guides/workflow-hostkit.md)
-12. [A 股 Portable Domain Extension](guides/astock-extension.md)
-13. [Portable Skills 接入](guides/portable-skills.md)
-14. [Run 与 Artifact 数据平面](guides/run-data-plane.md)
-15. [ProductShell 两阶段准备](guides/product-shell-preparation.md)
-16. [ProductShell Observation与Host Handoff](guides/product-shell-observation-handoff.md)
-17. [Package API 索引与成熟度矩阵](reference/package-maturity.md)
-18. [成熟度与兼容边界](maturity.md)
-19. [HS 迁移说明](guides/hs-migration.md)
-20. [`components/llm` 中文 API Reference](../components/llm/API.md)
-21. [`runtime` 中文 package 导航](../runtime/README.md)
-22. [`extensions` 中文 package 导航](../extensions/README.md)
-23. [`runtime/assetfs` 中文 API Reference](../runtime/assetfs/API.md)
-24. [`runtime/runstore` 中文 API Reference](../runtime/runstore/API.md)
-25. [`runtime/artifact` 中文 API Reference](../runtime/artifact/API.md)
-26. [`runtime/cases` 中文 API Reference](../runtime/cases/API.md)
-27. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
-28. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
-29. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
-30. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
-31. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
-32. [`extensions/productshell` 中文 API Reference](../extensions/productshell/API.md)
-33. [`extensions/skills` 中文 API Reference](../extensions/skills/API.md)
-34. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
-35. [`runtime/controlcontract` 中文 API Reference](../runtime/controlcontract/API.md)
-36. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
-37. [`runtime/executionpolicy` 中文 API Reference](../runtime/executionpolicy/API.md)
-38. [`runtime/channel` 中文 API Reference](../runtime/channel/API.md)
-39. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
-40. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
-41. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
-42. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
-43. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
-44. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
-45. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+11. [模型对话](guides/chat.md)
+12. [Tool Direct Answer](guides/tool-direct-answer.md)
+13. [Workflow Host Kit](guides/workflow-hostkit.md)
+14. [A 股 Portable Domain Extension](guides/astock-extension.md)
+15. [Portable Skills 接入](guides/portable-skills.md)
+16. [Run 与 Artifact 数据平面](guides/run-data-plane.md)
+17. [ProductShell 两阶段准备](guides/product-shell-preparation.md)
+18. [ProductShell Observation与Host Handoff](guides/product-shell-observation-handoff.md)
+19. [Package API 索引与成熟度矩阵](reference/package-maturity.md)
+20. [成熟度与兼容边界](maturity.md)
+21. [HS 迁移说明](guides/hs-migration.md)
+22. [`components/llm` 中文 API Reference](../components/llm/API.md)
+23. [`runtime` 中文 package 导航](../runtime/README.md)
+24. [`extensions` 中文 package 导航](../extensions/README.md)
+25. [`runtime/assetfs` 中文 API Reference](../runtime/assetfs/API.md)
+26. [`runtime/runstore` 中文 API Reference](../runtime/runstore/API.md)
+27. [`runtime/artifact` 中文 API Reference](../runtime/artifact/API.md)
+28. [`runtime/cases` 中文 API Reference](../runtime/cases/API.md)
+29. [`extensions/astock` 推荐入口中文 API Reference](../extensions/astock/API.md)
+30. [`extensions/astock/contracts` 中文 API Reference](../extensions/astock/contracts/API.md)
+31. [`extensions/astock/hostkit` 中文 API Reference](../extensions/astock/hostkit/API.md)
+32. [`extensions/domainmodule` 中文 API Reference](../extensions/domainmodule/API.md)
+33. [`extensions/pack` 中文 API Reference](../extensions/pack/API.md)
+34. [`extensions/productshell` 中文 API Reference](../extensions/productshell/API.md)
+35. [`extensions/skills` 中文 API Reference](../extensions/skills/API.md)
+36. [`runtime/construction` 中文 API Reference](../runtime/construction/API.md)
+37. [`runtime/controlcontract` 中文 API Reference](../runtime/controlcontract/API.md)
+38. [`runtime/execution` 中文 API Reference](../runtime/execution/API.md)
+39. [`runtime/executionpolicy` 中文 API Reference](../runtime/executionpolicy/API.md)
+40. [`runtime/channel` 中文 API Reference](../runtime/channel/API.md)
+41. [`runtime/hostkit` 中文 API Reference](../runtime/hostkit/API.md)
+42. [`runtime/hosthttp/hostserver` 中文 API Reference](../runtime/hosthttp/hostserver/API.md)
+43. [`runtime/hosthttp/requestjson` 中文 API Reference](../runtime/hosthttp/requestjson/API.md)
+44. [`runtime/hosthttp/resourcepolicy` 中文 API Reference](../runtime/hosthttp/resourcepolicy/API.md)
+45. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
+46. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
+47. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
 
 可运行验证位于：
 

@@ -3,6 +3,17 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802072349-5311859981e9（P1-A Model Conversation / Tool Direct Answer）
+
+- 新增`runtime/hostkit.NewChatClient`单轮 Model Conversation 推荐构造；conversation
+  backend、provider和历史加载继续由 Host注入；
+- 新增显式`ToolDirectAnswer`与统一`ExecutionResult`投影；Host负责业务判断、授权和
+  display-safe处理，canonical Host Kit负责不再发起模型合成轮次并完成 portable Run；
+- HS Open Tool Loop 的`answer_contract`检测、recovery、persistence和telemetry保持原
+  owner，但 production completion已切换 canonical结果策略；
+- 固定版本consumer覆盖无HS的 Chat与 Direct Answer；本版本仍是private validation
+  pseudo-version，不是tag、semver或Public/Beta/Stable声明。
+
 ## Unreleased（M6D技术候选）
 
 - 新增可删除的四module同版file-proxy候选、module zip SHA-256、依赖图、无replace
