@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5R Portable Session Channel, Bounded Ingress and Delivery Contract：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5S Core Developer Preview Surface, Construction and Documentation Closure：`active_implementation` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5R canonical landing：44个package、234个production source、89,672行；仍为8个Developer Preview candidate |
@@ -320,6 +320,15 @@ HS118/canonical34、Scene0，证明HS channel package退出production constructi
 当前状态为`technical_checkpoint_complete_awaiting_owner_acceptance`，W2-B继续
 `not_ready_for_hostless_w2b`；本checkpoint不构成Developer Preview晋级、
 Public/Beta/Stable或发行授权。
+
+M5R已于2026-08-02获Owner接受；该接受不构成成熟度晋级或发行授权。M5S随后停止以
+迁移LOC扩展Core，转向现有44个package和8个Developer Preview candidate的产品收口。
+当前标准construction固定为自定义`ExecutionAdapter`、Model/Tool Host Kit与Workflow
+Host Kit三条显式Host capability路径；完全hostless Runtime继续
+`not_ready_for_hostless_w2b`，但作为本次Developer Preview的deferred non-goal。
+`runtime/controlcontract`继续是Experimental迁移/组合底座，不进入推荐入口，也不得由
+M5S自动升级其巨大exported surface。M5S只补候选API/平台差异、fixed consumer、依赖
+足迹与中文文档门禁，不进入Scene、完整文档站、Beta/Stable或发行。
 
 ## 明确 non-goal
 
