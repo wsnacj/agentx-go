@@ -1,5 +1,8 @@
 # Task / Session / Subagent Host Kit 接入
 
+> 当前可复现的private Developer Preview版本：
+> `v0.0.0-20260802091415-920282587efc`。该pseudo-version用于验证，不是正式tag或兼容承诺。
+
 当业务需要把一个父Objective拆给child worker，并在结果回到父上下文前强制完成持久化
 回读和verification时，使用`runtime/session/hostkit`。普通模型对话或Open Tool Loop仍应
 使用`runtime/hostkit`；显式图执行使用`runtime/workflow/hostkit`。

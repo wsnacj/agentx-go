@@ -101,6 +101,7 @@ temporary Workflow planning机制、LLM组件和
 - [`runtime/conformance/toolloop-consumer`](../runtime/conformance/toolloop-consumer)
 - [`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)
 - [`runtime/conformance/objective-hostkit-consumer`](../runtime/conformance/objective-hostkit-consumer)
+- [`runtime/conformance/session-hostkit-consumer`](../runtime/conformance/session-hostkit-consumer)
 - [`runtime/conformance/run-data-plane-consumer`](../runtime/conformance/run-data-plane-consumer)
 - [`extensions/conformance/astock-contract-consumer`](../extensions/conformance/astock-contract-consumer)
 - [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)

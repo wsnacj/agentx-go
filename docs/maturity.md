@@ -24,7 +24,7 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | fixed-version consumer覆盖四条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
+| Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 48个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
@@ -425,6 +425,20 @@ alias/forwarder与共享private格式helper。具体policy、approval、credenti
 backend、持久化和副作用仍由Host拥有。当前只完成C5同步Host adapter闭环，不包含C6
 Task/Session/Subagent、Scheduler/Resume或durable long-run，也不构成正式发行。
 
+## P1-C Task / Session / Subagent Host Kit checkpoint
+
+P1-C新增Experimental `runtime/session`和Developer Preview candidate
+`runtime/session/hostkit`。Host显式提供child `WorkerRuntime`、`StateStore`与
+control-contract readiness；canonical implementation负责exact-once worker invoke、durable
+record、按ref回读、一致性校验、parent verification以及可选Objective handoff。
+
+固定版本`v0.0.0-20260802091415-920282587efc`由无HS、无Runner、无长期
+`replace`的独立consumer验证；HS delegation、ProductShell和interactive CLI生产路径
+已直接使用canonical合同。HS四个通用兼容文件从1,562行收缩为79行，净减
+1,483行，并有owner gate防止实现回流。concrete worker、queue、scheduler、
+credential、backend和产品policy仍属于Host。P1-C闭合C6的child worker lifecycle
+垂直切片，不声称Scheduler/Resume/long-task orchestration或正式发行已完成。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
@@ -435,8 +449,8 @@ Task/Session/Subagent、Scheduler/Resume或durable long-run，也不构成正式
   display-safe `ToolDirectAnswer`后的 portable completion投影）；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
 - 无Host policy/catalog/adapter注入的全自动Objective Runtime；
-- 长任务调度、子 Session 和 durable lifecycle；
-- Resume、progress/event stream；
+- 长任务调度、queue ownership和无Host的durable backend；
+- Resume、progress/event stream与完整long-task orchestration；
 - concrete Scene service/CLI/provider/credential与带真实副作用的 handler；
 - 真实网络或生产副作用。
 

@@ -7,7 +7,7 @@
 | 结论 | 状态 | 含义 |
 | --- | --- | --- |
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
-| `developer_portal_build_ready` | `true` | 85页中文Portal可由lockfile本地重建；不是公共托管结论 |
+| `developer_portal_build_ready` | `true` | 93页中文Portal可由lockfile本地重建；不是公共托管结论 |
 | `ubuntu_runtime_ready` | `true` | M6D已在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验；不扩张到其它平台 |
 | `pre_beta_technical_candidate_ready` | `true` | 本地与远端Go 1.25.12同版四module候选、安全扫描和只读cache均已通过；不等于发行授权 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
@@ -16,14 +16,14 @@
 ## 已关闭项
 
 - 四module统一fixed pseudo-version；
-- 8个Developer Preview candidate API snapshot、公开类型闭包和双平台签名gate；
-- 三条标准construction和A股推荐extension的无HS fixed consumer；
+- 10个Developer Preview candidate API snapshot、公开类型闭包和双平台签名gate；
+- 五条标准construction和A股推荐extension的无HS fixed consumer；
 - 中文Reference、安装、升级和回滚说明；
 - CODEOWNERS、贡献流程、支持边界和安全报告入口；
 - 本地distribution preflight与module cache/zip provenance检查。
 - 空`GOMODCACHE`经已批准的GitHub SSH传输获取四个固定版本module，并完成无HS
   clean-room consumer构建与运行；验证过程未输出或写入credential。
-- Core中文Developer Portal的clean install、零漏洞审计、85页production build、44/8
+- Core中文Developer Portal的clean install、零漏洞审计、93页production build、48/10
   coverage、本地搜索、响应式和浏览器交互验证。
 - M6C GitHub Actions run `30732109611`在Ubuntu 24.04.4/amd64、Go 1.25.5、CGO=1
   实机上完成四module normal/race/vet/tidy/list、44/8双平台API、fresh private VCS、

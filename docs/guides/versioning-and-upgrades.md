@@ -5,7 +5,7 @@ AgentX Go当前仍是private Developer Preview，没有tag、semver或Public/Bet
 使用同一个不可变pseudo-version：
 
 ```text
-v0.0.0-20260802080954-21919fd8e06a
+v0.0.0-20260802091415-920282587efc
 ```
 
 该版本是P1-A已验证的当前消费基线，不是正式发行版本。M5S/M5T历史回滚点仍保留在
@@ -26,10 +26,10 @@ export GOPRIVATE=github.com/wsnacj/agentx-go
 export GONOSUMDB=github.com/wsnacj/agentx-go
 export GOWORK=off
 
-go get github.com/wsnacj/agentx-go@v0.0.0-20260802080954-21919fd8e06a \
-  github.com/wsnacj/agentx-go/components@v0.0.0-20260802080954-21919fd8e06a \
-  github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802080954-21919fd8e06a \
-  github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802080954-21919fd8e06a
+go get github.com/wsnacj/agentx-go@v0.0.0-20260802091415-920282587efc \
+  github.com/wsnacj/agentx-go/components@v0.0.0-20260802091415-920282587efc \
+  github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802091415-920282587efc \
+  github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802091415-920282587efc
 ```
 
 只直接import部分module的项目，可以只保留实际使用项；如果同时使用多个module，则必须
@@ -54,9 +54,9 @@ go list -m -f '{{.Path}} {{.Version}}' all | grep '^github.com/wsnacj/agentx-go'
 
 ## API 差分边界
 
-- 8个Developer Preview candidate有`go doc -all`可读snapshot和hash gate；升级前后应
+- 10个Developer Preview candidate有`go doc -all`可读snapshot和hash gate；升级前后应
   审阅签名变化，而不是默认“有文档”等于兼容；
-- 其余Experimental package仍可能在后续Owner审阅中调整；新项目优先使用三条标准
+- 其余Experimental package仍可能在后续Owner审阅中调整；新项目优先使用五条标准
   construction和成熟度矩阵中的推荐入口；
 - type alias可以保持源码、字段和JSON兼容，但反射得到的定义package可能随source
   authority迁移而变化。依赖反射package identity的调用方必须单独验证；

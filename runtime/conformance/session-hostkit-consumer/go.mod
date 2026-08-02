@@ -1,4 +1,4 @@
-module github.com/wsnacj/agentx-go/runtime/conformance/objective-hostkit-consumer
+module github.com/wsnacj/agentx-go/runtime/conformance/session-hostkit-consumer
 
 go 1.24.1
 

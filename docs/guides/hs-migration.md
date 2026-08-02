@@ -161,6 +161,23 @@ alias/forwarder；owner gate禁止这些机制回流。
 或长期`replace`即可完成一次Objective Host adapter闭环。Task/Session/Subagent、
 Scheduler/Resume、durable backend和真实副作用仍由后续能力wave或Host拥有。
 
+## P1-C Task / Session / Subagent Host Kit收口
+
+`runtime/session/hostkit`现在拥有child worker lifecycle的portable协调机制：
+exact-once invoke、durable record、按ref回读、一致性校验、parent verification和
+可选Objective handoff。`runtime/session`提供普通Host所需的窄类型与构造名称，
+避免推荐路径直接泄漏大型`controlcontract`。
+
+HS `delegationruntime`、ProductShell sample和interactive CLI trace已使用固定
+pseudo-version。原backend、Objective closure/handoff和async completion通用实现已删除
+或降为薄alias/forwarder；HS仅保留concrete command worker、产品投影、配置、
+scheduler/queue、credential和backend。
+
+`runtime/conformance/session-hostkit-consumer`固定runtime pseudo-version，证明新项目
+无需HS、Runner、Scene、provider或长期`replace`即可完成child worker
+invoke→record→readback→verification闭环。Scheduler/Resume、progress/event stream、
+concrete durable backend和真实副作用仍由P1-D或Host拥有。
+
 ## 尚未迁移
 
 M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、

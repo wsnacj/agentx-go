@@ -3,6 +3,20 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802091415-920282587efc（P1-C Task / Session / Subagent Host Kit）
+
+- 新增Experimental `runtime/session`和Developer Preview candidate
+  `runtime/session/hostkit`，把child worker调用、durable record、回读校验、
+  parent verification与可选Objective handoff组合为真实portable implementation。
+- `WorkerRuntime`和`StateStore`由Host显式注入；concrete worker、scheduler、queue、
+  credential、backend与产品policy没有下沉到canonical Runtime。
+- HS三条production consumer已固定该pseudo-version；四个通用兼容文件从
+  1,562行收缩为79行alias/forwarder与必要Host投影，并增加owner gate防止实现回流。
+- 新增无HS、无Runner、无长期`replace`的fixed-version consumer，中文Reference现覆盖
+  48个package和10个Developer Preview candidate。
+- Scheduler/Resume/long-task orchestration保留给P1-D；本版本仍是private
+  Developer Preview candidate，不授权Public/Beta/Stable、tag或发行。
+
 ## v0.0.0-20260802080954-21919fd8e06a（P1-B Objective Host Kit）
 
 - 新增Experimental `runtime/objective`最小推荐类型入口和Developer Preview candidate
