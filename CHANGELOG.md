@@ -3,6 +3,17 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802080954-21919fd8e06a（P1-B Objective Host Kit）
+
+- 新增Experimental `runtime/objective`最小推荐类型入口和Developer Preview candidate
+  `runtime/objective/hostkit`；Host Kit真实组合managed ingress、explicit host dispatch、
+  observation normalization和Objective verification。
+- 将通用observation normalization从HS迁入canonical `runtime/controlcontract`，并让HS
+  production productshell路径通过固定版本使用canonical dispatch；HS旧实现降为薄兼容层。
+- 新增无HS、无Runner、无长期`replace`的fixed consumer，覆盖成功、显式确认、取消、
+  typed result和verification；中文Reference与Objective Host Kit接入指南同步落地。
+- 本版本仍是private Developer Preview candidate，不授权Public/Beta/Stable、tag或发行。
+
 ## v0.0.0-20260802072349-5311859981e9（P1-A Model Conversation / Tool Direct Answer）
 
 - 新增`runtime/hostkit.NewChatClient`单轮 Model Conversation 推荐构造；conversation

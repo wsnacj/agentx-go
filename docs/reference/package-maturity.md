@@ -1,6 +1,6 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前四个 module 中实际存在的44个 production package。它不是历史
+本页只评估当前四个 module 中实际存在的46个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -64,7 +64,7 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-44个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+46个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
@@ -78,7 +78,7 @@ GOWORK=off go run scripts/check_docs_links.go
 
 1. 四个 module 当前 production package 与矩阵一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 八个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
+3. 九个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；

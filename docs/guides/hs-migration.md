@@ -145,6 +145,22 @@ Runner/ProductShell集成。这些是产品策略或真实副作用，不能为�
 证明新项目可在无 HS、Runner、`replace`、网络和命令执行时完成 immutable source
 加载、缓存、activation、requested semantics、资源完整性与 deep clone。
 
+## P1-B Objective Host Kit收口
+
+`runtime/objective/hostkit`现在拥有managed ingress之后的显式Host dispatch、handler
+选择、exact-once调用、observation normalization和Objective verification组合。
+`runtime/objective`提供普通Host所需的最小类型/构造名称；大型`controlcontract`继续作为
+Experimental kernel，不作为推荐业务入口。
+
+HS `productshellruntime.ManagedObjectiveRuntimeAdapterProductEntrypoint`继续拥有产品refs、
+配置来源、operator approval和具体handlers，但其production dispatch已通过固定版本使用
+canonical implementation。HS原315行dispatch和通用observation normalization已删除为薄
+alias/forwarder；owner gate禁止这些机制回流。
+
+`runtime/conformance/objective-hostkit-consumer`证明新项目无需HS、Runner、Scene、provider
+或长期`replace`即可完成一次Objective Host adapter闭环。Task/Session/Subagent、
+Scheduler/Resume、durable backend和真实副作用仍由后续能力wave或Host拥有。
+
 ## 尚未迁移
 
 M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、
@@ -157,6 +173,6 @@ A股evaluator DTO的canonical定义已收口到`extensions/astock/contracts`，
 公开类型对Go`internal`路径的泄漏，不改变HS evaluator调用、JSON或产品策略。
 
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
-adapter、policy或 backend的完整 embedded Runtime；Workflow已有独立 Developer
-Preview Host Kit，但没有成为根 `Client` mode。完整 Scene、Objective、Resume、
-concrete durable backend、正式发行和 Public/Beta/Stable均不在当前范围。
+adapter、policy或 backend的完整 embedded Runtime；Workflow和Objective已有独立
+Developer Preview Host Kit，但没有成为根 `Client` mode。完整 Scene、Task/Session、
+Resume、concrete durable backend、正式发行和 Public/Beta/Stable仍不在当前范围。

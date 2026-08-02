@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
-M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint：三条标准construction路径、
-44个package中文Reference、8个候选API snapshot/平台/类型闭包门禁及统一fixed-version
+M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-B之后当前为四条标准construction路径、
+46个package中文Reference、9个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer已经闭合。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
 版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
@@ -97,6 +97,7 @@ temporary Workflow planning机制、LLM组件和
 - [`runtime/conformance/controlcontract-consumer`](../runtime/conformance/controlcontract-consumer)
 - [`runtime/conformance/toolloop-consumer`](../runtime/conformance/toolloop-consumer)
 - [`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)
+- [`runtime/conformance/objective-hostkit-consumer`](../runtime/conformance/objective-hostkit-consumer)
 - [`runtime/conformance/run-data-plane-consumer`](../runtime/conformance/run-data-plane-consumer)
 - [`extensions/conformance/astock-contract-consumer`](../extensions/conformance/astock-contract-consumer)
 - [`extensions/conformance/domain-module-consumer`](../extensions/conformance/domain-module-consumer)

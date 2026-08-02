@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M6D Core Pre-Beta候选安全与发行工程闭环：`technical_checkpoint_complete_awaiting_owner_acceptance` |
-| Developer Portal | 85个静态页面；44 package/8 candidate；本地搜索、响应式和source backlink已验证 |
+| 当前产品里程碑 | M7A P1-B Objective Host Kit纵向闭环；仍处于private validation |
+| Developer Portal | 90个静态页面；46 package/9 candidate；本地搜索、响应式和source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
+| agentx-go production packages | 当前46个package；9个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -22,19 +22,19 @@
 | Run/Artifact数据平面 | M5F已完成 `runtime/runstore`与`runtime/artifact` Experimental owner、fixed consumer和 HS production cutover；durable/file/object backend仍由 Host拥有 |
 | Core Run dispatch/result assembly | W5-F 已迁入 `runtime/execution`并完成 HS production cutover；engine投影仍由 host持有 |
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
-| 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
+| 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 统一fixed-version consumer覆盖三条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
+| Examples/conformance | fixed-version consumer覆盖四条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 44个全部纳入中文Reference矩阵；8个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
+| 当前 package surface | 46个全部纳入中文Reference矩阵；9个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前44个 production package均纳入中文 Reference；只说明
+- **API文档正文覆盖**：当前46个 production package均纳入中文 Reference；只说明
   实际签名、语义和 non-goal已经被描述。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
@@ -411,6 +411,20 @@ P1-A在不增加新module、不引入provider或业务规则的前提下，为`r
 错误文本与stop reason保持Host owner。8个Developer Preview candidate数量不变，
 `runtime/hostkit`签名基线经审阅更新；这不构成Public/Beta/Stable或正式发行。
 
+## P1-B Objective Host Kit checkpoint
+
+P1-B新增Experimental `runtime/objective`最小类型入口和Developer Preview candidate
+`runtime/objective/hostkit`。推荐路径现在可以在无HS、无Runner、无provider默认的进程中
+组合managed ingress、显式Host runtime-adapter dispatch、observation normalization和
+Objective verification。固定版本`v0.0.0-20260802080954-21919fd8e06a`由独立consumer
+验证成功、确认门禁和取消路径。
+
+通用observation normalization与315行dispatch facade的source authority已从HS转移到
+canonical；HS production productshell consumer通过固定版本使用新实现，原代码降为薄
+alias/forwarder与共享private格式helper。具体policy、approval、credential、handler、
+backend、持久化和副作用仍由Host拥有。当前只完成C5同步Host adapter闭环，不包含C6
+Task/Session/Subagent、Scheduler/Resume或durable long-run，也不构成正式发行。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
@@ -420,7 +434,7 @@ P1-A在不增加新module、不引入provider或业务规则的前提下，为`r
 - 自动解析任意工具输出并决定 Tool Direct Answer 的产品策略（Host Kit只支持 Host显式提供
   display-safe `ToolDirectAnswer`后的 portable completion投影）；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
-- Objective Runtime Loop；
+- 无Host policy/catalog/adapter注入的全自动Objective Runtime；
 - 长任务调度、子 Session 和 durable lifecycle；
 - Resume、progress/event stream；
 - concrete Scene service/CLI/provider/credential与带真实副作用的 handler；

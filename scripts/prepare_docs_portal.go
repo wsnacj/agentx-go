@@ -60,8 +60,8 @@ func main() {
 
 	entries, err := readPackages(filepath.Join(root, "docs", "reference", "developer-preview-packages.tsv"))
 	check(err)
-	if len(entries) != 44 {
-		check(fmt.Errorf("package maturity source has %d entries, want 44", len(entries)))
+	if len(entries) != 46 {
+		check(fmt.Errorf("package maturity source has %d entries, want 46", len(entries)))
 	}
 	candidates := 0
 	for _, entry := range entries {
@@ -69,8 +69,8 @@ func main() {
 			candidates++
 		}
 	}
-	if candidates != 8 {
-		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 8", candidates))
+	if candidates != 9 {
+		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 9", candidates))
 	}
 
 	for index := range entries {
@@ -177,12 +177,18 @@ outline: [2, 3]
 
 func packagesPage(nav navigation) string {
 	var builder strings.Builder
+	candidates := 0
+	for _, entry := range nav.Packages {
+		if entry.Maturity == "developer_preview_candidate" {
+			candidates++
+		}
+	}
 	builder.WriteString("---\ntitle: Package API\noutline: [2, 3]\n---\n\n")
 	builder.WriteString("# Package API\n\n")
 	builder.WriteString("当前索引由 `developer-preview-packages.tsv` 确定性生成，不是第二套API事实源。\n\n")
 	fmt.Fprintf(&builder, "- 固定版本：`%s`\n", nav.Version)
 	fmt.Fprintf(&builder, "- 构建源码：`%s`\n", short(nav.SourceCommit))
-	fmt.Fprintf(&builder, "- Package：%d；Developer Preview candidate：8\n\n", len(nav.Packages))
+	fmt.Fprintf(&builder, "- Package：%d；Developer Preview candidate：%d\n\n", len(nav.Packages), candidates)
 
 	groups := []struct {
 		maturity string

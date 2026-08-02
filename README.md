@@ -11,7 +11,8 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > 当前里程碑：**M6D Core Pre-Beta候选安全与发行工程闭环已完成技术
 > checkpoint，等待Owner接受**。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受。M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
+> 已获Owner接受；P1-B现新增第四条Objective Host Kit、46包分类和第9个候选API。
+> M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
 > M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
 > 搜索的85页Developer Portal Candidate。M6C已经证明Ubuntu真实运行与跨平台分发；
 > M6D已用Go 1.25.12、固定`govulncheck`、临时同版四module proxy、只读cache
@@ -132,16 +133,16 @@ rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日
 
 ```text
 github.com/wsnacj/agentx-go
-  v0.0.0-20260802072349-5311859981e9
+  v0.0.0-20260802080954-21919fd8e06a
 
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260802072349-5311859981e9
+  v0.0.0-20260802080954-21919fd8e06a
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260802072349-5311859981e9
+  v0.0.0-20260802080954-21919fd8e06a
 
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260802072349-5311859981e9
+  v0.0.0-20260802080954-21919fd8e06a
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -156,6 +157,7 @@ github.com/wsnacj/agentx-go/extensions
 - [自定义 Adapter](docs/guides/custom-adapter.md)
 - [Host Kit + Model/Tool Adapter](docs/guides/model-tool-hostkit.md)
 - [Workflow Host Kit](docs/guides/workflow-hostkit.md)
+- [Objective Host Kit](docs/guides/objective-hostkit.md)
 - [A 股 Portable Domain Extension](docs/guides/astock-extension.md)
 - [Portable Skills 接入](docs/guides/portable-skills.md)
 - [生命周期与错误处理](docs/guides/lifecycle-and-errors.md)
@@ -171,6 +173,8 @@ github.com/wsnacj/agentx-go/extensions
 - [`runtime/toolloop` 中文 API Reference](runtime/toolloop/API.md)
 - [`runtime/workflow/composition` 中文 API Reference](runtime/workflow/composition/API.md)
 - [`runtime/workflow/hostkit` 中文 API Reference](runtime/workflow/hostkit/API.md)
+- [`runtime/objective` 中文 API Reference](runtime/objective/API.md)
+- [`runtime/objective/hostkit` 中文 API Reference](runtime/objective/hostkit/API.md)
 - [`runtime/assetfs` 中文 API Reference](runtime/assetfs/API.md)
 - [`extensions/astock` 中文 API Reference](extensions/astock/API.md)
 - [`extensions/astock/contracts` 中文 API Reference](extensions/astock/contracts/API.md)
@@ -180,6 +184,7 @@ github.com/wsnacj/agentx-go/extensions
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [三条标准路径统一 External-style consumer](conformance/consumer)
+- [Objective Host Kit external-style consumer](runtime/conformance/objective-hostkit-consumer)
 - [Control Contract external-style consumer](runtime/conformance/controlcontract-consumer)
 - [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
