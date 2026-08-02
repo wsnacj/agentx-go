@@ -6,13 +6,13 @@
 | --- | --- |
 | 仓库 | private validation |
 | 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A/P4-B Portable Scenes闭环完成；仍处于private validation |
-| Developer Portal | 67 package/14 candidate双平台focused API gate已通过；完整Scene站点编排仍属于后续文档产品化 |
+| Developer Portal | 68 package/14 candidate focused API gate已通过；Public Transport因依赖Experimental controlcontract保持Experimental；完整Scene站点编排仍属于后续文档产品化 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前67个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
+| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前68个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
 | Experimental browser | P3-A已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |

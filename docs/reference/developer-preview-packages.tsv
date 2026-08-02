@@ -23,6 +23,7 @@ scenes/docparse/representation	internalization_candidate	scenes/docparse/represe
 scenes/docparse/understanding	internalization_candidate	scenes/docparse/understanding/API.md	-
 scenes/publicnews	developer_preview_candidate	scenes/publicnews/API.md	5f5d3bfa101d3edbb54f79dd558adcf6555fcca2fee14fbf29e9a6a9a8a625ad
 scenes/publicnews/hostkit	experimental_extension	scenes/publicnews/hostkit/API.md	-
+scenes/publictransport	experimental_extension	scenes/publictransport/API.md	-
 extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-

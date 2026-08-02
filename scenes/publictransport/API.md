@@ -1,7 +1,8 @@
 # `scenes/publictransport` 中文 API Reference
 
-成熟度：**Developer Preview candidate**。当前没有 semver、Public、Beta 或 Stable 兼容承诺；
-调用方应固定 pseudo-version，并在升级时执行 API 与行为 differential。
+成熟度：**Experimental extension**。当前没有 semver、Developer Preview、Public、Beta 或 Stable
+兼容承诺；调用方应固定 pseudo-version，并在升级时执行 API 与行为 differential。当前公开签名
+依赖同为 Experimental 的 `runtime/controlcontract`，因此不会提前升级为 Developer Preview candidate。
 
 本包是公共交通只读 Domain Kit 的 portable source authority：它提供 typed request/report、
 Collector port、provider-neutral Coordinator、确定性库存证据 evaluator 和 AgentX Pack。
