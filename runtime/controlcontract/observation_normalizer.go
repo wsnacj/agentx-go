@@ -127,3 +127,9 @@ func observationNormalizationInputUnsafe(input ObservationNormalizationInput) bo
 		RawOutputLoaded:       result.RawOutputLoaded,
 	}) || observationSliceUnsafePayload(result.Observations)
 }
+
+// ObservationsContainUnsafePayload reports whether observations contain raw or
+// non-display-safe values that must not enter a portable Objective contract.
+func ObservationsContainUnsafePayload(values []Observation) bool {
+	return observationSliceUnsafePayload(values)
+}
