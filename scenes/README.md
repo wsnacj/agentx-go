@@ -11,8 +11,11 @@ Stable兼容承诺。
 
 - [`astock`](./astock/API.md)：A股领域合同、三套Pack、evidence evaluator、工具目录与
   deterministic Host Kit；真实行情/研报provider、credential和产品策略由Host注入。
-- `publicnews`、`companyresearch`、`docparse`：P4-A后续顺序迁入，目录只在首个真实
-  implementation ready时创建。
+- [`publicnews`](./publicnews/API.md)：公开新闻意图、证据、来源质量、回答边界、Pack与
+  无provider Host Kit；搜索、页面读取和站点策略由Host注入。
+- [`companyresearch`](./companyresearch/API.md)：公司研究合同、任务分解、证据guard、
+  Pack与无provider Host Kit；财报、行情、新闻和主体解析backend由Host注入。
+- `docparse`：P4-A下一 cohort；目录只在真实 implementation ready时创建。
 
 ## 依赖方向
 

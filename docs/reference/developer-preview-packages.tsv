@@ -8,6 +8,10 @@ scenes/astock/hostkit	experimental_extension	scenes/astock/hostkit/API.md	-
 scenes/astock/internal/packresearch	internalization_candidate	scenes/astock/internal/packresearch/API.md	-
 scenes/astock/internal/packsignal	internalization_candidate	scenes/astock/internal/packsignal/API.md	-
 scenes/astock/internal/packvaluation	internalization_candidate	scenes/astock/internal/packvaluation/API.md	-
+scenes/companyresearch	developer_preview_candidate	scenes/companyresearch/API.md	c60ff08c8725aa30f62e5f20f77df53721ffe6c3c11e3df436817b8803d81e8b
+scenes/companyresearch/hostkit	experimental_extension	scenes/companyresearch/hostkit/API.md	-
+scenes/publicnews	developer_preview_candidate	scenes/publicnews/API.md	5f5d3bfa101d3edbb54f79dd558adcf6555fcca2fee14fbf29e9a6a9a8a625ad
+scenes/publicnews/hostkit	experimental_extension	scenes/publicnews/hostkit/API.md	-
 extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-
