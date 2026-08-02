@@ -117,6 +117,42 @@ func TestPDFInputCancellationPropagates(t *testing.T) {
 	}
 }
 
+func TestDocumentParseUsesHostErrorProjector(t *testing.T) {
+	registry := agentxtools.NewRegistry()
+	rawErr := errors.New("provider secret sentinel")
+	host := documenttools.DocumentHost{
+		Runtime: documenttools.DocumentParserFunc(func(context.Context, pipeline.ParseRequest) (*pipelinetypes.DocumentResult, error) {
+			return nil, rawErr
+		}),
+		Paths: documenttools.PathResolverFunc(func(_ context.Context, request documenttools.PathRequest) (documenttools.ResolvedPath, error) {
+			return documenttools.ResolvedPath{Path: request.Value, Display: request.Value}, nil
+		}),
+		Errors: documenttools.ErrorProjectorFuncs{
+			ClassifyFunc: func(err error) string {
+				if errors.Is(err, rawErr) {
+					return "provider_failure"
+				}
+				return "unknown"
+			},
+			DisplayFunc: func(error, string, string) string { return "safe projected failure" },
+		},
+	}
+	if err := documenttools.RegisterDocumentParseTools(registry, documenttools.DocumentParseToolOptions{
+		EnabledTools: []string{"document_parse"}, Host: host,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := registry.Execute(context.Background(), llm.FunctionCall{
+		Name: "document_parse", Arguments: `{"document_path":"report.txt","spec_path":"spec","artifact_policy":"none"}`,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(raw, rawErr.Error()) || !strings.Contains(raw, `"error_class":"provider_failure"`) || !strings.Contains(raw, "safe projected failure") {
+		t.Fatalf("unexpected projected payload: %s", raw)
+	}
+}
+
 type memoryPDFBackend struct{}
 
 func (memoryPDFBackend) Name() string { return "memory" }
