@@ -4,7 +4,8 @@ M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint
 44个package中文Reference、8个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer已经闭合。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
-版本epoch与分发预检合同，并形成等待Owner接受的技术checkpoint。
+版本epoch与分发预检合同并获Owner接受。M6B正在把现有正文交付为可本地构建、导航、
+搜索的Core中文Developer Portal Candidate。
 这些结论仍处于private validation，不构成Public、Beta、Stable、semver或正式发行。
 
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host

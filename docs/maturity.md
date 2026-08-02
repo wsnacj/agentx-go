@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M6A Core Pre-Beta Contract and Distribution Preflight Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M6B Core中文Developer Portal与API Reference交付闭环：`active` |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Public Beta readiness | `false`；license、安全复核、Ubuntu实机和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
@@ -384,6 +384,11 @@ Workflow、Engine与ProductShell focused兼容性通过。M6A没有修改固定�
 实现或HS生产代码，故不重复M5T完整回归，继续引用其149 PASS、2个既有治理FAIL、
 20 SKIP且无新增失败的最近基线。当前结论为`private_validation_ready=true`、
 `public_beta_ready=false`；状态为`technical_checkpoint_complete_awaiting_owner_acceptance`。
+
+M6A已于2026-08-02获Owner接受；该接受不改变`public_beta_ready=false`。M6B随后只把
+已有中文正文、44个package Reference、8个Developer Preview candidate和三条标准接入
+路径交付为可构建、导航、搜索的Core Developer Portal Candidate。站点复用现有
+Markdown/API snapshot事实源，不新增Runtime owner、公共API、Scene或正式发行声明。
 
 ## 明确 non-goal
 
