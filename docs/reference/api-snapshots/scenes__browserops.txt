@@ -1,0 +1,452 @@
+package browserops // import "github.com/wsnacj/agentx-go/scenes/browserops"
+
+Package browserops提供可移植的浏览器操作Pack、证据合同与确定性评估机制。
+
+本包不启动浏览器，不访问网络，也不拥有凭据、登录态、审批、文件落盘或站点策略。
+
+CONSTANTS
+
+const (
+	PackID                        = "browser-ops-pack"
+	DefaultWorkflow               = "browser_form_submit_v1"
+	ActionFailurePayloadWorkflow  = "browser_action_failure_payload_v1"
+	VerifyPageStateWorkflow       = "browser_verify_page_state_v1"
+	ExtractStructuredDataWorkflow = "browser_extract_structured_data_v1"
+	SiteSearchWorkflow            = "browser_site_search_v1"
+	DownloadFileWorkflow          = "browser_download_file_v1"
+)
+const (
+	BrowserArtifactTypePageSnapshot   = "browser.page.snapshot"
+	BrowserArtifactTypePageScreenshot = "browser.page.screenshot"
+	BrowserArtifactTypeActionTrace    = "browser.action.trace"
+	BrowserArtifactTypeSubmitReport   = "browser.submit.report"
+	BrowserArtifactTypeDownloadedFile = "browser.download.file"
+	BrowserArtifactTypeTaskPlan       = "browser.task.plan"
+
+	BrowserEvidenceKindFinalURL       = "final_url"
+	BrowserEvidenceKindPageSnapshot   = "page_snapshot"
+	BrowserEvidenceKindScreenshot     = "screenshot"
+	BrowserEvidenceKindActionTrace    = "action_trace"
+	BrowserEvidenceKindDownloadedFile = "downloaded_file"
+	BrowserEvidenceKindFailureReason  = "failure_reason"
+	BrowserEvidenceKindTaskPlan       = "task_plan"
+)
+
+FUNCTIONS
+
+func BrowserDownloadFileEvaluationSchema() map[string]any
+func BrowserEvidenceBundleSchema() map[string]any
+func BrowserPageStateEvaluationSchema() map[string]any
+func BrowserSiteSearchEvaluationSchema() map[string]any
+func BrowserStructuredDataEvaluationSchema() map[string]any
+func Definition() agentxpack.Definition
+func MaterializedDefaultWorkflow(coordinator *agentxpack.Coordinator) (agentxworkflow.Spec, error)
+func RegisterInto(reg agentxpack.Registry) error
+
+TYPES
+
+type BrowserActionFailurePayloadEvaluation struct {
+	Passed                   bool     `json:"passed"`
+	Summary                  string   `json:"summary"`
+	PayloadCount             int      `json:"payload_count"`
+	ValidPayloadCount        int      `json:"valid_payload_count"`
+	DistinctFailedChecks     []string `json:"distinct_failed_checks"`
+	DistinctFailedCheckCount int      `json:"distinct_failed_check_count"`
+	MissingFailedChecks      []string `json:"missing_failed_checks"`
+	TraceArtifactReady       bool     `json:"trace_artifact_ready"`
+	SnapshotEvidenceReady    bool     `json:"snapshot_evidence_ready"`
+	FailureReasons           []string `json:"failure_reasons"`
+}
+    BrowserActionFailurePayloadEvaluation is the stable result contract emitted
+    by the browserops failed-action payload evaluator.
+
+func EvaluateBrowserActionFailurePayloadEvidence(input BrowserActionFailurePayloadEvaluationInput) BrowserActionFailurePayloadEvaluation
+
+type BrowserActionFailurePayloadEvaluationInput struct {
+	Payloads                []BrowserActionFailurePayloadEvidence
+	RequiredFailedChecks    []string
+	RequireTraceArtifact    bool
+	RequireSnapshotEvidence bool
+	MinDistinctFailedChecks int
+}
+    BrowserActionFailurePayloadEvaluationInput is the pack-level evidence shape
+    for browser actionability regression gates. It keeps browser failure payload
+    quality in the browserops pack instead of hard-coding case-specific checks
+    in generic runtime or eval code.
+
+type BrowserActionFailurePayloadEvidence struct {
+	Action          string
+	Status          string
+	Actionability   *agentxbrowserruntime.BrowserActionabilityReport
+	FailureEvidence *agentxbrowserruntime.BrowserActionFailureEvidence
+}
+    BrowserActionFailurePayloadEvidence is the subset of browser_act payloads
+    needed by the pack-level failure-payload gate.
+
+type BrowserActionTraceEvidence struct {
+	TraceID      string             `json:"trace_id,omitempty"`
+	Path         string             `json:"path,omitempty"`
+	Status       string             `json:"status,omitempty"`
+	ActionCount  int                `json:"action_count,omitempty"`
+	FailureCount int                `json:"failure_count,omitempty"`
+	SourceTool   string             `json:"source_tool,omitempty"`
+	Artifact     BrowserArtifactRef `json:"artifact,omitempty"`
+	Ready        bool               `json:"ready,omitempty"`
+}
+
+type BrowserArtifactRef struct {
+	ArtifactID string `json:"artifact_id,omitempty"`
+	Type       string `json:"type,omitempty"`
+	Path       string `json:"path,omitempty"`
+	StorageRef string `json:"storage_ref,omitempty"`
+	URL        string `json:"url,omitempty"`
+	Digest     string `json:"digest,omitempty"`
+	MIMEType   string `json:"mime_type,omitempty"`
+	Role       string `json:"role,omitempty"`
+	SourceTool string `json:"source_tool,omitempty"`
+}
+
+type BrowserDownloadFileEvaluation struct {
+	Passed              bool                  `json:"passed"`
+	Score               float64               `json:"score"`
+	Summary             string                `json:"summary"`
+	EvidenceReady       bool                  `json:"evidence_ready"`
+	DownloadedFileReady bool                  `json:"downloaded_file_ready"`
+	ScreenshotReady     bool                  `json:"screenshot_ready"`
+	FinalURLReady       bool                  `json:"final_url_ready"`
+	FilenameReady       bool                  `json:"filename_ready"`
+	ContentTypeReady    bool                  `json:"content_type_ready"`
+	ByteSizeReady       bool                  `json:"byte_size_ready"`
+	URLExpectationReady bool                  `json:"url_expectation_ready"`
+	FailureReasonsReady bool                  `json:"failure_reasons_ready"`
+	Evidence            []string              `json:"evidence"`
+	FailureReasons      []string              `json:"failure_reasons"`
+	EvidenceBundle      BrowserEvidenceBundle `json:"evidence_bundle,omitempty"`
+}
+
+func EvaluateBrowserDownloadFileEvidence(input BrowserDownloadFileEvaluationInput) BrowserDownloadFileEvaluation
+
+type BrowserDownloadFileEvaluationInput struct {
+	Bundle              BrowserEvidenceBundle
+	TargetURL           string
+	DownloadURL         string
+	DownloadedPath      string
+	ScreenshotPath      string
+	FinalURL            string
+	Status              string
+	ContentType         string
+	Bytes               int64
+	ExpectedFilename    string
+	ExpectedContentType string
+	URLContains         string
+	MinBytes            int64
+	RequireFinalURL     bool
+	RequireScreenshot   bool
+	AllowFailureReasons bool
+}
+
+type BrowserDownloadedFileEvidence struct {
+	Path              string             `json:"path,omitempty"`
+	FinalURL          string             `json:"final_url,omitempty"`
+	Status            string             `json:"status,omitempty"`
+	ContentType       string             `json:"content_type,omitempty"`
+	ByteSize          int64              `json:"byte_size,omitempty"`
+	SuggestedFilename string             `json:"suggested_filename,omitempty"`
+	Mode              string             `json:"mode,omitempty"`
+	SourceTool        string             `json:"source_tool,omitempty"`
+	Artifact          BrowserArtifactRef `json:"artifact,omitempty"`
+	Ready             bool               `json:"ready,omitempty"`
+}
+
+type BrowserEvidenceBundle struct {
+	TargetURL      string                         `json:"target_url,omitempty"`
+	FinalURL       *BrowserFinalURLEvidence       `json:"final_url,omitempty"`
+	PageSnapshot   *BrowserPageSnapshotEvidence   `json:"page_snapshot,omitempty"`
+	Screenshot     *BrowserScreenshotEvidence     `json:"screenshot,omitempty"`
+	ActionTrace    *BrowserActionTraceEvidence    `json:"action_trace,omitempty"`
+	DownloadedFile *BrowserDownloadedFileEvidence `json:"downloaded_file,omitempty"`
+	TaskPlan       *BrowserTaskPlanEvidence       `json:"task_plan,omitempty"`
+	FailureReasons []BrowserFailureReasonEvidence `json:"failure_reasons,omitempty"`
+	ArtifactRefs   []BrowserArtifactRef           `json:"artifact_refs,omitempty"`
+}
+    BrowserEvidenceBundle is the pack-owned evidence contract for browser
+    operation workflows. It intentionally stays in the Browser Ops Domain Kit so
+    generic AgentX runtime does not learn browser-task business semantics.
+
+func BuildBrowserEvidenceBundleFromState(state map[string]any) BrowserEvidenceBundle
+
+type BrowserEvidenceReadiness struct {
+	Passed              bool     `json:"passed"`
+	Score               float64  `json:"score"`
+	EvidenceReady       bool     `json:"evidence_ready"`
+	SnapshotReady       bool     `json:"snapshot_ready"`
+	ScreenshotReady     bool     `json:"screenshot_ready"`
+	FinalURLReady       bool     `json:"final_url_ready"`
+	ActionTraceReady    bool     `json:"action_trace_ready"`
+	DownloadedFileReady bool     `json:"downloaded_file_ready"`
+	ArtifactRefsReady   bool     `json:"artifact_refs_ready"`
+	TaskPlanReady       bool     `json:"task_plan_ready"`
+	FailureReasonsReady bool     `json:"failure_reasons_ready"`
+	SubtaskCount        int      `json:"subtask_count,omitempty"`
+	SubtaskKinds        []string `json:"subtask_kinds,omitempty"`
+	Evidence            []string `json:"evidence"`
+	FailureReasons      []string `json:"failure_reasons"`
+}
+
+func EvaluateBrowserEvidenceBundle(bundle BrowserEvidenceBundle, req BrowserEvidenceRequirements) BrowserEvidenceReadiness
+
+type BrowserEvidenceRequirements struct {
+	TargetURL             string
+	RequiredSnapshotTerms []string
+	MinSnapshotChars      int
+	RequireSnapshot       bool
+	RequireScreenshot     bool
+	RequireFinalURL       bool
+	RequireActionTrace    bool
+	RequireDownloadedFile bool
+	RequireArtifactRefs   bool
+	RequireTaskPlan       bool
+	AllowFailureReasons   bool
+	MinSubtasks           int
+	RequiredSubtaskKinds  []string
+}
+
+type BrowserFailureReasonEvidence struct {
+	Code         string `json:"code,omitempty"`
+	Message      string `json:"message,omitempty"`
+	Action       string `json:"action,omitempty"`
+	NodeID       string `json:"node_id,omitempty"`
+	Tool         string `json:"tool,omitempty"`
+	Recoverable  bool   `json:"recoverable,omitempty"`
+	EvidenceKind string `json:"evidence_kind,omitempty"`
+}
+
+type BrowserFinalURLEvidence struct {
+	URL        string `json:"url,omitempty"`
+	TargetURL  string `json:"target_url,omitempty"`
+	SourceTool string `json:"source_tool,omitempty"`
+	Ready      bool   `json:"ready,omitempty"`
+}
+
+type BrowserPageSnapshotEvidence struct {
+	Text         string             `json:"text,omitempty"`
+	Format       string             `json:"format,omitempty"`
+	ElementCount int                `json:"element_count,omitempty"`
+	SourceTool   string             `json:"source_tool,omitempty"`
+	Artifact     BrowserArtifactRef `json:"artifact,omitempty"`
+	Ready        bool               `json:"ready,omitempty"`
+}
+
+type BrowserPageStateEvaluation struct {
+	Passed              bool                  `json:"passed"`
+	Score               float64               `json:"score"`
+	Summary             string                `json:"summary"`
+	EvidenceReady       bool                  `json:"evidence_ready"`
+	SnapshotReady       bool                  `json:"snapshot_ready"`
+	ScreenshotReady     bool                  `json:"screenshot_ready"`
+	FinalURLReady       bool                  `json:"final_url_ready"`
+	RequiredTextReady   bool                  `json:"required_text_ready"`
+	ForbiddenTextReady  bool                  `json:"forbidden_text_ready"`
+	URLExpectationReady bool                  `json:"url_expectation_ready"`
+	FailureReasonsReady bool                  `json:"failure_reasons_ready"`
+	Evidence            []string              `json:"evidence"`
+	FailureReasons      []string              `json:"failure_reasons"`
+	EvidenceBundle      BrowserEvidenceBundle `json:"evidence_bundle,omitempty"`
+}
+
+func EvaluateBrowserPageStateEvidence(input BrowserPageStateEvaluationInput) BrowserPageStateEvaluation
+
+type BrowserPageStateEvaluationInput struct {
+	Bundle              BrowserEvidenceBundle
+	SnapshotText        string
+	ScreenshotPath      string
+	FinalURL            string
+	TargetURL           string
+	RequiredText        []string
+	ForbiddenText       []string
+	URLContains         string
+	RequireScreenshot   bool
+	RequireFinalURL     bool
+	MinSnapshotChars    int
+	AllowFailureReasons bool
+}
+
+type BrowserScreenshotEvidence struct {
+	Path       string             `json:"path,omitempty"`
+	FinalURL   string             `json:"final_url,omitempty"`
+	FullPage   bool               `json:"full_page,omitempty"`
+	SourceTool string             `json:"source_tool,omitempty"`
+	Artifact   BrowserArtifactRef `json:"artifact,omitempty"`
+	Ready      bool               `json:"ready,omitempty"`
+}
+
+type BrowserSiteSearchEvaluation struct {
+	Passed              bool                                `json:"passed"`
+	Score               float64                             `json:"score"`
+	Summary             string                              `json:"summary"`
+	EvidenceReady       bool                                `json:"evidence_ready"`
+	SnapshotReady       bool                                `json:"snapshot_ready"`
+	ScreenshotReady     bool                                `json:"screenshot_ready"`
+	FinalURLReady       bool                                `json:"final_url_ready"`
+	QueryReady          bool                                `json:"query_ready"`
+	SearchActionReady   bool                                `json:"search_action_ready"`
+	RequiredTextReady   bool                                `json:"required_text_ready"`
+	ForbiddenTextReady  bool                                `json:"forbidden_text_ready"`
+	URLExpectationReady bool                                `json:"url_expectation_ready"`
+	ResultsReady        bool                                `json:"results_ready"`
+	FailureReasonsReady bool                                `json:"failure_reasons_ready"`
+	ResultEvaluations   []BrowserSiteSearchResultEvaluation `json:"result_evaluations,omitempty"`
+	Evidence            []string                            `json:"evidence"`
+	FailureReasons      []string                            `json:"failure_reasons"`
+	EvidenceBundle      BrowserEvidenceBundle               `json:"evidence_bundle,omitempty"`
+}
+
+func EvaluateBrowserSiteSearchEvidence(input BrowserSiteSearchEvaluationInput) BrowserSiteSearchEvaluation
+
+type BrowserSiteSearchEvaluationInput struct {
+	Bundle              BrowserEvidenceBundle
+	SnapshotText        string
+	ScreenshotPath      string
+	FinalURL            string
+	TargetURL           string
+	Query               string
+	ExpectedResults     []BrowserSiteSearchResultExpectation
+	RequiredText        []string
+	ForbiddenText       []string
+	URLContains         string
+	RequireQueryVisible bool
+	RequireScreenshot   bool
+	RequireFinalURL     bool
+	RequireSearchAction bool
+	RequireSubmitted    bool
+	MinSnapshotChars    int
+	FieldCount          int
+	Submitted           bool
+	AllowFailureReasons bool
+}
+
+type BrowserSiteSearchResultEvaluation struct {
+	Title           string   `json:"title,omitempty"`
+	URLContains     string   `json:"url_contains,omitempty"`
+	SnippetContains string   `json:"snippet_contains,omitempty"`
+	TitleReady      bool     `json:"title_ready,omitempty"`
+	URLReady        bool     `json:"url_ready,omitempty"`
+	SnippetReady    bool     `json:"snippet_ready,omitempty"`
+	Passed          bool     `json:"passed"`
+	FailureReasons  []string `json:"failure_reasons,omitempty"`
+}
+
+type BrowserSiteSearchResultExpectation struct {
+	Title           string `json:"title,omitempty"`
+	URLContains     string `json:"url_contains,omitempty"`
+	SnippetContains string `json:"snippet_contains,omitempty"`
+}
+
+type BrowserStructuredDataEvaluation struct {
+	Passed              bool                               `json:"passed"`
+	Score               float64                            `json:"score"`
+	Summary             string                             `json:"summary"`
+	EvidenceReady       bool                               `json:"evidence_ready"`
+	SnapshotReady       bool                               `json:"snapshot_ready"`
+	ScreenshotReady     bool                               `json:"screenshot_ready"`
+	FinalURLReady       bool                               `json:"final_url_ready"`
+	URLExpectationReady bool                               `json:"url_expectation_ready"`
+	FieldsReady         bool                               `json:"fields_ready"`
+	FailureReasonsReady bool                               `json:"failure_reasons_ready"`
+	ExtractedData       map[string]any                     `json:"extracted_data,omitempty"`
+	FieldResults        []BrowserStructuredDataFieldResult `json:"field_results,omitempty"`
+	Evidence            []string                           `json:"evidence"`
+	FailureReasons      []string                           `json:"failure_reasons"`
+	EvidenceBundle      BrowserEvidenceBundle              `json:"evidence_bundle,omitempty"`
+}
+
+func EvaluateBrowserStructuredDataEvidence(input BrowserStructuredDataEvaluationInput) BrowserStructuredDataEvaluation
+
+type BrowserStructuredDataEvaluationInput struct {
+	Bundle              BrowserEvidenceBundle
+	SnapshotText        string
+	ScreenshotPath      string
+	FinalURL            string
+	TargetURL           string
+	Fields              []BrowserStructuredDataFieldExpectation
+	ExtractedData       map[string]any
+	URLContains         string
+	RequireScreenshot   bool
+	RequireFinalURL     bool
+	MinSnapshotChars    int
+	AllowFailureReasons bool
+}
+
+type BrowserStructuredDataFieldExpectation struct {
+	Name         string `json:"name,omitempty"`
+	Type         string `json:"type,omitempty"`
+	Description  string `json:"description,omitempty"`
+	Required     bool   `json:"required,omitempty"`
+	ExpectedText string `json:"expected_text,omitempty"`
+}
+
+type BrowserStructuredDataFieldResult struct {
+	Name              string   `json:"name,omitempty"`
+	ExpectedText      string   `json:"expected_text,omitempty"`
+	ExtractedValue    string   `json:"extracted_value,omitempty"`
+	PresentInSnapshot bool     `json:"present_in_snapshot,omitempty"`
+	Passed            bool     `json:"passed"`
+	FailureReasons    []string `json:"failure_reasons,omitempty"`
+}
+
+type BrowserSubtaskObservationEvidence struct {
+	ID           string               `json:"id,omitempty"`
+	Kind         string               `json:"kind,omitempty"`
+	Description  string               `json:"description,omitempty"`
+	Status       string               `json:"status,omitempty"`
+	EvidenceKind string               `json:"evidence_kind,omitempty"`
+	Required     bool                 `json:"required,omitempty"`
+	EvidenceRefs []BrowserArtifactRef `json:"evidence_refs,omitempty"`
+}
+
+type BrowserTaskPlanEvidence struct {
+	TaskID     string                              `json:"task_id,omitempty"`
+	Goal       string                              `json:"goal,omitempty"`
+	CaseType   string                              `json:"case_type,omitempty"`
+	WorkflowID string                              `json:"workflow_id,omitempty"`
+	Status     string                              `json:"status,omitempty"`
+	SourceTool string                              `json:"source_tool,omitempty"`
+	Subtasks   []BrowserSubtaskObservationEvidence `json:"subtasks,omitempty"`
+	Artifact   BrowserArtifactRef                  `json:"artifact,omitempty"`
+	Ready      bool                                `json:"ready,omitempty"`
+}
+
+type BrowserVisualEvidenceEvaluation struct {
+	Passed              bool     `json:"passed"`
+	Score               float64  `json:"score"`
+	Summary             string   `json:"summary"`
+	VisualEvidenceReady bool     `json:"visual_evidence_ready"`
+	SnapshotReady       bool     `json:"snapshot_ready"`
+	ScreenshotReady     bool     `json:"screenshot_ready"`
+	FinalURLReady       bool     `json:"final_url_ready"`
+	Evidence            []string `json:"evidence"`
+	FailureReasons      []string `json:"failure_reasons"`
+}
+    BrowserVisualEvidenceEvaluation is the stable output shape for the browser
+    submit evidence gate. The result is eval evidence, not runtime policy.
+
+func EvaluateBrowserVisualEvidenceGate(input BrowserVisualEvidenceEvaluationInput) BrowserVisualEvidenceEvaluation
+
+type BrowserVisualEvidenceEvaluationInput struct {
+	SnapshotText          string
+	ScreenshotPath        string
+	FinalURL              string
+	TargetURL             string
+	RequiredSnapshotTerms []string
+	RequireSnapshot       bool
+	RequireScreenshot     bool
+	RequireFinalURL       bool
+	MinSnapshotChars      int
+}
+    BrowserVisualEvidenceEvaluationInput is the pack-owned deterministic gate
+    for browser screenshot/snapshot evidence readiness. It does not inspect
+    pixels or drive retries; it only checks whether the workflow produced enough
+    evidence for a visual/page-state evaluator to make a defensible decision.
+
+func BrowserVisualEvidenceInputFromBundle(bundle BrowserEvidenceBundle, req BrowserEvidenceRequirements) BrowserVisualEvidenceEvaluationInput
+

@@ -3,6 +3,7 @@ module github.com/wsnacj/agentx-go/scenes
 go 1.24.1
 
 require (
+	github.com/wsnacj/agentx-go/browser v0.0.0-20260802183055-f15e2f99ed1a
 	github.com/wsnacj/agentx-go/components v0.0.0-20260802130858-34ec103e09d9
 	github.com/wsnacj/agentx-go/document v0.0.0-20260802203835-ec74047cbe60
 	github.com/wsnacj/agentx-go/extensions v0.0.0-20260802113655-f41de95ec5be

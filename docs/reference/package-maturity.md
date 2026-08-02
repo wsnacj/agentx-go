@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
-65个 production package。它不是历史
+67个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -31,6 +31,8 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `scenes/astock/internal/packresearch` | internalization candidate | [API](../../scenes/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packsignal` | internalization candidate | [API](../../scenes/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packvaluation` | internalization candidate | [API](../../scenes/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
+| `scenes/browserops` | Developer Preview candidate | [API](../../scenes/browserops/API.md) | Browser Ops Pack、证据投影与确定性 evaluator |
+| `scenes/browserops/hostkit` | Experimental extension | [API](../../scenes/browserops/hostkit/API.md) | 显式Host tool executor驱动的Browser Ops协调层 |
 | `scenes/publicnews` | Developer Preview candidate | [API](../../scenes/publicnews/API.md) | 公开新闻合同、Pack、证据质量与确定性回答投影 |
 | `scenes/publicnews/hostkit` | Experimental extension | [API](../../scenes/publicnews/hostkit/API.md) | 显式Search/Fetch ports驱动的无provider协调 |
 | `scenes/companyresearch` | Developer Preview candidate | [API](../../scenes/companyresearch/API.md) | 公司研究任务、证据guard、Pack与结果投影 |

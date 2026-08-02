@@ -18,6 +18,9 @@ Stable兼容承诺。
 - [`docparse`](./docparse/API.md)：文档 profile/planner/adapter/fusion/understanding、
   evidence evaluator、Pack与无文件/无provider Host Kit；OCR/PDF、私有schema和真实文件由
   Host显式注入。
+- [`browserops`](./browserops/API.md)：浏览器操作Pack、证据合同、确定性evaluator与
+  [Host Kit](./browserops/hostkit/API.md)；真实浏览器、profile/login、credential、审批、
+  文件/artifact与站点副作用策略由Host显式注入。
 
 ## 依赖方向
 
