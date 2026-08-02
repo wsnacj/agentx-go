@@ -24,6 +24,11 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 与[版本、升级与回滚](docs/guides/versioning-and-upgrades.md)。当前Developer Preview
 变更摘要见[CHANGELOG](CHANGELOG.md)。
 
+维护、兼容和分发边界见[Developer Preview政策](docs/guides/developer-preview-policy.md)、
+[分发Readiness](docs/reference/distribution-readiness.md)、[安全报告](SECURITY.md)和
+[支持边界](SUPPORT.md)。参与修改请阅读[CONTRIBUTING](CONTRIBUTING.md)；PR不是必需
+流程，本地gate与commit-range人工审阅是一等路径。
+
 ## 当前提供：Experimental 组件
 
 - [`components/llm`](components/llm/API.md)：provider-neutral 的 LLM
@@ -197,6 +202,7 @@ GOWORK=off GOPROXY=off go -C extensions/conformance/skills-consumer test ./... -
 GOWORK=off go run scripts/check_developer_preview_api.go
 GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
 GOWORK=off go run scripts/check_docs_links.go
+GOWORK=off go run scripts/check_developer_preview_distribution.go
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime

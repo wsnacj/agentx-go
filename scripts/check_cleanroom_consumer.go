@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -23,6 +24,9 @@ var expectedModules = []string{
 }
 
 func main() {
+	freshCache := flag.Bool("fresh-cache", false, "download fixed modules into an empty temporary module and build cache")
+	flag.Parse()
+
 	root, err := os.Getwd()
 	check(err)
 	versionBytes, err := os.ReadFile(filepath.Join(root, "docs/reference/developer-preview-version.txt"))
@@ -39,28 +43,40 @@ func main() {
 	temporary, err := os.MkdirTemp("", "agentx-go-cleanroom-consumer-")
 	check(err)
 	defer os.RemoveAll(temporary)
-	check(copyConsumer(consumer, temporary))
+	consumerCopy := filepath.Join(temporary, "consumer")
+	check(copyConsumer(consumer, consumerCopy))
 
+	mode := "module-cache"
 	env := append(os.Environ(),
 		"GOWORK=off",
 		"GOPROXY=off",
 		"GONOSUMDB=github.com/wsnacj/agentx-go",
 		"GOFLAGS=-mod=readonly",
 	)
-	run(temporary, env, "go", "mod", "verify")
-	modules := run(temporary, env, "go", "list", "-m", "-f", "{{.Path}} {{.Version}}", "all")
+	if *freshCache {
+		mode = "fresh-vcs-cache"
+		env = append(env,
+			"GOPROXY=direct",
+			"GOPRIVATE=github.com/wsnacj/agentx-go",
+			"GOMODCACHE="+filepath.Join(temporary, "gomodcache"),
+			"GOCACHE="+filepath.Join(temporary, "gocache"),
+		)
+		run(consumerCopy, env, "go", "mod", "download")
+	}
+	run(consumerCopy, env, "go", "mod", "verify")
+	modules := run(consumerCopy, env, "go", "list", "-m", "-f", "{{.Path}} {{.Version}}", "all")
 	for _, module := range expectedModules {
 		want := module + " " + version
 		if !containsLine(modules, want) {
 			check(fmt.Errorf("clean-room module list missing %q", want))
 		}
 	}
-	run(temporary, env, "go", "test", "./...")
-	output := strings.TrimSpace(run(temporary, env, "go", "run", "."))
+	run(consumerCopy, env, "go", "test", "./...")
+	output := strings.TrimSpace(run(consumerCopy, env, "go", "run", "."))
 	if !strings.HasPrefix(output, "agentx-core-developer-preview-ok:") {
 		check(fmt.Errorf("unexpected clean-room output %q", output))
 	}
-	fmt.Printf("agentx-cleanroom-consumer-ok:version=%s:modules=%d\n", version, len(expectedModules))
+	fmt.Printf("agentx-cleanroom-consumer-ok:version=%s:modules=%d:source=%s\n", version, len(expectedModules), mode)
 }
 
 func copyConsumer(source, target string) error {

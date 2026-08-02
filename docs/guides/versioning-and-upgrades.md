@@ -76,3 +76,6 @@ fixture路径。`scripts/check_cleanroom_consumer.go`会把该consumer复制到�
 
 这项证据只说明当前固定版本可独立消费；正式tag、license/NOTICE、security/legal、
 release owner和生产SLA仍保持fail closed。
+
+允许/禁止变更、四module未来tag前缀、版本epoch和维护责任见
+[Developer Preview兼容与分发政策](developer-preview-policy.md)。
