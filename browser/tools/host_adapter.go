@@ -175,6 +175,15 @@ func BrowserCompatForceConfirmationNeedsGuardianReview(name string, params map[s
 	return browserCompatForceConfirmationNeedsGuardianReview(name, params)
 }
 
+// InferBrowserToolMetadataMissing returns canonical metadata only for Browser
+// definitions not already covered by complete Host metadata.
+func InferBrowserToolMetadataMissing(defs []types.Tool, provided map[string]ToolMetadata) map[string]ToolMetadata {
+	return inferBrowserToolMetadataMissing(defs, provided)
+}
+
+// BrowserArtifactSourceForTool returns the canonical media artifact source label.
+func BrowserArtifactSourceForTool(name string) string { return browserArtifactSourceForTool(name) }
+
 // BrowserCompatToolErrorf preserves the specialist-tool error prefix.
 func BrowserCompatToolErrorf(kind string, format string, args ...any) error {
 	return browserCompatToolErrorf(kind, format, args...)
