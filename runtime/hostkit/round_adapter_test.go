@@ -102,6 +102,41 @@ func TestModelToolRoundAdapterProjectsToolContinuation(t *testing.T) {
 	}
 }
 
+func TestModelToolRoundAdapterProjectsExplicitToolDirectAnswer(t *testing.T) {
+	adapter, err := NewModelToolRoundAdapter(ModelToolRoundConfig{
+		RequestModel: func(context.Context, toolloop.RoundExecutionInput) (ModelResult, error) {
+			return ModelResult{Response: llm.ChatResponse{Calls: []llm.FunctionCall{{Name: "lookup"}}}}, nil
+		},
+		ExecuteTools: func(context.Context, ModelToolRoundExchange) (ToolResult, error) {
+			return ToolResult{DirectAnswer: &ToolDirectAnswer{
+				Reply:  "display-safe tool answer",
+				Source: "lookup",
+				Reason: "authoritative_result",
+			}}, nil
+		},
+	})
+	if err != nil {
+		t.Fatalf("NewModelToolRoundAdapter() error = %v", err)
+	}
+	result, err := adapter.ExecuteRound(context.Background(), toolloop.RoundExecutionInput{Round: 1, MaxRounds: 2})
+	if err != nil {
+		t.Fatalf("ExecuteRound() error = %v", err)
+	}
+	if result.Kind != toolloop.OutcomeCompleted || result.Reply != "display-safe tool answer" || result.Continuation != nil {
+		t.Fatalf("result = %#v", result)
+	}
+}
+
+func TestModelToolRoundResultRejectsEmptyToolDirectAnswer(t *testing.T) {
+	_, err := (ModelToolRoundResult{
+		Phase: toolloop.RoundPhaseResult{Kind: toolloop.RoundPhaseActionCompleted},
+		Tools: ToolResult{DirectAnswer: &ToolDirectAnswer{Reply: "  "}},
+	}).ExecutionResult()
+	if err == nil || err.Error() != "agentx host kit: tool direct answer reply is required" {
+		t.Fatalf("ExecutionResult() error = %v", err)
+	}
+}
+
 func TestModelToolRoundAdapterHostStopSkipsTools(t *testing.T) {
 	adapter, err := NewModelToolRoundAdapter(ModelToolRoundConfig{
 		RequestModel: func(context.Context, toolloop.RoundExecutionInput) (ModelResult, error) {

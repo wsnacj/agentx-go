@@ -24,7 +24,7 @@ func (externalFactory) BuildRun(_ context.Context, request execution.Request) (h
 			return hostkit.ModelResult{Response: llm.ChatResponse{Content: "external reply"}}, nil
 		},
 		ExecuteTools: func(context.Context, hostkit.ModelToolRoundExchange) (hostkit.ToolResult, error) {
-			return hostkit.ToolResult{NextChunks: []string{"lookup: agentx"}}, nil
+			return hostkit.ToolResult{DirectAnswer: &hostkit.ToolDirectAnswer{Reply: "external direct answer"}}, nil
 		},
 	})
 	if err != nil {
@@ -58,7 +58,25 @@ func TestExternalPackageBuildsRunnableClient(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
 	}
-	if result.Status != "completed" || result.Reply != "external reply" || result.RunID != "external-run" {
+	if result.Status != "completed" || result.Reply != "external direct answer" || result.RunID != "external-run" {
+		t.Fatalf("result = %#v", result)
+	}
+}
+
+func TestExternalPackageBuildsChatClient(t *testing.T) {
+	client, err := hostkit.NewChatClient(hostkit.ChatClientConfig{
+		RequestModel: func(context.Context, llm.ChatRequest) (llm.ChatResponse, error) {
+			return llm.ChatResponse{Content: "external chat"}, nil
+		},
+	})
+	if err != nil {
+		t.Fatalf("NewChatClient() error = %v", err)
+	}
+	result, err := client.Run(context.Background(), agentx.RunRequest{Input: "hello"})
+	if err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+	if result.Status != "completed" || result.Reply != "external chat" {
 		t.Fatalf("result = %#v", result)
 	}
 }

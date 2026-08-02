@@ -16,6 +16,7 @@ import (
 func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 	types, funcs, methods := collectContract(t)
 	assertStrings(t, "types", types, []string{
+		"ChatClientConfig",
 		"Config",
 		"Factory",
 		"ModelResult",
@@ -27,9 +28,10 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 		"RunConfig",
 		"RunResult",
 		"ToolResult",
+		"ToolDirectAnswer",
 	})
-	assertStrings(t, "functions", funcs, []string{"Execute", "New", "NewModelToolClient", "NewModelToolRoundAdapter"})
-	assertStrings(t, "methods", methods, []string{"Execute", "ExecuteRound"})
+	assertStrings(t, "functions", funcs, []string{"Execute", "New", "NewChatClient", "NewModelToolClient", "NewModelToolRoundAdapter"})
+	assertStrings(t, "methods", methods, []string{"Execute", "ExecuteRound", "ExecutionResult"})
 
 	content, err := os.ReadFile("API.md")
 	if err != nil {
@@ -50,6 +52,11 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 		"NewModelToolRoundAdapter",
 		"ModelToolClientConfig",
 		"NewModelToolClient",
+		"ChatClientConfig",
+		"NewChatClient",
+		"ToolDirectAnswer",
+		"DirectAnswer",
+		"ExecutionResult",
 		"ExecuteRound",
 		"RequestModel",
 		"ExecuteTools",

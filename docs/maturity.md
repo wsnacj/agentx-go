@@ -408,7 +408,8 @@ smoke tests全部通过。M6B不改变fixed版本、Go production source、Runti
 已支持：
 
 - 无需 host-provided model/tool adapter和 policy的完整 embedded Runtime根构造；
-- Tool Direct Answer 的独立结果策略；
+- 自动解析任意工具输出并决定 Tool Direct Answer 的产品策略（Host Kit只支持 Host显式提供
+  display-safe `ToolDirectAnswer`后的 portable completion投影）；
 - 根 `agentx` Facade直接暴露的 Workflow 图执行；
 - Objective Runtime Loop；
 - 长任务调度、子 Session 和 durable lifecycle；

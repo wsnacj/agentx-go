@@ -3,6 +3,7 @@ package hostkit
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	llm "github.com/wsnacj/agentx-go/components/llm"
 	"github.com/wsnacj/agentx-go/runtime/toolloop"
@@ -34,6 +35,17 @@ type ToolResult struct {
 	Failures         []toolloop.FailureObservation
 	NextChunks       []string
 	ForceNoToolCalls bool
+	DirectAnswer     *ToolDirectAnswer
+}
+
+// ToolDirectAnswer is an explicit host decision to finish the current Run
+// with a display-safe tool result instead of asking the model for another
+// synthesis round. The host owns policy, sanitization, and source selection;
+// the portable Host Kit owns outcome projection.
+type ToolDirectAnswer struct {
+	Reply  string
+	Source string
+	Reason string
 }
 
 // ModelToolRoundConfig supplies concrete model/tool operations while leaving
@@ -111,16 +123,31 @@ func (adapter *ModelToolRoundAdapter) Execute(ctx context.Context, input toolloo
 // and an executed tool batch continues with ToolResult state.
 func (adapter *ModelToolRoundAdapter) ExecuteRound(ctx context.Context, input toolloop.RoundExecutionInput) (toolloop.RoundExecutionResult, error) {
 	result, err := adapter.Execute(ctx, input)
-	projected := toolloop.RoundExecutionResult{Reply: result.Phase.Reply}
 	if err != nil {
-		return projected, err
+		return toolloop.RoundExecutionResult{Reply: result.Phase.Reply}, err
 	}
+	return result.ExecutionResult()
+}
+
+// ExecutionResult projects a rich phase result into the portable tool-loop
+// outcome. Hosts that need product-specific persistence or telemetry can call
+// Execute first and then use this method without reimplementing result policy.
+func (result ModelToolRoundResult) ExecutionResult() (toolloop.RoundExecutionResult, error) {
+	projected := toolloop.RoundExecutionResult{Reply: result.Phase.Reply}
 	switch result.Phase.Kind {
 	case toolloop.RoundPhaseNoAction:
 		projected.Kind = toolloop.OutcomeCompleted
 	case toolloop.RoundPhaseHostStopped:
 		projected.Kind = toolloop.OutcomeTerminated
 	case toolloop.RoundPhaseActionCompleted:
+		if result.Tools.DirectAnswer != nil {
+			if strings.TrimSpace(result.Tools.DirectAnswer.Reply) == "" {
+				return projected, fmt.Errorf("agentx host kit: tool direct answer reply is required")
+			}
+			projected.Kind = toolloop.OutcomeCompleted
+			projected.Reply = result.Tools.DirectAnswer.Reply
+			return projected, nil
+		}
 		projected.Kind = toolloop.OutcomeContinue
 		projected.Continuation = &toolloop.RoundContinuation{
 			Calls:            projectToolCalls(result.Model.Response.Calls),
@@ -220,5 +247,9 @@ func cloneToolResult(result ToolResult) ToolResult {
 	result.Runs = append([]toolloop.RunObservation(nil), result.Runs...)
 	result.Failures = append([]toolloop.FailureObservation(nil), result.Failures...)
 	result.NextChunks = append([]string(nil), result.NextChunks...)
+	if result.DirectAnswer != nil {
+		direct := *result.DirectAnswer
+		result.DirectAnswer = &direct
+	}
 	return result
 }

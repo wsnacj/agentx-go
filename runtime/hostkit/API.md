@@ -166,12 +166,23 @@ type ToolResult struct {
     Failures         []toolloop.FailureObservation
     NextChunks       []string
     ForceNoToolCalls bool
+    DirectAnswer     *ToolDirectAnswer
+}
+
+type ToolDirectAnswer struct {
+    Reply  string
+    Source string
+    Reason string
 }
 ```
 
 `ModelToolRoundExchange`和所有返回 slice均为防御性副本。provider私有 payload、
 recovery plan、RunStore handle或具体 tool executor不得塞入这些合同；Host可在
 各函数闭包中保留自己的单轮状态。
+
+`DirectAnswer` 是显式的 Tool Direct Answer 结果策略。Host 只有在已经完成业务授权、
+结果校验和 display-safe 处理后才可设置它；`Reply` 必须非空，`Source`和`Reason`只作为
+不透明诊断事实。Host Kit 不解析工具输出、不选择哪个工具权威，也不内置 JSON 约定。
 
 ### `Execute` 与 `ExecuteRound`
 
@@ -196,12 +207,50 @@ func (*ModelToolRoundAdapter) ExecuteRound(
 - Host gate停止 → `OutcomeTerminated`；
 - tool batch完成 → `OutcomeContinue`，并自动投影 Calls、Runs、Failures、
   NextChunks和 ForceNoToolCalls。
+- tool batch显式返回 `DirectAnswer` → `OutcomeCompleted`，不再请求下一轮模型。
+
+需要在 completion 后继续执行产品 persistence、telemetry 或兼容投影的 Host，可先调用
+`Execute`，再调用 `ModelToolRoundResult.ExecutionResult()`；这两条路径使用同一个 canonical
+结果策略，不应由 Host 重写 completion 判断。
 
 因此 Host Kit调用方可以直接把 adapter放入
 `toolloop.CoordinatorConfig.Executor`，不再自行编写 `RoundExecutor`或复制
 round phase ordering。
 
 adapter自身无单轮可变状态；并发安全性只取决于调用方提供的函数是否安全。
+
+## `NewChatClient`
+
+`NewChatClient` 是 C1 Model Conversation 的低样板推荐入口。它每个 Run 只请求一次模型，
+不会执行工具，也不会保存 conversation backend。
+
+```go
+type ChatClientConfig struct {
+    Profile agentx.ExecutionProfile
+    Model   string
+    System  string
+
+    BuildRequest func(
+        context.Context,
+        execution.Request,
+    ) (llm.ChatRequest, error)
+    RequestModel func(
+        context.Context,
+        llm.ChatRequest,
+    ) (llm.ChatResponse, error)
+
+    ResolveIdentity func(execution.Request) (string, string)
+    Shutdown        func(context.Context) error
+    ClassifyError   func(error) agentx.ErrorCode
+}
+
+func NewChatClient(ChatClientConfig) (*agentx.Client, error)
+```
+
+`RequestModel`必填。`BuildRequest`为空时，`RunRequest.Input`会成为一条`user`消息，并
+使用`Model`和`System`；需要多轮历史的 Host可在`BuildRequest`中按`SessionID`加载消息。
+若模型返回 tool calls，Run以`CodeExecutionFailed`失败，防止 Chat路径静默伪装工具支持。
+取消、deadline、并发边界和 Shutdown语义继续由根 Client合同保证。
 
 ## `NewModelToolClient`
 

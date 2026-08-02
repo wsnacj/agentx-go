@@ -1,6 +1,7 @@
 # 使用 Host Kit 接入 Model/Tool Adapter
 
-这是 M3E 推荐给普通新项目的 Open Tool Loop 接入路径。调用方显式提供模型请求和
+这是推荐给普通新项目的 Model Conversation、Open Tool Loop 与 Tool Direct Answer
+接入路径。调用方显式提供模型请求和
 工具执行函数，Host Kit 负责 portable round 顺序、多轮 assembly、根 Client、
 typed error 和 Shutdown 组合。整个路径不依赖 HS、Runner、Scene 或长期
 `replace`。
@@ -77,6 +78,42 @@ func main() {
 }
 ```
 
+## 纯模型对话
+
+不需要工具时使用`NewChatClient`。默认每个 Run把`Input`转换成单条`user`消息；历史消息
+由调用方在可选`BuildRequest`中按`SessionID`加载，因此 SDK 不绑定数据库或 provider：
+
+```go
+client, err := hostkit.NewChatClient(hostkit.ChatClientConfig{
+    Model: "your-model",
+    RequestModel: func(
+        ctx context.Context,
+        request llm.ChatRequest,
+    ) (llm.ChatResponse, error) {
+        return model.Chat(ctx, request)
+    },
+})
+```
+
+Chat路径拒绝模型返回的 tool calls；需要工具时必须显式使用`NewModelToolClient`。
+
+## 工具结果直接回答
+
+当 Host 已确认某个工具结果可以安全地直接展示时，`ExecuteTools`可显式返回：
+
+```go
+return hostkit.ToolResult{
+    DirectAnswer: &hostkit.ToolDirectAnswer{
+        Reply:  displaySafeReply,
+        Source: toolName,
+        Reason: "authoritative_result",
+    },
+}, nil
+```
+
+Host Kit将该结果投影为`OutcomeCompleted`，不再发起模型合成轮次。工具输出解析、授权、
+结果可信度判断和脱敏仍由 Host负责；Core不会因为某段 JSON长得像答案就自动结束 Run。
+
 可直接运行的固定版本 consumer 位于
 [`runtime/conformance/hostkit-consumer`](../../runtime/conformance/hostkit-consumer)。
 
@@ -120,6 +157,6 @@ context；deadline/cancellation不得替换为字符串错误。`Shutdown(ctx)`�
 
 ## Non-goal
 
-这条路径不提供默认 provider、credential、网络 client、授权策略、RunStore、
+这些路径不提供默认 provider、credential、网络 client、授权策略、RunStore、
 Workflow/Objective/Resume 或 Scene。它是 Developer Preview candidate 接入面，
 不是 Public、Beta、Stable 或 production-ready 声明。
