@@ -27,7 +27,7 @@ const (
 	candidateVersion     = "v0.0.0-m6d.0"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
-	candidateGoToolchain = "go1.25.5"
+	candidateGoToolchain = "go1.25.12"
 	fixedVersionFile     = "docs/reference/developer-preview-version.txt"
 	manifestFile         = "pre-beta-candidate-manifest.txt"
 	dependencyGraphFile  = "pre-beta-candidate-modules.txt"

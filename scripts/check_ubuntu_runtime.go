@@ -17,9 +17,14 @@ import (
 
 var sourceModules = []string{".", "components", "runtime", "extensions"}
 
+const expectedGoVersion = "go1.25.12"
+
 func main() {
 	if runtime.GOOS != "linux" || runtime.GOARCH != "amd64" {
 		fail(fmt.Errorf("requires a real linux/amd64 host, got %s/%s", runtime.GOOS, runtime.GOARCH))
+	}
+	if runtime.Version() != expectedGoVersion {
+		fail(fmt.Errorf("requires %s, got %s", expectedGoVersion, runtime.Version()))
 	}
 	root, err := os.Getwd()
 	check(err)
