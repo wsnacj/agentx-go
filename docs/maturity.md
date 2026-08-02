@@ -5,10 +5,10 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5S Core Developer Preview Surface, Construction and Documentation Closure：`active_implementation` |
+| 当前产品里程碑 | M5S Core Developer Preview Surface, Construction and Documentation Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | M5R canonical landing：44个package、234个production source、89,672行；仍为8个Developer Preview candidate |
+| agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -20,10 +20,10 @@
 | Portable Core Host Kit | W5-G 已组合 no-HS-Runner执行；W5-H 已迁入 model/tool round implementation并完成 HS production cutover |
 | 普通新项目接入 | Open Tool Loop可用 `NewModelToolClient`；Workflow可用 `workflow/hostkit.New`，两者仍显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | 根合同、LLM、Runtime及Extension fixed-version consumer已提供；M5R channel consumer覆盖bounded ingress、dedupe、Shutdown与display-safe delivery contract；均无HS/Runner/Scene/长期replace/network |
+| Examples/conformance | 统一fixed-version consumer覆盖三条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension和channel；均无HS/Runner/Scene/长期replace/network |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 44个全部纳入中文 Reference矩阵；8个进入 Developer Preview candidate signature/doc gate |
+| 当前 package surface | 44个全部纳入中文Reference矩阵；8个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
@@ -329,6 +329,30 @@ Host Kit三条显式Host capability路径；完全hostless Runtime继续
 `runtime/controlcontract`继续是Experimental迁移/组合底座，不进入推荐入口，也不得由
 M5S自动升级其巨大exported surface。M5S只补候选API/平台差异、fixed consumer、依赖
 足迹与中文文档门禁，不进入Scene、完整文档站、Beta/Stable或发行。
+
+M5S技术checkpoint已完成。三条标准construction现在由根
+`conformance/consumer`在同一组固定版本
+`v0.0.0-20260802021959-5a41fb0ccb87`上验证：自定义`ExecutionAdapter`、
+`runtime/hostkit.NewModelToolClient`和`runtime/workflow/hostkit.New`。该consumer
+无HS、Runner、Scene、长期`replace`、provider、credential或网络副作用；test、race、
+vet、tidy、offline run和darwin/arm64、linux/amd64 CGO-disabled build均通过。
+
+8个Developer Preview candidate现在同时拥有`go doc -all`hash与可读snapshot；gate
+检查44个package分类、中文Reference、公开类型不得泄漏`hs/`、Go`internal`或
+`runtime/controlcontract`，并比较darwin/arm64与linux/amd64签名。为关闭唯一真实泄漏，
+A股六个evaluator DTO的source authority从三组`internal` Pack移到
+`extensions/astock/contracts`，顶层推荐入口和内部实现均使用type alias；evaluator逻辑、
+JSON字段和调用顺序未改变。Markdown门禁验证68个文件、248个本地链接。
+
+同一fixed commit的root/components/runtime/extensions module zip分别为102,907、
+27,733、1,026,836和246,270字节，Origin均回读`5a41fb0ccb87`；统一consumer只有
+canonical module和标准库依赖，总依赖包79个，darwin/arm64二进制3,327,682字节、
+linux/amd64二进制3,369,181字节。四module test/race/vet/tidy/list、module cache/zip、
+import direction和HS focused compatibility全部通过；唯一完整HS回归为149 PASS、2个
+既有治理FAIL、20 SKIP，仍仅有3个既有evidence stale/mismatch。W2-A closure保持
+407/57/2467/65、HS118/canonical34/Scene0；M5S不新增HS construction依赖，因此不借
+产品收口修改该闭包。当前结论为`technical_checkpoint_complete_awaiting_owner_acceptance`，
+不构成Public/Beta/Stable、semver、tag或发行授权。
 
 ## 明确 non-goal
 

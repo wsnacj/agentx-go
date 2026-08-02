@@ -147,6 +147,15 @@ Runner/ProductShell集成。这些是产品策略或真实副作用，不能为�
 
 ## 尚未迁移
 
+M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、
+Model/Tool Host Kit和Workflow Host Kit固定为三条标准接入路径，并用一个新的
+fixed-version external consumer统一验收。HS继续固定各owner已验收的不可变
+pseudo-version；本轮不为了版本外观一致而触碰Scene或重写业务consumer。
+
+A股evaluator DTO的canonical定义已收口到`extensions/astock/contracts`，
+`extensions/astock`和三组内部Pack只保留同一类型身份的alias。该调整用于消除候选
+公开类型对Go`internal`路径的泄漏，不改变HS evaluator调用、JSON或产品策略。
+
 W2-B结论统一为 `not_ready_for_hostless_w2b`。当前没有无需调用方提供 model/tool
 adapter、policy或 backend的完整 embedded Runtime；Workflow已有独立 Developer
 Preview Host Kit，但没有成为根 `Client` mode。完整 Scene、Objective、Resume、
