@@ -1,8 +1,6 @@
 package browserruntime
 
 import (
-	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -108,53 +106,6 @@ func BrowserDoctorAggregateStatus(statuses ...string) string {
 		bestRank = rank
 	}
 	return best
-}
-
-func BrowserDoctorAcceptanceScript(root string) string {
-	return browserDoctorRepoScript(root, "browserd-platform-acceptance-check.sh")
-}
-
-func BrowserDoctorBootstrapRepairScript(root string) string {
-	return browserDoctorRepoScript(root, "browserd-bootstrap-repair.sh")
-}
-
-func browserDoctorRepoScript(root string, filename string) string {
-	filename = strings.TrimSpace(filename)
-	if filename == "" {
-		return ""
-	}
-	searchRoots := browserDoctorSearchRoots(root)
-	for _, searchRoot := range searchRoots {
-		current := searchRoot
-		for current != "" {
-			candidate := filepath.Join(current, "core", "agentx", "browserdaemon", filename)
-			if browserDoctorFileExists(candidate) {
-				return filepath.Clean(candidate)
-			}
-			parent := filepath.Dir(current)
-			if parent == current {
-				break
-			}
-			current = parent
-		}
-	}
-	return ""
-}
-
-func BrowserDoctorAcceptanceCommand(root string) string {
-	script := strings.TrimSpace(BrowserDoctorAcceptanceScript(root))
-	if script == "" {
-		return ""
-	}
-	return "bash " + script
-}
-
-func BrowserDoctorBootstrapRepairCommand(root string) string {
-	script := strings.TrimSpace(BrowserDoctorBootstrapRepairScript(root))
-	if script == "" {
-		return ""
-	}
-	return "bash " + script
 }
 
 func BrowserDoctorBringupSteps(
@@ -263,31 +214,4 @@ func browserDoctorStatusRank(status string) int {
 	default:
 		return 0
 	}
-}
-
-func browserDoctorSearchRoots(root string) []string {
-	seen := map[string]bool{}
-	roots := make([]string, 0, 2)
-	appendRoot := func(value string) {
-		value = strings.TrimSpace(value)
-		if value == "" {
-			return
-		}
-		value = filepath.Clean(value)
-		if seen[value] {
-			return
-		}
-		seen[value] = true
-		roots = append(roots, value)
-	}
-	appendRoot(root)
-	if cwd, err := os.Getwd(); err == nil {
-		appendRoot(cwd)
-	}
-	return roots
-}
-
-func browserDoctorFileExists(path string) bool {
-	info, err := os.Stat(path)
-	return err == nil && !info.IsDir()
 }

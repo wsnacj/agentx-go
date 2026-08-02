@@ -15,6 +15,7 @@ func TestBrowserRuntimeRemainsSiteAgnostic(t *testing.T) {
 	}
 	root := filepath.Dir(file)
 	forbidden := []string{
+		"hs/", "core/agentx", `"core", "agentx"`, "/scene/", "engine.Runner",
 		"doubao", "doubao.com", "豆包",
 		"xiaohongshu", "xiaohongshu.com", "小红书",
 		"taobao", "taobao.com", "淘宝",
