@@ -120,20 +120,24 @@ func main() {
 	}
 	printRun(root, candidateEnv, govulncheckPath, "-version")
 
-	// The order is the release dependency order. Tidy each disposable module
-	// against already-created candidate dependencies before writing its zip, so
-	// go.mod and go.sum inside the artifact describe the same candidate graph.
+	// The first pass materializes a complete candidate graph. A module near the
+	// end of the graph can otherwise retain sums that were needed only while an
+	// upstream candidate zip was still absent.
+	for _, module := range candidateModules {
+		dir := staged[module.path]
+		printRun(dir, candidateEnv, "go", "mod", "tidy")
+		checkNoReplace(filepath.Join(dir, "go.mod"))
+		writeProxyModule(proxyRoot, dir, module, commitTime, false)
+	}
+	// With all four provisional zips present, stabilize in dependency order and
+	// overwrite each zip. Only this second pass is a candidate artifact.
 	var artifacts []moduleArtifact
 	for _, module := range candidateModules {
 		dir := staged[module.path]
 		printRun(dir, candidateEnv, "go", "mod", "tidy")
-		// A second pass is intentional. With lazy module loading, the first pass
-		// may fetch a transitive candidate solely to read its go.mod and leave a
-		// sum that becomes provably unnecessary only after that graph is cached.
-		printRun(dir, candidateEnv, "go", "mod", "tidy")
 		printRun(dir, candidateEnv, "go", "mod", "tidy", "-diff")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
-		artifact := writeProxyModule(proxyRoot, dir, module, commitTime)
+		artifact := writeProxyModule(proxyRoot, dir, module, commitTime, true)
 		artifacts = append(artifacts, artifact)
 	}
 
@@ -295,7 +299,7 @@ func rewriteCandidateRequirements(dir string) {
 	checkNoReplace(goMod)
 }
 
-func writeProxyModule(proxyRoot, source string, module moduleSpec, commitTime time.Time) moduleArtifact {
+func writeProxyModule(proxyRoot, source string, module moduleSpec, commitTime time.Time, announce bool) moduleArtifact {
 	versionDir := filepath.Join(proxyRoot, filepath.FromSlash(module.path), "@v")
 	check(os.MkdirAll(versionDir, 0o755))
 	modBytes, err := os.ReadFile(filepath.Join(source, "go.mod"))
@@ -308,8 +312,10 @@ func writeProxyModule(proxyRoot, source string, module moduleSpec, commitTime ti
 	zipPath := filepath.Join(versionDir, candidateVersion+".zip")
 	files := writeModuleZip(zipPath, source, module.path, commitTime)
 	hash, size := hashFile(zipPath)
-	fmt.Printf("agentx-pre-beta-artifact-ok:path=%s:version=%s:sha256=%s:bytes=%d:files=%d\n",
-		module.path, candidateVersion, hash, size, files)
+	if announce {
+		fmt.Printf("agentx-pre-beta-artifact-ok:path=%s:version=%s:sha256=%s:bytes=%d:files=%d\n",
+			module.path, candidateVersion, hash, size, files)
+	}
 	return moduleArtifact{path: module.path, sha256: hash, size: size, files: files}
 }
 
