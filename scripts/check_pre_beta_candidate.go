@@ -119,6 +119,10 @@ func main() {
 	}
 
 	candidateEnv := append(baseEnv,
+		// govulncheck intentionally accepts GOVERSION for source-mode standard
+		// library analysis. Keep this explicit: a newer launcher alone does not
+		// change the version modeled by the scanner.
+		"GOVERSION="+candidateGoToolchain,
 		"GOPROXY=file://"+proxyRoot+",https://proxy.golang.org",
 		"GONOSUMDB=github.com/wsnacj/agentx-go",
 		"GONOPROXY=none",
@@ -431,6 +435,9 @@ func runGovulncheck(binary, dir string, env []string, work, logPath string) secu
 
 func parseSecuritySummary(output string) securitySummary {
 	summary := securitySummary{}
+	if !strings.Contains(output, "the "+candidateGoToolchain+" standard library") {
+		check(fmt.Errorf("govulncheck output did not prove %s standard library analysis", candidateGoToolchain))
+	}
 	if strings.Contains(output, "Your code is affected by 0 vulnerabilities.") || strings.Contains(output, "No vulnerabilities found.") {
 		summary.reachable = 0
 	} else {
@@ -492,6 +499,7 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	fmt.Fprintf(&builder, "source_revision=%s\n", revision)
 	fmt.Fprintf(&builder, "source_commit_time=%s\n", commitTime.Format(time.RFC3339))
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
+	fmt.Fprintf(&builder, "security_standard_library_version=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
 	fmt.Fprintf(&builder, "candidate_version_scope=disposable_validation_only\n")
 	fmt.Fprintf(&builder, "rollback_version=%s\n", fixedVersion)
