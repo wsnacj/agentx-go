@@ -63,6 +63,20 @@ func ResolveBrowserElementTargetWithHint(selector string, ref string, hint *Brow
 	return resolveBrowserElementTargetWithHint(selector, ref, hint)
 }
 
+// BrowserElementResolverJS returns the bounded selector/ref resolver used by
+// the legacy system-host adapter.
+func BrowserElementResolverJS(target BrowserElementTarget) string {
+	return browserElementResolverJS(target)
+}
+
+// BrowserPrefersSafari reports whether a host browser label selects Safari.
+func BrowserPrefersSafari(browserApp string) bool { return prefersSafari(browserApp) }
+
+// ParseSafariTabsPayload parses the legacy system-host tab observation payload.
+func ParseSafariTabsPayload(raw string, activeIndex int) []BrowserTab {
+	return parseSafariTabsPayload(raw, activeIndex)
+}
+
 // BrowserRemoteLocatorProjectionForTarget projects a normalized target into
 // the transport-neutral remote locator contract.
 func BrowserRemoteLocatorProjectionForTarget(target BrowserElementTarget) (string, string, *BrowserElementHint, *agentxbrowserruntime.BrowserElementResolverRequest, agentxbrowserruntime.BrowserElementRemoteProjection) {
