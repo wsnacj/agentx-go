@@ -75,6 +75,9 @@ credential 或产品策略；当前仍是 Experimental，Beta 前需要进一步
 ## 参数、错误与 identity
 
 - `DecodeToolArguments` 与 `CanonicalizeToolArguments` 接受现有兼容输入并输出 canonical JSON；
+- `AttemptConstrainedBrowserArgumentRepair` 仅执行参数错误中显式声明、同时标记为
+  `Repairable` 与 `SafeAutorepair` 的 Browser 确定性修复；非 Browser tool、未声明或不安全的
+  修复均保持 fail closed，是否重试仍由 Host 决定；
 - 参数错误可通过 `errors.As(err, *ToolArgumentError)` 识别，保留稳定 code、field 与 repair；
 - `WithToolSessionID` 把调用方 session identity 传入 Browser session 协调；
 - `WithToolRuntimeNetworkGuard` 只注入宿主已决定的网络 guard，不替代 authorization、approval
