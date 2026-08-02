@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A首批Portable Scenes闭环完成；仍处于private validation |
-| Developer Portal | 65 package/13 candidate双平台focused API gate已通过；完整Scene站点编排仍属于后续文档产品化 |
+| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A/P4-B Portable Scenes闭环完成；仍处于private validation |
+| Developer Portal | 67 package/14 candidate双平台focused API gate已通过；完整Scene站点编排仍属于后续文档产品化 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前65个package、13个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
+| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前67个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
 | Experimental browser | P3-A已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
@@ -510,6 +510,28 @@ deferred governance：3个既有evidence source-scope stale/mismatch，以及1�
 
 本checkpoint仍不包含live provider、credential、客户policy、真实网络/文件副作用、业务结果
 权威，也不构成Public、Beta、Stable、semver、tag或发行授权。
+
+## P4-B Browser Ops Domain Kit source-authority 闭环
+
+P4-B把HS既有Browser Ops portable实现机械迁入`scenes/browserops`：14个production Go
+source、4,974行，覆盖六条Pack/Workflow、evidence bundle与state projection、六类确定性
+evaluator，以及通过显式canonical Tool Executor驱动的Host Kit。真实browser backend、
+profile/login、credential、approval、文件/artifact、livecapture与L1/L2/L3副作用策略继续留HS。
+
+fixed consumer锁定`v0.0.0-20260802230400-97a7e59508f5`，不含`replace`、HS、Runner、旧
+Scene import、真实浏览器、网络或credential；normal/race/vet/run及module zip/cache/Sum/Origin
+回读通过。HS production路径升级到同一版本，Pack注册与module manifest直接消费canonical
+owner；旧12个portable production文件删除，HS提交净减少4,496行，Browser Ops production
+由12,139行降至7,528行，保留部分均为Host/Product职责或兼容forwarder。
+
+scenes module normal/race/vet/tidy/list与Linux/amd64 CGO-disabled build通过，67 package/14
+candidate双平台API/import gate通过。完整AgentX回归仍为148 PASS、2个既有治理package FAIL、
+20 SKIP；失败仍只有3个evidence source-scope stale/mismatch与1个P3-A旧runtime-boundary
+inventory条目，没有P4-B功能回归。首次并行全module验证因本轮隔离cache耗尽磁盘而失败；
+仅清理本轮可重建cache后串行原命令通过，不计为代码失败。
+
+本checkpoint不授权Public/Beta/Stable、semver、license、tag或release，也不把HS live与安全
+策略视为待迁portable实现。
 
 ## 明确 non-goal
 

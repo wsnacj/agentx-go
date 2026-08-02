@@ -146,6 +146,9 @@ npm run docs:check
   contract、Pack、evidence/quality机制及显式Host ports
 - [`scenes/docparse`](scenes/docparse/API.md)：文档profile/planner/fusion/understanding、
   Pack、质量证据与无文件/无provider Host Kit；真实OCR/PDF、文件访问和私有schema由Host注入
+- [`scenes/browserops`](scenes/browserops/API.md)：Browser Ops Pack、证据投影、六类确定性
+  evaluator与显式[Host Kit](scenes/browserops/hostkit/API.md)；真实浏览器、profile/login、
+  credential、审批、文件/artifact和站点副作用策略由Host注入
 - [`extensions/domainkit`](extensions/domainkit/API.md)：无模型module/tool dispatch、typed
   error与deterministic output digest；provider与真实副作用必须由Host handler注入
 - [`extensions/domainmodule`](extensions/domainmodule/API.md)与

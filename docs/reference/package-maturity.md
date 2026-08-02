@@ -117,7 +117,7 @@ backend，也不因出现在本表而升级为Developer Preview candidate、Publ
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-65个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+67个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
