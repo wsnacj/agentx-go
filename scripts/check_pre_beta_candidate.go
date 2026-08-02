@@ -58,7 +58,7 @@ type securitySummary struct {
 }
 
 var (
-	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilities? in packages you import and ([0-9]+)[[:space:]]+vulnerabilities? in modules you require`)
+	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilit(y|ies) in packages you import and ([0-9]+)[[:space:]]+vulnerabilit(y|ies) in modules you require`)
 	vulnerabilityPattern = regexp.MustCompile(`GO-[0-9]{4}-[0-9]+`)
 )
 
@@ -444,9 +444,9 @@ func parseSecuritySummary(output string) securitySummary {
 	} else {
 		check(fmt.Errorf("govulncheck success output did not prove zero reachable vulnerabilities"))
 	}
-	if match := securityCountPattern.FindStringSubmatch(output); len(match) == 3 {
+	if match := securityCountPattern.FindStringSubmatch(output); len(match) == 5 {
 		summary.imported = mustAtoi(match[1])
-		summary.required = mustAtoi(match[2])
+		summary.required = mustAtoi(match[3])
 	}
 	seen := map[string]bool{}
 	for _, id := range vulnerabilityPattern.FindAllString(output, -1) {
