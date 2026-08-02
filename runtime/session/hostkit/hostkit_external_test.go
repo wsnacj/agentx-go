@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	controlcontract "github.com/wsnacj/agentx-go/runtime/controlcontract"
+	session "github.com/wsnacj/agentx-go/runtime/session"
 	sessionhostkit "github.com/wsnacj/agentx-go/runtime/session/hostkit"
 )
 
@@ -77,7 +77,7 @@ func TestRuntimeCancellationAndReadbackMismatchFailClosed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Completed || result.Backend.WorkerResultReadbackReady || result.Backend.FailureClass != controlcontract.FailureVerificationFailed {
+	if result.Completed || result.Backend.WorkerResultReadbackReady || result.Backend.FailureClass != session.FailureVerificationFailed {
 		t.Fatalf("mismatched readback must fail closed: %#v", result)
 	}
 }
@@ -109,10 +109,10 @@ func (w *stubWorker) InvokeDelegationWorker(ctx context.Context, request session
 		WorkerResultRef:      "worker_result:external_session_hostkit",
 		WorkerReadbackRef:    "worker_readback:external_session_hostkit",
 		ObservationRef:       "observation:external_session_hostkit",
-		EvidenceRefs: []controlcontract.EvidenceRef{{
+		EvidenceRefs: []session.EvidenceRef{{
 			Ref:      "evidence:external_session_hostkit",
 			Kind:     "delegation_worker_result",
-			Strength: controlcontract.EvidenceAdequate,
+			Strength: session.EvidenceAdequate,
 			Source:   "worker:external_session_hostkit",
 		}},
 	}, nil
@@ -131,50 +131,50 @@ func (w *stubWorker) ReadDelegationWorkerResult(_ context.Context, request sessi
 		WorkerResultRef:      request.WorkerResultRef,
 		WorkerReadbackRef:    request.WorkerReadbackRef,
 		ObservationRef:       "observation:external_session_hostkit",
-		EvidenceRefs: []controlcontract.EvidenceRef{{
+		EvidenceRefs: []session.EvidenceRef{{
 			Ref:      "evidence:external_session_hostkit_readback",
 			Kind:     "delegation_worker_readback",
-			Strength: controlcontract.EvidenceAdequate,
+			Strength: session.EvidenceAdequate,
 			Source:   "readback:external_session_hostkit",
 		}},
 	}, nil
 }
 
 func readyInput() sessionhostkit.BackendInput {
-	readiness := controlcontract.BuildHostOwnedDelegationWorkerRuntimeReadiness(controlcontract.HostOwnedDelegationWorkerRuntimeReadinessInput{
-		Request: controlcontract.BuildDelegationRequestProjection(controlcontract.DelegationRequestInput{
-			Activation:         controlcontract.ActivationManaged,
-			RequestedIntensity: controlcontract.IntensityL4DurableLongRun,
-			Frame: controlcontract.ObjectiveFrame{
+	readiness := session.BuildHostOwnedDelegationWorkerRuntimeReadiness(session.HostOwnedDelegationWorkerRuntimeReadinessInput{
+		Request: session.BuildDelegationRequestProjection(session.DelegationRequestInput{
+			Activation:         session.ActivationManaged,
+			RequestedIntensity: session.IntensityL4DurableLongRun,
+			Frame: session.ObjectiveFrame{
 				ID:              "objective:external_session_hostkit",
 				UserGoalDigest:  "sha256:external_session_hostkit",
-				ControlMode:     controlcontract.ControlModeDelegated,
-				Intensity:       controlcontract.IntensityL4DurableLongRun,
+				ControlMode:     session.ControlModeDelegated,
+				Intensity:       session.IntensityL4DurableLongRun,
 				SuccessCriteria: []string{"child result is verified before parent merge"},
-				RequiredEvidence: []controlcontract.EvidenceRef{{
+				RequiredEvidence: []session.EvidenceRef{{
 					Ref:      "evidence:external_session_hostkit",
 					Kind:     "delegation_worker_result",
-					Strength: controlcontract.EvidenceAdequate,
+					Strength: session.EvidenceAdequate,
 					Source:   "worker:external_session_hostkit",
 				}},
 			},
 			SubgoalRef:                        "subgoal:external_session_hostkit",
 			WorkerRef:                         "worker:external_session_hostkit",
-			AllowedToolRefs:                   []controlcontract.DisplaySafeRef{"tool:read"},
-			Budget:                            controlcontract.ObjectiveBudgetSnapshot{BudgetRef: "budget:external_session_hostkit", Limit: 1, Remaining: 1},
-			EvidenceRequirements:              []controlcontract.EvidenceRef{{Ref: "evidence:external_session_hostkit", Kind: "delegation_worker_result", Strength: controlcontract.EvidenceAdequate, Source: "worker:external_session_hostkit"}},
-			StopConditionRefs:                 []controlcontract.DisplaySafeRef{"stop:external_session_hostkit_verified"},
+			AllowedToolRefs:                   []session.DisplaySafeRef{"tool:read"},
+			Budget:                            session.ObjectiveBudgetSnapshot{BudgetRef: "budget:external_session_hostkit", Limit: 1, Remaining: 1},
+			EvidenceRequirements:              []session.EvidenceRef{{Ref: "evidence:external_session_hostkit", Kind: "delegation_worker_result", Strength: session.EvidenceAdequate, Source: "worker:external_session_hostkit"}},
+			StopConditionRefs:                 []session.DisplaySafeRef{"stop:external_session_hostkit_verified"},
 			RedactionPolicyRef:                "redaction:external_session_hostkit",
 			MergePolicyRef:                    "merge:external_session_hostkit",
 			ExecutionContractAllowsDelegation: true,
 			HostAllowsL4Delegation:            true,
 			UserConfirmed:                     true,
 			HostApproved:                      true,
-			ApprovalRefs:                      []controlcontract.DisplaySafeRef{"approval:external_session_hostkit"},
-			PolicyRefs:                        []controlcontract.DisplaySafeRef{"policy:external_session_hostkit"},
+			ApprovalRefs:                      []session.DisplaySafeRef{"approval:external_session_hostkit"},
+			PolicyRefs:                        []session.DisplaySafeRef{"policy:external_session_hostkit"},
 		}),
-		WorkerRuntimeGate: controlcontract.BuildProductionAdapterIndependentEffectGate(controlcontract.ProductionAdapterIndependentEffectGateSpec{
-			Kind:                  controlcontract.ProductionAdapterEffectGateDelegationWorker,
+		WorkerRuntimeGate: session.BuildProductionAdapterIndependentEffectGate(session.ProductionAdapterIndependentEffectGateSpec{
+			Kind:                  session.ProductionAdapterEffectGateDelegationWorker,
 			GateRef:               "gate:external_session_hostkit",
 			AdapterRef:            "adapter:external_session_hostkit",
 			ContractRef:           "contract:external_session_hostkit",
@@ -186,7 +186,7 @@ func readyInput() sessionhostkit.BackendInput {
 			EvalRef:               "eval:external_session_hostkit",
 			FailureReviewRef:      "review:external_session_hostkit",
 			CompensationReviewRef: "review:external_session_hostkit_compensation",
-			EvidenceRefs:          []controlcontract.DisplaySafeRef{"evidence:external_session_hostkit"},
+			EvidenceRefs:          []session.DisplaySafeRef{"evidence:external_session_hostkit"},
 		}),
 		AdapterRef:           "adapter:external_session_hostkit",
 		AdapterVersionRef:    "adapter_version:external_session_hostkit_v1",
@@ -209,8 +209,8 @@ func readyInput() sessionhostkit.BackendInput {
 		Readiness:               readiness,
 		InvocationReportRef:     "invocation_report:external_session_hostkit",
 		HostWorkerRuntimeRunRef: "worker_runtime_run:external_session_hostkit",
-		VisibleToolRefs:         []controlcontract.DisplaySafeRef{"tool:read"},
-		ContextRefs:             []controlcontract.DisplaySafeRef{"context:external_session_hostkit"},
+		VisibleToolRefs:         []session.DisplaySafeRef{"tool:read"},
+		ContextRefs:             []session.DisplaySafeRef{"context:external_session_hostkit"},
 		TimeoutRef:              "timeout:external_session_hostkit",
 		ParallelismRef:          "parallelism:external_session_hostkit",
 		FailureRef:              "failure:external_session_hostkit",

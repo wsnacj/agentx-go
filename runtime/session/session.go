@@ -9,19 +9,30 @@ package session
 import controlcontract "github.com/wsnacj/agentx-go/runtime/controlcontract"
 
 type (
-	DisplaySafeRef = controlcontract.DisplaySafeRef
-	AttemptRef     = controlcontract.AttemptRef
-	Boundary       = controlcontract.Boundary
-	MissingInput   = controlcontract.MissingInput
-	NextHostAction = controlcontract.NextHostAction
-	FailureClass   = controlcontract.FailureClass
-	EvidenceRef    = controlcontract.EvidenceRef
-	Observation    = controlcontract.Observation
-	ObjectiveFrame = controlcontract.ObjectiveFrame
-	ObjectiveRun   = controlcontract.ObjectiveRun
+	DisplaySafeRef          = controlcontract.DisplaySafeRef
+	AttemptRef              = controlcontract.AttemptRef
+	Boundary                = controlcontract.Boundary
+	MissingInput            = controlcontract.MissingInput
+	NextHostAction          = controlcontract.NextHostAction
+	FailureClass            = controlcontract.FailureClass
+	EvidenceStrength        = controlcontract.EvidenceStrength
+	EvidenceRef             = controlcontract.EvidenceRef
+	Observation             = controlcontract.Observation
+	Activation              = controlcontract.Activation
+	ExecutionIntensity      = controlcontract.ExecutionIntensity
+	ControlMode             = controlcontract.ControlMode
+	ObjectiveFrame          = controlcontract.ObjectiveFrame
+	ObjectiveRun            = controlcontract.ObjectiveRun
+	ObjectiveBudgetSnapshot = controlcontract.ObjectiveBudgetSnapshot
 
 	HostActionStatus = controlcontract.HostActionStatus
 
+	DelegationRequestInput                          = controlcontract.DelegationRequestInput
+	DelegationRequestProjection                     = controlcontract.DelegationRequestProjection
+	ProductionAdapterEffectGateKind                 = controlcontract.ProductionAdapterEffectGateKind
+	ProductionAdapterIndependentEffectGateSpec      = controlcontract.ProductionAdapterIndependentEffectGateSpec
+	ProductionAdapterIndependentEffectGate          = controlcontract.ProductionAdapterIndependentEffectGate
+	HostOwnedDelegationWorkerRuntimeReadinessInput  = controlcontract.HostOwnedDelegationWorkerRuntimeReadinessInput
 	HostOwnedDelegationWorkerRuntimeReadiness       = controlcontract.HostOwnedDelegationWorkerRuntimeReadiness
 	HostOwnedDelegationWorkerRuntimeInvocationInput = controlcontract.HostOwnedDelegationWorkerRuntimeInvocationInput
 	HostOwnedDelegationWorkerRuntimeInvocation      = controlcontract.HostOwnedDelegationWorkerRuntimeInvocation
@@ -51,6 +62,12 @@ const (
 	FailureEvidenceWeak       = controlcontract.FailureEvidenceWeak
 	FailureVerificationFailed = controlcontract.FailureVerificationFailed
 	FailureInternalError      = controlcontract.FailureInternalError
+	EvidenceAdequate          = controlcontract.EvidenceAdequate
+
+	ActivationManaged                           = controlcontract.ActivationManaged
+	IntensityL4DurableLongRun                   = controlcontract.IntensityL4DurableLongRun
+	ControlModeDelegated                        = controlcontract.ControlModeDelegated
+	ProductionAdapterEffectGateDelegationWorker = controlcontract.ProductionAdapterEffectGateDelegationWorker
 
 	HostActionBlocked  = controlcontract.HostActionBlocked
 	HostActionRecorded = controlcontract.HostActionRecorded
@@ -102,6 +119,18 @@ func AppendMissingInputs(base []MissingInput, values ...MissingInput) []MissingI
 
 func MergeEvidenceRefs(groups ...[]EvidenceRef) []EvidenceRef {
 	return controlcontract.MergeEvidenceRefs(groups...)
+}
+
+func BuildDelegationRequestProjection(input DelegationRequestInput) DelegationRequestProjection {
+	return controlcontract.BuildDelegationRequestProjection(input)
+}
+
+func BuildProductionAdapterIndependentEffectGate(spec ProductionAdapterIndependentEffectGateSpec) ProductionAdapterIndependentEffectGate {
+	return controlcontract.BuildProductionAdapterIndependentEffectGate(spec)
+}
+
+func BuildHostOwnedDelegationWorkerRuntimeReadiness(input HostOwnedDelegationWorkerRuntimeReadinessInput) HostOwnedDelegationWorkerRuntimeReadiness {
+	return controlcontract.BuildHostOwnedDelegationWorkerRuntimeReadiness(input)
 }
 
 func BuildHostOwnedDelegationWorkerRuntimeInvocation(input HostOwnedDelegationWorkerRuntimeInvocationInput) HostOwnedDelegationWorkerRuntimeInvocation {
