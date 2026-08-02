@@ -7,12 +7,14 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
-> 当前里程碑：**M6C Core Ubuntu Runtime与跨平台分发证据闭环**正在执行。
+> 当前里程碑：**M6C Core Ubuntu Runtime与跨平台分发证据闭环**已形成
+> `technical_checkpoint_complete_awaiting_owner_acceptance`。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受。M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
 > M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
 > 搜索的85页Developer Portal Candidate；M6C只补齐Ubuntu真实运行与跨平台分发证据，
-> 不新增Runtime能力，也不是Public、Beta、Stable或production-ready发布。
+> Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1实机矩阵已通过；它不新增Runtime能力，也不是
+> Public、Beta、Stable或production-ready发布。
 
 ## 当前提供：根合同
 

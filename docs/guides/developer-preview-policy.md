@@ -62,12 +62,13 @@ hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaki
 ## 工具链与平台
 
 当前module声明`go 1.24.1`，private consumer应使用Go 1.24.1或更高版本。darwin/arm64与
-linux/amd64的CGO-disabled API/build surface已经对账；实际完整运行验证目前是macOS
-arm64、Go 1.25.5。Ubuntu真实运行、CGO on/native和更宽平台矩阵在Beta前单独验收。
+linux/amd64的CGO-disabled API/build surface已经对账；实际完整运行验证包括macOS
+arm64/Go 1.25.5，以及M6C批准的Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1矩阵。后者只证明
+该精确组合，不自动形成更宽Linux、架构、Go版本或native支持承诺。
 
 ## Readiness边界
 
 本地preflight和fresh-cache VCS consumer通过后可以声明
 `private_validation_ready=true`。Public Beta还要求Owner选择并批准license/NOTICE、
-具名security和release approver、Ubuntu真实验证、正式tag/release授权以及剩余Pre-Beta
-门禁。缺任一项时`public_beta_ready=false`。
+具名security和release approver、正式tag/release授权、正式兼容等级以及剩余Pre-Beta
+门禁。M6C已关闭Ubuntu实机证据项，但缺其它任一项时`public_beta_ready=false`。

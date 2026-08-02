@@ -80,6 +80,21 @@ Skill加载、缓存、activation、requested semantics和资源引用；它不�
 长期 consumer不得依赖本地 `replace`；本地 `replace`只能用于临时开发测量，不能
 作为 fixed-version或发布证据。
 
+## Ubuntu实机复跑
+
+仓库内M6C lane固定Ubuntu 24.04 amd64与Go 1.25.5，在真实Linux进程中运行四module
+normal/race/vet/tidy/list、双平台API gate、fixed-version空缓存consumer和module
+artifact provenance：
+
+```bash
+GOWORK=off CGO_ENABLED=1 go run ./scripts/check_ubuntu_runtime.go
+```
+
+该命令需要Linux amd64、GitHub私有仓库读取权限和公共Go依赖访问；它会使用临时空
+`GOMODCACHE`获取固定版本，并在冻结cache、`GOPROXY=off`后再次运行consumer。GitHub
+Actions入口为`.github/workflows/m6c-ubuntu-runtime.yml`，支持当前迁移分支push和
+`workflow_dispatch`，不要求PR。不得把token、URL rewrite或runner credential写入仓库。
+
 ## 升级方式
 
 Developer Preview期间，升级应显式修改 pseudo-version，并运行调用方 focused

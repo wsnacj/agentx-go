@@ -21,10 +21,14 @@ AgentX Go当前只提供private Developer Preview的best-effort开发支持，�
 | 维度 | 当前事实 |
 | --- | --- |
 | Go module基线 | `go 1.24.1`；private consumer应使用Go 1.24.1或更高版本 |
-| 实际完整测试主机 | macOS arm64，Go 1.25.5 |
+| 实际完整测试主机 | macOS arm64与Ubuntu 24.04.4 amd64，Go 1.25.5 |
 | API/build surface | darwin/arm64与linux/amd64，`CGO_ENABLED=0` |
-| Ubuntu真实运行 | 尚未形成M6A正式证据，继续阻断Public Beta |
-| CGO/native | Core推荐路径不要求；未声明的native能力不属于支持面 |
+| Ubuntu真实运行 | M6C run `30732109611`在`3c3c7fa46a28`完成四module normal/race/vet/tidy/list、fixed consumer与artifact gate |
+| CGO/native | Ubuntu批准矩阵以`CGO_ENABLED=1`通过；Core推荐路径仍不要求CGO，未声明的native能力不属于支持面 |
+
+M6C只证明上述单一Ubuntu/amd64/Go版本矩阵；它不自动承诺其它发行版、架构、Go版本、
+系统级native依赖或生产SLA。可复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`与
+`go run ./scripts/check_ubuntu_runtime.go`，后者会拒绝非Linux amd64主机。
 
 provider、credential、授权/审批、真实网络、durable backend、Scene业务规则、部署容量和
 生产可用性不属于本仓Developer Preview支持承诺。
