@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M5S Core Developer Preview Surface, Construction and Documentation Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| 当前产品里程碑 | M5T Core Developer Preview Version Alignment, Upgrade Compatibility and Clean-Room Adoption Closure：`active` |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
@@ -351,8 +351,13 @@ linux/amd64二进制3,369,181字节。四module test/race/vet/tidy/list、module
 import direction和HS focused compatibility全部通过；唯一完整HS回归为149 PASS、2个
 既有治理FAIL、20 SKIP，仍仅有3个既有evidence stale/mismatch。W2-A closure保持
 407/57/2467/65、HS118/canonical34/Scene0；M5S不新增HS construction依赖，因此不借
-产品收口修改该闭包。当前结论为`technical_checkpoint_complete_awaiting_owner_acceptance`，
-不构成Public/Beta/Stable、semver、tag或发行授权。
+产品收口修改该闭包。M5S已于2026-08-02获Owner接受，状态为`accepted_checkpoint`；
+该接受不构成Public/Beta/Stable、semver、tag或发行授权。
+
+M5T随后只关闭消费与升级层面的版本偏差：以
+`v0.0.0-20260802021959-5a41fb0ccb87`作为四module候选统一基线，补中文升级/回滚说明、
+轻量版本一致性门禁与clean-room/no-replace验证，并在兼容差分通过后统一HS要求。
+M5T不新增Runtime owner、不改变Scene业务逻辑，也不进入完整文档站或正式发行。
 
 ## 明确 non-goal
 

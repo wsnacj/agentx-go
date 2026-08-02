@@ -5,11 +5,11 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前里程碑：**M5E Portable Skills Core technical checkpoint complete / awaiting Owner acceptance**。
-> M3E Core两条标准路径、M5C Pack Core与 M5D A股 extension已获接受；M5E已经把
-> portable Skill合同、loader/cache、activation/semantics和资源引用迁入新仓。
-> 代码、固定 consumer、HS cutover和中文文档已完成，等待人工接受；
-> 它不是 Public、Beta、Stable或 production-ready发布。
+> 当前里程碑：**M5T Core Developer Preview Version Alignment, Upgrade Compatibility and
+> Clean-Room Adoption Closure**。
+> M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
+> 已获Owner接受。M5T只收口四module固定版本、升级/回滚说明与独立消费证据；
+> 它不新增Runtime能力，也不是Public、Beta、Stable或production-ready发布。
 
 ## 当前提供：根合同
 

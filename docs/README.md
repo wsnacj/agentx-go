@@ -1,9 +1,9 @@
 # AgentX Go 中文文档
 
-M5S已形成Core Developer Preview Candidate技术checkpoint：三条标准construction路径、
+M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint：三条标准construction路径、
 44个package中文Reference、8个候选API snapshot/平台/类型闭包门禁及统一fixed-version
-consumer已经闭合。该结论仍处于private validation，等待Owner接受，不构成Public、
-Beta、Stable、semver或正式发行。
+consumer已经闭合。M5T正在收口四module统一版本、升级/回滚说明与clean-room消费证据。
+这些结论仍处于private validation，不构成Public、Beta、Stable、semver或正式发行。
 
 当前文档对应 M3E Core Developer Preview candidate、M4A Experimental Host
 HTTP owner、M5A AssetFS/首个 portable extension合同、M5B Domain Module及
