@@ -140,7 +140,7 @@ func BrowserInventoryDefinition(name string) (types.Tool, bool) {
 		return browserOpenDefinition(), true
 	case "navigate":
 		return browserNavigateDefinition(), true
-	case "tabs":
+	case "list_tabs":
 		return browserTabsDefinition(), true
 	case "extract":
 		return browserExtractDefinition(), true
