@@ -6,7 +6,7 @@ from .table_extractor_pdfplumber import PDFPlumberTableExtractor, HybridTableExt
 from .image_extractor import ImageExtractor
 
 __all__ = [
-    'PDFParser', 
+    'PDFParser',
     'PDFPlumberTableExtractor',
     'HybridTableExtractor',
     'ImageExtractor'

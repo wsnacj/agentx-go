@@ -46,7 +46,7 @@ except ImportError:
 
 class PDFParser:
     """PDF解析器主类（清理版）"""
-    
+
     def __init__(self, pdf_path: str, need_character: bool = False,
                  extract_images: bool = False, page_range: str = "all",
                  table_engine: str = "hybrid", high_accuracy: bool = False):
@@ -67,18 +67,18 @@ class PDFParser:
         self.page_range = page_range
         self.table_engine = table_engine
         self.high_accuracy = high_accuracy
-        
+
         # 根据table_engine确定是否使用pdfplumber
         self.use_pdfplumber = (table_engine in ["pdfplumber", "hybrid"]) and PDFPLUMBER_AVAILABLE
-        
+
         self.doc = None
         self.pdf_plumber_doc = None
-        
+
         logger.info(f"Initializing PDF parser for: {pdf_path}")
         logger.debug(f"Parameters: need_character={need_character}, extract_images={extract_images}, "
                     f"page_range={page_range}, table_engine={table_engine}, "
                     f"use_pdfplumber={self.use_pdfplumber}")
-        
+
     def parse(self) -> Dict[str, Any]:
         """解析PDF文档"""
         start_time = time.time()
@@ -93,7 +93,7 @@ class PDFParser:
             except Exception as e:
                 error_msg = str(e)
                 logger.error(f"Failed to open PDF with PyMuPDF: {error_msg}")
-                
+
                 # 检查是否是加密相关错误
                 if "aes filter" in error_msg.lower() or "encryption" in error_msg.lower():
                     raise Exception(f"PDF file is encrypted or corrupted: {error_msg}")
@@ -101,7 +101,7 @@ class PDFParser:
                     raise Exception(f"PDF file is corrupted or truncated: {error_msg}")
                 else:
                     raise Exception(f"Cannot open PDF file: {error_msg}")
-            
+
             # 如果需要使用pdfplumber，提前打开文档
             if self.use_pdfplumber:
                 try:
@@ -134,10 +134,10 @@ class PDFParser:
                         "tables": []
                     }
                     pages.append(page_data)
-            
+
             duration = int((time.time() - start_time) * 1000)  # 毫秒
             logger.info(f"PDF parsing completed in {duration}ms")
-            
+
             result = {
                 "message": "success",
                 "code": 0,
@@ -147,9 +147,9 @@ class PDFParser:
                     "pages": pages
                 }
             }
-            
+
             return result
-            
+
         except Exception as e:
             duration = int((time.time() - start_time) * 1000)
             logger.exception(f"Error parsing PDF: {str(e)}")
@@ -157,17 +157,17 @@ class PDFParser:
         finally:
             # 安全关闭文档资源
             self._cleanup_resources()
-    
+
     def _parse_page_range(self, page_range_str, total_pages):
         """解析页面范围字符串"""
         if page_range_str.lower() == "all":
             return list(range(total_pages))
-            
+
         pages = set()
-        
+
         for part in page_range_str.split(','):
             part = part.strip()
-            
+
             if '-' in part:
                 start, end = part.split('-')
                 start = int(start) - 1
@@ -177,9 +177,9 @@ class PDFParser:
                 page = int(part) - 1
                 if 0 <= page < total_pages:
                     pages.add(page)
-                    
+
         return sorted(list(pages))
-    
+
     def _parse_page(self, page, page_num: int) -> Dict[str, Any]:
         """解析单个页面"""
         try:
@@ -220,7 +220,7 @@ class PDFParser:
             except Exception as e:
                 logger.warning(f"Failed to extract images from page {page_num + 1}: {e}")
                 page_data["images"] = []
-        
+
         # 使用表格提取器
         logger.debug(f"Using table engine: {self.table_engine}")
 
@@ -240,7 +240,7 @@ class PDFParser:
             tables = extractor.find_tables()
 
         logger.debug(f"Found {len(tables)} tables on page {page_num + 1}")
-        
+
         # debug
         for i, table in enumerate(tables):
             logger.debug(f"Table {i}: position={table['position']}, type={table.get('type')}, "
@@ -254,31 +254,31 @@ class PDFParser:
                 'rect': fitz.Rect(pos[0], pos[1], pos[2], pos[3]),
                 'table': table
             })
-        
+
         # 提取表格外的文本块
         text_blocks = self._extract_text_blocks_outside_tables(page, table_regions)
         logger.debug(f"Found {len(text_blocks)} text blocks outside tables on page {page_num + 1}")
-        
+
         # 将文本块和表格按照位置排序，构建统一的tables列表
         all_elements = self._combine_tables_and_text(tables, text_blocks)
-        
+
         # 按照位置排序（从上到下，从左到右）
         all_elements.sort(key=lambda x: (x['position'][1], x['position'][0]))
-        
+
         # 构建最终的tables列表
         page_data['tables'] = [elem['table'] for elem in all_elements]
-        
+
         logger.debug(f"Page {page_num + 1} processed: {len(page_data['tables'])} elements total")
-        
+
         return page_data
-    
+
     def _extract_tables_pymupdf_only(self, page, page_num: int) -> List[Dict[str, Any]]:
         """只使用PyMuPDF提取表格的简化方法"""
         logger.debug("Using PyMuPDF-only table extraction")
         # 这里可以实现一个简化的PyMuPDF表格提取逻辑
         # 暂时返回空列表，实际使用时需要实现
         return []
-    
+
     def _extract_text_blocks_outside_tables(self, page, table_regions):
         """提取表格外的文本块"""
         try:
@@ -287,9 +287,9 @@ class PDFParser:
         except Exception as e:
             logger.warning(f"Error extracting text from page: {e}")
             return []
-        
+
         text_blocks = []
-        
+
         for block in text_dict['blocks']:
             if block['type'] == 0:  # 文本块
                 try:
@@ -363,11 +363,11 @@ class PDFParser:
                 return True
 
         return False
-    
+
     def _combine_tables_and_text(self, tables, text_blocks):
         """合并表格和文本块"""
         all_elements = []
-        
+
         # 添加文本块作为plain类型的table
         if text_blocks:
             plain_tables = self._group_text_blocks_into_plain_tables(text_blocks)
@@ -377,7 +377,7 @@ class PDFParser:
                     'position': plain_table['position'],
                     'table': plain_table
                 })
-        
+
         # 添加真正的表格
         for table in tables:
             # 规范化表格类型
@@ -386,29 +386,29 @@ class PDFParser:
                 table['type'] = 'table_with_line'
             elif table_type == 'table_no_border':
                 table['type'] = 'table_without_line'
-            
+
             all_elements.append({
                 'type': table['type'],
                 'position': table['position'],
                 'table': table
             })
-        
+
         return all_elements
-    
+
     def _group_text_blocks_into_plain_tables(self, text_blocks):
         """将文本块分组成plain类型的table"""
         if not text_blocks:
             return []
-        
+
         # 简化的文本块分组逻辑
         # 按垂直位置分组
         text_blocks_with_idx = [(i, block) for i, block in enumerate(text_blocks)]
         text_blocks_with_idx.sort(key=lambda x: (x[1]['bbox'][1], x[1]['bbox'][0]))
-        
+
         plain_tables = []
         current_group = []
         vertical_gap_threshold = 20
-        
+
         for idx, block in text_blocks_with_idx:
             if not current_group:
                 current_group = [(idx, block)]
@@ -416,7 +416,7 @@ class PDFParser:
                 last_block = current_group[-1][1]
                 current_block_y = block['bbox'][1]
                 last_block_y = last_block['bbox'][3]
-                
+
                 if current_block_y - last_block_y <= vertical_gap_threshold:
                     current_group.append((idx, block))
                 else:
@@ -426,19 +426,19 @@ class PDFParser:
                         blocks_only = [item[1] for item in current_group]
                         plain_table = self._create_plain_table(blocks_only)
                         plain_tables.append(plain_table)
-                    
+
                     # 开始新组
                     current_group = [(idx, block)]
-        
+
         # 处理最后一组
         if current_group:
             current_group.sort(key=lambda x: x[0])
             blocks_only = [item[1] for item in current_group]
             plain_table = self._create_plain_table(blocks_only)
             plain_tables.append(plain_table)
-        
+
         return plain_tables
-    
+
     def _create_plain_table(self, text_blocks):
         """从文本块创建plain类型的table"""
         # 计算边界
@@ -446,7 +446,7 @@ class PDFParser:
         min_y = min(block['bbox'][1] for block in text_blocks)
         max_x = max(block['bbox'][2] for block in text_blocks)
         max_y = max(block['bbox'][3] for block in text_blocks)
-        
+
         # 创建lines
         lines = []
         for block in text_blocks:
@@ -455,19 +455,19 @@ class PDFParser:
                 "text": block['text'],
                 "direction": 0,
                 "handwritten": 0,
-                "position": [int(block['bbox'][0]), int(block['bbox'][1]), 
+                "position": [int(block['bbox'][0]), int(block['bbox'][1]),
                            int(block['bbox'][2]), int(block['bbox'][3])],
                 "score": 1.0,
                 "type": "text"
             }
-            
+
             # 如果需要字符信息，这里可以进一步处理
             if self.need_character:
                 char_info = self._init_char_info()
                 tline.update(char_info)
-            
+
             lines.append(tline)
-        
+
         # 创建plain table
         plain_table = {
             "height_of_rows": [],  # plain类型不需要行高
@@ -479,9 +479,9 @@ class PDFParser:
             "lines": lines,
             "table_cols": 0
         }
-        
+
         return plain_table
-    
+
     def _init_char_info(self) -> Dict[str, List]:
         """初始化字符级信息结构"""
         return {
@@ -492,7 +492,7 @@ class PDFParser:
             "char_positions": [],
             "char_scores": []
         }
-    
+
     def _cleanup_resources(self):
         """安全清理资源"""
         # 清理pdfplumber文档
@@ -504,7 +504,7 @@ class PDFParser:
                 logger.warning(f"Error closing pdfplumber document: {e}")
             finally:
                 self.pdf_plumber_doc = None
-        
+
         # 清理PyMuPDF文档
         if self.doc:
             try:
@@ -514,7 +514,7 @@ class PDFParser:
                 logger.warning(f"Error closing PyMuPDF document: {e}")
             finally:
                 self.doc = None
-    
+
     def _create_error_response(self, error_message: str, duration: int = 0) -> Dict[str, Any]:
         """创建标准错误响应"""
         return {

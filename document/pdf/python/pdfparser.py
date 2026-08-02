@@ -23,11 +23,11 @@ def main():
     """主函数"""
     parser = argparse.ArgumentParser(description='Unified PDF Parser')
     parser.add_argument('pdf_path', help='Path to PDF file')
-    parser.add_argument('--need-character', action='store_true', 
+    parser.add_argument('--need-character', action='store_true',
                        help='Include character-level information')
     parser.add_argument('--extract-images', action='store_true',
                        help='Extract images from PDF')
-    parser.add_argument('--page-range', default='all', 
+    parser.add_argument('--page-range', default='all',
                        help='Page range, e.g., "1-5", "1,3,5", "all"')
     parser.add_argument('--output-format', choices=['json', 'text', 'html'], default='json',
                        help='Output format')
@@ -35,7 +35,7 @@ def main():
                        help='Table extraction engine to use')
     parser.add_argument('--high-accuracy', action='store_true',
                        help='Enable high accuracy mode (enables Camelot fallback, slower but more accurate)')
-    
+
     # 保留这些参数以保持兼容性，但内部不再使用或有默认行为
     parser.add_argument('--merge-lines', action='store_true',
                        help='(Deprecated) Merge adjacent text lines - now handled automatically')
@@ -49,9 +49,9 @@ def main():
                        help='(Deprecated) Minimum table columns - now handled by engine')
     parser.add_argument('--no-pdfplumber', action='store_true',
                        help='(Deprecated) Use --table-engine pymupdf instead')
-    
+
     args = parser.parse_args()
-    
+
     # 验证文件路径
     if not Path(args.pdf_path).exists():
         logger.error(f"PDF file '{args.pdf_path}' not found")
@@ -64,7 +64,7 @@ def main():
         }
         print(json.dumps(error_result, ensure_ascii=False))
         sys.exit(1)
-    
+
     try:
         logger.info(f"Starting PDF parsing for: {args.pdf_path}")
 
@@ -92,7 +92,7 @@ def main():
         print(output)
 
         logger.info("PDF parsing completed successfully")
-        
+
     except Exception as e:
         logger.exception(f"Unexpected error: {str(e)}")
         error_result = {
