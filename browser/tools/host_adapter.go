@@ -154,6 +154,27 @@ func BrowserInventoryDefinition(name string) (types.Tool, bool) {
 	}
 }
 
+// NormalizeBrowserToolToken applies canonical action/kind token normalization.
+func NormalizeBrowserToolToken(raw string) string { return browserNormalizeToolToken(raw) }
+
+// BrowserUnifiedActKind resolves a unified Browser action into its canonical act kind.
+func BrowserUnifiedActKind(params map[string]any, action string) string {
+	return browserUnifiedActKind(params, action)
+}
+
+// BrowserUnifiedRuntimeAction resolves a unified runtime alias.
+func BrowserUnifiedRuntimeAction(action string) (string, bool) {
+	alias, ok := browserUnifiedRuntimeActionAliases[browserNormalizeToolToken(action)]
+	return alias.Action, ok
+}
+
+// BrowserCompatForceConfirmationNeedsGuardianReview reports the canonical
+// force-confirmation posture for a compatibility tool. The Host still owns the
+// approval decision and hook.
+func BrowserCompatForceConfirmationNeedsGuardianReview(name string, params map[string]any) bool {
+	return browserCompatForceConfirmationNeedsGuardianReview(name, params)
+}
+
 // BrowserCompatToolErrorf preserves the specialist-tool error prefix.
 func BrowserCompatToolErrorf(kind string, format string, args ...any) error {
 	return browserCompatToolErrorf(kind, format, args...)
