@@ -1,6 +1,6 @@
 # AgentX Go 中文文档
 
-M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径、
+M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；
 51个package中文Reference、10个候选API snapshot/平台/类型闭包门禁及统一fixed-version
 consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、

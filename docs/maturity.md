@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-D完成；P1-E Deterministic Domain Kit统一conformance实施中；仍处于private validation |
+| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A由HS规划继续推进；仍处于private validation |
 | Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
@@ -461,9 +461,13 @@ P1-D状态为`completed_checkpoint`，不构成Public/Beta/Stable或正式发行
 P1-E新增Experimental `extensions/domainkit`真实implementation：构造时统一规范化manifest、
 拒绝重复module、manifest外handler与缺失handler；运行时按显式module/tool exact-once调用
 Host handler，不调用模型、不进行自然语言路由或provider选择，并输出稳定SHA-256 digest。
-typed error保留cause identity，同时提供独立display-safe message。当前只完成canonical
-implementation landing；fixed consumer、HS A股production cutover和最终回归将在本wave
-checkpoint前闭合。
+typed error保留cause identity，同时提供独立display-safe message。该实现不包含provider、
+credential或真实副作用。fixed版本`v0.0.0-20260802113655-f41de95ec5be`由无HS/Runner/Scene/
+长期`replace`的domain-module consumer重复fixture验证；HS A股production tool protocol已
+使用canonical Runtime并删除本地通用结果收口。canonical四module、51/10/2 API gate、
+83份Markdown/303链接、95页Portal与artifact Origin通过；HS完整回归为149 PASS、2个既有
+治理FAIL、20 SKIP且无新增失败。P1-E状态为`completed_checkpoint`，不构成Scene迁移或
+Public/Beta/Stable授权。
 
 ## 明确 non-goal
 

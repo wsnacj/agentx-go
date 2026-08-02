@@ -98,8 +98,8 @@ Manifest/ConfigRequirement/Diagnostics，同时继续通过 HS Target helper接�
 迁移没有改变注册顺序、错误文本、diagnostic JSON或“失败前的 mutation不回滚”语义。
 
 `extensions/conformance/domain-module-consumer`固定 extensions pseudo-version，证明
-外部项目无需 HS、Runner或 `replace`即可使用portable coordinator；它不包含具体
-Scene、pack、tool executor、provider或credential。
+外部项目无需 HS、Runner或 `replace`即可使用portable coordinator与无模型Domain Kit
+fixture执行；它不包含具体Scene、provider、credential或真实副作用。
 
 ## M5C Portable Pack Core收口
 

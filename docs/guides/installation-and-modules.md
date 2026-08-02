@@ -71,7 +71,8 @@ consumer中验证自定义ExecutionAdapter、Model/Tool Host Kit、Workflow Host
 `extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
 用于验证无 HS、无长期 `replace` 的组合接入。
 `extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以
-在无 HS、无 Runner、无长期 `replace` 时实现 config resolver和注册 callback。
+在无 HS、无 Runner、无长期 `replace` 时实现 config resolver、注册 callback和
+无模型Domain Kit fixture执行。
 `extensions/conformance/astock-consumer`固定 extensions/runtime，验证 A股 Manifest、
 嵌入资产、三组 Pack、route/binding、fixture Host Kit和 evaluator的组合路径。
 `extensions/conformance/skills-consumer`固定 extensions/runtime，验证 immutable
