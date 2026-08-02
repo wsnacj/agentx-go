@@ -105,7 +105,9 @@ client, err := hostkit.NewModelToolClient(hostkit.ModelToolClientConfig{
 `requestModel`和 `executeTools`由调用方实现；Host Kit不安装默认 provider、凭据、
 授权或网络副作用。完整代码、可选 ports和 owner边界见
 [Host Kit接入指南](guides/model-tool-hostkit.md)，fixed-version运行证据见
-[`runtime/conformance/hostkit-consumer`](../runtime/conformance/hostkit-consumer)。
+统一[`conformance/consumer`](../conformance/consumer)；原有专项目录
+[`runtime/conformance/hostkit-consumer`](../runtime/conformance/hostkit-consumer)
+继续保留为 focused compatibility consumer。
 
 ## 路径三：Workflow Host Kit
 
@@ -127,7 +129,9 @@ result, err := runtime.Run(ctx, spec, workflowhostkit.Inputs{})
 Host Kit复用 canonical validation/lowering/journal/nodeexec/orchestration/composition，
 不安装产品 policy、provider或 backend。完整示例与 durable、取消、并发边界见
 [Workflow Host Kit指南](guides/workflow-hostkit.md)，fixed-version证据见
-[`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)。
+统一[`conformance/consumer`](../conformance/consumer)；原有专项目录
+[`runtime/conformance/workflow-hostkit-consumer`](../runtime/conformance/workflow-hostkit-consumer)
+继续保留为 focused compatibility consumer。
 
 安装前先阅读[安装与多 Module 引用](guides/installation-and-modules.md)。
 

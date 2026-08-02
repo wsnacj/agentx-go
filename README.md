@@ -106,16 +106,16 @@ rewrite 属于开发/CI 环境配置，不写入源码、`go.mod`、示例或日
 
 ```text
 github.com/wsnacj/agentx-go
-  v0.0.0-20260729101644-c7c26d427ac2
+  v0.0.0-20260802021959-5a41fb0ccb87
 
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260729125257-bb6949793309
+  v0.0.0-20260802021959-5a41fb0ccb87
 
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801061901-08fdf1038850
+  v0.0.0-20260802021959-5a41fb0ccb87
 
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801100244-e9b2f8a65ee4
+  v0.0.0-20260802021959-5a41fb0ccb87
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -153,7 +153,7 @@ github.com/wsnacj/agentx-go/extensions
 - [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
-- [External-style consumer](conformance/consumer)
+- [三条标准路径统一 External-style consumer](conformance/consumer)
 - [Control Contract external-style consumer](runtime/conformance/controlcontract-consumer)
 - [Extension external-style consumer](extensions/conformance/astock-contract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)

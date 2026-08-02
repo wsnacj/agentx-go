@@ -80,7 +80,7 @@ GOWORK=off go run scripts/check_docs_links.go
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；
-6. 中文正文中的245个仓库本地链接均可解析且不越出仓库。
+6. 中文正文中扫描到的仓库本地链接均可解析且不越出仓库。
 
 更新候选签名必须同时完成 focused owner/consumer review、中文 Reference 修订和
 baseline及`docs/reference/api-snapshots/`更新。`-check-platforms`只把目标平台参数

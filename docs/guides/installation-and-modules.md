@@ -22,22 +22,22 @@ immutable `FSSource`，还应把 runtime列为直接依赖。
 
 ```text
 github.com/wsnacj/agentx-go
-  v0.0.0-20260729101644-c7c26d427ac2
+  v0.0.0-20260802021959-5a41fb0ccb87
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260729125257-bb6949793309
+  v0.0.0-20260802021959-5a41fb0ccb87
 github.com/wsnacj/agentx-go/runtime
-  v0.0.0-20260801061901-08fdf1038850
+  v0.0.0-20260802021959-5a41fb0ccb87
 github.com/wsnacj/agentx-go/extensions
-  v0.0.0-20260801100244-e9b2f8a65ee4
+  v0.0.0-20260802021959-5a41fb0ccb87
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
 
 ```bash
-go get github.com/wsnacj/agentx-go@v0.0.0-20260729101644-c7c26d427ac2
-go get github.com/wsnacj/agentx-go/components@v0.0.0-20260729125257-bb6949793309
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801061901-08fdf1038850
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801100244-e9b2f8a65ee4
+go get github.com/wsnacj/agentx-go@v0.0.0-20260802021959-5a41fb0ccb87
+go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802021959-5a41fb0ccb87
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802021959-5a41fb0ccb87
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802021959-5a41fb0ccb87
 ```
 
 ## Private 仓库访问
@@ -64,6 +64,9 @@ GOWORK=off go -C extensions test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
+根[`conformance/consumer`](../../conformance/consumer)同时固定根、components和
+runtime版本，在一个无HS、无Runner、无长期`replace`、无网络副作用的 consumer中
+验证自定义ExecutionAdapter、Model/Tool Host Kit和Workflow Host Kit三条标准路径。
 `extensions/conformance/astock-contract-consumer`同时固定 runtime和 extensions，
 用于验证无 HS、无长期 `replace` 的组合接入。
 `extensions/conformance/domain-module-consumer`只固定 extensions，验证新项目可以

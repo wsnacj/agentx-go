@@ -98,7 +98,7 @@ func runProbe() (string, error) {
 }
 
 func main() {
-	output, err := runProbe()
+	output, err := runAllProbes(context.Background())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
