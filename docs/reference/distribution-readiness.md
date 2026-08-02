@@ -9,6 +9,7 @@
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
 | `developer_portal_build_ready` | `true` | 85页中文Portal可由lockfile本地重建；不是公共托管结论 |
 | `ubuntu_runtime_ready` | `true` | Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1实机矩阵已通过；不扩张到其它平台 |
+| `pre_beta_technical_candidate_ready` | `pending_remote_readback` | 本地Go 1.25.12同版四module候选、安全扫描与只读cache已通过；只有最终远端run可读通过后才改为`true` |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
@@ -28,6 +29,14 @@
   实机上完成四module normal/race/vet/tidy/list、44/8双平台API、fresh private VCS、
   read-only module cache consumer和四module artifact Origin检查；精确source revision为
   `3c3c7fa46a2857b0ce04efffd046b352bd142e83`。
+- M6D本地门禁已在Go 1.25.12上从当前tracked source生成四个`v0.0.0-m6d.0`临时
+  module zip，完成四module test/vet/tidy、固定`govulncheck@v1.6.0`、无replace consumer
+  和`GOPROXY=off`只读cache复验；0个可达漏洞。该模拟版本和zip仅用于临时技术验证，
+  不进入正式分发。
+- extensions依赖图仍包含`golang.org/x/sys@v0.13.0`的Windows-only
+  `GO-2026-5024` module-level finding；当前10个extension package没有import或调用该
+  漏洞。它不阻断当前darwin/linux技术候选，但必须由具名security approver在Beta前决定
+  升级依赖或显式接受平台残余边界。
 
 ## Public Beta阻断
 
@@ -49,6 +58,7 @@ GOWORK=off go run scripts/check_developer_preview_distribution.go
 GOWORK=off go run scripts/check_developer_preview_distribution.go -fresh-cache -read-only-cache
 GOWORK=off go run scripts/check_developer_preview_distribution.go -portal
 GOWORK=off CGO_ENABLED=1 go run scripts/check_ubuntu_runtime.go
+GOWORK=off go run scripts/check_pre_beta_candidate.go
 ```
 
 第二条会使用空临时`GOMODCACHE`从私有VCS获取固定版本与公共依赖，随后冻结cache并在
@@ -57,3 +67,5 @@ GOWORK=off CGO_ENABLED=1 go run scripts/check_ubuntu_runtime.go
 第三条是可选Developer Portal lane；需先运行`npm ci`，不会改变普通Go consumer或四
 module验证对Node的零依赖边界。第四条只能在Linux amd64实机运行，并额外执行四module
 race；GitHub-hosted复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`。
+第五条构建可删除的同版候选、运行固定漏洞扫描并输出value-safe manifest；完整远端入口
+为`.github/workflows/m6d-pre-beta-candidate.yml`。

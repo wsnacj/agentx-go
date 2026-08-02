@@ -82,7 +82,7 @@ Skill加载、缓存、activation、requested semantics和资源引用；它不�
 
 ## Ubuntu实机复跑
 
-仓库内M6C lane固定Ubuntu 24.04 amd64与Go 1.25.5，在真实Linux进程中运行四module
+仓库内当前候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module
 normal/race/vet/tidy/list、双平台API gate、fixed-version空缓存consumer和module
 artifact provenance：
 
@@ -90,10 +90,18 @@ artifact provenance：
 GOWORK=off CGO_ENABLED=1 go run ./scripts/check_ubuntu_runtime.go
 ```
 
-该命令需要Linux amd64、GitHub私有仓库读取权限和公共Go依赖访问；它会使用临时空
+该命令需要Linux amd64、Go 1.25.12、GitHub私有仓库读取权限和公共Go依赖访问；它会使用临时空
 `GOMODCACHE`获取固定版本，并在冻结cache、`GOPROXY=off`后再次运行consumer。GitHub
-Actions入口为`.github/workflows/m6c-ubuntu-runtime.yml`，支持当前迁移分支push和
-`workflow_dispatch`，不要求PR。不得把token、URL rewrite或runner credential写入仓库。
+Actions的完整入口为`.github/workflows/m6d-pre-beta-candidate.yml`，支持当前迁移分支
+push和`workflow_dispatch`，不要求PR；M6C workflow保留为手动单项复跑。M6D还会运行：
+
+```bash
+GOWORK=off go run ./scripts/check_pre_beta_candidate.go
+```
+
+该命令只在临时目录使用`v0.0.0-m6d.0`组装四module同版候选，不修改tracked `go.mod`，
+并运行固定漏洞扫描、无replace consumer和只读cache复验。不得把token、URL rewrite或
+runner credential写入仓库。
 
 ## 升级方式
 

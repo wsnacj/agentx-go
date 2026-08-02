@@ -61,10 +61,12 @@ hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaki
 
 ## 工具链与平台
 
-当前module声明`go 1.24.1`，private consumer应使用Go 1.24.1或更高版本。darwin/arm64与
-linux/amd64的CGO-disabled API/build surface已经对账；实际完整运行验证包括macOS
-arm64/Go 1.25.5，以及M6C批准的Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1矩阵。后者只证明
-该精确组合，不自动形成更宽Linux、架构、Go版本或native支持承诺。
+当前module的`go 1.24.1`是语言/module graph基线，不构成Go 1.24 patch安全支持承诺。
+darwin/arm64与linux/amd64的CGO-disabled API/build surface已经对账；M6C历史证据覆盖
+macOS arm64/Go 1.25.5和Ubuntu 24.04.4/amd64/Go 1.25.5/CGO=1。M6D扫描证明Go 1.25.5
+标准库存在AgentX Runtime可达漏洞，因此当前Pre-Beta技术候选工具链已收紧为Go 1.25.12；
+正式最低/最新支持策略仍需Owner批准。任一结果都不自动形成更宽Linux、架构、Go版本或
+native支持承诺。
 
 ## Readiness边界
 

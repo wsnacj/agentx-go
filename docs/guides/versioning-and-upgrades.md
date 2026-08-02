@@ -10,6 +10,10 @@ v0.0.0-20260802021959-5a41fb0ccb87
 
 该版本是M5S已验证、M5T统一采用的消费基线，不是正式发行版本。
 
+M6D另外使用`v0.0.0-m6d.0`在临时file proxy中验证四module同版发行列车。该版本不会
+写入tracked `go.mod`、tag或下载入口，脚本退出后候选zip被删除；它不能作为项目依赖。
+M6D manifest继续把上述fixed pseudo-version记录为回滚点。
+
 ## 为什么四个 Module 使用同一版本
 
 四个module位于同一仓库，但Go会分别选择它们的版本。只升级其中一个，可能让调用方

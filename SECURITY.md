@@ -29,5 +29,19 @@ provider、credential、授权策略、真实backend和部署环境仍由各自o
 跨越边界，Core maintainer会协助路由。当前只支持文档记录的统一固定版本，不承诺旧
 pseudo-version安全回补。
 
+## 自动扫描边界
+
+Pre-Beta候选使用固定
+`golang.org/x/vuln/cmd/govulncheck@v1.6.0`扫描四module全部package。扫描工具链固定为
+Go 1.25.12；M6D曾在Go 1.25.5上命中10个标准库可达漏洞并按fail-closed停止，升级到
+Go 1.25.12后当前可达漏洞为0。漏洞数据库或工具下载不可达时只允许有界重试，不能把
+执行失败写成零漏洞。
+
+当前extensions graph另有1个不可达module-level finding：`GO-2026-5024`位于
+`golang.org/x/sys@v0.13.0`的Windows实现，现有extension package未import或调用，且当前
+候选平台不包含Windows。该结论不是永久豁免；具名security approver仍需在Beta前决定
+升级依赖或接受残余平台边界。自动扫描也不能覆盖反射/unsafe不可见调用、Host credential、
+授权策略、部署配置或业务readback。
+
 正式Public/Beta发布前仍需具名security approver、漏洞响应授权、license和release
 流程；本文件不代表这些门禁已经关闭。
