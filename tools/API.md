@@ -86,6 +86,19 @@ type ToolMetadata struct {
 `ToolSourceExtension`、`ToolSourceProject`、`ToolSourceCustom`和`ToolSourceUnknown`提供稳定
 source值。
 
+## Runtime context
+
+```go
+func WithToolSessionID(context.Context, string) context.Context
+func ToolSessionIDFromContext(context.Context) string
+func WithToolRuntimeNetworkGuard(context.Context, RuntimeNetworkGuard) context.Context
+func ToolRuntimeNetworkGuardFromContext(context.Context) (RuntimeNetworkGuard, bool)
+```
+
+该上下文合同只携带run/session identity和Host已选择的网络约束覆盖，不决定默认策略，也不
+执行网络请求。空值保持原context；CIDR和port列表会去空、去重并稳定排序。命令授权、approval
+hook和具体network backend不属于该合同。
+
 ## 当前通用tool
 
 - [`tools/diffs`](./diffs/API.md)：纯文本diff，不读取文件、Git或网络，不产生副作用。
