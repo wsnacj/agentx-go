@@ -3,7 +3,20 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
-## v0.0.0-20260802103826-c7d80001682e（P1-C Task / Session / Subagent Host Kit）
+## v0.0.0-20260802103826-c7d80001682e（P1-D Scheduler / Resume / Long Task）
+
+- 新增Experimental `runtime/scheduler`真实queue、dispatcher、lease heartbeat、terminal
+  persistence、retry/dead-letter与metrics实现；
+- 新增Experimental `runtime/session/resume`和Developer Preview candidate
+  `runtime/session/hostkit.NewResumeRuntime`，组合continuation readback、Host wake dispatch、
+  bounded daemon/service、幂等Shutdown和关闭后调用合同；
+- fixed consumer无HS、Runner、Scene或长期`replace`，同时覆盖child worker和resume路径；
+  HS scheduler/resume production consumer已cutover，原portable authority净减少约3,506行；
+- 具体durable backend、process/system scheduler、credential、authorization和产品policy仍由
+  Host拥有；本版本仍是private Developer Preview candidate，不授权Public/Beta/Stable、tag
+  或发行。
+
+## v0.0.0-20260802091415-920282587efc（P1-C Task / Session / Subagent Host Kit）
 
 - 新增Experimental `runtime/session`和Developer Preview candidate
   `runtime/session/hostkit`，把child worker调用、durable record、回读校验、

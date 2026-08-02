@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-D Scheduler/Resume/Long Task纵向闭环；仍处于private validation |
+| 当前产品里程碑 | M7A P1-D Scheduler/Resume/Long Task纵向闭环完成；P1-E由HS规划继续推进；仍处于private validation |
 | Developer Portal | 95个静态页面；50 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
@@ -433,7 +433,7 @@ P1-C新增Experimental `runtime/session`和Developer Preview candidate
 control-contract readiness；canonical implementation负责exact-once worker invoke、durable
 record、按ref回读、一致性校验、parent verification以及可选Objective handoff。
 
-固定版本`v0.0.0-20260802103826-c7d80001682e`由无HS、无Runner、无长期
+固定版本`v0.0.0-20260802091415-920282587efc`由无HS、无Runner、无长期
 `replace`的独立consumer验证；HS delegation、ProductShell和interactive CLI生产路径
 已直接使用canonical合同。HS四个通用兼容文件从1,562行收缩为79行，净减
 1,483行，并有owner gate防止实现回流。concrete worker、queue、scheduler、
@@ -449,8 +449,12 @@ coordination、metrics，以及continuation readback到Host wake dispatch的有�
 
 Host仍显式拥有concrete durable queue/store、process/service lifecycle、authorization、
 credential、backend与产品retry/priority policy。该landing不等于系统scheduler或无Host的
-完整long-task平台；fixed-version consumer、HS production cutover和最终回归将在本wave
-checkpoint前闭合。
+完整long-task平台。fixed版本`v0.0.0-20260802103826-c7d80001682e`的独立consumer同时验证
+child worker与resume路径；HS production已经切到canonical scheduler和resume service，原
+10个portable source共3,902行收缩为396行兼容/Host helper，净减少约3,506行。canonical
+四module test/race/vet/tidy/list、50 package/10 candidate API gate、fixed consumer与分发
+检查均通过；HS有效完整回归为149 PASS、2个既有治理FAIL、20 SKIP且无新增功能失败。
+P1-D状态为`completed_checkpoint`，不构成Public/Beta/Stable或正式发行授权。
 
 ## 明确 non-goal
 

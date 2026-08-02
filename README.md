@@ -8,10 +8,11 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1-D Scheduler/Resume/Long Task纵向闭环实施中**；M6D Core
+> 当前里程碑：**M7A P1-D Scheduler/Resume/Long Task纵向闭环已完成，P1-E
+> Deterministic Domain Kit统一conformance由HS规划继续推进**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受；P1-D现新增bounded Scheduler/Resume Host Kit、50包分类，并扩展第10个候选API。
+> 已获Owner接受；P1-D已新增bounded Scheduler/Resume Host Kit、50包分类，并扩展第10个候选API。
 > M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
 > M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
 > 搜索的85页Developer Portal Candidate。M6C已经证明Ubuntu真实运行与跨平台分发；
