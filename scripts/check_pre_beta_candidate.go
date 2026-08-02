@@ -143,10 +143,9 @@ func main() {
 
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, "go", "mod", "download", "all")
-		printRun(dir, candidateEnv, "go", "mod", "verify")
 		printRun(dir, candidateEnv, "go", "test", "./...")
 		printRun(dir, candidateEnv, "go", "vet", "./...")
+		printRun(dir, candidateEnv, "go", "mod", "verify")
 		printRun(dir, candidateEnv, "go", "mod", "tidy", "-diff")
 		packages := nonEmptyLines(run(dir, candidateEnv, "go", "list", "./..."))
 		if packages == 0 {
