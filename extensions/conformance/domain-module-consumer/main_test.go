@@ -31,3 +31,19 @@ func TestFixedVersionConsumer(t *testing.T) {
 		}
 	}
 }
+
+func TestFixedVersionDomainKitConsumer(t *testing.T) {
+	first, err := execute(context.Background())
+	if err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	second, err := execute(context.Background())
+	if err != nil {
+		t.Fatalf("execute repeat: %v", err)
+	}
+	if first.ModuleID != "sample" || first.Tool != "lookup" ||
+		first.Output != `{"id":"fixture-1","status":"ready"}` ||
+		first.OutputDigest == "" || first.OutputDigest != second.OutputDigest {
+		t.Fatalf("unexpected deterministic result: first=%#v second=%#v", first, second)
+	}
+}

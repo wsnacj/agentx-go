@@ -4,7 +4,7 @@ Objective Host Kit适合“Host拥有真实执行与业务授权，AgentX拥有�
 它不是自动读取凭据、自动选工具或自动写业务系统的黑盒Agent。
 
 当前private validation固定版本为
-`v0.0.0-20260802103826-c7d80001682e`。
+`v0.0.0-20260802113655-f41de95ec5be`。
 
 ## 标准接入步骤
 

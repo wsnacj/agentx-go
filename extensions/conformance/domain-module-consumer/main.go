@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/wsnacj/agentx-go/extensions/domainkit"
 	"github.com/wsnacj/agentx-go/extensions/domainmodule"
 )
 
@@ -38,13 +39,41 @@ func register(ctx context.Context) (domainmodule.Report, error) {
 	})
 }
 
+func execute(ctx context.Context) (domainkit.RunResult, error) {
+	runtime, err := domainkit.New(domainkit.Config{Modules: []domainkit.Module{{
+		Manifest: domainmodule.Manifest{ID: "sample", Name: "Sample", Tools: []string{"lookup"}},
+		Handlers: map[string]domainkit.Handler{
+			"lookup": func(_ context.Context, args map[string]any) (any, error) {
+				return map[string]any{"id": args["id"], "status": "ready"}, nil
+			},
+		},
+	}}})
+	if err != nil {
+		return domainkit.RunResult{}, err
+	}
+	return runtime.Run(ctx, domainkit.RunRequest{
+		ModuleID:  "sample",
+		CaseID:    "lookup-fixture",
+		Tool:      "lookup",
+		Arguments: map[string]any{"id": "fixture-1"},
+	})
+}
+
 func main() {
 	report, err := register(context.Background())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	if err := json.NewEncoder(os.Stdout).Encode(report); err != nil {
+	result, err := execute(context.Background())
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	if err := json.NewEncoder(os.Stdout).Encode(struct {
+		Registration domainmodule.Report `json:"registration"`
+		Execution    domainkit.RunResult `json:"execution"`
+	}{Registration: report, Execution: result}); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

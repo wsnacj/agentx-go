@@ -3,6 +3,17 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802113655-f41de95ec5be（P1-E Deterministic Domain Kit）
+
+- 新增Experimental `extensions/domainkit`真实无模型execution implementation：构造时
+  校验完整manifest/handler闭包，运行时按显式module/tool exact-once调用Host handler；
+- 输出保持string/bytes/JSON兼容，并附带稳定SHA-256 digest；typed error支持
+  `errors.Is/As`且将display-safe message与cause文本分离；
+- fixed `domain-module-consumer`不依赖HS、Runner、Scene或长期`replace`，覆盖注册与
+  重复fixture执行；HS A股production tool protocol切换到同一canonical Runtime；
+- provider、credential、authorization、真实backend/副作用与Scene业务判断仍由Host拥有；
+  本版本仍是private Experimental/Developer Preview验证，不授权正式发行。
+
 ## v0.0.0-20260802103826-c7d80001682e（P1-D Scheduler / Resume / Long Task）
 
 - 新增Experimental `runtime/scheduler`真实queue、dispatcher、lease heartbeat、terminal
