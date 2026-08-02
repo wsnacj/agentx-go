@@ -83,6 +83,12 @@ func NormalizeSeatEvidenceMode(mode string) string {
 	return SeatEvidenceModeAvailable
 }
 
+// NormalizeSeatTokens returns the canonical deduplicated seat-token list.
+func NormalizeSeatTokens(values []string) []string { return normalizeSeatTokens(values) }
+
+// SeatAvailabilityValueAvailable applies the canonical sold-out token policy.
+func SeatAvailabilityValueAvailable(value string) bool { return seatAvailable(value) }
+
 // FilterInventoryRowsByEvidence returns rows satisfying all requested available evidence.
 func FilterInventoryRowsByEvidence(rows []InventoryRow, trainPrefixes, seatTokens []string) []InventoryRow {
 	rows = normalizeRows(rows)
