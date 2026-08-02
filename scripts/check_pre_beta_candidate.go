@@ -80,6 +80,7 @@ func main() {
 	revision := strings.TrimSpace(run(root, os.Environ(), "git", "rev-parse", "HEAD"))
 	commitTime := readCommitTime(root)
 	fixedVersion := readTrimmed(filepath.Join(root, fixedVersionFile))
+	goCommand := resolveCandidateGo(root)
 
 	outputDir := *artifactDir
 	removeOutput := false
@@ -97,8 +98,8 @@ func main() {
 	check(err)
 	defer os.RemoveAll(work)
 
-	baseEnv := append(os.Environ(), "GOWORK=off", "GOTOOLCHAIN="+candidateGoToolchain)
-	printRun(root, baseEnv, "go", "run", "./scripts/check_developer_preview_distribution.go")
+	baseEnv := append(os.Environ(), "GOWORK=off", "GOTOOLCHAIN=local")
+	printRun(root, baseEnv, goCommand, "run", "./scripts/check_developer_preview_distribution.go")
 
 	stagingRoot := filepath.Join(work, "staging")
 	proxyRoot := filepath.Join(work, "proxy")
@@ -113,7 +114,7 @@ func main() {
 	for _, module := range candidateModules {
 		target := filepath.Join(stagingRoot, module.name)
 		copyTrackedModule(root, module.dir, target, nestedRoots)
-		rewriteCandidateRequirements(target)
+		rewriteCandidateRequirements(target, goCommand, baseEnv)
 		staged[module.path] = target
 	}
 
@@ -128,7 +129,7 @@ func main() {
 	toolBin := filepath.Join(work, "bin")
 	check(os.MkdirAll(toolBin, 0o755))
 	toolEnv := replaceEnv(candidateEnv, "GOBIN", toolBin)
-	printRun(root, toolEnv, "go", "install", govulncheckModule+"@"+govulncheckVersion)
+	printRun(root, toolEnv, goCommand, "install", govulncheckModule+"@"+govulncheckVersion)
 	govulncheckPath := filepath.Join(toolBin, "govulncheck")
 	if info, statErr := os.Stat(govulncheckPath); statErr != nil || !info.Mode().IsRegular() {
 		check(fmt.Errorf("pinned govulncheck binary was not installed"))
@@ -140,7 +141,7 @@ func main() {
 	// upstream candidate zip was still absent.
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, "go", "mod", "tidy")
+		printRun(dir, candidateEnv, goCommand, "mod", "tidy")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		writeProxyModule(proxyRoot, dir, module, commitTime, false)
 	}
@@ -149,8 +150,8 @@ func main() {
 	var artifacts []moduleArtifact
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, "go", "mod", "tidy")
-		printRun(dir, candidateEnv, "go", "mod", "tidy", "-diff")
+		printRun(dir, candidateEnv, goCommand, "mod", "tidy")
+		printRun(dir, candidateEnv, goCommand, "mod", "tidy", "-diff")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		artifact := writeProxyModule(proxyRoot, dir, module, commitTime, true)
 		artifacts = append(artifacts, artifact)
@@ -158,11 +159,11 @@ func main() {
 
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, "go", "test", "./...")
-		printRun(dir, candidateEnv, "go", "vet", "./...")
-		printRun(dir, candidateEnv, "go", "mod", "verify")
-		printRun(dir, candidateEnv, "go", "mod", "tidy", "-diff")
-		packages := nonEmptyLines(run(dir, candidateEnv, "go", "list", "./..."))
+		printRun(dir, candidateEnv, goCommand, "test", "./...")
+		printRun(dir, candidateEnv, goCommand, "vet", "./...")
+		printRun(dir, candidateEnv, goCommand, "mod", "verify")
+		printRun(dir, candidateEnv, goCommand, "mod", "tidy", "-diff")
+		packages := nonEmptyLines(run(dir, candidateEnv, goCommand, "list", "./..."))
 		if packages == 0 {
 			check(fmt.Errorf("%s candidate enumerated zero packages", module.path))
 		}
@@ -177,21 +178,21 @@ func main() {
 	consumer := filepath.Join(work, "consumer")
 	copyTrackedModule(root, "conformance/consumer", consumer, nestedRoots)
 	for _, module := range candidateModules {
-		printRun(consumer, candidateEnv, "go", "mod", "edit", "-require="+module.path+"@"+candidateVersion)
+		printRun(consumer, candidateEnv, goCommand, "mod", "edit", "-require="+module.path+"@"+candidateVersion)
 	}
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
-	printRun(consumer, candidateEnv, "go", "mod", "tidy")
+	printRun(consumer, candidateEnv, goCommand, "mod", "tidy")
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
-	printRun(consumer, candidateEnv, "go", "mod", "download", "all")
-	if packages := nonEmptyLines(run(consumer, candidateEnv, "go", "list", "-deps", "./...")); packages == 0 {
+	printRun(consumer, candidateEnv, goCommand, "mod", "download", "all")
+	if packages := nonEmptyLines(run(consumer, candidateEnv, goCommand, "list", "-deps", "./...")); packages == 0 {
 		check(fmt.Errorf("candidate consumer enumerated zero dependencies"))
 	}
-	printRun(consumer, candidateEnv, "go", "mod", "verify")
-	moduleGraph := run(consumer, candidateEnv, "go", "list", "-m", "-f", "{{.Path}} {{.Version}} {{.Sum}} {{.GoModSum}}", "all")
+	printRun(consumer, candidateEnv, goCommand, "mod", "verify")
+	moduleGraph := run(consumer, candidateEnv, goCommand, "list", "-m", "-f", "{{.Path}} {{.Version}} {{.Sum}} {{.GoModSum}}", "all")
 	checkCandidateSelection(moduleGraph)
 	check(os.WriteFile(filepath.Join(outputDir, dependencyGraphFile), []byte(sanitize(moduleGraph, work)), 0o644))
-	printRun(consumer, candidateEnv, "go", "test", "./...")
-	consumerOutput := strings.TrimSpace(run(consumer, candidateEnv, "go", "run", "."))
+	printRun(consumer, candidateEnv, goCommand, "test", "./...")
+	consumerOutput := strings.TrimSpace(run(consumer, candidateEnv, goCommand, "run", "."))
 	if !strings.HasPrefix(consumerOutput, "agentx-core-developer-preview-ok:") {
 		check(fmt.Errorf("unexpected candidate consumer output %q", consumerOutput))
 	}
@@ -202,10 +203,10 @@ func main() {
 		"GOPROXY", "off",
 		"GOFLAGS", "-mod=readonly",
 	)
-	printRun(consumer, offlineEnv, "go", "mod", "verify")
-	checkCandidateSelection(run(consumer, offlineEnv, "go", "list", "-m", "-f", "{{.Path}} {{.Version}}", "all"))
-	printRun(consumer, offlineEnv, "go", "test", "./...")
-	offlineOutput := strings.TrimSpace(run(consumer, offlineEnv, "go", "run", "."))
+	printRun(consumer, offlineEnv, goCommand, "mod", "verify")
+	checkCandidateSelection(run(consumer, offlineEnv, goCommand, "list", "-m", "-f", "{{.Path}} {{.Version}}", "all"))
+	printRun(consumer, offlineEnv, goCommand, "test", "./...")
+	offlineOutput := strings.TrimSpace(run(consumer, offlineEnv, goCommand, "run", "."))
 	if !strings.HasPrefix(offlineOutput, "agentx-core-developer-preview-ok:") {
 		check(fmt.Errorf("unexpected offline candidate consumer output %q", offlineOutput))
 	}
@@ -236,6 +237,22 @@ func readCommitTime(root string) time.Time {
 	parsed, err := time.Parse(time.RFC3339, value)
 	check(err)
 	return parsed.UTC()
+}
+
+func resolveCandidateGo(root string) string {
+	bootstrapEnv := replaceEnv(os.Environ(), "GOTOOLCHAIN", candidateGoToolchain)
+	goRoot := strings.TrimSpace(run(root, bootstrapEnv, "go", "env", "GOROOT"))
+	goCommand := filepath.Join(goRoot, "bin", "go")
+	info, err := os.Stat(goCommand)
+	if err != nil || !info.Mode().IsRegular() {
+		check(fmt.Errorf("cannot resolve %s go command", candidateGoToolchain))
+	}
+	version := strings.TrimSpace(run(root, replaceEnv(bootstrapEnv, "GOTOOLCHAIN", "local"), goCommand, "version"))
+	if !strings.Contains(version, "go version "+candidateGoToolchain+" ") {
+		check(fmt.Errorf("resolved candidate go command = %q, want %s", version, candidateGoToolchain))
+	}
+	fmt.Printf("agentx-pre-beta-toolchain-ok:version=%s\n", candidateGoToolchain)
+	return goCommand
 }
 
 func trackedModuleRoots(root string) []string {
@@ -307,12 +324,12 @@ func belongsToNestedModule(tracked, moduleDir string, nestedRoots []string) bool
 	return false
 }
 
-func rewriteCandidateRequirements(dir string) {
+func rewriteCandidateRequirements(dir, goCommand string, env []string) {
 	goMod := filepath.Join(dir, "go.mod")
 	content := readTrimmed(goMod)
 	for _, module := range candidateModules {
 		if strings.Contains(content, module.path+" ") {
-			printRun(dir, append(os.Environ(), "GOWORK=off"), "go", "mod", "edit", "-require="+module.path+"@"+candidateVersion)
+			printRun(dir, env, goCommand, "mod", "edit", "-require="+module.path+"@"+candidateVersion)
 		}
 	}
 	checkNoReplace(goMod)
