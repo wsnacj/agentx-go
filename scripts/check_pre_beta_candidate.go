@@ -365,18 +365,58 @@ func writeModuleZip(target, source, modulePath string, commitTime time.Time) int
 }
 
 func runGovulncheck(binary, dir string, env []string, work, logPath string) {
-	command := exec.Command(binary, "./...")
-	command.Dir = dir
-	command.Env = env
-	output, err := command.CombinedOutput()
-	safeOutput := sanitize(string(output), work)
-	check(os.WriteFile(logPath, []byte(safeOutput), 0o644))
-	if err != nil {
-		check(fmt.Errorf("govulncheck %s: %w: %s", dir, err, strings.TrimSpace(safeOutput)))
+	var log strings.Builder
+	for attempt := 1; attempt <= 3; attempt++ {
+		command := exec.Command(binary, "./...")
+		command.Dir = dir
+		command.Env = env
+		output, err := command.CombinedOutput()
+		safeOutput := sanitize(string(output), work)
+		fmt.Fprintf(&log, "attempt=%d\n%s", attempt, safeOutput)
+		if err == nil {
+			check(os.WriteFile(logPath, []byte(log.String()), 0o644))
+			if safeOutput != "" {
+				fmt.Print(safeOutput)
+			}
+			return
+		}
+		if !isTransientScanFailure(safeOutput) {
+			check(os.WriteFile(logPath, []byte(log.String()), 0o644))
+			check(fmt.Errorf("govulncheck %s: %w: %s", dir, err, strings.TrimSpace(safeOutput)))
+		}
+		if attempt < 3 {
+			fmt.Printf("agentx-govulncheck-transient-retry:attempt=%d\n", attempt)
+			time.Sleep(time.Duration(attempt) * time.Second)
+			continue
+		}
+		check(os.WriteFile(logPath, []byte(log.String()), 0o644))
+		check(fmt.Errorf("govulncheck %s exhausted transient retries: %w: %s", dir, err, strings.TrimSpace(safeOutput)))
 	}
-	if safeOutput != "" {
-		fmt.Print(safeOutput)
+}
+
+func isTransientScanFailure(output string) bool {
+	lower := strings.ToLower(output)
+	if strings.Contains(lower, "vulnerability #") || strings.Contains(lower, "your code is affected by") {
+		return false
 	}
+	for _, marker := range []string{
+		"connection reset",
+		"connection refused",
+		"i/o timeout",
+		"tls handshake timeout",
+		"temporary failure",
+		"no such host",
+		"unexpected eof",
+		"server misbehaving",
+		"502 bad gateway",
+		"503 service unavailable",
+		"504 gateway timeout",
+	} {
+		if strings.Contains(lower, marker) {
+			return true
+		}
+	}
+	return false
 }
 
 func checkCandidateSelection(output string) {
