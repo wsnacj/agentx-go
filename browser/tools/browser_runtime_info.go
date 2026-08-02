@@ -163,13 +163,16 @@ func BrowserDefaultRuntimeInfoForOptions(opts BrowserToolOptions) BrowserRuntime
 }
 
 func browserConfiguredHostBackendForOptions(opts BrowserToolOptions) BrowserBackend {
-	return opts.Backend
+	if opts.Backend != nil {
+		return opts.Backend
+	}
+	return opts.ImplicitHostBackend
 }
 
 func browserHostBackendForOptions(opts BrowserToolOptions, policy outboundNetworkPolicy, timeoutMs int) BrowserBackend {
 	_ = policy
 	_ = timeoutMs
-	return opts.Backend
+	return browserConfiguredHostBackendForOptions(opts)
 }
 
 type browserDefaultRouteOwner struct {
@@ -431,7 +434,7 @@ func browserDefaultRouteRuntimeInfoForAssessment(assessment browserDefaultSubstr
 }
 
 func browserRuntimeHostRuntimeInfoForOptions(opts BrowserToolOptions) BrowserRuntimeInfo {
-	info := browserRuntimeInfoForBackend(opts, opts.Backend)
+	info := browserRuntimeInfoForBackend(opts, browserConfiguredHostBackendForOptions(opts))
 	if opts.Backend != nil && strings.TrimSpace(info.Backend) == "" {
 		info.Backend = "custom"
 	}

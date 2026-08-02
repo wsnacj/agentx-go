@@ -41,16 +41,21 @@ type BrowserToolOptions struct {
 	DenyPorts                    []int
 	EnabledTools                 []string
 	Backend                      BrowserBackend
-	SandboxBackend               BrowserBackend
-	NodeBackend                  BrowserBackend
-	SessionRegistry              *BrowserSessionRegistry
-	SessionRunRegistry           BrowserSessionRunRegistry
-	SessionStateRegistry         *BrowserSessionStateRegistry
-	PublishArtifact              BrowserArtifactPublisher
-	LocalPlannerChat             BrowserLocalPlannerChat
-	RunCommand                   BrowserCommandRunner
-	RepairScript                 string
-	AcceptanceScript             string
+	// ImplicitHostBackend supplies a host fallback without promoting it to an
+	// explicitly configured default route. Host adapters use this seam to keep
+	// legacy host execution available while preserving the explicit-selection
+	// and diagnostics semantics of a nil Backend.
+	ImplicitHostBackend  BrowserBackend
+	SandboxBackend       BrowserBackend
+	NodeBackend          BrowserBackend
+	SessionRegistry      *BrowserSessionRegistry
+	SessionRunRegistry   BrowserSessionRunRegistry
+	SessionStateRegistry *BrowserSessionStateRegistry
+	PublishArtifact      BrowserArtifactPublisher
+	LocalPlannerChat     BrowserLocalPlannerChat
+	RunCommand           BrowserCommandRunner
+	RepairScript         string
+	AcceptanceScript     string
 }
 
 // BrowserArtifactPublisher atomically publishes one browser-produced file.

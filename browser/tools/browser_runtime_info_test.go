@@ -286,6 +286,27 @@ func TestBrowserDefaultRuntimePreviewForToolOptionsHidesImplicitLegacyHostFallba
 	}
 }
 
+func TestBrowserDefaultRuntimePreviewForToolOptionsHidesInjectedImplicitHostFallback(t *testing.T) {
+	implicit := &runtimeInfoCapabilityBrowserBackend{
+		fakeBrowserBackend: &fakeBrowserBackend{},
+		runtimeInfo:        DefaultBrowserRuntimeInfo(),
+		capabilities:       defaultBrowserCapabilities(),
+	}
+	preview := browserDefaultRuntimePreviewForToolOptions(BrowserToolOptions{ImplicitHostBackend: implicit})
+	if preview.EffectiveBackend == nil {
+		t.Fatal("expected injected implicit host backend to remain executable")
+	}
+	if preview.LogicalDefaultRoute != DefaultBrowserRuntimeInfo() {
+		t.Fatalf("expected logical default route to remain legacy host, got %#v", preview.LogicalDefaultRoute)
+	}
+	if preview.VisibleDefaultRoute != (BrowserRuntimeInfo{}) {
+		t.Fatalf("expected visible default route to hide injected implicit host fallback, got %#v", preview.VisibleDefaultRoute)
+	}
+	if !preview.HiddenImplicitHostDefaultBase {
+		t.Fatal("expected injected implicit host default base to remain hidden")
+	}
+}
+
 func TestBrowserDefaultRuntimePreviewForToolOptionsUsesDynamicManagedDefaultRouteBeforeHiddenImplicitHostFallback(t *testing.T) {
 	node := &countingRuntimeInfoCapabilityRouteResolverBrowserBackend{
 		runtimeInfoCapabilityBrowserBackend: &runtimeInfoCapabilityBrowserBackend{

@@ -43,7 +43,8 @@ result, err := registry.Execute(ctx, llm.FunctionCall{
 主要字段分为四组：
 
 1. 执行参数：`Root`、`TimeoutMs`、`MaxChars`、`OpenWaitMs`、`ScreenshotWaitMs`；
-2. backend：`Backend`、`NodeBackend`、`SandboxBackend`；未注入 backend 时 capability
+2. backend：`Backend`、`ImplicitHostBackend`、`NodeBackend`、`SandboxBackend`；
+   `ImplicitHostBackend` 仅供 host adapter 注入兼容 host fallback，不会把它提升为显式默认路由；未注入 backend 时 capability
    fail closed，不创建隐式系统浏览器；
 3. session：`SessionRegistry`、`SessionRunRegistry`、`SessionStateRegistry`；registry 可被多个
    handler 并发使用，调用方仍负责租户隔离和持久化；
