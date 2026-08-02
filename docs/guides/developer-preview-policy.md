@@ -4,12 +4,13 @@
 
 ## 候选合同
 
-兼容审阅面只包含成熟度矩阵中的8个Developer Preview candidate，以及以下三条标准
+兼容审阅面只包含成熟度矩阵中的9个Developer Preview candidate，以及以下四条标准
 construction：
 
 1. 根`agentx.Client`与自定义`ExecutionAdapter`；
 2. `runtime/hostkit`与调用方提供的Model/Tool Adapter；
 3. `runtime/workflow/hostkit`与调用方提供的Workflow ports。
+4. `runtime/objective/hostkit`与调用方提供的Objective policy/catalog/adapter handler。
 
 其它Experimental package仍可能调整；Go exported不等于产品公共API。
 

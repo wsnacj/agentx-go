@@ -20,6 +20,11 @@ github.com/wsnacj/agentx-go/runtime
 - [`mediaartifact`](./mediaartifact/API.md)：跨 browser、PDF、video、nodes
   capability 共享的媒体产物元数据 wire descriptor。它不负责 Artifact注册、
   lineage或持久化；需要保存和查询执行产物时使用 `artifact`，两者不会自动互转。
+- [`objective`](./objective/API.md)：Objective推荐路径的最小类型与构造名称；当前保持
+  `controlcontract` kernel的类型/JSON identity，为后续物理owner拆分建立稳定边界。
+- [`objective/hostkit`](./objective/hostkit/API.md)：组合managed ingress、显式Host
+  runtime-adapter dispatch、observation normalization和verification；具体handler、policy、
+  approval、credential与backend继续由Host拥有。
 - [`toolerrors`](./toolerrors/API.md)：结构化工具参数错误、cause chain 与
   deterministic repair hint 数据合同。
 - [`budget`](./budget/API.md)：对调用方提供的 limit/snapshot 执行无副作用的

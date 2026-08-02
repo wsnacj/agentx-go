@@ -1,0 +1,123 @@
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/objective/hostkit"
+
+Package hostkit composes the canonical Objective ingress, host-owned runtime
+adapter dispatch, observation normalization, and verification mechanisms.
+
+The package is a Developer Preview candidate for private validation. It does not
+provide a provider, Runner, backend, credential, product policy, or production
+side effect.
+
+TYPES
+
+type Config struct {
+	Handler  Handler
+	Handlers map[objective.DisplaySafeRef]Handler
+}
+    Config contains only host-owned adapter capabilities. It does not install a
+    provider, backend, credential, approval, policy, or product default.
+
+type DispatchInput struct {
+	Enabled                  bool
+	HostConfirmed            bool
+	Request                  objective.RuntimeAdapterRequest
+	Handler                  Handler
+	Handlers                 map[objective.DisplaySafeRef]Handler
+	ExpectedObservationKinds []string
+	Boundaries               []objective.Boundary
+	Context                  context.Context
+}
+    DispatchInput controls one explicitly confirmed host dispatch.
+
+type DispatchResult struct {
+	Available                        bool   `json:"available"`
+	Enabled                          bool   `json:"enabled"`
+	HostConfirmed                    bool   `json:"host_confirmed"`
+	Status                           string `json:"status,omitempty"`
+	RequestReady                     bool   `json:"request_ready"`
+	HandlerReady                     bool   `json:"handler_ready"`
+	ResultReadbackReady              bool   `json:"result_readback_ready"`
+	ReadyForObservationNormalization bool   `json:"ready_for_observation_normalization"`
+	ReadyForVerification             bool   `json:"ready_for_verification"`
+	Satisfied                        bool   `json:"satisfied"`
+	HostExecutionReported            bool   `json:"host_execution_reported"`
+	RuntimeAdapterExecuted           bool   `json:"runtime_adapter_executed"`
+	RuntimeAdapterExecutedByCore     bool   `json:"runtime_adapter_executed_by_core"`
+	RunnerDispatched                 bool   `json:"runner_dispatched"`
+	ToolExecuted                     bool   `json:"tool_executed"`
+	WorkflowDispatched               bool   `json:"workflow_dispatched"`
+	SchedulerApplied                 bool   `json:"scheduler_applied"`
+	InstallerExecuted                bool   `json:"installer_executed"`
+	RawOutputLoaded                  bool   `json:"raw_output_loaded"`
+	AdapterRef                       string `json:"adapter_ref,omitempty"`
+	StrategyRef                      string `json:"strategy_ref,omitempty"`
+	HostAdapterRunRef                string `json:"host_adapter_run_ref,omitempty"`
+	RequestStatus                    string `json:"request_status,omitempty"`
+	ResultStatus                     string `json:"result_status,omitempty"`
+	NormalizationStatus              string `json:"normalization_status,omitempty"`
+	VerificationStatus               string `json:"verification_status,omitempty"`
+	FailureClass                     string `json:"failure_class,omitempty"`
+	NextHostAction                   string `json:"next_host_action,omitempty"`
+	MissingInputs                    []string
+	BlockedReasons                   []string
+	Boundaries                       []string
+	Request                          objective.RuntimeAdapterRequest          `json:"request,omitempty"`
+	Result                           objective.RuntimeAdapterResult           `json:"result,omitempty"`
+	Normalization                    objective.ObservationNormalizationResult `json:"normalization,omitempty"`
+	Verification                     objective.ObjectiveVerificationResult    `json:"verification,omitempty"`
+}
+    DispatchResult is the normalized readback of one host-owned adapter call.
+
+func Dispatch(input DispatchInput) DispatchResult
+    Dispatch invokes exactly one host handler after request and confirmation
+    gates, then runs canonical observation normalization and verification.
+
+func (report DispatchResult) Normalize() DispatchResult
+    Normalize returns a defensive, canonical view of the dispatch result.
+
+type Handler func(context.Context, objective.RuntimeAdapterRequest) objective.RuntimeAdapterResult
+    Handler is a host-owned runtime-adapter execution function.
+
+type RunRequest struct {
+	Ingress               objective.ManagedObjectiveIngressInput
+	DispatchEnabled       bool
+	DispatchHostConfirmed bool
+	Boundaries            []objective.Boundary
+}
+    RunRequest contains display-safe Objective inputs and explicit dispatch
+    authorization for one Host Kit invocation.
+
+type RunResult struct {
+	Ingress            objective.ManagedObjectiveIngressResult `json:"ingress,omitempty"`
+	Dispatch           DispatchResult                          `json:"dispatch,omitempty"`
+	ReadyForDispatch   bool                                    `json:"ready_for_dispatch"`
+	DispatchAttempted  bool                                    `json:"dispatch_attempted"`
+	Completed          bool                                    `json:"completed"`
+	Status             string                                  `json:"status,omitempty"`
+	FailureClass       string                                  `json:"failure_class,omitempty"`
+	NextHostAction     string                                  `json:"next_host_action,omitempty"`
+	MissingInputs      []string                                `json:"missing_inputs,omitempty"`
+	Boundaries         []string                                `json:"boundaries,omitempty"`
+	RawOutputLoaded    bool                                    `json:"raw_output_loaded"`
+	RunnerDispatched   bool                                    `json:"runner_dispatched"`
+	ToolExecuted       bool                                    `json:"tool_executed"`
+	WorkflowDispatched bool                                    `json:"workflow_dispatched"`
+	SchedulerApplied   bool                                    `json:"scheduler_applied"`
+	InstallerExecuted  bool                                    `json:"installer_executed"`
+}
+    RunResult preserves both the side-effect-free ingress projection and the
+    optional host-owned dispatch readback.
+
+type Runtime struct {
+	// Has unexported fields.
+}
+    Runtime is an immutable Objective composition. Handler concurrency safety
+    remains the responsibility of the Host.
+
+func New(config Config) (*Runtime, error)
+    New validates the host-owned adapter capabilities and creates an immutable
+    Objective Runtime.
+
+func (runtime *Runtime) Run(ctx context.Context, request RunRequest) RunResult
+    Run projects one managed Objective and, only after explicit enable and host
+    confirmation, invokes exactly one selected handler before verification.
+

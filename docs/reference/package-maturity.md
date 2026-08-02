@@ -44,6 +44,8 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/construction` | Experimental extension | [API](../../runtime/construction/API.md) | 高级 Host 构造生命周期 |
 | `runtime/controlcontract` | Experimental extension | [API](../../runtime/controlcontract/API.md) | 执行控制合同、Objective kernel、Host effect、adapter/ingress/closeout、durable projection、trace-backed final answer及delegation coordination |
 | `runtime/mediaartifact` | Experimental extension | [API](../../runtime/mediaartifact/API.md) | 媒体产物描述合同 |
+| `runtime/objective` | Experimental extension | [API](../../runtime/objective/API.md) | Objective推荐类型入口；保持kernel类型与JSON identity |
+| `runtime/objective/hostkit` | Developer Preview candidate | [API](../../runtime/objective/hostkit/API.md) | Managed ingress、显式Host dispatch、observation normalization与verification标准入口 |
 | `runtime/promptcontext` | Experimental extension | [API](../../runtime/promptcontext/API.md) | prompt context 投影 |
 | `runtime/protocol` | Experimental extension | [API](../../runtime/protocol/API.md) | Runtime wire/schema |
 | `runtime/runstore` | Experimental extension | [API](../../runtime/runstore/API.md) | Run、NodeExecution、Event存储合同、投影与并发安全内存实现 |

@@ -80,6 +80,9 @@ temporary Workflow planning机制、LLM组件和
 45. [`runtime/toolloop` 中文 API Reference](../runtime/toolloop/API.md)
 46. [`runtime/workflow/composition` 中文 API Reference](../runtime/workflow/composition/API.md)
 47. [`runtime/workflow/hostkit` 中文 API Reference](../runtime/workflow/hostkit/API.md)
+48. [Objective Host Kit 接入指南](guides/objective-hostkit.md)
+49. [`runtime/objective` 中文 API Reference](../runtime/objective/API.md)
+50. [`runtime/objective/hostkit` 中文 API Reference](../runtime/objective/hostkit/API.md)
 
 可运行验证位于：
 
