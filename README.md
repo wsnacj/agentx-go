@@ -141,6 +141,11 @@ npm run docs:check
   focused签名门禁
 - [`scenes/astock/hostkit`](scenes/astock/hostkit/API.md)：显式注入 Host
   handler的 intent、readiness与回答格式化
+- [`scenes/publicnews`](scenes/publicnews/API.md)与
+  [`scenes/companyresearch`](scenes/companyresearch/API.md)：公开新闻与公司研究的只读
+  contract、Pack、evidence/quality机制及显式Host ports
+- [`scenes/docparse`](scenes/docparse/API.md)：文档profile/planner/fusion/understanding、
+  Pack、质量证据与无文件/无provider Host Kit；真实OCR/PDF、文件访问和私有schema由Host注入
 - [`extensions/domainkit`](extensions/domainkit/API.md)：无模型module/tool dispatch、typed
   error与deterministic output digest；provider与真实副作用必须由Host handler注入
 - [`extensions/domainmodule`](extensions/domainmodule/API.md)与
@@ -207,6 +212,9 @@ github.com/wsnacj/agentx-go/tools
 
 github.com/wsnacj/agentx-go/browser
   v0.0.0-20260802154551-56dc2b2c3a2b
+
+github.com/wsnacj/agentx-go/scenes
+  v0.0.0-20260802220352-a8c81c2c9118
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -250,6 +258,12 @@ github.com/wsnacj/agentx-go/browser
 - [`scenes/astock` 中文 API Reference](scenes/astock/API.md)
 - [`scenes/astock/contracts` 中文 API Reference](scenes/astock/contracts/API.md)
 - [`scenes/astock/hostkit` 中文 API Reference](scenes/astock/hostkit/API.md)
+- [`scenes/publicnews` 中文 API Reference](scenes/publicnews/API.md)
+- [`scenes/publicnews/hostkit` 中文 API Reference](scenes/publicnews/hostkit/API.md)
+- [`scenes/companyresearch` 中文 API Reference](scenes/companyresearch/API.md)
+- [`scenes/companyresearch/hostkit` 中文 API Reference](scenes/companyresearch/hostkit/API.md)
+- [`scenes/docparse` 中文 API Reference](scenes/docparse/API.md)
+- [`scenes/docparse/hostkit` 中文 API Reference](scenes/docparse/hostkit/API.md)
 - [`extensions/domainkit` 中文 API Reference](extensions/domainkit/API.md)
 - [`extensions/domainmodule` 中文 API Reference](extensions/domainmodule/API.md)
 - [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
@@ -261,6 +275,8 @@ github.com/wsnacj/agentx-go/browser
 - [Control Contract external-style consumer](runtime/conformance/controlcontract-consumer)
 - [Domain Module external-style consumer](extensions/conformance/domain-module-consumer)
 - [A 股组合 external-style consumer](scenes/conformance/astock-consumer)
+- [公开新闻/公司研究 external-style consumer](scenes/conformance/research-consumer)
+- [文档解析 external-style consumer](scenes/conformance/docparse-consumer)
 - [Skills external-style consumer](extensions/conformance/skills-consumer)
 - [Tool catalog/diffs external-style consumer](tools/conformance/catalog-diffs-consumer)
 

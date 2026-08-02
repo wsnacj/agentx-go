@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
-52个 production package。它不是历史
+65个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -31,6 +31,19 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `scenes/astock/internal/packresearch` | internalization candidate | [API](../../scenes/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packsignal` | internalization candidate | [API](../../scenes/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packvaluation` | internalization candidate | [API](../../scenes/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
+| `scenes/publicnews` | Developer Preview candidate | [API](../../scenes/publicnews/API.md) | 公开新闻合同、Pack、证据质量与确定性回答投影 |
+| `scenes/publicnews/hostkit` | Experimental extension | [API](../../scenes/publicnews/hostkit/API.md) | 显式Search/Fetch ports驱动的无provider协调 |
+| `scenes/companyresearch` | Developer Preview candidate | [API](../../scenes/companyresearch/API.md) | 公司研究任务、证据guard、Pack与结果投影 |
+| `scenes/companyresearch/hostkit` | Experimental extension | [API](../../scenes/companyresearch/hostkit/API.md) | 显式研究数据ports驱动的无provider协调 |
+| `scenes/docparse` | Developer Preview candidate | [API](../../scenes/docparse/API.md) | 文档解析Pack、资产、tool schema与推荐入口 |
+| `scenes/docparse/hostkit` | Experimental extension | [API](../../scenes/docparse/hostkit/API.md) | 显式Parse/ResultLoader ports驱动的文档协调与结果投影 |
+| `scenes/docparse/adapters` | internalization candidate | [API](../../scenes/docparse/adapters/API.md) | portable字段与表格适配机制 |
+| `scenes/docparse/fusion` | internalization candidate | [API](../../scenes/docparse/fusion/API.md) | 多来源文档结果融合机制 |
+| `scenes/docparse/planner` | internalization candidate | [API](../../scenes/docparse/planner/API.md) | profile驱动的文档路由规划 |
+| `scenes/docparse/profile` | internalization candidate | [API](../../scenes/docparse/profile/API.md) | 文档profile探测与规范化 |
+| `scenes/docparse/qualityevidence` | internalization candidate | [API](../../scenes/docparse/qualityevidence/API.md) | 质量证据与评估投影 |
+| `scenes/docparse/representation` | internalization candidate | [API](../../scenes/docparse/representation/API.md) | provider-neutral Document/Page表征 |
+| `scenes/docparse/understanding` | internalization candidate | [API](../../scenes/docparse/understanding/API.md) | 文档理解与review-required判定机制 |
 | `extensions/domainkit` | Experimental extension | [API](../../extensions/domainkit/API.md) | 无模型module/tool dispatch、typed error与deterministic output digest |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
@@ -102,7 +115,7 @@ backend，也不因出现在本表而升级为Developer Preview candidate、Publ
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-52个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+65个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
@@ -114,9 +127,9 @@ GOWORK=off go run scripts/check_docs_links.go
 
 门禁会确认：
 
-1. 四个 module 当前 production package 与矩阵一一对应；
+1. 五个 module 当前 production package 与矩阵一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 十个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
+3. 十三个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；

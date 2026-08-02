@@ -5,14 +5,14 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools与P3 Browser/Document闭环完成；P4-A首批Portable Scenes迁移中；仍处于private validation |
-| Developer Portal | 当前生成站点基线待P4-A最终checkpoint刷新；52 package/10 candidate focused API gate已通过 |
+| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A首批Portable Scenes闭环完成；仍处于private validation |
+| Developer Portal | 65 package/13 candidate双平台focused API gate已通过；完整Scene站点编排仍属于后续文档产品化 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前52个package、10个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
+| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前65个package、13个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
 | Experimental browser | P3-A已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
@@ -485,6 +485,31 @@ production consumer已直接使用canonical版本，原551行通用source收缩�
 净减502行。authorization、approval、sandbox及filesystem/process/network/store backend
 仍由Host拥有；P2-C不是“全部通用tools已迁完”的声明，后续cohort只能通过显式窄port继续
 迁入portable mechanism。本checkpoint不构成Public/Beta/Stable或正式发行授权。
+
+## P4-A 首批 Portable Scenes source-authority 闭环
+
+P4-A建立独立`scenes` module并完成三组互补领域Kit。`scenes/astock`收正A股唯一
+canonical owner；`scenes/publicnews`与`scenes/companyresearch`拥有只读研究合同、Pack、
+evidence/quality机制和显式Host ports；`scenes/docparse`拥有profile、planner、fusion、
+understanding、quality evidence、Pack、资产与无文件/无provider Host Kit，并复用固定
+`document` module合同而不复制OCR/PDF实现。
+
+四组canonical production共79个Go source、19,534行；三个fixed consumer分别锁定
+`v0.0.0-20260802210630-68ea44b615cc`、
+`v0.0.0-20260802213138-f16c8c734592`和
+`v0.0.0-20260802220352-a8c81c2c9118`，在无HS、Runner、旧Scene路径、长期`replace`、
+credential和真实网络的条件下通过normal/race/vet/run及module zip/cache/Origin回读。
+HS production consumer已切换到fixed canonical owner；research提交净减少15,765行，docparse
+提交净减少5,744行，A股旧`extensions/astock`重复authority已收正。
+
+scenes module normal/race/vet/tidy/list、Linux/amd64 CGO-disabled build、65 package/13
+candidate双平台API gate和import-direction gate均通过。HS四Scene focused normal/race/vet
+通过；有效完整AgentX回归为148 PASS、2个既有治理package FAIL、20 SKIP。失败仍属于
+deferred governance：3个既有evidence source-scope stale/mismatch，以及1个P3-A删除旧
+`browserruntime`后尚未刷新的runtime-boundary inventory条目；没有P4-A功能回归。
+
+本checkpoint仍不包含live provider、credential、客户policy、真实网络/文件副作用、业务结果
+权威，也不构成Public、Beta、Stable、semver、tag或发行授权。
 
 ## 明确 non-goal
 
