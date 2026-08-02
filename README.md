@@ -129,9 +129,10 @@ npm run docs:check
 - [`browser/runtime`](browser/runtime/API.md)拥有30,906行provider-neutral Browser
   session/action/route/snapshot/capability/result与state/recovery/watch implementation；
   HS production consumer已开始使用固定版本
-- 当前默认不启动browserd、不访问网络、不读取credential；`browser/host/browserd`、
-  `browser/tools`和统一consumer仍在P3-A后续节点，不能从runtime landing推导Browser
-  Platform已经完成
+- [`browser/host/browserd`](browser/host/browserd/API.md)提供显式Plan/StatusProbe驱动的
+  browserd process manager、内置Node资产和Playwright bootstrap/cache；构造阶段无副作用
+- 当前默认不启动browserd、不访问网络、不读取credential；`browser/tools`和统一consumer
+  仍在P3-A后续节点，不能从runtime/host landing推导Browser Platform已经完成
 
 ## 当前提供：Experimental Extensions
 
@@ -234,6 +235,7 @@ github.com/wsnacj/agentx-go/browser
 - [`tools/diffs` 中文 API Reference](tools/diffs/API.md)
 - [`browser` 中文 API 总览](browser/API.md)
 - [`browser/runtime` 中文 API Reference](browser/runtime/API.md)
+- [`browser/host/browserd` 中文 API Reference](browser/host/browserd/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/controlcontract` 中文 API Reference](runtime/controlcontract/API.md)

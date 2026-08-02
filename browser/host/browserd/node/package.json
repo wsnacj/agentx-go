@@ -1,0 +1,17 @@
+{
+  "name": "@agentx/browserdaemon",
+  "private": true,
+  "version": "0.0.1",
+  "description": "AgentX managed browser daemon",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node ./agentx-browserd.mjs",
+    "install:browsers": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "1.55.0"
+  }
+}
