@@ -3,6 +3,18 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## v0.0.0-20260802121436-b8b4d7efb134（P2-A OpenAI-compatible Provider）
+
+- 新增独立Experimental `providers` module与真实OpenAI-compatible chat、vision、
+  embedding、bot和SSE stream client；
+- provider-neutral transport hooks、fault分类、bounded retry与usage collector seam一并
+  迁入，production code不依赖HS、Runner或Scene；
+- credential、endpoint、local media和HTTP client通过显式Host seam注入，默认构造不读取
+  环境变量、文件或credential store；
+- fixed consumer无`replace`、HS或真实网络；HS `core/llmx/provider/http`切为canonical
+  production consumer，旧portable authority从1,912行收缩为295行；
+- 本版本仍是private Experimental验证，不授权Public/Beta/Stable、正式tag或发行。
+
 ## v0.0.0-20260802113655-f41de95ec5be（P1-E Deterministic Domain Kit）
 
 - 新增Experimental `extensions/domainkit`真实无模型execution implementation：构造时

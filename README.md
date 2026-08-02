@@ -9,7 +9,7 @@ implementation owner 和 Run/Open Tool Loop 通用机制。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
 > 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A首个provider
-> 纵向闭环由HS规划继续推进**；M6D Core
+> 纵向闭环已完成**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受；P1-D新增bounded Scheduler/Resume Host Kit；P1-E新增
@@ -92,6 +92,17 @@ npm run docs:check
   import-direction gate
 - Runtime production代码不依赖 HS、Scene、具体 provider或 backend
 
+## 当前提供：Experimental Providers
+
+- [`providers`](providers/API.md) 独立可选 module：
+  `github.com/wsnacj/agentx-go/providers`
+- [`providers/openaicompat`](providers/openaicompat/API.md) 提供真实 OpenAI-compatible
+  chat、vision、embedding、bot和SSE stream实现
+- `transport`、`fault`、`retry`和`usage`提供provider-neutral机制；固定版本
+  external consumer不依赖HS、Runner、Scene、`replace`或真实网络
+- endpoint、credential、proxy、配额、审计、模型选择和生产出网授权仍由Host显式注入；
+  默认构造不读环境变量、文件或credential store
+
 ## 当前提供：Experimental Extensions
 
 - [`extensions/astock`](extensions/astock/API.md)：A股 Manifest、不可变资产、7个
@@ -114,7 +125,7 @@ npm run docs:check
 ## 当前不提供
 
 - 无需任何 host-provided model/tool adapter和 policy的开箱即用 Runtime
-- 官方模型/provider、credential或生产网络接入
+- 默认模型目录、credential发现/轮换、生产网络授权或开箱即用provider配置
 - 根 `agentx` Facade 的 Workflow、Objective、Resume 或长任务入口；当前Resume位于
   Experimental Runtime Host Kit
 - concrete Workflow validation/mapping policy、executor和 RunStore backend
@@ -156,6 +167,9 @@ github.com/wsnacj/agentx-go/runtime
 
 github.com/wsnacj/agentx-go/extensions
   v0.0.0-20260802113655-f41de95ec5be
+
+github.com/wsnacj/agentx-go/providers
+  v0.0.0-20260802121436-b8b4d7efb134
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -178,6 +192,7 @@ github.com/wsnacj/agentx-go/extensions
 - [HS 迁移说明](docs/guides/hs-migration.md)
 - [成熟度与兼容边界](docs/maturity.md)
 - [`components/llm` 中文 API Reference](components/llm/API.md)
+- [`providers` 中文 API Reference](providers/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/controlcontract` 中文 API Reference](runtime/controlcontract/API.md)

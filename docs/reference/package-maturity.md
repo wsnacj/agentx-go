@@ -67,6 +67,22 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `runtime/workflow/schema` | internalization candidate | [API](../../runtime/workflow/schema/API.md) | schema normalization/validation 内核 |
 | `runtime/workflow/transition` | internalization candidate | [API](../../runtime/workflow/transition/API.md) | state transition 内核 |
 
+## 可选 Providers module
+
+下列6个package不进入当前四module的51包Core gate，全部保持Experimental：
+
+| Package | 分级 | 中文 Reference | 主要用途 |
+| --- | --- | --- | --- |
+| `providers` | Experimental extension | [API](../../providers/API.md) | provider错误与capability sentinel |
+| `providers/openaicompat` | Experimental extension | [API](../../providers/openaicompat/API.md) | OpenAI-compatible HTTP与SSE真实client |
+| `providers/transport` | Experimental extension | [API](../../providers/transport/API.md) | request settings、headers与hooks |
+| `providers/fault` | Experimental extension | [API](../../providers/fault/API.md) | 稳定错误分类与retryability |
+| `providers/retry` | Experimental extension | [API](../../providers/retry/API.md) | bounded context-aware retry |
+| `providers/usage` | Experimental extension | [API](../../providers/usage/API.md) | usage collector port |
+
+providers module使用独立fixed pseudo-version与consumer验证；不因出现在本表而升级为
+Developer Preview candidate、Public、Beta或Stable。
+
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
 51个 package 的覆盖与漂移门禁，不是新的全仓 API registry。

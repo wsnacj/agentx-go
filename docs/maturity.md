@@ -5,14 +5,15 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A由HS规划继续推进；仍处于private validation |
+| 当前产品里程碑 | M7A P1-A至P1-E C1-C7 Core能力闭环完成；P2-A首个provider纵向闭环完成；仍处于private validation |
 | Developer Portal | 95个静态页面；51 package/10 candidate；搜索与source backlink由`docs:check`验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | 当前51个package；10个Developer Preview candidate；历史M5S规模基线为44个package、235个production source、89,691行 |
+| agentx-go production packages | Core四module当前51个package、10个Developer Preview candidate；可选providers module另有6个Experimental package、11个production source、1,777行 |
+| Experimental providers | P2-A已落地OpenAI-compatible真实client、transport/fault/retry/usage机制和fixed consumer；credential、模型选择与生产网络仍由Host拥有 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |

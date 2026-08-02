@@ -1,6 +1,6 @@
 # 安装与多 Module 引用
 
-`agentx-go`当前采用一个仓库、四个独立 Go module。调用方只引入实际使用的
+`agentx-go`当前采用一个仓库、五个独立 Go library module。调用方只引入实际使用的
 module：
 
 | Module | 用途 |
@@ -9,6 +9,7 @@ module：
 | `github.com/wsnacj/agentx-go/components` | provider-neutral LLM合同 |
 | `github.com/wsnacj/agentx-go/runtime` | Host Kit、toolloop、Workflow和其它 portable Runtime owner |
 | `github.com/wsnacj/agentx-go/extensions` | 可选 portable extension机制；当前含 A股推荐入口、Domain Module、Pack与 Skills |
+| `github.com/wsnacj/agentx-go/providers` | 可选模型provider；当前含OpenAI-compatible client与transport/fault/retry/usage机制 |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
@@ -17,6 +18,8 @@ Host Kit、Pack和内嵌资产由 extensions module提供，并通过其固定�
 runtime/components；调用方只需直接声明自己代码实际 import的 module。只从目录
 加载 Skill时直接声明 extensions即可；若代码直接构造经 `runtime/assetfs`证明身份的
 immutable `FSSource`，还应把 runtime列为直接依赖。
+需要AgentX提供的OpenAI-compatible协议实现时直接声明providers；credential和endpoint
+仍必须由Host显式提供，Core Runtime不会反向依赖providers。
 
 ## 当前固定验证版本
 
@@ -29,6 +32,8 @@ github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260802113655-f41de95ec5be
 github.com/wsnacj/agentx-go/extensions
   v0.0.0-20260802113655-f41de95ec5be
+github.com/wsnacj/agentx-go/providers
+  v0.0.0-20260802121436-b8b4d7efb134
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
@@ -38,6 +43,7 @@ go get github.com/wsnacj/agentx-go@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/providers@v0.0.0-20260802121436-b8b4d7efb134
 ```
 
 ## Private 仓库访问
@@ -61,6 +67,7 @@ GOWORK=off go test ./...
 GOWORK=off go -C components test ./...
 GOWORK=off go -C runtime test ./...
 GOWORK=off go -C extensions test ./...
+GOWORK=off go -C providers test ./...
 ```
 
 external-style consumer也是独立 nested module，应在 `GOWORK=off`下单独测试。
@@ -80,6 +87,9 @@ Skill加载、缓存、activation、requested semantics和资源引用；它不�
 长期 `replace`、网络或命令执行。
 长期 consumer不得依赖本地 `replace`；本地 `replace`只能用于临时开发测量，不能
 作为 fixed-version或发布证据。
+`providers/conformance/openaicompat-consumer`固定components/providers，不使用
+`replace`、HS、Runner、Scene或真实网络，验证显式HTTPDoer、credential injection、
+chat/tool-call解码和usage合同。
 
 ## Ubuntu实机复跑
 

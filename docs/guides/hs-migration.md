@@ -16,6 +16,24 @@ provider、credential、Scene和真实副作用
 agentx-go production code不得 import `hs/...`、Runner或 `scene/...`。HS可以固定
 pseudo-version消费 canonical owner，但 owner package不得反向依赖 Facade或 HS。
 
+## P2-A OpenAI-compatible provider收口
+
+`providers/openaicompat`现在拥有请求序列化、chat/vision/embedding/bot响应解码、
+SSE事件流和HTTP状态错误的真实implementation；`providers/transport`、`fault`、
+`retry`与`usage`拥有相应provider-neutral机制。
+
+HS `core/llmx/provider/http`保留原`HTTPProvider`签名和metadata，只把HS Config映射为
+canonical Config，并注入Host拥有的auth resolver与local-media resolver。旧HTTP
+protocol实现已删除；fault/retry/transport/usage旧包降为alias或薄forwarder。HS继续拥有：
+
+- API key来源、环境/credential store、rotation与认证header策略；
+- 默认模型、provider注册、endpoint/proxy/配额与生产出网授权；
+- tracing、审计、FileCollector和其它具体provider。
+
+固定consumer位于`providers/conformance/openaicompat-consumer`，不依赖HS、Runner、Scene、
+长期`replace`或真实网络。新的通用OpenAI-compatible协议行为必须先进入canonical module，
+不得在HS adapter恢复双写。
+
 ## W5-H round owner 收口
 
 `runtime/hostkit.ModelToolRoundAdapter`现在拥有：

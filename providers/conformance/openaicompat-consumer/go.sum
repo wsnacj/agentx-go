@@ -1,0 +1,4 @@
+github.com/wsnacj/agentx-go/components v0.0.0-20260802113655-f41de95ec5be h1:0T/3ii6J1tG7wln74IKdjmE6h/VreacqUEd7Dr7IOLw=
+github.com/wsnacj/agentx-go/components v0.0.0-20260802113655-f41de95ec5be/go.mod h1:dZpFtQUci6okqwTXJCq3XTSXmP96x21NsFrStSstLGk=
+github.com/wsnacj/agentx-go/providers v0.0.0-20260802121436-b8b4d7efb134 h1:u08WpbbrImg69EpOO39Nl5Q+8u6qDFGC/rApUbB+MIY=
+github.com/wsnacj/agentx-go/providers v0.0.0-20260802121436-b8b4d7efb134/go.mod h1:4l191m6U5gF9lOITitHmZm52Qeif7DdNKW/+mcuc0iI=
