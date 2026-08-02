@@ -3,13 +3,15 @@
 `agentx-go` 是 AgentX 面向 Go consumer 的独立源码仓库。当前根 module 提供经过
 HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-neutral LLM
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
-implementation owner 和 Run/Open Tool Loop 通用机制。
+implementation owner 和 Run/Open Tool Loop 通用机制；`providers`、`tools`和`browser`
+提供显式选择的可选重型能力。
 
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A/P2-B三个provider
-> protocol owner与P2-C首个通用Tool vertical slice均已纵向闭环**；M6D Core
+> 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A至P2-D Providers与
+> 通用Tools均已纵向闭环；P3-A Browser Platform正在迁移，Browser Runtime首个真实owner
+> 已落地**；M6D Core
 > Foundation发行门禁继续独立fail closed。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受；P1-D新增bounded Scheduler/Resume Host Kit；P1-E新增
@@ -114,8 +116,22 @@ npm run docs:check
   已形成真实implementation owner
 - [`tools/diffs`](tools/diffs/API.md)提供首个真实通用tool：只处理调用方显式传入的
   before/after文本，不读取文件、Git、网络或工作区
-- authorization、approval、sandbox、credential、filesystem/process/network/store
-  backend和产品allowlist仍由Host拥有；后续通用tool必须继续通过窄port接入这些能力
+- [`tools/message`](tools/message/API.md)、[`tools/httprequest`](tools/httprequest/API.md)、
+  [`tools/filesystem`](tools/filesystem/API.md)、[`tools/memory`](tools/memory/API.md)与
+  [`tools/scheduler`](tools/scheduler/API.md)提供真实portable coordination；固定consumer
+  以fake/in-memory ports执行10个入口
+- authorization、approval、sandbox、credential、filesystem/process/network/store/
+  scheduler backend和产品allowlist仍由Host拥有
+
+## 当前提供：Experimental Browser
+
+- [`browser`](browser/API.md)独立可选module：`github.com/wsnacj/agentx-go/browser`
+- [`browser/runtime`](browser/runtime/API.md)拥有30,906行provider-neutral Browser
+  session/action/route/snapshot/capability/result与state/recovery/watch implementation；
+  HS production consumer已开始使用固定版本
+- 当前默认不启动browserd、不访问网络、不读取credential；`browser/host/browserd`、
+  `browser/tools`和统一consumer仍在P3-A后续节点，不能从runtime landing推导Browser
+  Platform已经完成
 
 ## 当前提供：Experimental Extensions
 
@@ -186,7 +202,10 @@ github.com/wsnacj/agentx-go/providers
   v0.0.0-20260802124746-c7f90139a1cc
 
 github.com/wsnacj/agentx-go/tools
-  v0.0.0-20260802131439-56dd598eef59
+  v0.0.0-20260802150550-743059e6da69
+
+github.com/wsnacj/agentx-go/browser
+  v0.0.0-20260802154551-56dc2b2c3a2b
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -213,6 +232,8 @@ github.com/wsnacj/agentx-go/tools
 - [`providers` 中文 API Reference](providers/API.md)
 - [`tools` 中文 API Reference](tools/API.md)
 - [`tools/diffs` 中文 API Reference](tools/diffs/API.md)
+- [`browser` 中文 API 总览](browser/API.md)
+- [`browser/runtime` 中文 API Reference](browser/runtime/API.md)
 - [`runtime` 中文 package 导航](runtime/README.md)
 - [`runtime/construction` 中文 API Reference](runtime/construction/API.md)
 - [`runtime/controlcontract` 中文 API Reference](runtime/controlcontract/API.md)

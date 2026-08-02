@@ -15,6 +15,7 @@
 | agentx-go production packages | Core四module当前51个package、10个Developer Preview candidate；可选providers module另有8个Experimental package、19个production source、2,934行 |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
+| Experimental browser | P3-A首个`browser/runtime`真实owner已落地30,906行portable implementation并开始HS fixed-version cutover；browserd host、browser tools、统一consumer和最终平台gate仍pending |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |

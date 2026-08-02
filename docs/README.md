@@ -96,6 +96,8 @@ temporary Workflow planning机制、LLM组件和
 60. [`components/tool` 中文 API Reference](../components/tool/API.md)
 61. [`tools` 中文 API Reference](../tools/API.md)
 62. [`tools/diffs` 中文 API Reference](../tools/diffs/API.md)
+63. [`browser` 中文 API 总览](../browser/API.md)
+64. [`browser/runtime` 中文 API Reference](../browser/runtime/API.md)
 
 可运行验证位于：
 
@@ -132,6 +134,8 @@ temporary Workflow planning机制、LLM组件和
 但自身必须完成fixed consumer、test/race/vet/tidy/list和无HS反向依赖验证。
 `tools/**/API.md`描述可选通用tool module；它同样不属于Core API gate，必须独立证明
 固定版本消费、行为合同和无HS/Runner/Scene反向依赖。
+`browser/**/API.md`描述可选重型Browser module。P3-A当前只完成runtime真实owner landing
+与HS fixed-version cutover；在host/tools/consumer闭合前不得标记Browser Platform完成。
 M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片。M5E
 只迁入 Skill contracts、loader/cache、activation、requested semantics与 resource
 refs；prompt catalog/filter、安全规则、安装执行、bundled内容和 Runner仍由 Host拥有。

@@ -110,6 +110,16 @@ canonical consumer。
 Scene、真实网络、文件、credential或scheduler backend；生产Host仍必须显式提供并治理
 这些能力。
 
+Browser Runtime使用独立可选module：
+
+```bash
+go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802154551-56dc2b2c3a2b
+```
+
+当前版本只承诺P3-A private-validation的`browser/runtime`事实；它不自动启动browserd，
+也不提供默认credential、proxy、登录态、网络或tool注册。Browser host/tools与统一consumer
+仍属于P3-A后续节点。
+
 ## Ubuntu实机复跑
 
 仓库内当前候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module
