@@ -5,7 +5,9 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M6A Core Pre-Beta Contract and Distribution Preflight Closure：`active` |
+| 当前产品里程碑 | M6A Core Pre-Beta Contract and Distribution Preflight Closure：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
+| Public Beta readiness | `false`；license、安全复核、Ubuntu实机和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | M5S：44个package、235个production source、89,691行；仍为8个Developer Preview candidate |
@@ -372,6 +374,16 @@ Public/Beta/Stable、semver、tag、Scene迁移或发行授权。
 M6A随后只补Developer Preview兼容、维护、支持、安全报告、版本epoch和分发预检合同，
 并将private validation与Public Beta readiness分开。M6A不新增Runtime owner、不修改
 公共行为、不进入Scene或完整文档站，也不擅自选择license或创建tag/release。
+
+M6A技术checkpoint现已完成：仓库新增`SECURITY.md`、`SUPPORT.md`、
+`CONTRIBUTING.md`、`CODEOWNERS`、Developer Preview政策和分发Readiness页；本地
+preflight复用既有版本、API、文档、clean-room与module artifact gate。四module固定
+版本已从空`GOMODCACHE`经私有VCS重新获取，Origin均回读`5a41fb0ccb87`，无HS
+consumer完成构建和运行。四module `test/vet/tidy-diff/list`全部通过，HS Facade、
+Workflow、Engine与ProductShell focused兼容性通过。M6A没有修改固定消费版本、Runtime
+实现或HS生产代码，故不重复M5T完整回归，继续引用其149 PASS、2个既有治理FAIL、
+20 SKIP且无新增失败的最近基线。当前结论为`private_validation_ready=true`、
+`public_beta_ready=false`；状态为`technical_checkpoint_complete_awaiting_owner_acceptance`。
 
 ## 明确 non-goal
 

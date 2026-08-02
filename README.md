@@ -5,11 +5,13 @@ HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-ne
 合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
 implementation owner 和 Run/Open Tool Loop 通用机制。
 
-> 当前里程碑：**M6A Core Pre-Beta Contract and Distribution Preflight Closure**。
+> 当前里程碑：**M6A Core Pre-Beta Contract and Distribution Preflight Closure** 已形成
+> `technical_checkpoint_complete_awaiting_owner_acceptance`。
 > M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
 > 已获Owner接受。M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
-> M6A只补兼容、维护、支持、安全报告、版本epoch与分发预检合同；它不新增Runtime能力，
-> 也不是Public、Beta、Stable或production-ready发布。
+> M6A已补齐兼容、维护、支持、安全报告、版本epoch与分发预检合同，并通过空缓存私有
+> VCS消费与四module完整预检；它不新增Runtime能力，也不是Public、Beta、Stable或
+> production-ready发布。
 
 ## 当前提供：根合同
 
