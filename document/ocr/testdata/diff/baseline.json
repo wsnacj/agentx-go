@@ -1,0 +1,1 @@
+{"code":200,"message":"OK","result":{"pages":[{"angle":0,"width":100,"height":100,"lines":[{"text":"Hello","char_candidates":[["H"],["e"],["l"],["l"],["o"]],"char_candidates_score":[[0.9],[0.9],[0.9],[0.9],[0.9]],"char_positions":[[0,0,1,1],[1,0,2,1],[2,0,3,1],[3,0,4,1],[4,0,5,1]]}]}]}}

@@ -1,0 +1,88 @@
+pipelines:
+  ocr:
+    provider:
+      kind: textin
+      base_url: https://api.textin.com/ai/service/v2/recognize/multipage
+      auth:
+        app_id: "" # REQUIRED: copy this file outside the repo and inject a real value.
+        secret_code: "" # REQUIRED: never commit a real secret.
+      timeout: 30s
+    splitter:
+      kind: poppler
+      dpi: 300
+      batch_pages: 0
+      max_parallel: 4
+    cache:
+      enabled: false
+      kind: fs
+      ttl: 24h
+    worker:
+      max_concurrent: 5
+    limits:
+      max_pages: 500
+      max_files: 20
+    retry:
+      max_attempts: 3
+      backoff: 1s
+      max_backoff: 5s
+    diff:
+      enabled: false
+      preview: 3
+  table:
+    provider:
+      kind: textin
+      base_url: https://api.textin.com/ai/service/v2/recognize/table/multipage
+      auth:
+        app_id: "" # REQUIRED: copy this file outside the repo and inject a real value.
+        secret_code: "" # REQUIRED: never commit a real secret.
+      timeout: 30s
+    splitter:
+      kind: poppler
+      dpi: 300
+      batch_pages: 0
+      max_parallel: 4
+    cache:
+      enabled: false
+      kind: fs
+      ttl: 24h
+    worker:
+      max_concurrent: 5
+    limits:
+      max_pages: 50
+      max_files: 20
+    retry:
+      max_attempts: 3
+      backoff: 1s
+      max_backoff: 5s
+    diff:
+      enabled: false
+      preview: 3
+  stamp:
+    provider:
+      kind: textin
+      base_url: https://api.textin.com/ai/service/v1/recognize_stamp
+      auth:
+        app_id: "" # REQUIRED: copy this file outside the repo and inject a real value.
+        secret_code: "" # REQUIRED: never commit a real secret.
+      timeout: 30s
+    splitter:
+      kind: poppler
+      dpi: 300
+      batch_pages: 0
+      max_parallel: 4
+    cache:
+      enabled: false
+      kind: fs
+      ttl: 24h
+    worker:
+      max_concurrent: 2
+    limits:
+      max_pages: 50
+      max_files: 20
+    retry:
+      max_attempts: 3
+      backoff: 1s
+      max_backoff: 5s
+    diff:
+      enabled: false
+      preview: 3
