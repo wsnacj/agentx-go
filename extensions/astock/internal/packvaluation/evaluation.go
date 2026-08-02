@@ -7,39 +7,8 @@ import (
 	astockcontracts "github.com/wsnacj/agentx-go/extensions/astock/contracts"
 )
 
-type ValuationEvaluationInput struct {
-	ExpectedEntityName        string
-	ExpectedStockCode         string
-	EvidenceEntityName        string
-	EvidenceStockCode         string
-	AdapterStatus             astockcontracts.AdapterStatus
-	FailureCode               astockcontracts.FailureCode
-	AnswerReady               bool
-	RequestedFields           []string
-	FieldValues               map[string]string
-	AsOf                      string
-	SourceURL                 string
-	MissingRequestedFields    []string
-	ReviewRequiredFields      []string
-	InvestmentAdviceRequested bool
-	AdviceBoundaryStated      bool
-}
-
-type ValuationEvaluation struct {
-	Passed                  bool     `json:"passed"`
-	SubjectCorrect          bool     `json:"subject_correct"`
-	FreshnessAccepted       bool     `json:"freshness_accepted"`
-	FieldsReady             bool     `json:"fields_ready"`
-	SourceAccepted          bool     `json:"source_accepted"`
-	AdviceBoundaryRespected bool     `json:"advice_boundary_respected"`
-	MissingRequestedFields  []string `json:"missing_requested_fields,omitempty"`
-	ReviewRequiredFields    []string `json:"review_required_fields,omitempty"`
-	RequestedFields         []string `json:"requested_fields,omitempty"`
-	SourceURL               string   `json:"source_url,omitempty"`
-	AdapterStatus           string   `json:"adapter_status,omitempty"`
-	FailureCode             string   `json:"failure_code,omitempty"`
-	FailureReason           string   `json:"failure_reason,omitempty"`
-}
+type ValuationEvaluationInput = astockcontracts.ValuationEvaluationInput
+type ValuationEvaluation = astockcontracts.ValuationEvaluation
 
 func EvaluateValuationEvidence(input ValuationEvaluationInput) ValuationEvaluation {
 	missing := normalizeStringList(input.MissingRequestedFields)

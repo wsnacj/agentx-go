@@ -68,14 +68,21 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 
 ```bash
 GOWORK=off go run scripts/check_developer_preview_api.go
+GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
+GOWORK=off go run scripts/check_docs_links.go
 ```
 
 门禁会确认：
 
 1. 四个 module 当前 production package 与矩阵一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 八个 Developer Preview candidate 的 `go doc -all` 签名未漂移。
+3. 八个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
+4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
+   `runtime/controlcontract`；
+5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；
+6. 中文正文中的245个仓库本地链接均可解析且不越出仓库。
 
 更新候选签名必须同时完成 focused owner/consumer review、中文 Reference 修订和
-baseline 更新。该门禁不生成完整文档站，也不替代未来 semver/API compatibility
-工具。
+baseline及`docs/reference/api-snapshots/`更新。`-check-platforms`只把目标平台参数
+传给子级`go list`/`go doc`，gate程序本身仍在当前Host执行，因此不会执行交叉编译
+产物。上述门禁不生成完整文档站，也不替代未来semver/API compatibility工具。

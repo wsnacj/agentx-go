@@ -11,6 +11,18 @@ Go标准库。
 - status/assessment按已有字段确定性投影，不读取 host配置；
 - 输入不会被用于发起交易、写缓存或调用模型。
 
+## Evidence evaluator 数据合同
+
+`ResearchEvaluationInput`、`SignalEvaluationInput`和
+`ValuationEvaluationInput`描述 Host 已经取得的 evidence；对应的
+`ResearchEvaluation`、`SignalEvaluation`和`ValuationEvaluation`保留稳定 JSON
+字段，用于承载确定性 guard 结果。实际 evaluator 由推荐入口
+`extensions/astock`暴露，本包只拥有 portable DTO，避免公开类型依赖 Go
+`internal`实现包。
+
+这些输入不会自行拉取行情、研报或信号，也不会推断交易日、选择 provider 或生成
+投资建议。
+
 本包不包含：证券身份解析、交易日/freshness策略、来源优先级、provider client、
 credential、缓存、pack/workflow、tool executor或最终回答策略。这些责任继续由
 具体 A股 Host/Scene拥有。

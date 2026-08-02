@@ -41,6 +41,10 @@ _ = astock.RegisterPacks(registry)
   `EvaluateSignalEvidence`只对已提供 evidence做确定性 guard判断，不拉取数据、
   不生成投资建议。
 
+六个 evaluator 输入/结果 DTO 的 source authority 位于
+`extensions/astock/contracts`；本包通过 type alias 提供推荐入口。公开签名不会依赖
+Go `internal`实现包，调用方也不应直接导入三组内部 Pack evaluator。
+
 所有 module/tool/skill/Pack/case/workflow identity均有具名常量。返回的 slice、map、
 Definition和 Manifest不得被解释为共享可变状态。
 

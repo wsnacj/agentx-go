@@ -7,42 +7,8 @@ import (
 	astockcontracts "github.com/wsnacj/agentx-go/extensions/astock/contracts"
 )
 
-type SignalEvaluationInput struct {
-	ExpectedEntityName        string
-	ExpectedStockCode         string
-	EvidenceEntityName        string
-	EvidenceStockCode         string
-	AdapterStatus             astockcontracts.AdapterStatus
-	FailureCode               astockcontracts.FailureCode
-	AnswerReady               bool
-	Degraded                  bool
-	RequestedSignalTypes      []string
-	ReturnedSignalTypes       []string
-	TradeDate                 string
-	AsOf                      string
-	MissingRequestedFields    []string
-	ReviewRequiredFields      []string
-	SourceURLs                []string
-	InvestmentAdviceRequested bool
-	AdviceBoundaryStated      bool
-}
-
-type SignalEvaluation struct {
-	Passed                  bool     `json:"passed"`
-	SubjectCorrect          bool     `json:"subject_correct"`
-	FreshnessAccepted       bool     `json:"freshness_accepted"`
-	FieldsReady             bool     `json:"fields_ready"`
-	SourceAccepted          bool     `json:"source_accepted"`
-	AdviceBoundaryRespected bool     `json:"advice_boundary_respected"`
-	MissingRequestedFields  []string `json:"missing_requested_fields,omitempty"`
-	ReviewRequiredFields    []string `json:"review_required_fields,omitempty"`
-	RequestedSignalTypes    []string `json:"requested_signal_types,omitempty"`
-	ReturnedSignalTypes     []string `json:"returned_signal_types,omitempty"`
-	SourceURLs              []string `json:"source_urls,omitempty"`
-	AdapterStatus           string   `json:"adapter_status,omitempty"`
-	FailureCode             string   `json:"failure_code,omitempty"`
-	FailureReason           string   `json:"failure_reason,omitempty"`
-}
+type SignalEvaluationInput = astockcontracts.SignalEvaluationInput
+type SignalEvaluation = astockcontracts.SignalEvaluation
 
 func EvaluateSignalEvidence(input SignalEvaluationInput) SignalEvaluation {
 	missing := normalizeStringList(input.MissingRequestedFields)

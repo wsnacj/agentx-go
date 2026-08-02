@@ -191,6 +191,8 @@ GOWORK=off GOPROXY=off go -C extensions/conformance/domain-module-consumer test 
 GOWORK=off GOPROXY=off go -C extensions/conformance/astock-consumer test ./... -count=1
 GOWORK=off GOPROXY=off go -C extensions/conformance/skills-consumer test ./... -count=1
 GOWORK=off go run scripts/check_developer_preview_api.go
+GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
+GOWORK=off go run scripts/check_docs_links.go
 ```
 
 根 contract 与 `components/llm` 的 production代码只依赖 Go 标准库；Runtime

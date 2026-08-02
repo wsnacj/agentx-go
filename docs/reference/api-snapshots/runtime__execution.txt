@@ -1,0 +1,57 @@
+package execution // import "github.com/wsnacj/agentx-go/runtime/execution"
+
+Package execution 提供根 AgentX Client 与 concrete execution host 之间的
+substrate-neutral Run dispatch、result assembly和 lifecycle adapter。
+
+当前 package 处于 Experimental/private validation。它不构造模型、工具、 Workflow、RunStore或
+Scene；这些能力由 Host拥有。
+
+TYPES
+
+type Host interface {
+	Run(context.Context, Request) (*Result, error)
+	Shutdown(context.Context) error
+	ClassifyError(error) agentx.ErrorCode
+}
+    Host 持有 concrete execution、资源关闭和错误分类语义。
+
+    Run 必须原样遵守调用方 context。Shutdown 必须支持重复调用，并允许前一次调用 因
+    context到期返回后继续收敛。ClassifyError只返回根 agentx合同支持的 code。
+
+type Request struct {
+	Input     string
+	SessionID string
+}
+    Request 是传递给 concrete Host 的底层无关 Run 输入。
+
+type Result struct {
+	RunID     string
+	SessionID string
+	Status    string
+	Reply     string
+}
+    Result 是 concrete Host 返回的底层无关 Run 结果。
+
+type Runtime struct {
+	// Has unexported fields.
+}
+    Runtime 把一个 Host组合为根 agentx.ExecutionAdapter。
+
+    Runtime不增加并发 gate；并发与关闭后调用语义由拥有它的 agentx.Client负责。 一个 Runtime成功交给
+    Client后，调用方不应再直接调用 Runtime或 Host。
+
+func New(host Host) (*Runtime, error)
+    New 校验 Host并构造一个 execution Runtime。
+
+func (rt *Runtime) ClassifyError(err error) agentx.ErrorCode
+    ClassifyError 委托 Host把 concrete error映射到根 agentx错误码。
+
+func (rt *Runtime) Run(ctx context.Context, request agentx.AdapterRunRequest) (*agentx.AdapterRunResult, error)
+    Run 将一个 adapter request确定性分派给 Host，并组装底层无关 adapter result。
+
+    context、文本、partial result和 error identity均不被包装或改写。请求校验、
+    SessionID规范化和稳定公共状态映射由根 agentx.Client负责。
+
+func (rt *Runtime) Shutdown(ctx context.Context) error
+    Shutdown 把有界关闭请求原样传递给 Host。
+

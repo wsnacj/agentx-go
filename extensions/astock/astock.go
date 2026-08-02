@@ -35,12 +35,12 @@ const (
 	ValuationDefaultWorkflow = packvaluation.DefaultWorkflow
 )
 
-type ResearchEvaluationInput = packresearch.ResearchEvaluationInput
-type ResearchEvaluation = packresearch.ResearchEvaluation
-type SignalEvaluationInput = packsignal.SignalEvaluationInput
-type SignalEvaluation = packsignal.SignalEvaluation
-type ValuationEvaluationInput = packvaluation.ValuationEvaluationInput
-type ValuationEvaluation = packvaluation.ValuationEvaluation
+type ResearchEvaluationInput = astockcontracts.ResearchEvaluationInput
+type ResearchEvaluation = astockcontracts.ResearchEvaluation
+type SignalEvaluationInput = astockcontracts.SignalEvaluationInput
+type SignalEvaluation = astockcontracts.SignalEvaluation
+type ValuationEvaluationInput = astockcontracts.ValuationEvaluationInput
+type ValuationEvaluation = astockcontracts.ValuationEvaluation
 
 // Manifest returns a fresh portable description of the A-share extension.
 // It does not register a Runner, install executors or authorize network access.

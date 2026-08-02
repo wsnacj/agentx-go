@@ -1,0 +1,331 @@
+package toolloop // import "github.com/wsnacj/agentx-go/runtime/toolloop"
+
+Package toolloop owns the portable Open Tool Loop mechanism.
+
+CONSTANTS
+
+const (
+	LoopKindRepeat     = "repeat"
+	LoopKindPingPong   = "ping_pong"
+	LoopKindNoProgress = "no_progress"
+	LoopKindReplay     = "successful_replay"
+)
+
+TYPES
+
+type Assembly struct {
+	// Has unexported fields.
+}
+    Assembly is a single-run composition of Runtime and Coordinator. It is
+    stateful, intended for one logical Run, and is not safe for concurrent use.
+
+func NewAssembly(config AssemblyConfig) (*Assembly, error)
+    NewAssembly validates and assembles the portable driver and coordinator.
+
+func (assembly *Assembly) Run(ctx context.Context) (AssemblyResult, error)
+    Run executes the assembled driver. The caller context and round errors are
+    forwarded without wrapping. Returned state and termination are defensive
+    copies of the assembly's portable result.
+
+type AssemblyConfig struct {
+	MaxRounds   int
+	Coordinator CoordinatorConfig
+	Initial     RoundState
+}
+    AssemblyConfig combines the portable driver and round coordinator inputs.
+    Concrete model, tool, persistence, and product policy remain in Coordinator
+    ports supplied by the host.
+
+type AssemblyResult struct {
+	Driver      Result
+	State       RoundState
+	Termination *TerminationSignal
+}
+    AssemblyResult reports the driver outcome, final portable state, and any
+    termination fact observed by the coordinator.
+
+type Call struct {
+	Name      string
+	Arguments string
+}
+    Call is the portable projection of a model-requested tool call.
+
+type Config struct {
+	MaxRounds int
+}
+    Config controls the portable round driver.
+
+type ContinuationObservation struct {
+	Round int
+	Calls []Call
+	Runs  []RunObservation
+}
+    ContinuationObservation is supplied to an optional host policy between the
+    canonical failure fuse and loop detector.
+
+type ContinuationPolicy interface {
+	ObserveContinuation(context.Context, ContinuationObservation) (code string, stop bool, err error)
+}
+    ContinuationPolicy retains host-specific stop policy outside the portable
+    coordinator. A non-empty code identifies the host policy decision.
+
+type Coordinator struct {
+	// Has unexported fields.
+}
+    Coordinator owns portable round-result state application and stop ordering.
+
+func NewCoordinator(config CoordinatorConfig, initial RoundState) (*Coordinator, error)
+    NewCoordinator constructs a coordinator with a defensive copy of state.
+
+func (c *Coordinator) State() RoundState
+    State returns a defensive copy of the current portable state.
+
+func (c *Coordinator) Step(ctx context.Context, input StepInput) (StepResult, error)
+    Step executes and coordinates one host-owned round.
+
+type CoordinatorConfig struct {
+	Executor           RoundExecutor
+	LoopDetector       *LoopDetector
+	FailureFuse        *FailureFuse
+	ContinuationPolicy ContinuationPolicy
+}
+    CoordinatorConfig supplies the host executor and already-resolved policy
+    mechanisms.
+
+type FailureFuse struct {
+	// Has unexported fields.
+}
+    FailureFuse tracks consecutive failures for the same normalized tool.
+
+func NewFailureFuse(config FailureFuseConfig) *FailureFuse
+    NewFailureFuse constructs a fuse from already resolved host policy.
+
+func (f *FailureFuse) Observe(round int, observations []FailureObservation) (FailureSignal, bool)
+    Observe records tool results and reports the first fuse trigger.
+
+type FailureFuseConfig struct {
+	Enabled   bool
+	Threshold int
+}
+    FailureFuseConfig supplies host-owned failure policy to the fuse.
+
+type FailureObservation struct {
+	Tool       string
+	Failed     bool
+	ErrorClass string
+}
+    FailureObservation is the portable projection of one tool result.
+
+type FailureSignal struct {
+	Round      int
+	Tool       string
+	Count      int
+	ErrorClass string
+}
+    FailureSignal describes a consecutive tool failure fuse trigger.
+
+type LoopDetector struct {
+	// Has unexported fields.
+}
+    LoopDetector detects repeated, ping-pong, no-progress, and replay patterns.
+
+func NewLoopDetector(config LoopDetectorConfig) *LoopDetector
+    NewLoopDetector constructs a detector from already resolved host policy.
+
+func (d *LoopDetector) Observe(round int, calls []Call, runs []RunObservation) (LoopSignal, bool)
+    Observe records one round and reports a terminal loop signal when present.
+
+func (d *LoopDetector) ShouldSuppressReplay(calls []Call) (LoopSignal, bool)
+    ShouldSuppressReplay reports an immediately repeated successful call.
+
+type LoopDetectorConfig struct {
+	Enabled             bool
+	RepeatThreshold     int
+	PingPongThreshold   int
+	NoProgressThreshold int
+}
+    LoopDetectorConfig supplies host-owned policy values to the detector.
+
+type LoopSignal struct {
+	Kind            string
+	Round           int
+	CallSignature   string
+	ResultSignature string
+	Count           int
+}
+    LoopSignal describes a detected loop or successful replay.
+
+type OutcomeKind string
+    OutcomeKind identifies why a tool-loop driver stopped or continued.
+
+const (
+	OutcomeContinue   OutcomeKind = "continue"
+	OutcomeCompleted  OutcomeKind = "completed"
+	OutcomeTerminated OutcomeKind = "terminated"
+	OutcomeMaxRounds  OutcomeKind = "max_rounds"
+)
+type Result struct {
+	Kind  OutcomeKind
+	Round int
+}
+    Result reports the round and outcome that stopped the driver.
+
+type RoundContinuation struct {
+	Calls            []Call
+	Runs             []RunObservation
+	Failures         []FailureObservation
+	NextChunks       []string
+	ForceNoToolCalls bool
+}
+    RoundContinuation contains the portable observations needed to continue.
+
+type RoundExecutionInput struct {
+	Round     int
+	MaxRounds int
+	State     RoundState
+}
+    RoundExecutionInput describes the host-owned round to execute.
+
+type RoundExecutionResult struct {
+	Kind         OutcomeKind
+	Reply        string
+	Continuation *RoundContinuation
+}
+    RoundExecutionResult is the portable result of one host-owned round.
+
+type RoundExecutor interface {
+	ExecuteRound(context.Context, RoundExecutionInput) (RoundExecutionResult, error)
+}
+    RoundExecutor executes the concrete model/tool work for one round.
+
+type RoundObserveResult struct {
+	Reply string
+}
+    RoundObserveResult carries the raw assistant reply observed by the host.
+
+type RoundPhase string
+    RoundPhase identifies a portable round execution phase.
+
+const (
+	// RoundPhaseRequest identifies the host model-request phase.
+	RoundPhaseRequest RoundPhase = "request"
+	// RoundPhaseObserve identifies the host response-observation phase.
+	RoundPhaseObserve RoundPhase = "observe"
+	// RoundPhaseBeforeAction identifies the optional host action-admission phase.
+	RoundPhaseBeforeAction RoundPhase = "before_action"
+	// RoundPhaseAct identifies the concrete host action phase.
+	RoundPhaseAct RoundPhase = "act"
+)
+type RoundPhaseCoordinator struct {
+	// Has unexported fields.
+}
+    RoundPhaseCoordinator owns portable request/observe/gate/act ordering.
+
+func NewRoundPhaseCoordinator(executor RoundPhaseExecutor) (*RoundPhaseCoordinator, error)
+    NewRoundPhaseCoordinator constructs a round phase coordinator.
+
+func (c *RoundPhaseCoordinator) Execute(ctx context.Context, input RoundPhaseInput) (RoundPhaseResult, error)
+    Execute coordinates one host-owned round without wrapping phase errors.
+
+type RoundPhaseExecutor interface {
+	Request(context.Context, RoundPhaseInput) (RoundRequestResult, error)
+	Observe(context.Context, RoundPhaseInput) (RoundObserveResult, error)
+	BeforeAction(context.Context, RoundPhaseInput) (proceed bool, err error)
+	Act(context.Context, RoundPhaseInput) error
+}
+    RoundPhaseExecutor owns every concrete phase operation and policy decision.
+    Implementations may retain request state between methods and must
+    not be shared across concurrent round executions unless they provide
+    synchronization.
+
+type RoundPhaseInput struct {
+	Round     int
+	MaxRounds int
+}
+    RoundPhaseInput identifies the host-owned round being coordinated.
+
+type RoundPhaseResult struct {
+	Kind      RoundPhaseResultKind
+	LastPhase RoundPhase
+	Reply     string
+}
+    RoundPhaseResult reports the portable outcome and last attempted phase.
+
+type RoundPhaseResultKind string
+    RoundPhaseResultKind identifies how portable phase orchestration completed.
+
+const (
+	// RoundPhaseNoAction means observation completed without requiring action.
+	RoundPhaseNoAction RoundPhaseResultKind = "no_action"
+	// RoundPhaseHostStopped means the host gate stopped before concrete action.
+	RoundPhaseHostStopped RoundPhaseResultKind = "host_stopped"
+	// RoundPhaseActionCompleted means the concrete host action completed.
+	RoundPhaseActionCompleted RoundPhaseResultKind = "action_completed"
+)
+type RoundRequestResult struct {
+	ActionRequired bool
+}
+    RoundRequestResult reports whether the model response requires host action.
+
+type RoundState struct {
+	Chunks           []string
+	ForceNoToolCalls bool
+	FinalReply       string
+}
+    RoundState is the portable state carried between host-owned rounds.
+
+type RunObservation struct {
+	Name       string
+	Output     string
+	Failed     bool
+	ErrorClass string
+}
+    RunObservation is the portable projection of a completed tool call.
+
+type Runtime struct {
+	// Has unexported fields.
+}
+    Runtime drives host-owned rounds without owning model, tool, or policy
+    implementations.
+
+func New(config Config, stepper Stepper) (*Runtime, error)
+    New validates and constructs a portable tool-loop Runtime.
+
+func (rt *Runtime) Run(ctx context.Context) (Result, error)
+    Run executes at most MaxRounds host-owned steps. The supplied context is
+    forwarded unchanged; cancellation policy remains with the host step.
+
+type StepInput struct {
+	Round     int
+	MaxRounds int
+}
+    StepInput describes the current round.
+
+type StepResult struct {
+	Kind        OutcomeKind
+	Termination *TerminationSignal
+}
+    StepResult reports the portable outcome of one host-owned round.
+
+type Stepper interface {
+	Step(context.Context, StepInput) (StepResult, error)
+}
+    Stepper executes one host-owned model/tool round.
+
+type TerminationKind string
+    TerminationKind identifies which coordination layer stopped continuation.
+
+const (
+	TerminationFailureFuse TerminationKind = "failure_fuse"
+	TerminationHostPolicy  TerminationKind = "host_policy"
+	TerminationLoop        TerminationKind = "loop"
+)
+type TerminationSignal struct {
+	Kind    TerminationKind
+	Code    string
+	Failure FailureSignal
+	Loop    LoopSignal
+}
+    TerminationSignal is a portable stop fact. User-visible projection remains
+    host-owned.
+

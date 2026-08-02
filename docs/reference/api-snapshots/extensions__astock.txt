@@ -1,0 +1,97 @@
+package astock // import "github.com/wsnacj/agentx-go/extensions/astock"
+
+Package astock provides the portable A-share domain manifest, immutable assets,
+tool catalog, Pack definitions and deterministic evaluators.
+
+CONSTANTS
+
+const (
+	ModuleID             = astockcontracts.ModuleID
+	AStockDataPluginName = astockcontracts.AStockDataPluginName
+	SkillAStockData      = astockcontracts.SkillAStockData
+
+	ToolAStockInvestigation      = astockcontracts.ToolAStockInvestigation
+	ToolAStockQuoteLookup        = astockcontracts.ToolAStockQuoteLookup
+	ToolAStockResearchLookup     = astockcontracts.ToolAStockResearchLookup
+	ToolAStockSignalLookup       = astockcontracts.ToolAStockSignalLookup
+	ToolAStockAnnouncementLookup = astockcontracts.ToolAStockAnnouncementLookup
+	ToolAStockProfileLookup      = astockcontracts.ToolAStockProfileLookup
+	ToolAStockAnswerFormat       = astockcontracts.ToolAStockAnswerFormat
+
+	ResearchPackID           = packresearch.PackID
+	ResearchCaseType         = packresearch.CaseTypeResearch
+	ResearchDefaultWorkflow  = packresearch.DefaultWorkflow
+	SignalPackID             = packsignal.PackID
+	SignalCaseType           = packsignal.CaseTypeSignal
+	SignalDefaultWorkflow    = packsignal.DefaultWorkflow
+	ValuationPackID          = packvaluation.PackID
+	QuoteCaseType            = packvaluation.CaseTypeQuote
+	ValuationCaseType        = packvaluation.CaseTypeValuation
+	ValuationDefaultWorkflow = packvaluation.DefaultWorkflow
+)
+
+FUNCTIONS
+
+func AStockAnnouncementLookupTool() llm.Tool
+func AStockAnswerFormatTool() llm.Tool
+func AStockInvestigationTool() llm.Tool
+func AStockProfileLookupTool() llm.Tool
+func AStockQuoteLookupTool() llm.Tool
+func AStockResearchLookupTool() llm.Tool
+func AStockSignalLookupTool() llm.Tool
+func Assets() assetfs.Provider
+    Assets returns the immutable A-share skill/tool asset provider.
+
+func Definitions() []pack.Definition
+    Definitions returns fresh, caller-owned Pack definitions in registration
+    order.
+
+func ExtensionFS() fs.FS
+    ExtensionFS returns the immutable filesystem view used by extension hosts.
+
+func Manifest() domainmodule.Manifest
+    Manifest returns a fresh portable description of the A-share extension. It
+    does not register a Runner, install executors or authorize network access.
+
+func MaterializeResearchWorkflow(coordinator *pack.Coordinator) (workflow.Spec, error)
+func MaterializeSignalWorkflow(coordinator *pack.Coordinator) (workflow.Spec, error)
+func MaterializeValuationWorkflow(coordinator *pack.Coordinator) (workflow.Spec, error)
+func RegisterPacks(registrar PackRegistrar) error
+    RegisterPacks installs all portable A-share Pack definitions in stable
+    order.
+
+func ResearchDefinition() pack.Definition
+func SignalDefinition() pack.Definition
+func SkillNames() []string
+func ToolDefinitions() []llm.Tool
+    ToolDefinitions returns fresh, caller-owned LLM tool schemas. It does not
+    register handlers or grant access to a provider.
+
+func ToolNames() []string
+func ValuationDefinition() pack.Definition
+
+TYPES
+
+type PackRegistrar interface {
+	Register(pack.Definition) error
+}
+    PackRegistrar is the narrow capability required by RegisterPacks.
+
+type ResearchEvaluation = astockcontracts.ResearchEvaluation
+
+func EvaluateResearchEvidence(input ResearchEvaluationInput) ResearchEvaluation
+
+type ResearchEvaluationInput = astockcontracts.ResearchEvaluationInput
+
+type SignalEvaluation = astockcontracts.SignalEvaluation
+
+func EvaluateSignalEvidence(input SignalEvaluationInput) SignalEvaluation
+
+type SignalEvaluationInput = astockcontracts.SignalEvaluationInput
+
+type ValuationEvaluation = astockcontracts.ValuationEvaluation
+
+func EvaluateValuationEvidence(input ValuationEvaluationInput) ValuationEvaluation
+
+type ValuationEvaluationInput = astockcontracts.ValuationEvaluationInput
+

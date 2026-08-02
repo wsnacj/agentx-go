@@ -1,0 +1,155 @@
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/hostkit"
+
+Package hostkit 组合 portable tool-loop、execution adapter 和根 AgentX Client，为不依赖特定
+Runner 的宿主提供最小执行内核。
+
+当前 package 处于 Experimental/private validation。它不提供模型、工具、
+provider、credential、Workflow 显式图或 durable backend。
+
+FUNCTIONS
+
+func New(config Config) (*agentx.Client, error)
+    New 构造一个不依赖特定 Runner 的根 AgentX Client。
+
+    New 不执行模型或工具请求。Factory 只有在 New 成功后才转移给 Client；失败时仍由调用方持有。
+
+func NewModelToolClient(config ModelToolClientConfig) (*agentx.Client, error)
+    NewModelToolClient constructs a root Client without requiring callers to
+    implement Factory, BuildRun, or toolloop.RoundExecutor. It does not install
+    provider, authorization, persistence, detector, or product-policy defaults.
+
+
+TYPES
+
+type Config struct {
+	Factory Factory
+	Profile agentx.ExecutionProfile
+}
+    Config 绑定宿主 Factory 与根 Client 执行画像。
+
+    New 成功后，Factory 的 Run 构造和 Shutdown 访问权转移给返回的 Client；调用方不应再直接使用该 Factory。
+
+type Factory interface {
+	BuildRun(context.Context, execution.Request) (RunConfig, error)
+	Shutdown(context.Context) error
+	ClassifyError(error) agentx.ErrorCode
+}
+    Factory 按 Run 构造已解析的 portable assembly，并持有宿主资源生命周期。
+
+    BuildRun 只应组装 identity、RoundExecutor 和已解析 policy ports， 不应重新实现 portable
+    round ordering。Shutdown 必须有界、幂等，并允许 前一次调用因 context 到期后继续收敛。
+
+type ModelResult struct {
+	Response  llm.ChatResponse
+	Model     string
+	Recovered bool
+}
+    ModelResult is the substrate-neutral result of one host model request.
+    Response uses the canonical LLM contract; provider payload and recovery
+    policy remain captured by the host function.
+
+type ModelToolClientConfig struct {
+	Profile   agentx.ExecutionProfile
+	MaxRounds int
+
+	BuildRound func(context.Context, execution.Request) (ModelToolRoundConfig, error)
+
+	ResolveIdentity func(execution.Request) (runID string, sessionID string)
+	InitialState    func(execution.Request) toolloop.RoundState
+	Shutdown        func(context.Context) error
+	ClassifyError   func(error) agentx.ErrorCode
+}
+    ModelToolClientConfig is the low-boilerplate Host Kit path for callers
+    that can build model/tool functions per Run but do not need custom assembly
+    policy. Advanced hosts can continue to use Config and Factory directly.
+
+type ModelToolRoundAdapter struct {
+	// Has unexported fields.
+}
+    ModelToolRoundAdapter coordinates a model request, response observation,
+    optional host tool gate, and concrete tool execution. It is stateless;
+    concurrent safety depends only on the supplied host functions.
+
+func NewModelToolRoundAdapter(config ModelToolRoundConfig) (*ModelToolRoundAdapter, error)
+    NewModelToolRoundAdapter validates and constructs a portable round adapter.
+
+func (adapter *ModelToolRoundAdapter) Execute(ctx context.Context, input toolloop.RoundExecutionInput) (ModelToolRoundResult, error)
+    Execute coordinates one model/tool round and preserves phase error identity.
+    It is useful to hosts that retain richer post-round product policy while
+    delegating the generic model/tool phase mechanism.
+
+func (adapter *ModelToolRoundAdapter) ExecuteRound(ctx context.Context, input toolloop.RoundExecutionInput) (toolloop.RoundExecutionResult, error)
+    ExecuteRound implements toolloop.RoundExecutor with the minimal portable
+    projection: a model-only response completes, a host gate stop terminates,
+    and an executed tool batch continues with ToolResult state.
+
+type ModelToolRoundConfig struct {
+	RequestModel    func(context.Context, toolloop.RoundExecutionInput) (ModelResult, error)
+	ObserveResponse func(context.Context, ModelToolRoundExchange) (string, error)
+	BeforeTools     func(context.Context, ModelToolRoundExchange) (bool, error)
+	ExecuteTools    func(context.Context, ModelToolRoundExchange) (ToolResult, error)
+}
+    ModelToolRoundConfig supplies concrete model/tool operations while leaving
+    round phase ordering and portable projection to ModelToolRoundAdapter.
+
+    RequestModel is required. ObserveResponse defaults to Response.Content,
+    BeforeTools defaults to true, and ExecuteTools is required only when the
+    model response contains tool calls.
+
+type ModelToolRoundExchange struct {
+	Input toolloop.RoundExecutionInput
+	Model ModelResult
+	Reply string
+}
+    ModelToolRoundExchange is the immutable view passed from response
+    observation to the optional tool gate and concrete tool executor. Reply is
+    empty while ObserveResponse is running and populated for later phases.
+
+type ModelToolRoundResult struct {
+	Phase toolloop.RoundPhaseResult
+	Model ModelResult
+	Tools ToolResult
+}
+    ModelToolRoundResult reports the canonical phase result together with
+    defensive copies of the model and tool results.
+
+type RunConfig struct {
+	RunID     string
+	SessionID string
+	Assembly  toolloop.AssemblyConfig
+}
+    RunConfig 是 Factory 为一次 Run 提供的完整 portable assembly 输入。
+
+    RunID 和 SessionID 由宿主产生或保留；hostkit 不伪造 identity。 Assembly 直接复用 canonical
+    toolloop 合同。
+
+type RunResult struct {
+	RunID       string
+	SessionID   string
+	Status      string
+	Reply       string
+	Driver      toolloop.Result
+	State       toolloop.RoundState
+	Termination *toolloop.TerminationSignal
+}
+    RunResult 是一次 portable assembly 的完整底层无关结果。
+
+    Status 只使用 execution adapter 已支持的 completed、incomplete 和 failed。Driver、State
+    和 Termination 供宿主做诊断或兼容投影。
+
+func Execute(ctx context.Context, config RunConfig) (RunResult, error)
+    Execute 构造并执行一次 portable tool-loop assembly。
+
+    context 和 host error identity 不被包装。执行错误发生时，返回值仍 保留已产生的 identity、portable
+    state 和 reply。
+
+type ToolResult struct {
+	Runs             []toolloop.RunObservation
+	Failures         []toolloop.FailureObservation
+	NextChunks       []string
+	ForceNoToolCalls bool
+}
+    ToolResult is the portable result of executing one model-requested tool
+    batch. The host still owns authorization, scheduling, persistence, and
+    concrete tool implementations.
+

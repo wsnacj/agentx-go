@@ -1,0 +1,127 @@
+package agentx // import "github.com/wsnacj/agentx-go"
+
+Package agentx 提供 AgentX 的最小公共执行合同。
+
+当前版本仅用于 private validation：它定义 Client、Run、错误、执行画像和 ExecutionAdapter 扩展接缝，但不包含
+Runtime 构造、模型/provider、Workflow、 Objective、Resume、持久化生命周期、HTTP 或 Scene 能力。
+
+本包不是 Public、Beta 或 Stable 兼容性声明。
+
+TYPES
+
+type AdapterRunRequest struct {
+	Input     string
+	SessionID string
+}
+    AdapterRunRequest 是传递给 ExecutionAdapter 的底层无关输入。
+
+type AdapterRunResult struct {
+	RunID     string
+	SessionID string
+	Status    string
+	Reply     string
+}
+    AdapterRunResult 是 ExecutionAdapter 返回的底层无关结果。
+
+    Status 是 adapter 对底层执行状态的观察；Client 会将其映射为稳定的公共状态、 blocker 和 next action。
+
+type Client struct {
+	// Has unexported fields.
+}
+    Client 是 ExecutionAdapter 之上的薄公共合同。
+
+    Client 方法可并发调用，但同一 Client 的重叠 Run 会被串行化。Shutdown 可与 当前 Run 并发；Shutdown
+    一旦开始，新的 Run 会返回 CodeClientClosed。
+
+func New(config Config) (*Client, error)
+    New 校验 Config 并创建 Client。
+
+func (c *Client) Run(ctx context.Context, request RunRequest) (RunResult, error)
+    Run 执行已配置的同步 adapter 路径。
+
+func (c *Client) Shutdown(ctx context.Context) error
+    Shutdown 开始或继续一次有界、幂等的 adapter 关闭过程。
+
+    Adapter.Shutdown 必须支持在前一次调用因 context 到期返回后继续调用。
+
+type Config struct {
+	Adapter ExecutionAdapter
+	Profile ExecutionProfile
+}
+    Config 绑定一个由 host 构造的底层无关 ExecutionAdapter。
+
+    New 成功后，调用方将 Adapter 的 Run 和 Shutdown 独占访问权交给 Client，不应 再直接调用该 Adapter。
+
+type Error struct {
+	Code      ErrorCode
+	Retryable bool
+	Message   string
+
+	// Has unexported fields.
+}
+    Error 是 Client 返回的 display-safe typed error。
+
+    Message 不包含 adapter/backend 原始错误；Unwrap 仍保留 cause，供 errors.Is/errors.As
+    进行程序化判断。
+
+func (e *Error) Error() string
+    Error 返回可安全展示的错误文本。
+
+func (e *Error) Is(target error) bool
+    Is 按稳定 ErrorCode 比较两个 AgentX 错误。
+
+func (e *Error) Unwrap() error
+    Unwrap 返回原始 cause，供程序化错误检查使用。
+
+type ErrorCode string
+    ErrorCode 是稳定、可供程序判断的错误类别。
+
+const (
+	CodeInvalidArgument    ErrorCode = "invalid_argument"
+	CodeCanceled           ErrorCode = "canceled"
+	CodeDeadlineExceeded   ErrorCode = "deadline_exceeded"
+	CodeClientClosed       ErrorCode = "client_closed"
+	CodeUnsupportedProfile ErrorCode = "unsupported_profile"
+	CodeExecutionFailed    ErrorCode = "execution_failed"
+	CodeShutdownFailed     ErrorCode = "shutdown_failed"
+)
+type ExecutionAdapter interface {
+	Run(context.Context, AdapterRunRequest) (*AdapterRunResult, error)
+	Shutdown(context.Context) error
+	ClassifyError(error) ErrorCode
+}
+    ExecutionAdapter 是 Client 使用的最窄执行接缝。
+
+    Client 会串行调用 Run；Shutdown 可以与 Run 并发，以便实现取消和收敛正在 执行的工作。实现必须让 Shutdown
+    支持重复调用，并自行持有底层 Runtime 的构造、 状态、结果提取和错误分类语义。
+
+type ExecutionProfile struct {
+	Activation         string
+	ControlMode        string
+	ExecutionIntensity string
+	Driver             string
+	ResultPolicy       string
+	Lifecycle          string
+}
+    ExecutionProfile 描述一次执行的六个正交维度。
+
+    W1 只接受同步 open-tool-loop 画像。这些字符串是已测量合同，不表示调用方可通过 任意组合重新配置底层 Runtime。
+
+type RunRequest struct {
+	Input     string
+	SessionID string
+}
+    RunRequest 是最小同步执行输入。
+
+type RunResult struct {
+	RunID      string
+	SessionID  string
+	Status     string
+	Reply      string
+	Evidence   []string
+	Blockers   []string
+	NextAction string
+	Profile    ExecutionProfile
+}
+    RunResult 是一次 owner 执行的 display-safe 投影。
+
