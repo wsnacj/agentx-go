@@ -1,0 +1,62 @@
+name: AgentX Core Pre-Beta Candidate
+
+on:
+  push:
+    branches:
+      - codex/w4-runtime-foundation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m6d-pre-beta-candidate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pre-beta-candidate:
+    name: Ubuntu runtime, candidate artifacts and security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GOPRIVATE: github.com/wsnacj/agentx-go
+      GONOSUMDB: github.com/wsnacj/agentx-go
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: url.https://x-access-token:${{ github.token }}@github.com/.insteadOf
+      GIT_CONFIG_VALUE_0: https://github.com/
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install pinned Go toolchain
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: 1.25.12
+          cache: false
+
+      - name: Prepare value-safe evidence directory
+        run: mkdir -p "$RUNNER_TEMP/m6d-evidence"
+
+      - name: Re-run accepted Ubuntu runtime gate
+        env:
+          GOWORK: "off"
+          CGO_ENABLED: "1"
+        run: go run ./scripts/check_ubuntu_runtime.go
+
+      - name: Build and verify disposable Pre-Beta candidate
+        env:
+          GOWORK: "off"
+          CGO_ENABLED: "1"
+        run: go run ./scripts/check_pre_beta_candidate.go -artifact-dir "$RUNNER_TEMP/m6d-evidence"
+
+      - name: Upload value-safe candidate manifest and scan logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: m6d-pre-beta-candidate-${{ github.sha }}
+          path: ${{ runner.temp }}/m6d-evidence/
+          if-no-files-found: error
+          retention-days: 14

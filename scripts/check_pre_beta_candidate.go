@@ -17,8 +17,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -47,6 +48,19 @@ type moduleArtifact struct {
 	size   int64
 	files  int
 }
+
+type securitySummary struct {
+	path        string
+	reachable   int
+	imported    int
+	required    int
+	residualIDs []string
+}
+
+var (
+	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilities in packages you import and ([0-9]+)[[:space:]]+vulnerabilities in modules you require`)
+	vulnerabilityPattern = regexp.MustCompile(`GO-[0-9]{4}-[0-9]+`)
+)
 
 var candidateModules = []moduleSpec{
 	{path: "github.com/wsnacj/agentx-go", dir: ".", name: "root"},
@@ -95,6 +109,7 @@ func main() {
 
 	nestedRoots := trackedModuleRoots(root)
 	staged := make(map[string]string, len(candidateModules))
+	var securitySummaries []securitySummary
 	for _, module := range candidateModules {
 		target := filepath.Join(stagingRoot, module.name)
 		copyTrackedModule(root, module.dir, target, nestedRoots)
@@ -152,8 +167,11 @@ func main() {
 			check(fmt.Errorf("%s candidate enumerated zero packages", module.path))
 		}
 		logPath := filepath.Join(outputDir, fmt.Sprintf(securityLogName, module.name))
-		runGovulncheck(govulncheckPath, dir, candidateEnv, work, logPath)
-		fmt.Printf("agentx-pre-beta-module-ok:path=%s:packages=%d:known_reachable_vulnerabilities=0\n", module.path, packages)
+		security := runGovulncheck(govulncheckPath, dir, candidateEnv, work, logPath)
+		security.path = module.path
+		securitySummaries = append(securitySummaries, security)
+		fmt.Printf("agentx-pre-beta-module-ok:path=%s:packages=%d:known_reachable_vulnerabilities=%d:imported_unreachable=%d:module_unreachable=%d\n",
+			module.path, packages, security.reachable, security.imported, security.required)
 	}
 
 	consumer := filepath.Join(work, "consumer")
@@ -165,7 +183,9 @@ func main() {
 	printRun(consumer, candidateEnv, "go", "mod", "tidy")
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
 	printRun(consumer, candidateEnv, "go", "mod", "download", "all")
-	printRun(consumer, candidateEnv, "go", "list", "-deps", "./...")
+	if packages := nonEmptyLines(run(consumer, candidateEnv, "go", "list", "-deps", "./...")); packages == 0 {
+		check(fmt.Errorf("candidate consumer enumerated zero dependencies"))
+	}
 	printRun(consumer, candidateEnv, "go", "mod", "verify")
 	moduleGraph := run(consumer, candidateEnv, "go", "list", "-m", "-f", "{{.Path}} {{.Version}} {{.Sum}} {{.GoModSum}}", "all")
 	checkCandidateSelection(moduleGraph)
@@ -190,7 +210,7 @@ func main() {
 		check(fmt.Errorf("unexpected offline candidate consumer output %q", offlineOutput))
 	}
 
-	manifest := buildManifest(revision, commitTime, fixedVersion, artifacts)
+	manifest := buildManifest(revision, commitTime, fixedVersion, artifacts, securitySummaries)
 	check(os.WriteFile(filepath.Join(outputDir, manifestFile), []byte(manifest), 0o644))
 	checkCleanTree(root)
 
@@ -364,10 +384,10 @@ func writeModuleZip(target, source, modulePath string, commitTime time.Time) int
 	return len(files)
 }
 
-func runGovulncheck(binary, dir string, env []string, work, logPath string) {
+func runGovulncheck(binary, dir string, env []string, work, logPath string) securitySummary {
 	var log strings.Builder
 	for attempt := 1; attempt <= 3; attempt++ {
-		command := exec.Command(binary, "./...")
+		command := exec.Command(binary, "-show", "verbose", "./...")
 		command.Dir = dir
 		command.Env = env
 		output, err := command.CombinedOutput()
@@ -375,10 +395,7 @@ func runGovulncheck(binary, dir string, env []string, work, logPath string) {
 		fmt.Fprintf(&log, "attempt=%d\n%s", attempt, safeOutput)
 		if err == nil {
 			check(os.WriteFile(logPath, []byte(log.String()), 0o644))
-			if safeOutput != "" {
-				fmt.Print(safeOutput)
-			}
-			return
+			return parseSecuritySummary(safeOutput)
 		}
 		if !isTransientScanFailure(safeOutput) {
 			check(os.WriteFile(logPath, []byte(log.String()), 0o644))
@@ -392,6 +409,30 @@ func runGovulncheck(binary, dir string, env []string, work, logPath string) {
 		check(os.WriteFile(logPath, []byte(log.String()), 0o644))
 		check(fmt.Errorf("govulncheck %s exhausted transient retries: %w: %s", dir, err, strings.TrimSpace(safeOutput)))
 	}
+	return securitySummary{}
+}
+
+func parseSecuritySummary(output string) securitySummary {
+	summary := securitySummary{}
+	if strings.Contains(output, "Your code is affected by 0 vulnerabilities.") || strings.Contains(output, "No vulnerabilities found.") {
+		summary.reachable = 0
+	} else {
+		check(fmt.Errorf("govulncheck success output did not prove zero reachable vulnerabilities"))
+	}
+	if match := securityCountPattern.FindStringSubmatch(output); len(match) == 3 {
+		summary.imported = mustAtoi(match[1])
+		summary.required = mustAtoi(match[2])
+	}
+	seen := map[string]bool{}
+	for _, id := range vulnerabilityPattern.FindAllString(output, -1) {
+		if seen[id] {
+			continue
+		}
+		seen[id] = true
+		summary.residualIDs = append(summary.residualIDs, id)
+	}
+	sort.Strings(summary.residualIDs)
+	return summary
 }
 
 func isTransientScanFailure(output string) bool {
@@ -428,12 +469,11 @@ func checkCandidateSelection(output string) {
 	}
 }
 
-func buildManifest(revision string, commitTime time.Time, fixedVersion string, artifacts []moduleArtifact) string {
+func buildManifest(revision string, commitTime time.Time, fixedVersion string, artifacts []moduleArtifact, security []securitySummary) string {
 	var builder strings.Builder
 	fmt.Fprintln(&builder, "agentx_pre_beta_candidate_manifest")
 	fmt.Fprintf(&builder, "source_revision=%s\n", revision)
 	fmt.Fprintf(&builder, "source_commit_time=%s\n", commitTime.Format(time.RFC3339))
-	fmt.Fprintf(&builder, "gate_build_go_version=%s\n", runtime.Version())
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
 	fmt.Fprintf(&builder, "candidate_version_scope=disposable_validation_only\n")
@@ -448,9 +488,23 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 		fmt.Fprintf(&builder, "module=%s version=%s zip_sha256=%s zip_bytes=%d zip_files=%d\n",
 			artifact.path, candidateVersion, artifact.sha256, artifact.size, artifact.files)
 	}
+	for _, summary := range security {
+		ids := "none"
+		if len(summary.residualIDs) > 0 {
+			ids = strings.Join(summary.residualIDs, ",")
+		}
+		fmt.Fprintf(&builder, "security=%s reachable=%d imported_unreachable=%d module_unreachable=%d residual_ids=%s\n",
+			summary.path, summary.reachable, summary.imported, summary.required, ids)
+	}
 	fmt.Fprintln(&builder, technicalReadyMarker)
 	fmt.Fprintln(&builder, "public_beta_ready=false")
 	return builder.String()
+}
+
+func mustAtoi(value string) int {
+	parsed, err := strconv.Atoi(value)
+	check(err)
+	return parsed
 }
 
 func checkNoReplace(path string) {
