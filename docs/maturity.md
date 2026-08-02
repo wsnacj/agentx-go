@@ -5,7 +5,8 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | M6B Core中文Developer Portal与API Reference交付闭环：`active` |
+| 当前产品里程碑 | M6B Core中文Developer Portal与API Reference交付闭环：`technical_checkpoint_complete_awaiting_owner_acceptance` |
+| Developer Portal | 85个静态页面；44 package/8 candidate；本地搜索、响应式和source backlink已验证 |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Public Beta readiness | `false`；license、安全复核、Ubuntu实机和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
@@ -389,6 +390,16 @@ M6A已于2026-08-02获Owner接受；该接受不改变`public_beta_ready=false`�
 已有中文正文、44个package Reference、8个Developer Preview candidate和三条标准接入
 路径交付为可构建、导航、搜索的Core Developer Portal Candidate。站点复用现有
 Markdown/API snapshot事实源，不新增Runtime owner、公共API、Scene或正式发行声明。
+
+M6B技术checkpoint现已完成：VitePress 1.6.4与修复后的Vite 6.4.3由lockfile固定，
+clean `npm ci`和`npm audit`零漏洞通过；确定性prepare只把现有Markdown、package
+`API.md`和maturity TSV投影到ignored staging。production build生成85个HTML页面，
+44 package/8 candidate coverage、本地全文搜索、断链、生成产物clean和敏感占位gate
+通过。浏览器已验证首页、Package API、`Shutdown`搜索、Developer Preview badge、
+source commit backlink、侧边栏、390×844响应式无水平溢出和零console error。四module
+smoke tests全部通过。M6B不改变fixed版本、Go production source、Runtime行为或HS代码，
+故不重复完整AgentX回归；当前状态为
+`technical_checkpoint_complete_awaiting_owner_acceptance`。
 
 ## 明确 non-goal
 

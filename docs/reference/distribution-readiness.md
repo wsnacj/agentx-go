@@ -7,6 +7,8 @@
 | 结论 | 状态 | 含义 |
 | --- | --- | --- |
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
+| `developer_portal_build_ready` | `true` | 85页中文Portal可由lockfile本地重建；不是公共托管结论 |
+| `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
 ## 已关闭项
@@ -19,6 +21,8 @@
 - 本地distribution preflight与module cache/zip provenance检查。
 - 空`GOMODCACHE`经已批准的GitHub SSH传输获取四个固定版本module，并完成无HS
   clean-room consumer构建与运行；验证过程未输出或写入credential。
+- Core中文Developer Portal的clean install、零漏洞审计、85页production build、44/8
+  coverage、本地搜索、响应式和浏览器交互验证。
 
 ## Public Beta阻断
 
