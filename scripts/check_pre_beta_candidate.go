@@ -110,6 +110,15 @@ func main() {
 		"GOMODCACHE="+moduleCache,
 		"GOCACHE="+buildCache,
 	)
+	toolBin := filepath.Join(work, "bin")
+	check(os.MkdirAll(toolBin, 0o755))
+	toolEnv := replaceEnv(candidateEnv, "GOBIN", toolBin)
+	printRun(root, toolEnv, "go", "install", govulncheckModule+"@"+govulncheckVersion)
+	govulncheckPath := filepath.Join(toolBin, "govulncheck")
+	if info, statErr := os.Stat(govulncheckPath); statErr != nil || !info.Mode().IsRegular() {
+		check(fmt.Errorf("pinned govulncheck binary was not installed"))
+	}
+	printRun(root, candidateEnv, govulncheckPath, "-version")
 
 	// The order is the release dependency order. Tidy each disposable module
 	// against already-created candidate dependencies before writing its zip, so
@@ -140,7 +149,7 @@ func main() {
 			check(fmt.Errorf("%s candidate enumerated zero packages", module.path))
 		}
 		logPath := filepath.Join(outputDir, fmt.Sprintf(securityLogName, module.name))
-		runGovulncheck(dir, candidateEnv, work, logPath)
+		runGovulncheck(govulncheckPath, dir, candidateEnv, work, logPath)
 		fmt.Printf("agentx-pre-beta-module-ok:path=%s:packages=%d:known_reachable_vulnerabilities=0\n", module.path, packages)
 	}
 
@@ -350,8 +359,8 @@ func writeModuleZip(target, source, modulePath string, commitTime time.Time) int
 	return len(files)
 }
 
-func runGovulncheck(dir string, env []string, work, logPath string) {
-	command := exec.Command("go", "run", govulncheckModule+"@"+govulncheckVersion, "./...")
+func runGovulncheck(binary, dir string, env []string, work, logPath string) {
+	command := exec.Command(binary, "./...")
 	command.Dir = dir
 	command.Env = env
 	output, err := command.CombinedOutput()
