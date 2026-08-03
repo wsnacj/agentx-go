@@ -131,3 +131,8 @@ sandbox、credential或具体backend已经迁入。
 `llm_task`的独立fixed-version验证位于
 [`tools/conformance/llm-task-consumer`](./conformance/llm-task-consumer)。它不使用`replace`，
 通过fake model adapter验证JSON/schema/model identity和`tool_choice=none`，不访问真实provider。
+
+Web工具的独立fixed-version验证位于
+[`tools/conformance/web-tools-consumer`](./conformance/web-tools-consumer)。它不使用`replace`，
+通过fake `retrieval.Preparer`执行`search -> open_page -> find_in_page`，不导入HS、Runner或Scene，
+也不访问真实provider、credential或网络。
