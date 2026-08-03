@@ -21,6 +21,12 @@ Stable兼容承诺。
 - [`browserops`](./browserops/API.md)：浏览器操作Pack、证据合同、确定性evaluator与
   [Host Kit](./browserops/hostkit/API.md)；真实浏览器、profile/login、credential、审批、
   文件/artifact与站点副作用策略由Host显式注入。
+- [`publictransport`](./publictransport/API.md)：公共交通只读合同、库存evidence、
+  provider-neutral coordination与Pack；票务provider、凭据、网络、限流和购票副作用留Host。
+- [`publicsource`](./publicsource/API.md)：通用公开来源合同、source policy、search/document
+  投影、Coordinator、evaluator与Pack；HTTP/Browser、provider、credential和真实fetch留Host。
+- [`wechatarticle`](./wechatarticle/API.md)：公众号文章typed contract、Host Client协调、
+  evidence、evaluator与Pack；exporter、登录二维码、credential/cookie、网络与artifact留Host。
 
 ## 依赖方向
 

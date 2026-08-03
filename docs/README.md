@@ -1,7 +1,7 @@
 # AgentX Go 中文文档
 
 M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；P2-A/P2-B又完成OpenAI-compatible、Anthropic和Codex三个provider protocol纵向闭环，P2-C完成首个通用Tool vertical slice；
-68个package中文Reference、14个候选API snapshot/平台/类型闭包门禁及fixed-version
+70个package中文Reference、14个候选API snapshot/平台/类型闭包门禁及fixed-version
 consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
 技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
 版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
@@ -114,6 +114,8 @@ temporary Workflow planning机制、LLM组件和
 79. [`scenes/browserops` 中文 API Reference](../scenes/browserops/API.md)
 80. [`scenes/browserops/hostkit` 中文 API Reference](../scenes/browserops/hostkit/API.md)
 81. [`scenes/publictransport` 中文 API Reference](../scenes/publictransport/API.md)
+82. [`scenes/publicsource` 中文 API Reference](../scenes/publicsource/API.md)
+83. [`scenes/wechatarticle` 中文 API Reference](../scenes/wechatarticle/API.md)
 
 可运行验证位于：
 

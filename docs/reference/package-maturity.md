@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
-68个 production package。它不是历史
+70个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -36,6 +36,8 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `scenes/publictransport` | Experimental extension | [API](../../scenes/publictransport/API.md) | 公共交通只读合同、provider-neutral协调、证据evaluator与Pack；依赖Experimental controlcontract |
 | `scenes/publicnews` | Developer Preview candidate | [API](../../scenes/publicnews/API.md) | 公开新闻合同、Pack、证据质量与确定性回答投影 |
 | `scenes/publicnews/hostkit` | Experimental extension | [API](../../scenes/publicnews/hostkit/API.md) | 显式Search/Fetch ports驱动的无provider协调 |
+| `scenes/publicsource` | Experimental extension | [API](../../scenes/publicsource/API.md) | 通用公开来源合同、source policy、search/document投影、协调、evaluator与Pack |
+| `scenes/wechatarticle` | Experimental extension | [API](../../scenes/wechatarticle/API.md) | 公众号文章typed合同、Host Client协调、evidence、evaluator与Pack |
 | `scenes/companyresearch` | Developer Preview candidate | [API](../../scenes/companyresearch/API.md) | 公司研究任务、证据guard、Pack与结果投影 |
 | `scenes/companyresearch/hostkit` | Experimental extension | [API](../../scenes/companyresearch/hostkit/API.md) | 显式研究数据ports驱动的无provider协调 |
 | `scenes/docparse` | Developer Preview candidate | [API](../../scenes/docparse/API.md) | 文档解析Pack、资产、tool schema与推荐入口 |
@@ -118,7 +120,7 @@ backend，也不因出现在本表而升级为Developer Preview candidate、Publ
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-68个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+70个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
