@@ -588,6 +588,26 @@ HTTP/retrieval、exporter concrete client、credential/cookie、login QR、artif
 真实网络和产品结果权威继续留在Host。本checkpoint不授权Public/Beta/Stable、semver、
 license、tag或release。
 
+## P4-E Finance Domain Kit source-authority 闭环
+
+P4-E在`scenes/globalstock`与`scenes/finance`七个package落地37个production Go文件、
+7,274行真实implementation。Global Stock拥有证券事实合同、代码规范化、evidence/readiness、
+exact-once investigation coordination与quote Pack/Workflow；Finance拥有财报合同、period/
+metric/trend/evidence/readiness、exact-once lookup coordination与brief/metrics Pack/Workflow。
+产品回答格式通过显式Host seam注入，付费数据/provider、credential、交易、docparse/tool
+concrete executor、真实网络与免责声明不属于canonical owner。
+
+无HS、Runner、长期`replace`、credential、网络或交易副作用的fixed consumer锁定
+`scenes@v0.0.0-20260803022834-4043fbe78ff3`，normal/race/vet/run及module
+zip/cache/Sum/Origin通过。HS两个production Scene已切换同一版本；旧portable contracts、
+coordination、evaluator与Pack删除或降薄，production source从35,600行降至28,940行，净减
+6,660行。canonical scenes模块normal/race/vet/tidy/list、Linux/amd64 CGO-disabled build、
+77 package/14 candidate/2 target API gate与77文件/406链接文档gate通过；HS focused
+兼容验证通过，完整AgentX回归没有遗留P4-E功能失败。
+
+全部新package继续标记为Experimental extension，不构成Public/Beta/Stable、semver、
+license、tag或release授权。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
