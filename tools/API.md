@@ -121,6 +121,9 @@ hook和具体network backend不属于该合同。
   schema校验、响应提取和timeout/cancellation，通过显式`ChatWithInputFunc`接入Host模型。
 - [`tools/process`](./process/API.md)：提供显式opt-in本地前台命令与只读进程列表adapter，拥有
   command/result、bounded output、取消/超时和终止证据；授权、sandbox与signal policy留在Host。
+- [`tools/videoframes`](./videoframes/API.md)：提供显式opt-in本地视频帧adapter，拥有输入快照、
+  ffprobe/ffmpeg协调、artifact生命周期、bounded output与media descriptor；依赖安装、授权、
+  approval、sandbox和工具默认启用策略留在Host。
 - [`tools/web`](./web/API.md)：拥有Search、WebFetch、OpenPage、FindInPage的provider协议、
   正文提取、缓存与模型调用协调，通过显式`retrieval.Preparer`接入Host URL、redirect、proxy与
   network policy；凭据只允许显式注入。
