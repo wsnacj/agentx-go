@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	llm "github.com/wsnacj/agentx-go/components/llm"
+	"github.com/wsnacj/agentx-go/providers"
 	"github.com/wsnacj/agentx-go/providers/gemini"
 	"github.com/wsnacj/agentx-go/providers/transport"
 )
@@ -16,6 +17,57 @@ import (
 type fixtureDoer struct {
 	request *http.Request
 	body    map[string]any
+}
+
+func TestProviderChatAndVisionContract(t *testing.T) {
+	doer := &fixtureDoer{}
+	provider := gemini.NewProvider(gemini.Config{
+		BaseURL:    "https://example.invalid/v1beta",
+		HTTPClient: doer,
+		ResolveMedia: func(_ context.Context, source string) (gemini.ResolvedMedia, error) {
+			if source != "fixture.png" {
+				t.Fatalf("source = %q", source)
+			}
+			return gemini.ResolvedMedia{MIMEType: "image/png", Base64Data: "Zml4dHVyZQ=="}, nil
+		},
+	})
+	model := gemini.ModelConfig{Model: "gemini-fixture", MaxCompletion: 64, Capability: gemini.Capability{Vision: true, LocalFiles: true}}
+	chat, _, err := provider.Chat(context.Background(), model, llm.ChatRequest{Messages: llm.Conversation{{Role: "user", Content: "hello"}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if chat.Content != "ready" {
+		t.Fatalf("chat = %#v", chat)
+	}
+	vision, _, err := provider.Vision(context.Background(), model, llm.VisualRequest{
+		Messages: llm.Conversation{{Role: "user", Content: "inspect"}},
+		Visual:   []llm.VisualContent{{Type: "image_url", ImageURL: "fixture.png"}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if vision.Content != "ready" {
+		t.Fatalf("vision = %#v", vision)
+	}
+	contents, ok := doer.body["contents"].([]any)
+	if !ok || len(contents) != 1 {
+		t.Fatalf("contents = %#v", doer.body["contents"])
+	}
+	content, _ := contents[0].(map[string]any)
+	parts, _ := content["parts"].([]any)
+	if len(parts) != 2 {
+		t.Fatalf("parts = %#v", parts)
+	}
+	media, _ := parts[1].(map[string]any)
+	inline, _ := media["inlineData"].(map[string]any)
+	if inline["mimeType"] != "image/png" || inline["data"] != "Zml4dHVyZQ==" {
+		t.Fatalf("inlineData = %#v", inline)
+	}
+
+	_, _, err = provider.Chat(context.Background(), model, llm.ChatRequest{Tools: []llm.Tool{{Type: "function"}}})
+	if err != providers.ErrUnsupported {
+		t.Fatalf("tool error = %v", err)
+	}
 }
 
 func (d *fixtureDoer) Do(request *http.Request) (*http.Response, error) {

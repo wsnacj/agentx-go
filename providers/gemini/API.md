@@ -14,6 +14,10 @@
 - `UploadFile`、`GetFile`、`DeleteFile`；
 - native request/response、content、tool、usage 和 file 类型。
 
+`NewProvider(Config)` 进一步提供面向 `components/llm` 的 `Chat`、`Vision`、
+`Embedding` 与 normalized stream event。模型默认值通过 `ModelConfig` 或
+`EmbeddingConfig` 显式传入；本地媒体只能通过 `Config.ResolveMedia` 由 Host 批准和解析，
+provider 本身不读取文件系统。
+
 默认 endpoint 仅用于协议兼容。生产 Host 仍应显式确认 endpoint、凭据、代理、配额、
 重试和网络授权。当前包为 Experimental，不构成 Public/Beta/Stable 承诺。
-
