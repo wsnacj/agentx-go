@@ -152,7 +152,7 @@ func main() {
 	// upstream candidate zip was still absent.
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, goCommand, "mod", "tidy")
+		printRunTransient(dir, candidateEnv, work, goCommand, "mod", "tidy")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		writeProxyModule(proxyRoot, dir, module, commitTime, false)
 	}
@@ -161,7 +161,7 @@ func main() {
 	var artifacts []moduleArtifact
 	for _, module := range candidateModules {
 		dir := staged[module.path]
-		printRun(dir, candidateEnv, goCommand, "mod", "tidy")
+		printRunTransient(dir, candidateEnv, work, goCommand, "mod", "tidy")
 		printRun(dir, candidateEnv, goCommand, "mod", "tidy", "-diff")
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		artifact := writeProxyModule(proxyRoot, dir, module, commitTime, true)
@@ -189,9 +189,9 @@ func main() {
 	consumer := filepath.Join(work, "consumer")
 	writeCandidateConsumer(consumer)
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
-	printRun(consumer, candidateEnv, goCommand, "mod", "tidy")
+	printRunTransient(consumer, candidateEnv, work, goCommand, "mod", "tidy")
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
-	printRun(consumer, candidateEnv, goCommand, "mod", "download", "all")
+	printRunTransient(consumer, candidateEnv, work, goCommand, "mod", "download", "all")
 	if packages := nonEmptyLines(run(consumer, candidateEnv, goCommand, "list", "-deps", "./...")); packages == 0 {
 		check(fmt.Errorf("candidate consumer enumerated zero dependencies"))
 	}
@@ -725,6 +725,30 @@ func printRun(dir string, env []string, name string, args ...string) {
 	output := run(dir, env, name, args...)
 	if output != "" {
 		fmt.Print(output)
+	}
+}
+
+func printRunTransient(dir string, env []string, work, name string, args ...string) {
+	for attempt := 1; attempt <= 3; attempt++ {
+		command := exec.Command(name, args...)
+		command.Dir = dir
+		command.Env = env
+		output, err := command.CombinedOutput()
+		if err == nil {
+			if len(output) > 0 {
+				fmt.Print(sanitize(string(output), work))
+			}
+			return
+		}
+		safeOutput := sanitize(string(output), work)
+		if !isTransientScanFailure(safeOutput) {
+			check(fmt.Errorf("%s %s: %w: %s", name, strings.Join(args, " "), err, strings.TrimSpace(safeOutput)))
+		}
+		if attempt == 3 {
+			check(fmt.Errorf("%s %s exhausted transient retries: %w: %s", name, strings.Join(args, " "), err, strings.TrimSpace(safeOutput)))
+		}
+		fmt.Printf("agentx-candidate-network-transient-retry:command=%s:attempt=%d\n", strings.Join(append([]string{name}, args...), " "), attempt)
+		time.Sleep(time.Duration(attempt) * time.Second)
 	}
 }
 
