@@ -34,6 +34,7 @@ const (
 	dependencyGraphFile  = "pre-beta-candidate-modules.txt"
 	securityLogName      = "govulncheck-%s.log"
 	technicalReadyMarker = "pre_beta_technical_candidate_ready=true"
+	candidateConsumerOK  = "agentx-pre-beta-consumer-ok:"
 )
 
 type moduleSpec struct {
@@ -201,7 +202,7 @@ func main() {
 	check(os.WriteFile(filepath.Join(outputDir, dependencyGraphFile), []byte(sanitize(moduleGraph, work)), 0o644))
 	printRun(consumer, candidateEnv, goCommand, "test", "./...")
 	consumerOutput := strings.TrimSpace(run(consumer, candidateEnv, goCommand, "run", "."))
-	if !strings.HasPrefix(consumerOutput, "agentx-core-developer-preview-ok:") {
+	if !strings.HasPrefix(consumerOutput, candidateConsumerOK) {
 		check(fmt.Errorf("unexpected candidate consumer output %q", consumerOutput))
 	}
 
@@ -215,7 +216,7 @@ func main() {
 	checkCandidateSelection(run(consumer, offlineEnv, goCommand, "list", "-m", "-f", "{{.Path}} {{.Version}}", "all"))
 	printRun(consumer, offlineEnv, goCommand, "test", "./...")
 	offlineOutput := strings.TrimSpace(run(consumer, offlineEnv, goCommand, "run", "."))
-	if !strings.HasPrefix(offlineOutput, "agentx-core-developer-preview-ok:") {
+	if !strings.HasPrefix(offlineOutput, candidateConsumerOK) {
 		check(fmt.Errorf("unexpected offline candidate consumer output %q", offlineOutput))
 	}
 
@@ -368,7 +369,7 @@ func writeCandidateConsumer(dir string) {
 	fmt.Fprintln(&source, ")")
 	fmt.Fprintln(&source)
 	fmt.Fprintln(&source, "func main() {")
-	fmt.Fprintln(&source, "\tfmt.Println(\"agentx-pre-beta-consumer-ok\")")
+	fmt.Fprintf(&source, "\tfmt.Println(%q)\n", candidateConsumerOK+"modules=9")
 	fmt.Fprintln(&source, "}")
 	check(os.WriteFile(filepath.Join(dir, "main.go"), []byte(source.String()), 0o644))
 }
