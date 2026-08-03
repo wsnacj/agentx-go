@@ -533,6 +533,33 @@ inventory条目，没有P4-B功能回归。首次并行全module验证因本轮�
 本checkpoint不授权Public/Beta/Stable、semver、license、tag或release，也不把HS live与安全
 策略视为待迁portable实现。
 
+## P4-C Public Transport Domain Kit source-authority 闭环
+
+P4-C在`scenes/publictransport`落地5个production Go source、1,132行真实implementation：
+typed request/report/evidence/inventory合同、fail-closed normalization、provider-neutral exact-once
+Coordinator、control-contract投影、库存evidence纯函数、确定性Evaluator与read-only
+Pack/Workflow。真实ticket/map provider、endpoint/template、headers/cookie、credential、
+station catalog、warmup/retry、缓存/限流、真实网络与购票副作用仍由HS Host拥有。
+
+无HS、Runner、长期`replace`、网络或credential的fixed consumer锁定
+`scenes@v0.0.0-20260802235605-d32ccb29a700`，normal/race/vet/run通过，输出
+`agentx-publictransport-ok:public-transport-readonly-pack:public_transport_ticket_lookup_v1:1:true`。
+HS production路径已升级到同一版本：`service`直接消费canonical evaluator，原
+ticketlookup portable types、coordination、projection与evaluator删除或降为121行Deprecated
+alias/forwarder。cutover提交增加174行、删除785行，净减611行；整个Scene
+production source由12,644行降至11,996行。
+
+scenes module normal/race/vet/tidy/list、import boundary与68 package/14 candidate/2 target API gate
+通过。`publictransport`因导出签名显式依赖Experimental `runtime/controlcontract`，依据
+fail-closed gate保持`Experimental extension`，没有被错误升级为Developer Preview。HS全Scene
+normal、focused race/vet、engine/pack/inlinespec/business-host兼容测试通过。本wave唯一
+完整AgentX回归仅失败2个既有治理package中的4项历史断言：3项evidence
+source-scope stale/mismatch与1项P3-A删除旧browserruntime后的runtime-boundary记录漂移；
+没有P4-C功能回归。
+
+本checkpoint不授权Public/Beta/Stable、semver、license、tag或release，也不把真实
+票务后端、凭据、安全/合规、商业条款或产品结果权威下沉canonical。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
