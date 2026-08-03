@@ -95,6 +95,9 @@ func Register(reg toolcontract.Registrar, opts Options) {
 // for one direct task lifecycle tool.
 func NewTaskHandler(name string, backend Backend) toolcontract.Handler {
 	return func(ctx context.Context, call toolcontract.Call) (toolcontract.Result, error) {
+		if backend == nil {
+			return "", fmt.Errorf("%s: host backend is unavailable", name)
+		}
 		params, err := decodeArguments(name, call.Arguments)
 		if err != nil {
 			return "", err
@@ -107,6 +110,9 @@ func NewTaskHandler(name string, backend Backend) toolcontract.Handler {
 // Host lifecycle backend. It deliberately does not own Store or Scheduler policy.
 func NewSubagentsHandler(backend Backend) toolcontract.Handler {
 	return func(ctx context.Context, call toolcontract.Call) (toolcontract.Result, error) {
+		if backend == nil {
+			return "", fmt.Errorf("%s: host backend is unavailable", SubagentsName)
+		}
 		params, err := decodeArguments(SubagentsName, call.Arguments)
 		if err != nil {
 			return "", err
@@ -136,6 +142,9 @@ func NewSubagentsHandler(backend Backend) toolcontract.Handler {
 // NewAgentStepHandler parses one bounded child step and hands it to the Host.
 func NewAgentStepHandler(backend Backend) toolcontract.Handler {
 	return func(ctx context.Context, call toolcontract.Call) (toolcontract.Result, error) {
+		if backend == nil {
+			return "", fmt.Errorf("%s: host backend is unavailable", AgentStepName)
+		}
 		params, err := decodeArguments(AgentStepName, call.Arguments)
 		if err != nil {
 			return "", err

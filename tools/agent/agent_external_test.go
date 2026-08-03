@@ -113,3 +113,15 @@ func TestDefinitionsAreStable(t *testing.T) {
 		t.Fatalf("names = %#v, want %#v", got, want)
 	}
 }
+
+func TestDirectHandlerConstructorsFailClosedWithoutBackend(t *testing.T) {
+	for name, handler := range map[string]func(context.Context, llm.FunctionCall) (string, error){
+		agent.TasksRunName:  agent.NewTaskHandler(agent.TasksRunName, nil),
+		agent.SubagentsName: agent.NewSubagentsHandler(nil),
+		agent.AgentStepName: agent.NewAgentStepHandler(nil),
+	} {
+		if _, err := handler(context.Background(), llm.FunctionCall{Name: name, Arguments: `{}`}); err == nil {
+			t.Fatalf("%s accepted nil backend", name)
+		}
+	}
+}
