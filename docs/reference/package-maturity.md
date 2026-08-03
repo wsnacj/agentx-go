@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
-70个 production package。它不是历史
+77个 production package。它不是历史
 surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
 
 ## 分级含义
@@ -49,6 +49,13 @@ surface inventory，也不会把任何符号自动升级为 Public、Beta 或 St
 | `scenes/docparse/qualityevidence` | internalization candidate | [API](../../scenes/docparse/qualityevidence/API.md) | 质量证据与评估投影 |
 | `scenes/docparse/representation` | internalization candidate | [API](../../scenes/docparse/representation/API.md) | provider-neutral Document/Page表征 |
 | `scenes/docparse/understanding` | internalization candidate | [API](../../scenes/docparse/understanding/API.md) | 文档理解与review-required判定机制 |
+| `scenes/globalstock` | Experimental extension | [API](../../scenes/globalstock/API.md) | 港股/美股只读Pack、Workflow、tool identity与evaluator入口 |
+| `scenes/globalstock/contracts` | Experimental extension | [API](../../scenes/globalstock/contracts/API.md) | HK/US证券、行情、证据、identity与readiness合同 |
+| `scenes/globalstock/hostkit` | Experimental extension | [API](../../scenes/globalstock/hostkit/API.md) | 显式handler ports驱动的provider-neutral investigation协调 |
+| `scenes/finance` | Experimental extension | [API](../../scenes/finance/API.md) | 财报合同、period/metric/evidence/readiness机制与Pack组合入口 |
+| `scenes/finance/metrics` | Experimental extension | [API](../../scenes/finance/metrics/API.md) | 财报指标Pack、字段来源guard和确定性evaluator |
+| `scenes/finance/brief` | Experimental extension | [API](../../scenes/finance/brief/API.md) | 财报简报Pack、evidence与确定性evaluator |
+| `scenes/finance/hostkit` | Experimental extension | [API](../../scenes/finance/hostkit/API.md) | candidates→metrics→guard→optional brief协调 |
 | `extensions/domainkit` | Experimental extension | [API](../../extensions/domainkit/API.md) | 无模型module/tool dispatch、typed error与deterministic output digest |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
@@ -120,7 +127,7 @@ backend，也不因出现在本表而升级为Developer Preview candidate、Publ
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-70个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+77个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 

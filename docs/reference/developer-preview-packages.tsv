@@ -21,6 +21,13 @@ scenes/docparse/profile	internalization_candidate	scenes/docparse/profile/API.md
 scenes/docparse/qualityevidence	internalization_candidate	scenes/docparse/qualityevidence/API.md	-
 scenes/docparse/representation	internalization_candidate	scenes/docparse/representation/API.md	-
 scenes/docparse/understanding	internalization_candidate	scenes/docparse/understanding/API.md	-
+scenes/finance	experimental_extension	scenes/finance/API.md	-
+scenes/finance/brief	experimental_extension	scenes/finance/brief/API.md	-
+scenes/finance/hostkit	experimental_extension	scenes/finance/hostkit/API.md	-
+scenes/finance/metrics	experimental_extension	scenes/finance/metrics/API.md	-
+scenes/globalstock	experimental_extension	scenes/globalstock/API.md	-
+scenes/globalstock/contracts	experimental_extension	scenes/globalstock/contracts/API.md	-
+scenes/globalstock/hostkit	experimental_extension	scenes/globalstock/hostkit/API.md	-
 scenes/publicnews	developer_preview_candidate	scenes/publicnews/API.md	5f5d3bfa101d3edbb54f79dd558adcf6555fcca2fee14fbf29e9a6a9a8a625ad
 scenes/publicnews/hostkit	experimental_extension	scenes/publicnews/hostkit/API.md	-
 scenes/publicsource	experimental_extension	scenes/publicsource/API.md	-
