@@ -141,7 +141,7 @@ func main() {
 	toolBin := filepath.Join(work, "bin")
 	check(os.MkdirAll(toolBin, 0o755))
 	toolEnv := replaceEnv(candidateEnv, "GOBIN", toolBin)
-	printRun(root, toolEnv, goCommand, "install", govulncheckModule+"@"+govulncheckVersion)
+	printRunTransient(root, toolEnv, work, goCommand, "install", govulncheckModule+"@"+govulncheckVersion)
 	govulncheckPath := filepath.Join(toolBin, "govulncheck")
 	if info, statErr := os.Stat(govulncheckPath); statErr != nil || !info.Mode().IsRegular() {
 		check(fmt.Errorf("pinned govulncheck binary was not installed"))
