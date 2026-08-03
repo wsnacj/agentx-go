@@ -151,3 +151,8 @@ Process/Runtime的独立fixed-version验证位于
 [`tools/conformance/process-runtime-consumer`](./conformance/process-runtime-consumer)。它不使用
 `replace`，显式构造local adapter并验证真实前台命令、bounded output与timeout；它不证明
 Host授权、sandbox、signal policy或后台process lifecycle已经迁入。
+
+Video Frames的独立fixed-version验证位于
+[`tools/conformance/video-frames-consumer`](./conformance/video-frames-consumer)。它不使用`replace`，
+显式构造local adapter并通过隔离的ffprobe/ffmpeg stub验证artifact与media result；它不证明
+Host授权、sandbox、依赖安装或生产命令执行已经迁入。
