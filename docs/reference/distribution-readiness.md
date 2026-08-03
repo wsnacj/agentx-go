@@ -9,8 +9,9 @@
 | `private_validation_ready` | `true` | 历史Core四module已通过空缓存私有VCS；当前九module又完成本地不可变cache、33个consumer、仓库外clean-room与zip/Origin复验；只面向已获私有仓库权限的开发者 |
 | `developer_portal_build_ready` | `true` | 当前九module正文已构建为207页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
 | `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
-| `current_nine_module_local_candidate_gate` | `implemented` | 本地distribution与Pre-Beta candidate入口已升级到同一九module范围；必须以当前source revision重新运行后才形成技术证据 |
-| `current_nine_module_pre_beta_ready` | `false` | 当前九module未形成同一批准release train，也未获得新的全量Ubuntu、安全、license或发行签署 |
+| `current_nine_module_local_candidate_gate` | `true` | source `f57ecda758b5d43614bac2e5f9b005e24dff8228`已通过九module同版候选、132 package、固定漏洞扫描、聚合consumer和离线cache复验 |
+| `current_nine_module_pre_beta_technical_candidate` | `true` | 本地技术候选成立；这不是Public Beta、正式tag或发行授权 |
+| `current_nine_module_pre_beta_ready` | `false` | 当前九module仍缺新的全量Ubuntu、具名安全、license、兼容范围和发行签署 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
@@ -46,6 +47,13 @@
   `GO-2026-5024` module-level finding；当前10个extension package没有import或调用该
   漏洞。它不阻断当前darwin/linux技术候选，但必须由具名security approver在Beta前决定
   升级依赖或显式接受平台残余边界。
+- 2026-08-03九module本地候选在macOS、Go 1.25.12与source
+  `f57ecda758b5d43614bac2e5f9b005e24dff8228`上通过：132个package、九module
+  `v0.0.0-m6d.0`临时zip、test/vet/tidy/list、固定`govulncheck@v1.6.0`、无HS且无
+  `replace`的聚合consumer与`GOPROXY=off`只读cache均通过，0个可达漏洞。
+- extensions、document与scenes仍有`x/sys`或`x/net`的module-only记录；生产import/call
+  graph不可达。extensions的直接修复版本会提升最低Go版本，因此未在无Owner决定时改变
+  工具链合同；这些记录留给具名security approver处理。
 
 ## Public Beta阻断
 
