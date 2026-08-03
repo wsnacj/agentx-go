@@ -12,9 +12,13 @@ pseudo-version；准确矩阵以机器可读
 当前消费基线的一部分，不是正式发行版本。providers、tools、browser、document和scenes
 也各自使用安装指南记录的固定版本。M5S/M5T历史回滚点仍保留在changelog和成熟度记录中。
 
-M6D另外使用`v0.0.0-m6d.0`在临时file proxy中验证四module同版发行列车。该版本不会
+Pre-Beta技术门禁使用`v0.0.0-m6d.0`在临时file proxy中验证九module同版发行列车。该版本不会
 写入tracked `go.mod`、tag或下载入口，脚本退出后候选zip被删除；它不能作为项目依赖。
-M6D manifest继续把上述fixed pseudo-version记录为回滚点。
+manifest继续把当前root fixed pseudo-version记录为回滚点。
+
+正式Beta建议使用`v0.1.0-beta.1`，九个module分别使用Go多module约定的目录tag前缀；
+该建议尚未获得发行授权，完整矩阵与fail-closed责任见
+[Pre-Beta准入合同](../reference/pre-beta-admission.md)。
 
 ## 历史同版列车与当前独立版本
 
@@ -94,5 +98,5 @@ consumer验证，不通过根consumer伪装成单一“全功能开箱即用”�
 正式tag、license/NOTICE、security/legal、
 release owner和生产SLA仍保持fail closed。
 
-允许/禁止变更、历史Core四module未来tag前缀、版本epoch和维护责任见
+允许/禁止变更、九module未来tag前缀、版本epoch和维护责任见
 [Developer Preview兼容与分发政策](developer-preview-policy.md)。

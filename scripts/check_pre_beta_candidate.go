@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_pre_beta_candidate builds a disposable, same-version four-module
+// check_pre_beta_candidate builds a disposable, same-version nine-module
 // candidate from tracked source and verifies it through a local Go proxy.
 // It never creates tags, releases, or tracked version changes.
 package main
@@ -37,9 +37,10 @@ const (
 )
 
 type moduleSpec struct {
-	path string
-	dir  string
-	name string
+	path         string
+	dir          string
+	name         string
+	consumerPath string
 }
 
 type moduleArtifact struct {
@@ -63,10 +64,15 @@ var (
 )
 
 var candidateModules = []moduleSpec{
-	{path: "github.com/wsnacj/agentx-go", dir: ".", name: "root"},
-	{path: "github.com/wsnacj/agentx-go/components", dir: "components", name: "components"},
-	{path: "github.com/wsnacj/agentx-go/runtime", dir: "runtime", name: "runtime"},
-	{path: "github.com/wsnacj/agentx-go/extensions", dir: "extensions", name: "extensions"},
+	{path: "github.com/wsnacj/agentx-go", dir: ".", name: "root", consumerPath: "github.com/wsnacj/agentx-go"},
+	{path: "github.com/wsnacj/agentx-go/components", dir: "components", name: "components", consumerPath: "github.com/wsnacj/agentx-go/components/llm"},
+	{path: "github.com/wsnacj/agentx-go/runtime", dir: "runtime", name: "runtime", consumerPath: "github.com/wsnacj/agentx-go/runtime/protocol"},
+	{path: "github.com/wsnacj/agentx-go/extensions", dir: "extensions", name: "extensions", consumerPath: "github.com/wsnacj/agentx-go/extensions/domainkit"},
+	{path: "github.com/wsnacj/agentx-go/providers", dir: "providers", name: "providers", consumerPath: "github.com/wsnacj/agentx-go/providers/fault"},
+	{path: "github.com/wsnacj/agentx-go/tools", dir: "tools", name: "tools", consumerPath: "github.com/wsnacj/agentx-go/tools/diffs"},
+	{path: "github.com/wsnacj/agentx-go/browser", dir: "browser", name: "browser", consumerPath: "github.com/wsnacj/agentx-go/browser/runtime"},
+	{path: "github.com/wsnacj/agentx-go/document", dir: "document", name: "document", consumerPath: "github.com/wsnacj/agentx-go/document/contracts"},
+	{path: "github.com/wsnacj/agentx-go/scenes", dir: "scenes", name: "scenes", consumerPath: "github.com/wsnacj/agentx-go/scenes/publictransport"},
 }
 
 func main() {
@@ -150,7 +156,7 @@ func main() {
 		checkNoReplace(filepath.Join(dir, "go.mod"))
 		writeProxyModule(proxyRoot, dir, module, commitTime, false)
 	}
-	// With all four provisional zips present, stabilize in dependency order and
+	// With all nine provisional zips present, stabilize in dependency order and
 	// overwrite each zip. Only this second pass is a candidate artifact.
 	var artifacts []moduleArtifact
 	for _, module := range candidateModules {
@@ -181,10 +187,7 @@ func main() {
 	}
 
 	consumer := filepath.Join(work, "consumer")
-	copyTrackedModule(root, "conformance/consumer", consumer, nestedRoots)
-	for _, module := range candidateModules {
-		printRun(consumer, candidateEnv, goCommand, "mod", "edit", "-require="+module.path+"@"+candidateVersion)
-	}
+	writeCandidateConsumer(consumer)
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
 	printRun(consumer, candidateEnv, goCommand, "mod", "tidy")
 	checkNoReplace(filepath.Join(consumer, "go.mod"))
@@ -216,7 +219,7 @@ func main() {
 		check(fmt.Errorf("unexpected offline candidate consumer output %q", offlineOutput))
 	}
 
-	manifest := buildManifest(revision, commitTime, fixedVersion, artifacts, securitySummaries)
+	manifest := buildManifest(revision, commitTime, fixedVersion, artifacts, securitySummaries, releaseLegalStatus(root))
 	check(os.WriteFile(filepath.Join(outputDir, manifestFile), []byte(manifest), 0o644))
 	checkCleanTree(root)
 
@@ -338,6 +341,36 @@ func rewriteCandidateRequirements(dir, goCommand string, env []string) {
 		}
 	}
 	checkNoReplace(goMod)
+}
+
+func writeCandidateConsumer(dir string) {
+	check(os.MkdirAll(dir, 0o755))
+	var goMod strings.Builder
+	fmt.Fprintln(&goMod, "module agentx-pre-beta-consumer")
+	fmt.Fprintln(&goMod)
+	fmt.Fprintln(&goMod, "go 1.25.0")
+	fmt.Fprintln(&goMod)
+	fmt.Fprintln(&goMod, "require (")
+	for _, module := range candidateModules {
+		fmt.Fprintf(&goMod, "\t%s %s\n", module.path, candidateVersion)
+	}
+	fmt.Fprintln(&goMod, ")")
+	check(os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod.String()), 0o644))
+
+	var source strings.Builder
+	fmt.Fprintln(&source, "package main")
+	fmt.Fprintln(&source)
+	fmt.Fprintln(&source, "import (")
+	fmt.Fprintln(&source, "\t\"fmt\"")
+	for _, module := range candidateModules {
+		fmt.Fprintf(&source, "\t_ %q\n", module.consumerPath)
+	}
+	fmt.Fprintln(&source, ")")
+	fmt.Fprintln(&source)
+	fmt.Fprintln(&source, "func main() {")
+	fmt.Fprintln(&source, "\tfmt.Println(\"agentx-pre-beta-consumer-ok\")")
+	fmt.Fprintln(&source, "}")
+	check(os.WriteFile(filepath.Join(dir, "main.go"), []byte(source.String()), 0o644))
 }
 
 func writeProxyModule(proxyRoot, source string, module moduleSpec, commitTime time.Time, announce bool) moduleArtifact {
@@ -511,7 +544,7 @@ func checkCandidateSelection(output string) {
 	}
 }
 
-func buildManifest(revision string, commitTime time.Time, fixedVersion string, artifacts []moduleArtifact, security []securitySummary) string {
+func buildManifest(revision string, commitTime time.Time, fixedVersion string, artifacts []moduleArtifact, security []securitySummary, legalStatus string) string {
 	var builder strings.Builder
 	fmt.Fprintln(&builder, "agentx_pre_beta_candidate_manifest")
 	fmt.Fprintf(&builder, "source_revision=%s\n", revision)
@@ -523,7 +556,7 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	fmt.Fprintf(&builder, "rollback_version=%s\n", fixedVersion)
 	fmt.Fprintf(&builder, "security_scanner=%s@%s\n", govulncheckModule, govulncheckVersion)
 	fmt.Fprintf(&builder, "known_reachable_vulnerabilities=0\n")
-	fmt.Fprintf(&builder, "license_notice_status=pending_owner_decision\n")
+	fmt.Fprintf(&builder, "license_notice_status=%s\n", legalStatus)
 	fmt.Fprintf(&builder, "named_security_approval_status=pending\n")
 	fmt.Fprintf(&builder, "release_authorization_status=pending\n")
 	fmt.Fprintf(&builder, "compatibility_promotion_status=developer_preview_only\n")
@@ -542,6 +575,24 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	fmt.Fprintln(&builder, technicalReadyMarker)
 	fmt.Fprintln(&builder, "public_beta_ready=false")
 	return builder.String()
+}
+
+func releaseLegalStatus(root string) string {
+	license := hasRegularFile(filepath.Join(root, "LICENSE")) || hasRegularFile(filepath.Join(root, "LICENSE.txt")) || hasRegularFile(filepath.Join(root, "LICENSE.md"))
+	notice := hasRegularFile(filepath.Join(root, "NOTICE")) || hasRegularFile(filepath.Join(root, "NOTICE.txt")) || hasRegularFile(filepath.Join(root, "NOTICE.md"))
+	switch {
+	case license && notice:
+		return "files_present_approval_pending"
+	case license:
+		return "license_present_notice_missing_owner_decision"
+	default:
+		return "missing_owner_decision"
+	}
+}
+
+func hasRegularFile(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && info.Mode().IsRegular() && info.Size() > 0
 }
 
 func mustAtoi(value string) int {

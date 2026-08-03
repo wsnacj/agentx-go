@@ -43,7 +43,8 @@ temporary Workflow planning机制、LLM组件和
 2. [安装与多 Module 引用](guides/installation-and-modules.md)
 3. [版本、升级与回滚](guides/versioning-and-upgrades.md)
 4. [Developer Preview兼容与分发政策](guides/developer-preview-policy.md)
-5. [分发Readiness与Beta阻断](reference/distribution-readiness.md)
+5. [分发Readiness与Beta阻断](reference/distribution-readiness.md)，以及
+   [Pre-Beta准入合同](reference/pre-beta-admission.md)
 6. [公共执行模型](concepts/execution-model.md)
 7. [Go API Reference](reference/agentx.md)
 8. [生命周期与错误处理](guides/lifecycle-and-errors.md)

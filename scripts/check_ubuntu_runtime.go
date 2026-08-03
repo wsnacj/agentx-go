@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-var sourceModules = []string{".", "components", "runtime", "extensions"}
+var sourceModules = []string{".", "components", "runtime", "extensions", "providers", "tools", "browser", "document", "scenes"}
 
 const expectedGoVersion = "go1.25.12"
 
@@ -41,7 +41,7 @@ func main() {
 
 	// The distribution lane includes API/platform signatures, docs, an empty
 	// private-VCS cache, a frozen module-cache consumer, artifact provenance,
-	// and normal test/vet/tidy/list checks for all four modules.
+	// and normal test/vet/tidy/list checks for all nine modules.
 	fmt.Print(run(root, env, "go", "run", "./scripts/check_developer_preview_distribution.go", "-fresh-cache", "-read-only-cache", "-full"))
 
 	for _, relative := range sourceModules {

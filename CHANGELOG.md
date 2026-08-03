@@ -5,6 +5,10 @@ semver兼容承诺或Public/Beta/Stable声明。
 
 ## Unreleased（P5 Core Developer Preview Closure）
 
+- Pre-Beta本地技术门禁、distribution full gate和Ubuntu入口已从历史四module范围升级为
+  当前九module release train，并新增无HS、无`replace`的九module聚合consumer；
+- 新增Pre-Beta准入合同与九module候选tag前缀。该合同不选择License、不创建tag，具名
+  security/release责任和Public Beta授权继续fail closed；
 - 九module的120个可外部import production package均有中文Reference，共123份`API.md`；
   focused signature gate覆盖77 package、14个Developer Preview candidate和2个平台；
 - 新增九module机器可读fixed-version矩阵，并让版本与文档门禁核对代表性consumer，修复

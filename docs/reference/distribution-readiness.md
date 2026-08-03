@@ -9,6 +9,7 @@
 | `private_validation_ready` | `true` | 历史Core四module已通过空缓存私有VCS；当前九module又完成本地不可变cache、33个consumer、仓库外clean-room与zip/Origin复验；只面向已获私有仓库权限的开发者 |
 | `developer_portal_build_ready` | `true` | 当前九module正文已构建为207页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
 | `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
+| `current_nine_module_local_candidate_gate` | `implemented` | 本地distribution与Pre-Beta candidate入口已升级到同一九module范围；必须以当前source revision重新运行后才形成技术证据 |
 | `current_nine_module_pre_beta_ready` | `false` | 当前九module未形成同一批准release train，也未获得新的全量Ubuntu、安全、license或发行签署 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
@@ -73,13 +74,13 @@ GOWORK=off go run scripts/check_pre_beta_candidate.go
 ```
 
 前三条是当前九module版本、代表性clean-room consumer和中文Reference/Portal入口；
-`check_developer_preview_distribution.go`及其后的M6C/M6D命令仍是历史Core四module发行前置，
-不得拿它们替代当前九module Pre-Beta批准。
+`check_developer_preview_distribution.go`与当前Pre-Beta candidate命令均已使用九module范围，
+但技术通过仍不得替代License、安全、兼容与release owner批准。
 
 带`-fresh-cache -read-only-cache`的distribution命令会使用空临时`GOMODCACHE`从私有VCS
 获取历史四module与公共依赖，随后冻结cache并在`GOPROXY=off`下消费；需要调用方已经
 配置GitHub私有仓库读取权限，但不会把credential写入仓库或输出。带`-portal`的命令是
 可选Portal lane，需先运行`npm ci`。`check_ubuntu_runtime.go`只能在Linux amd64实机运行，
 GitHub-hosted复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`；
-`check_pre_beta_candidate.go`构建可删除的历史四module同版候选并运行固定漏洞扫描，完整
+`check_pre_beta_candidate.go`构建可删除的九module同版候选并运行固定漏洞扫描，完整
 远端入口为`.github/workflows/m6d-pre-beta-candidate.yml`。

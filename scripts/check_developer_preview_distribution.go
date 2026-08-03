@@ -6,6 +6,7 @@ package main
 
 import (
 	"archive/zip"
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"flag"
@@ -36,13 +37,18 @@ var releaseModules = []moduleSpec{
 	{path: "github.com/wsnacj/agentx-go", dir: ".", required: "README.md"},
 	{path: "github.com/wsnacj/agentx-go/components", dir: "components", required: "llm/API.md"},
 	{path: "github.com/wsnacj/agentx-go/runtime", dir: "runtime", required: "workflow/hostkit/API.md"},
-	{path: "github.com/wsnacj/agentx-go/extensions", dir: "extensions", required: "astock/API.md"},
+	{path: "github.com/wsnacj/agentx-go/extensions", dir: "extensions", required: "domainkit/API.md"},
+	{path: "github.com/wsnacj/agentx-go/providers", dir: "providers", required: "API.md"},
+	{path: "github.com/wsnacj/agentx-go/tools", dir: "tools", required: "API.md"},
+	{path: "github.com/wsnacj/agentx-go/browser", dir: "browser", required: "API.md"},
+	{path: "github.com/wsnacj/agentx-go/document", dir: "document", required: "API.md"},
+	{path: "github.com/wsnacj/agentx-go/scenes", dir: "scenes", required: "astock/API.md"},
 }
 
 func main() {
 	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer modules from VCS into an empty temporary cache")
 	readOnlyCache := flag.Bool("read-only-cache", false, "freeze the fresh consumer module cache before verify, test and run")
-	full := flag.Bool("full", false, "also run test, vet, tidy and list for all four source modules")
+	full := flag.Bool("full", false, "also run test, vet, tidy and list for all nine source modules")
 	portal := flag.Bool("portal", false, "also build and validate the optional local Developer Portal (requires npm ci first)")
 	flag.Parse()
 
@@ -50,7 +56,11 @@ func main() {
 	check(err)
 	checkRequiredFiles(root)
 	checkGoMods(root)
-	version := readVersion(root)
+	versions := readVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"))
+	rootVersion := versions["github.com/wsnacj/agentx-go"]
+	if rootVersion == "" || len(versions) != len(releaseModules) {
+		check(fmt.Errorf("Developer Preview version matrix has %d modules and root %q, want %d modules", len(versions), rootVersion, len(releaseModules)))
+	}
 
 	env := append(os.Environ(), "GOWORK=off")
 	printRun(root, env, "go", "run", "./scripts/check_developer_preview_version.go")
@@ -68,9 +78,12 @@ func main() {
 	}
 	printRun(root, env, "go", cleanroomArgs...)
 
-	revision := pseudoVersionRevision(version)
 	for _, module := range releaseModules {
-		checkArtifact(root, env, module, version, revision)
+		version := versions[module.path]
+		if version == "" {
+			check(fmt.Errorf("Developer Preview version matrix is missing %s", module.path))
+		}
+		checkArtifact(root, env, module, version, pseudoVersionRevision(version))
 	}
 	if *full {
 		for _, module := range releaseModules {
@@ -85,7 +98,7 @@ func main() {
 		printRun(root, env, "npm", "run", "docs:check")
 	}
 
-	fmt.Printf("agentx-developer-preview-distribution-ok:version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:read_only_cache=%t:full=%t:portal=%t\n", version, len(releaseModules), *freshCache, *readOnlyCache, *full, *portal)
+	fmt.Printf("agentx-developer-preview-distribution-ok:root_version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:read_only_cache=%t:full=%t:portal=%t\n", rootVersion, len(releaseModules), *freshCache, *readOnlyCache, *full, *portal)
 }
 
 func checkRequiredFiles(root string) {
@@ -98,6 +111,7 @@ func checkRequiredFiles(root string) {
 		".github/CODEOWNERS",
 		"docs/guides/developer-preview-policy.md",
 		"docs/reference/distribution-readiness.md",
+		"docs/reference/pre-beta-admission.md",
 		"docs/architecture/developer-portal-generator.md",
 		"package.json",
 		"package-lock.json",
@@ -129,14 +143,28 @@ func checkGoMods(root string) {
 	}
 }
 
-func readVersion(root string) string {
-	content, err := os.ReadFile(filepath.Join(root, "docs/reference/developer-preview-version.txt"))
+func readVersionMatrix(path string) map[string]string {
+	file, err := os.Open(path)
 	check(err)
-	version := strings.TrimSpace(string(content))
-	if !strings.HasPrefix(version, "v0.0.0-") {
-		check(fmt.Errorf("unsupported Developer Preview version %q", version))
+	defer file.Close()
+	versions := map[string]string{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		fields := strings.Fields(line)
+		if len(fields) != 2 || !strings.HasPrefix(fields[1], "v0.0.0-") {
+			check(fmt.Errorf("invalid Developer Preview version matrix line %q", line))
+		}
+		if _, exists := versions[fields[0]]; exists {
+			check(fmt.Errorf("duplicate Developer Preview module %s", fields[0]))
+		}
+		versions[fields[0]] = fields[1]
 	}
-	return version
+	check(scanner.Err())
+	return versions
 }
 
 func pseudoVersionRevision(version string) string {

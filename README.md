@@ -18,9 +18,9 @@ Run/Open Tool Loop 的 portable implementation owner；`providers`、`tools`、`
 > P4 Portfolio Checkpoint已经停止按Scene逐个扩张；P5-C closure没有发现需要补迁的
 > 公共能力，因此未增加新cohort。M6D Core Foundation发行门禁继续独立fail closed。
 > M6C已经为历史Core四module快照形成Ubuntu真实运行与跨平台分发证据；
-> M6D已用Go 1.25.12、固定`govulncheck`、临时同版四module proxy、只读cache
-> consumer和Ubuntu远端run形成可复验技术候选。它不新增Runtime能力，也不是Public、
-> Beta、Stable或production-ready发布。
+> M6D历史四module证据继续保留；当前Pre-Beta本地、distribution与Ubuntu入口已升级到
+> 九module release train，等待当前revision复验及具名License、安全和发行决定。它不新增
+> Runtime能力，也不是Public、Beta、Stable或production-ready发布。
 
 P5-C最终验证覆盖九module normal/race/vet/tidy/list、33个无`replace` fixed-version
 consumer、仓库外clean-room consumer、九module zip/Sum/Origin、反向依赖和中文Portal。
@@ -41,7 +41,7 @@ consumer、仓库外clean-room consumer、九module zip/Sum/Origin、反向依�
 
 维护、兼容和分发边界见[Developer Preview政策](docs/guides/developer-preview-policy.md)、
 [分发Readiness](docs/reference/distribution-readiness.md)、[安全报告](SECURITY.md)和
-[支持边界](SUPPORT.md)。参与修改请阅读[CONTRIBUTING](CONTRIBUTING.md)；PR不是必需
+[Pre-Beta准入合同](docs/reference/pre-beta-admission.md)、[支持边界](SUPPORT.md)。参与修改请阅读[CONTRIBUTING](CONTRIBUTING.md)；PR不是必需
 流程，本地gate与commit-range人工审阅是一等路径。
 
 中文Developer Portal本地构建：

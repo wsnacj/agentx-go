@@ -1,9 +1,9 @@
-name: AgentX Core Pre-Beta Candidate
+name: AgentX Platform Pre-Beta Candidate
 
 on:
   push:
     branches:
-      - codex/w4-runtime-foundation
+      - codex/pre-beta-admission
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ jobs:
   pre-beta-candidate:
     name: Ubuntu runtime, candidate artifacts and security
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       GOPRIVATE: github.com/wsnacj/agentx-go
       GONOSUMDB: github.com/wsnacj/agentx-go

@@ -37,10 +37,11 @@ hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaki
 个已接受Developer Preview baseline；安全或数据完整性问题可以更快移除，但必须记录
 原因和迁移步骤。进入Beta前必须重新批准明确时间窗口和EOL政策。
 
-## 历史四Module release train与tag前缀
+## 九Module release train与tag前缀
 
-以下是历史Core四module的候选tag设计，不是当前发行授权。当前九module使用各自固定
-pseudo-version；正式release train必须在Pre-Beta阶段重新批准：
+以下是九module的候选tag设计，不是当前发行授权。当前九module仍使用各自固定
+pseudo-version；首次Beta建议与完整准入边界见
+[Pre-Beta准入合同](../reference/pre-beta-admission.md)：
 
 | Module | Go tag前缀 |
 | --- | --- |
@@ -48,6 +49,11 @@ pseudo-version；正式release train必须在Pre-Beta阶段重新批准：
 | `github.com/wsnacj/agentx-go/components` | `components/vX.Y.Z...` |
 | `github.com/wsnacj/agentx-go/runtime` | `runtime/vX.Y.Z...` |
 | `github.com/wsnacj/agentx-go/extensions` | `extensions/vX.Y.Z...` |
+| `github.com/wsnacj/agentx-go/providers` | `providers/vX.Y.Z...` |
+| `github.com/wsnacj/agentx-go/tools` | `tools/vX.Y.Z...` |
+| `github.com/wsnacj/agentx-go/browser` | `browser/vX.Y.Z...` |
+| `github.com/wsnacj/agentx-go/document` | `document/vX.Y.Z...` |
+| `github.com/wsnacj/agentx-go/scenes` | `scenes/vX.Y.Z...` |
 
 如果未来批准同一release train，应明确哪些module同版、哪些独立版，并避免调用方组合
 未经验证的checkpoint。当前pseudo-version只用于private validation，不预先批准首次
@@ -78,6 +84,6 @@ native支持承诺。
 `private_validation_ready=true`。Public Beta还要求Owner选择并批准license/NOTICE、
 具名security和release approver、正式tag/release授权、正式兼容等级以及剩余Pre-Beta
 门禁。M6C已关闭Ubuntu实机证据项，但缺其它任一项时`public_beta_ready=false`。
-M6D关闭的是当时同版四module候选、漏洞扫描、离线消费与Go 1.25.12 Ubuntu复验的历史
-技术项；它不自动覆盖后续五个module和当前source revision，也不代替Owner对License、
-具名security/release责任和正式兼容等级的批准。
+M6D历史证据只覆盖当时四module snapshot；当前本地与Ubuntu入口已经升级为九module，
+必须从当前source revision重新运行后才形成新的技术证据。即使技术门禁通过，也不代替
+Owner对License、具名security/release责任和正式兼容等级的批准。

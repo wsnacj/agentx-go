@@ -145,7 +145,7 @@ Document与Portable Scenes分别使用独立固定版本。对应external-style 
 
 ## Ubuntu实机复跑
 
-历史M6D候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module
+Pre-Beta候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行九module
 normal/race/vet/tidy/list、双平台API gate、fixed-version空缓存consumer和module
 artifact provenance：
 
@@ -162,10 +162,10 @@ push和`workflow_dispatch`，不要求PR；M6C workflow保留为手动单项复�
 GOWORK=off go run ./scripts/check_pre_beta_candidate.go
 ```
 
-该命令只在临时目录使用`v0.0.0-m6d.0`组装四module同版候选，不修改tracked `go.mod`，
+该命令只在临时目录使用`v0.0.0-m6d.0`组装九module同版候选，不修改tracked `go.mod`，
 并运行固定漏洞扫描、无replace consumer和只读cache复验。不得把token、URL rewrite或
-runner credential写入仓库。该历史四module发行证据没有自动覆盖后续五个可选module，
-因此不能据此宣称当前九module已获得Beta或正式发行授权。
+runner credential写入仓库。技术门禁覆盖九module仍不自动解除License/NOTICE、具名
+security/release责任、兼容性晋级或正式发行授权。
 
 ## 升级方式
 
