@@ -1,7 +1,7 @@
 //go:build ignore
 
-// check_developer_preview_version verifies the focused version facts used by
-// the Developer Preview consumer and Chinese adoption documentation.
+// check_developer_preview_version verifies the nine-module fixed-version facts
+// used by representative consumers and Chinese adoption documentation.
 package main
 
 import (
@@ -12,76 +12,128 @@ import (
 	"strings"
 )
 
-const versionPath = "docs/reference/developer-preview-version.txt"
+const (
+	rootVersionPath = "docs/reference/developer-preview-version.txt"
+	matrixPath      = "docs/reference/developer-preview-module-versions.txt"
+)
 
-var modules = []string{
-	"github.com/wsnacj/agentx-go",
-	"github.com/wsnacj/agentx-go/components",
-	"github.com/wsnacj/agentx-go/runtime",
-	"github.com/wsnacj/agentx-go/extensions",
+type moduleSpec struct {
+	path     string
+	consumer string
+}
+
+var modules = []moduleSpec{
+	{path: "github.com/wsnacj/agentx-go", consumer: "conformance/consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/components", consumer: "conformance/consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/runtime", consumer: "conformance/consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/extensions", consumer: "conformance/consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/providers", consumer: "providers/conformance/provider-cohort-consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/tools", consumer: "browser/conformance/browser-platform-consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/browser", consumer: "browser/conformance/browser-platform-consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/document", consumer: "document/conformance/tools-consumer/go.mod"},
+	{path: "github.com/wsnacj/agentx-go/scenes", consumer: "conformance/consumer/go.mod"},
 }
 
 func main() {
 	root, err := os.Getwd()
 	check(err)
-	versionBytes, err := os.ReadFile(filepath.Join(root, versionPath))
+	expected, err := readVersionMatrix(filepath.Join(root, matrixPath))
 	check(err)
-	version := strings.TrimSpace(string(versionBytes))
-	if !strings.HasPrefix(version, "v0.0.0-") || strings.ContainsAny(version, " \t\r\n") {
-		check(fmt.Errorf("invalid Developer Preview pseudo-version %q", version))
+	if len(expected) != len(modules) {
+		check(fmt.Errorf("version matrix has %d modules, want %d", len(expected), len(modules)))
 	}
 
-	selected, err := readRequiredModules(filepath.Join(root, "conformance/consumer/go.mod"))
+	rootVersionBytes, err := os.ReadFile(filepath.Join(root, rootVersionPath))
 	check(err)
+	rootVersion := strings.TrimSpace(string(rootVersionBytes))
+	if rootVersion != expected["github.com/wsnacj/agentx-go"] {
+		check(fmt.Errorf("legacy root version = %q, matrix has %q", rootVersion, expected["github.com/wsnacj/agentx-go"]))
+	}
+
+	installationBytes, err := os.ReadFile(filepath.Join(root, "docs/guides/installation-and-modules.md"))
+	check(err)
+	installation := string(installationBytes)
 	for _, module := range modules {
-		if got := selected[module]; got != version {
-			check(fmt.Errorf("conformance consumer %s version = %q, want %q", module, got, version))
+		version, ok := expected[module.path]
+		if !ok {
+			check(fmt.Errorf("version matrix is missing %s", module.path))
+		}
+		selected, err := readRequiredModule(filepath.Join(root, module.consumer), module.path)
+		check(err)
+		if selected != version {
+			check(fmt.Errorf("%s selects %s at %q, want %q", module.consumer, module.path, selected, version))
+		}
+		if !strings.Contains(installation, module.path+"\n  "+version) {
+			check(fmt.Errorf("installation guide does not reference %s at %s", module.path, version))
 		}
 	}
 
 	for _, relative := range []string{
 		"README.md",
 		"CHANGELOG.md",
-		"docs/guides/installation-and-modules.md",
 		"docs/guides/versioning-and-upgrades.md",
 	} {
 		content, err := os.ReadFile(filepath.Join(root, relative))
 		check(err)
-		if !strings.Contains(string(content), version) {
-			check(fmt.Errorf("%s does not reference accepted version %s", relative, version))
+		if !strings.Contains(string(content), rootVersion) {
+			check(fmt.Errorf("%s does not reference accepted root version %s", relative, rootVersion))
 		}
 	}
 
-	fmt.Printf("agentx-developer-preview-version-ok:version=%s:modules=%d\n", version, len(modules))
+	fmt.Printf("agentx-developer-preview-version-ok:root=%s:modules=%d\n", rootVersion, len(modules))
 }
 
-func readRequiredModules(path string) (map[string]string, error) {
+func readVersionMatrix(path string) (map[string]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	selected := map[string]string{}
+	versions := map[string]string{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		fields := strings.Fields(line)
+		if len(fields) != 2 || !strings.HasPrefix(fields[1], "v0.0.0-") || strings.ContainsAny(fields[1], "\t\r\n ") {
+			return nil, fmt.Errorf("invalid version matrix line %q", line)
+		}
+		if _, exists := versions[fields[0]]; exists {
+			return nil, fmt.Errorf("duplicate version matrix module %s", fields[0])
+		}
+		versions[fields[0]] = fields[1]
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return versions, nil
+}
+
+func readRequiredModule(path, module string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	selected := ""
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		fields := strings.Fields(scanner.Text())
-		if len(fields) < 2 {
-			continue
-		}
-		if fields[0] == "require" {
+		if len(fields) >= 3 && fields[0] == "require" {
 			fields = fields[1:]
 		}
-		if len(fields) < 2 {
-			continue
-		}
-		for _, module := range modules {
-			if fields[0] == module && strings.HasPrefix(fields[1], "v") {
-				selected[module] = fields[1]
-			}
+		if len(fields) >= 2 && fields[0] == module && strings.HasPrefix(fields[1], "v") {
+			selected = fields[1]
 		}
 	}
-	return selected, scanner.Err()
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return selected, nil
 }
 
 func check(err error) {

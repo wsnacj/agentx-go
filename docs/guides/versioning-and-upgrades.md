@@ -2,8 +2,9 @@
 
 AgentX Go当前仍是private Developer Preview，没有tag、semver或Public/Beta/Stable兼容
 承诺。当前九个module按各自最后一次真实source-authority checkpoint使用不可变
-pseudo-version；准确矩阵只维护在
-[安装与多Module引用](installation-and-modules.md#当前固定验证版本)。调用方不得假设它们
+pseudo-version；准确矩阵以机器可读
+[`developer-preview-module-versions.txt`](../reference/developer-preview-module-versions.txt)为
+事实源，并投影到[安装与多Module引用](installation-and-modules.md#当前固定验证版本)。调用方不得假设它们
 来自同一个commit，也不得把任意单个pseudo-version推广为整个仓库的版本。
 
 根、runtime与extensions当前仍使用`v0.0.0-20260802113655-f41de95ec5be`；components
@@ -78,6 +79,9 @@ go list -m -f '{{.Path}} {{.Version}}' all | grep '^github.com/wsnacj/agentx-go'
 恢复既有行为时，应保留失败证据并停止升级。
 
 ## 当前验证证据
+
+`scripts/check_developer_preview_version.go`会核对九module矩阵、代表性fixed-version
+consumer和安装文档；历史四module脚本不再被当作当前九module版本证据。
 
 根[`conformance/consumer`](../../conformance/consumer)直接固定Core四module及scenes版本，并
 运行自定义ExecutionAdapter、Model/Tool Host Kit、Workflow Host Kit与A股extension

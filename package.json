@@ -7,7 +7,7 @@
     "docs:dev": "npm run docs:prepare && vitepress dev portal",
     "docs:build": "npm run docs:prepare && vitepress build portal",
     "docs:preview": "vitepress preview portal",
-    "docs:check": "go run ./scripts/check_package_api_docs.go && go run ./scripts/check_docs_links.go && npm run docs:build && go run ./scripts/check_docs_portal.go",
+    "docs:check": "go run ./scripts/check_developer_preview_version.go && go run ./scripts/check_package_api_docs.go && go run ./scripts/check_docs_links.go && npm run docs:build && go run ./scripts/check_docs_portal.go",
     "docs:audit": "npm audit --audit-level=moderate"
   },
   "devDependencies": {

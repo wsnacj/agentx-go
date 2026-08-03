@@ -29,6 +29,10 @@ components即可。Runtime不反向依赖tools，Host仍显式拥有授权、安
 
 ## 当前固定验证版本
 
+下列矩阵的机器可读事实源为
+[`developer-preview-module-versions.txt`](../reference/developer-preview-module-versions.txt)；
+文档门禁会核对九个版本、代表性external consumer与本节，避免只验证历史四module。
+
 ```text
 github.com/wsnacj/agentx-go
   v0.0.0-20260802113655-f41de95ec5be
