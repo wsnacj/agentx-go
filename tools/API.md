@@ -112,6 +112,8 @@ hook和具体network backend不属于该合同。
   typed request与预算协调，通过显式`Backend`接入Host store、visibility和ranking策略。
 - [`tools/scheduler`](./scheduler/API.md)：拥有`cron`的action解析与命令路由，通过五个显式
   Backend方法接入Host scheduler、RunStore、授权和durable lifecycle。
+- [`tools/llmtask`](./llmtask/API.md)：拥有单次LLM-only JSON子任务的参数兼容、模型输入、
+  schema校验、响应提取和timeout/cancellation，通过显式`ChatWithInputFunc`接入Host模型。
 
 authorization、approval、sandbox、credential、内容信任分类、具体filesystem/process/network/store backend和
 产品allowlist/default均由Host或后续显式adapter提供。
@@ -122,3 +124,7 @@ authorization、approval、sandbox、credential、内容信任分类、具体fil
 memory入口和`cron`，只使用内存/fake ports，不依赖HS、Runner、Scene、长期`replace`或
 真实副作用。该consumer证明portable coordination可被外部Host组合，不证明Host授权、
 sandbox、credential或具体backend已经迁入。
+
+`llm_task`的独立fixed-version验证位于
+[`tools/conformance/llm-task-consumer`](./conformance/llm-task-consumer)。它不使用`replace`，
+通过fake model adapter验证JSON/schema/model identity和`tool_choice=none`，不访问真实provider。
