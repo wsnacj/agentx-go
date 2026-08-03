@@ -41,6 +41,21 @@ func NewHandler(Options) tool.Handler
 `ChatWithInput` 是唯一模型副作用边界。未提供该函数时 `Register` 不注册工具；直接构造的
 `NewHandler` 也会 fail closed，不回退到环境变量或全局 provider。
 
+需要把同一语义嵌入 durable Session/Task Host Kit 时，可以使用以下 advanced composition API：
+
+```go
+func BuildRequest(map[string]any, Options, int) (Request, error)
+func BuildChatInput(Request) llm.ChatInput
+func Invoke(context.Context, Options, Request) (*llm.ChatResponse, error)
+func DecodeContent(string, int) (any, string, error)
+func NormalizeSchema(any) (map[string]any, error)
+func ValidateSchema(map[string]any) error
+func ValidateValue(any, map[string]any) error
+```
+
+这些函数仍然不拥有 Session、Task、Store 或模型 backend；它们只避免 Host Kit 复制参数、JSON
+和 schema 语义。`Request` 当前属于 Experimental extension，不是稳定持久化格式。
+
 ## 行为合同
 
 - `instruction` 必填；兼容读取 `task/prompt/goal/request/query`，但这些别名不进入推荐 schema；

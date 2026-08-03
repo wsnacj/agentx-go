@@ -24,6 +24,13 @@ const (
 	llmTaskSchemaName        = "agentx_llm_task_result"
 )
 
+// DefaultTimeoutMs is the default model call deadline used by NewHandler.
+const DefaultTimeoutMs = defaultLLMTaskTimeoutMs
+
+// DefaultMaxContentChars is the default maximum model response size validated
+// by the portable coordinator.
+const DefaultMaxContentChars = defaultLLMTaskMaxContent
+
 // Name is the catalog name of the LLM task tool.
 const Name = "llm_task"
 
@@ -53,6 +60,10 @@ type llmTaskRequest struct {
 	MaxTokens      int
 	TimeoutMs      int
 }
+
+// Request is the normalized advanced-composition contract used by Host Kit
+// adapters that need to persist or route a subtask before model invocation.
+type Request = llmTaskRequest
 
 // Register adds llm_task when both a registrar and explicit model port exist.
 func Register(reg toolcontract.Registrar, opts Options) {
@@ -126,6 +137,11 @@ func invokeLLMTaskChat(ctx context.Context, opts Options, req llmTaskRequest) (*
 	return opts.ChatWithInput(ctx, buildLLMTaskChatInput(req))
 }
 
+// Invoke calls the explicit Host model adapter with the normalized request.
+func Invoke(ctx context.Context, opts Options, request Request) (*llm.ChatResponse, error) {
+	return invokeLLMTaskChat(ctx, opts, request)
+}
+
 func buildLLMTaskChatInput(req llmTaskRequest) llm.ChatInput {
 	request := llm.RequestOptions{}
 	request.ResponseFormat = llmTaskResponseFormat(req)
@@ -147,6 +163,9 @@ func buildLLMTaskChatInput(req llmTaskRequest) llm.ChatInput {
 		},
 	}
 }
+
+// BuildChatInput builds the model request without executing it.
+func BuildChatInput(request Request) llm.ChatInput { return buildLLMTaskChatInput(request) }
 
 func llmTaskResponseFormat(req llmTaskRequest) any {
 	if req.Schema != nil {
@@ -236,6 +255,13 @@ func buildLLMTaskRequest(params map[string]any, opts Options, defaultTimeout int
 	}, nil
 }
 
+// BuildRequest validates and normalizes already-decoded arguments. It is
+// intended for Host Kits that share llm_task semantics with a durable Session
+// or Task lifecycle.
+func BuildRequest(params map[string]any, opts Options, defaultTimeout int) (Request, error) {
+	return buildLLMTaskRequest(params, opts, defaultTimeout)
+}
+
 func llmTaskSystemPrompt(hasSchema bool) string {
 	if hasSchema {
 		return "You are Agentx llm_task worker. Return only valid JSON that strictly follows the provided schema. The exact schema is included in the prompt. Do not include markdown."
@@ -289,6 +315,11 @@ func decodeLLMTaskContent(content string, maxChars int) (any, string, error) {
 		return parsed, trimmed, nil
 	}
 	return nil, "", fmt.Errorf("response is not valid json")
+}
+
+// DecodeContent extracts and decodes one bounded JSON value from model text.
+func DecodeContent(content string, maxChars int) (any, string, error) {
+	return decodeLLMTaskContent(content, maxChars)
 }
 
 func stripCodeFence(text string) string {
@@ -421,6 +452,9 @@ func normalizeJSONSchema(raw any) (map[string]any, error) {
 	}
 }
 
+// NormalizeSchema accepts an object or JSON object string.
+func NormalizeSchema(raw any) (map[string]any, error) { return normalizeJSONSchema(raw) }
+
 func validateSchemaDefinition(schema map[string]any, path string) error {
 	types, err := readSchemaTypes(schema["type"])
 	if err != nil {
@@ -521,6 +555,9 @@ func validateSchemaDefinition(schema map[string]any, path string) error {
 	return nil
 }
 
+// ValidateSchema validates the supported JSON Schema subset.
+func ValidateSchema(schema map[string]any) error { return validateSchemaDefinition(schema, "$") }
+
 func validateSchemaKeywordTypeApplicability(schema map[string]any, types []string, path string) error {
 	if len(types) == 0 {
 		return nil
@@ -610,6 +647,11 @@ func validateJSONSchemaSubset(value any, schema map[string]any, path string) err
 		// covered by type/enum/const checks.
 	}
 	return nil
+}
+
+// ValidateValue validates a decoded JSON value against the supported schema.
+func ValidateValue(value any, schema map[string]any) error {
+	return validateJSONSchemaSubset(value, schema, "$")
 }
 
 func validateSchemaTypeConstraint(value any, schema map[string]any, path string) error {
