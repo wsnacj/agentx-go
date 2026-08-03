@@ -481,7 +481,7 @@ func maybeWebFetchFirecrawlFallback(
 		attempt.Detail = "unavailable: request preparer is unavailable"
 		return attempt
 	}
-	prepared, err := prepare(runCtx, httprequest.PrepareInput{RawURL: cfg.Endpoint, TimeoutMs: timeoutMs, FollowRedirects: true, MaxRedirects: 5})
+	prepared, err := prepare(runCtx, httprequest.PrepareInput{RawURL: cfg.Endpoint, TimeoutMs: timeoutMs, FollowRedirects: true, MaxRedirects: 5, CredentialSensitive: true})
 	if err != nil {
 		attempt.Detail = "unavailable: " + truncateToolText(compactWhitespace(err.Error()), 180)
 		return attempt

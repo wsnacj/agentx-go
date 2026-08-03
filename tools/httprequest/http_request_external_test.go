@@ -25,7 +25,7 @@ func TestRunUsesExplicitPreparedClientAndProducesStablePayload(t *testing.T) {
 		Method: "post", URL: parsed.String(), Query: map[string]string{"city": "beijing"},
 		Headers: map[string]string{"X-Trace": "abc"}, Body: "payload", MaxChars: 64,
 	}, httprequest.Options{Prepare: func(_ context.Context, input httprequest.PrepareInput) (httprequest.PreparedRequest, error) {
-		if input.RawURL != parsed.String() || !input.FollowRedirects {
+		if input.RawURL != parsed.String() || !input.FollowRedirects || !input.CredentialSensitive {
 			t.Fatalf("prepare input = %#v", input)
 		}
 		return httprequest.PreparedRequest{URL: parsed, Doer: doerFunc(func(request *http.Request) (*http.Response, error) {

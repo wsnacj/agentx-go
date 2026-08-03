@@ -167,7 +167,7 @@ func prepareSearchEndpoint(ctx context.Context, prepare Preparer, rawURL string,
 	if prepare == nil {
 		return httprequest.PreparedRequest{}, fmt.Errorf("request preparer is unavailable")
 	}
-	prepared, err := prepare(ctx, httprequest.PrepareInput{RawURL: rawURL, TimeoutMs: timeoutMs, FollowRedirects: true, MaxRedirects: 5})
+	prepared, err := prepare(ctx, httprequest.PrepareInput{RawURL: rawURL, TimeoutMs: timeoutMs, FollowRedirects: true, MaxRedirects: 5, CredentialSensitive: true})
 	if err != nil {
 		return httprequest.PreparedRequest{}, err
 	}

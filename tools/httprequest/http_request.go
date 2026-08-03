@@ -38,6 +38,9 @@ type PrepareInput struct {
 	TimeoutMs       int
 	FollowRedirects bool
 	MaxRedirects    int
+	// CredentialSensitive asks the Host to apply its credential-safe redirect
+	// policy. It does not prescribe same-origin rules or header handling.
+	CredentialSensitive bool
 	// OnRedirect receives display-safe redirect observations from the Host.
 	// The Host remains responsible for validating every redirect before it is
 	// followed. Portable retrieval uses this hook only for diagnostics.
@@ -148,6 +151,7 @@ func Run(ctx context.Context, request Request, opts Options) (toolcontract.Resul
 	}
 	prepared, err := opts.Prepare(ctx, PrepareInput{
 		RawURL: rawURL, TimeoutMs: timeoutMs, FollowRedirects: followRedirects, MaxRedirects: redirectLimit,
+		CredentialSensitive: len(request.Headers) > 0 || strings.TrimSpace(request.Body) != "",
 	})
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", Name, err)

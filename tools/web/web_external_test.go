@@ -31,13 +31,18 @@ func fakePreparer(t *testing.T, do doerFunc) retrieval.Preparer {
 }
 
 func TestRunSearchUsesCanonicalProviderProtocol(t *testing.T) {
-	prepare := fakePreparer(t, func(request *http.Request) (*http.Response, error) {
+	credentialSensitive := false
+	basePrepare := fakePreparer(t, func(request *http.Request) (*http.Response, error) {
 		if request.Header.Get("X-Subscription-Token") != "explicit-key" || request.URL.Query().Get("q") != "agent runtime" {
 			t.Fatalf("request = %#v", request)
 		}
 		body := `{"web":{"results":[{"title":"AgentX","url":"https://example.test/agentx","description":"portable runtime"}]}}`
 		return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(body)), Request: request}, nil
 	})
+	prepare := func(ctx context.Context, input httprequest.PrepareInput) (httprequest.PreparedRequest, error) {
+		credentialSensitive = input.CredentialSensitive
+		return basePrepare(ctx, input)
+	}
 	payload, err := web.RunSearch(context.Background(), web.SearchRequest{Query: "agent runtime", MaxResults: 3}, web.SearchOptions{
 		DefaultProvider: "brave", Prepare: prepare,
 		Providers: map[string]web.ProviderConfig{"brave": {APIKey: "explicit-key", Endpoint: "https://search.example.test/api"}},
@@ -45,7 +50,7 @@ func TestRunSearchUsesCanonicalProviderProtocol(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RunSearch: %v", err)
 	}
-	if payload.Provider != "brave" || len(payload.Results) != 1 || payload.Results[0].Title != "AgentX" {
+	if !credentialSensitive || payload.Provider != "brave" || len(payload.Results) != 1 || payload.Results[0].Title != "AgentX" {
 		t.Fatalf("payload = %#v", payload)
 	}
 }
