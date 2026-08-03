@@ -143,3 +143,8 @@ Web工具的独立fixed-version验证位于
 [`tools/conformance/web-tools-consumer`](./conformance/web-tools-consumer)。它不使用`replace`，
 通过fake `retrieval.Preparer`执行`search -> open_page -> find_in_page`，不导入HS、Runner或Scene，
 也不访问真实provider、credential或网络。
+
+Process/Runtime的独立fixed-version验证位于
+[`tools/conformance/process-runtime-consumer`](./conformance/process-runtime-consumer)。它不使用
+`replace`，显式构造local adapter并验证真实前台命令、bounded output与timeout；它不证明
+Host授权、sandbox、signal policy或后台process lifecycle已经迁入。
