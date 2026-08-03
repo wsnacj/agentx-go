@@ -38,6 +38,10 @@ type PrepareInput struct {
 	TimeoutMs       int
 	FollowRedirects bool
 	MaxRedirects    int
+	// OnRedirect receives display-safe redirect observations from the Host.
+	// The Host remains responsible for validating every redirect before it is
+	// followed. Portable retrieval uses this hook only for diagnostics.
+	OnRedirect func(context.Context, string, int)
 }
 
 // PreparedRequest contains a policy-validated URL and a Host-owned client.
