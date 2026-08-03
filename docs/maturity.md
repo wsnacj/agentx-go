@@ -5,9 +5,9 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A～P4-E Portable Scenes闭环完成；P5 Developer Preview产品化进行中 |
+| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document、P4-A～P4-E Portable Scenes与P5 Developer Preview产品化闭环完成 |
 | Developer Portal | 77 package/14 candidate focused API gate与207页九module本地Portal构建已通过；Public Transport因依赖Experimental controlcontract保持Experimental |
-| Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
+| Private validation readiness | `true`；九module normal/race/vet/tidy/list、33个fixed-version consumer、仓库外clean-room consumer与module provenance已通过 |
 | Current nine-module Pre-Beta candidate | `false`；M6D四module历史快照通过不自动覆盖当前九module、license、安全与发行授权 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
@@ -16,7 +16,7 @@
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
 | Experimental browser | P3已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
-| Experimental document | P3已完成OCR、PDF、pipeline、推荐Document tools、fixed consumer与HS cutover；低层可import实现包仍是P5 internalization/documentation决策项 |
+| Experimental document | P3已完成OCR、PDF、pipeline、推荐Document tools、fixed consumer与HS cutover；P5-B已完成21个低层可import package的owner审阅和中文Reference，不自动升级成熟度 |
 | Portable scenes | P4-A～P4-E已覆盖A股、研究/新闻、Docparse、Browser Ops、公共交通、公开来源、公众号、港/美股与财报；P4 Portfolio Checkpoint后不再逐Scene扩张 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
@@ -31,7 +31,7 @@
 | 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`，bounded Resume可用`session/hostkit.NewResumeRuntime`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
 | Examples/conformance | 根fixed-version consumer覆盖五条标准construction；九module各有focused consumer，examples版本已对齐当前根合同；均无长期replace，fixture路径无真实副作用 |
-| HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
+| HS canonical import | W1-C、M5A～M5R及P1～P4 production consumer已使用九module固定private pseudo-version；P5-C版本与owner closure通过 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
 | 当前 package surface | 五个focused module的77个package纳入成熟度矩阵，14个候选有hash、可读snapshot、公开类型闭包和darwin/linux门禁；九module的120个可外部import package均有中文Reference，共123份`API.md` |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
@@ -51,10 +51,16 @@
 根合同的 authoring/source authority 已在 W1-C 后转移到本仓库。HS 旧
 `experimental/facade` 只保留 Deprecated alias/forwarder，不再接受独立行为修改。
 
+P5-C最终checkpoint串行复验九个library module的normal/race/vet/tidy/list，运行33个
+无workspace、无长期`replace`的external-style consumer，并对代表性根consumer执行仓库外
+clean-room验证；九module zip、Sum与Git Origin均与固定矩阵一致。production import-direction
+扫描没有HS、Runner或Scene反向依赖。该证据只建立private Developer Preview Candidate，
+不解除Pre-Beta、License、安全或发行门禁。
+
 LLM 合同类型的 source authority 已在 W3-01 后转移到
 `github.com/wsnacj/agentx-go/components/llm`。HS
-`core/llmx/types` 只保留 Deprecated alias/forwarder；其余 consumer 将在后续
-小批次切换，不能继续向旧路径增加行为。
+`core/llmx/types` 只保留 Deprecated alias/forwarder；`core/agentx/**`直接旧import已经
+清零。其它HS调用方在完成独立cutover前可以经过shim，但不能再向旧路径增加合同或行为。
 
 Runtime module 已拥有 protocol、telemetry、budget、prompt context以及
 Workflow Spec/schema/validation/lowering/state/transition/journal/nodeexec/

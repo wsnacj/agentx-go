@@ -6,7 +6,7 @@
 
 | 结论 | 状态 | 含义 |
 | --- | --- | --- |
-| `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
+| `private_validation_ready` | `true` | 历史Core四module已通过空缓存私有VCS；当前九module又完成本地不可变cache、33个consumer、仓库外clean-room与zip/Origin复验；只面向已获私有仓库权限的开发者 |
 | `developer_portal_build_ready` | `true` | 当前九module正文已构建为207页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
 | `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
 | `current_nine_module_pre_beta_ready` | `false` | 当前九module未形成同一批准release train，也未获得新的全量Ubuntu、安全、license或发行签署 |
@@ -16,11 +16,13 @@
 ## 已关闭项
 
 - 历史四module统一fixed pseudo-version，以及当前九module的独立fixed consumer；
+- P5-C九module版本矩阵门禁、normal/race/vet/tidy/list、33个无`replace`consumer、仓库外
+  clean-room consumer、九module zip/Sum/Origin和production反向依赖复验；
 - 14个Developer Preview candidate API snapshot、公开类型闭包和双平台签名gate；
 - 五条标准construction和已选Portable Scene入口的无HS fixed consumer；
 - 中文Reference、安装、升级和回滚说明；
 - CODEOWNERS、贡献流程、支持边界和安全报告入口；
-- 本地distribution preflight与module cache/zip provenance检查。
+- 本地distribution preflight与module cache/zip provenance检查；
 - 空`GOMODCACHE`经已批准的GitHub SSH传输获取四个固定版本module，并完成无HS
   clean-room consumer构建与运行；验证过程未输出或写入credential。
 - Core中文Developer Portal的clean install、零漏洞审计、93页production build、48/10
@@ -60,6 +62,9 @@ License选项目前只作为决策输入，不代表法律建议或默认选择�
 ## 复跑入口
 
 ```bash
+GOWORK=off go run scripts/check_developer_preview_version.go
+GOWORK=off go run scripts/check_cleanroom_consumer.go
+npm run docs:check
 GOWORK=off go run scripts/check_developer_preview_distribution.go
 GOWORK=off go run scripts/check_developer_preview_distribution.go -fresh-cache -read-only-cache
 GOWORK=off go run scripts/check_developer_preview_distribution.go -portal
@@ -67,11 +72,14 @@ GOWORK=off CGO_ENABLED=1 go run scripts/check_ubuntu_runtime.go
 GOWORK=off go run scripts/check_pre_beta_candidate.go
 ```
 
-第二条会使用空临时`GOMODCACHE`从私有VCS获取固定版本与公共依赖，随后冻结cache并在
-`GOPROXY=off`下消费；需要调用方已经配置GitHub私有仓库读取权限，但不会把credential
-写入仓库或输出。
-第三条是可选Developer Portal lane；需先运行`npm ci`，不会改变普通Go consumer或四
-module验证对Node的零依赖边界。第四条只能在Linux amd64实机运行，并额外执行四module
-race；GitHub-hosted复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`。
-第五条构建可删除的同版候选、运行固定漏洞扫描并输出value-safe manifest；完整远端入口
-为`.github/workflows/m6d-pre-beta-candidate.yml`。
+前三条是当前九module版本、代表性clean-room consumer和中文Reference/Portal入口；
+`check_developer_preview_distribution.go`及其后的M6C/M6D命令仍是历史Core四module发行前置，
+不得拿它们替代当前九module Pre-Beta批准。
+
+带`-fresh-cache -read-only-cache`的distribution命令会使用空临时`GOMODCACHE`从私有VCS
+获取历史四module与公共依赖，随后冻结cache并在`GOPROXY=off`下消费；需要调用方已经
+配置GitHub私有仓库读取权限，但不会把credential写入仓库或输出。带`-portal`的命令是
+可选Portal lane，需先运行`npm ci`。`check_ubuntu_runtime.go`只能在Linux amd64实机运行，
+GitHub-hosted复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`；
+`check_pre_beta_candidate.go`构建可删除的历史四module同版候选并运行固定漏洞扫描，完整
+远端入口为`.github/workflows/m6d-pre-beta-candidate.yml`。

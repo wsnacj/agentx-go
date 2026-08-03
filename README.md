@@ -9,18 +9,22 @@ Run/Open Tool Loop 的 portable implementation owner；`providers`、`tools`、`
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1 Core七类能力、P2 Providers/通用Tools、P3 Browser/Document与
-> P4首批Portable Scenes均已形成真实source authority、fixed-version consumer和HS
-> production cutover；P5 Core Developer Preview产品化正在收口**。当前九个module共有
+> 当前里程碑：**M7A P1 Core七类能力、P2 Providers/通用Tools、P3 Browser/Document、
+> P4首批Portable Scenes与P5 Core Developer Preview产品化均已完成私有候选闭环**。
+> 当前九个module共有
 > 123份中文`API.md`，覆盖全部120个可外部import的production package；其中
 > root/components/runtime/extensions/scenes的77个候选范围
 > package和14个Developer Preview candidate进入focused API gate。
-> P4 Portfolio Checkpoint已经停止按Scene逐个扩张；后续只在P5 closure证明必要时增加
-> 一个有界cohort。M6D Core Foundation发行门禁继续独立fail closed。
+> P4 Portfolio Checkpoint已经停止按Scene逐个扩张；P5-C closure没有发现需要补迁的
+> 公共能力，因此未增加新cohort。M6D Core Foundation发行门禁继续独立fail closed。
 > M6C已经为历史Core四module快照形成Ubuntu真实运行与跨平台分发证据；
 > M6D已用Go 1.25.12、固定`govulncheck`、临时同版四module proxy、只读cache
 > consumer和Ubuntu远端run形成可复验技术候选。它不新增Runtime能力，也不是Public、
 > Beta、Stable或production-ready发布。
+
+P5-C最终验证覆盖九module normal/race/vet/tidy/list、33个无`replace` fixed-version
+consumer、仓库外clean-room consumer、九module zip/Sum/Origin、反向依赖和中文Portal。
+它证明private Developer Preview Candidate可复验，不构成正式发行或兼容性承诺。
 
 ## 当前提供：根合同
 

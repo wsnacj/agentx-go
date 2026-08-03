@@ -1,9 +1,9 @@
 # AgentX Go 中文文档
 
 P1已完成Core七类能力，P2已完成Providers与通用Tools，P3已完成Browser与Document，
-P4-A至P4-E已迁入首批互补Portable Scenes并完成Portfolio Checkpoint。当前P5只收口
+P4-A至P4-E已迁入首批互补Portable Scenes并完成Portfolio Checkpoint。P5已完成
 Developer Preview接入、中文API导航、固定版本和HS portable source-authority closure，
-不再按Scene逐个扩张。九个module当前共有123份中文`API.md`，覆盖全部120个可外部import
+没有发现需要补迁的公共能力，也没有继续按Scene逐个扩张。九个module当前共有123份中文`API.md`，覆盖全部120个可外部import
 的production package；focused gate管理root/components/runtime/extensions/scenes的
 77个production package和14个Developer
 Preview candidate。其它可选module仍按Experimental边界独立验证。

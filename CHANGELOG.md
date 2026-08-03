@@ -3,6 +3,20 @@
 本文件记录可供private consumer复现的Developer Preview checkpoint，不代表正式release、
 semver兼容承诺或Public/Beta/Stable声明。
 
+## Unreleased（P5 Core Developer Preview Closure）
+
+- 九module的120个可外部import production package均有中文Reference，共123份`API.md`；
+  focused signature gate覆盖77 package、14个Developer Preview candidate和2个平台；
+- 新增九module机器可读fixed-version矩阵，并让版本与文档门禁核对代表性consumer，修复
+  历史四module同版假设；
+- 九modulenormal/race/vet/tidy/list、33个无`replace`external-style consumer、仓库外
+  clean-room consumer及九module zip/Sum/Origin复验通过；production code无HS、Runner或
+  Scene反向依赖；
+- P5 closure没有发现阻断七类能力或推荐接入路径的portable owner缺口，因此没有继续迁移
+  Operations、Capability Install、Database Query或其它Scene；
+- 当前状态为private Developer Preview Candidate。Pre-Beta、Public/Beta/Stable、正式tag、
+  License、security/legal和release authorization继续fail closed。
+
 ## v0.0.0-20260802131439-56dd598eef59（P2-C Tool Catalog / Diffs）
 
 - `components/tool`复用既有LLM wire type identity，提供provider-neutral

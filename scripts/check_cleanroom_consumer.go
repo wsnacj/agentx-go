@@ -5,6 +5,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
@@ -21,6 +22,7 @@ var expectedModules = []string{
 	"github.com/wsnacj/agentx-go/components",
 	"github.com/wsnacj/agentx-go/runtime",
 	"github.com/wsnacj/agentx-go/extensions",
+	"github.com/wsnacj/agentx-go/scenes",
 }
 
 func main() {
@@ -33,9 +35,12 @@ func main() {
 
 	root, err := os.Getwd()
 	check(err)
-	versionBytes, err := os.ReadFile(filepath.Join(root, "docs/reference/developer-preview-version.txt"))
+	versions, err := readVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"))
 	check(err)
-	version := strings.TrimSpace(string(versionBytes))
+	rootVersion := versions["github.com/wsnacj/agentx-go"]
+	if rootVersion == "" {
+		check(fmt.Errorf("fixed-version matrix is missing root module"))
+	}
 
 	consumer := filepath.Join(root, "conformance/consumer")
 	goMod, err := os.ReadFile(filepath.Join(consumer, "go.mod"))
@@ -84,6 +89,10 @@ func main() {
 	run(consumerCopy, env, "go", "mod", "verify")
 	modules := run(consumerCopy, env, "go", "list", "-m", "-f", "{{.Path}} {{.Version}}", "all")
 	for _, module := range expectedModules {
+		version := versions[module]
+		if version == "" {
+			check(fmt.Errorf("fixed-version matrix is missing %s", module))
+		}
 		want := module + " " + version
 		if !containsLine(modules, want) {
 			check(fmt.Errorf("clean-room module list missing %q", want))
@@ -94,7 +103,33 @@ func main() {
 	if !strings.HasPrefix(output, "agentx-core-developer-preview-ok:") {
 		check(fmt.Errorf("unexpected clean-room output %q", output))
 	}
-	fmt.Printf("agentx-cleanroom-consumer-ok:version=%s:modules=%d:source=%s\n", version, len(expectedModules), mode)
+	fmt.Printf("agentx-cleanroom-consumer-ok:root=%s:modules=%d:source=%s\n", rootVersion, len(expectedModules), mode)
+}
+
+func readVersionMatrix(path string) (map[string]string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	versions := map[string]string{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			return nil, fmt.Errorf("invalid version matrix line %q", line)
+		}
+		versions[fields[0]] = fields[1]
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return versions, nil
 }
 
 func setTreeWritable(root string, writable bool) error {
