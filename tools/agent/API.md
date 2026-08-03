@@ -52,6 +52,30 @@ func NewSubagentsHandler(Backend) tool.Handler
 func NewAgentStepHandler(Backend) tool.Handler
 ```
 
+工具定义可单独用于catalog、审计或自定义注册：
+
+```go
+const TasksSpawnName = "tasks_spawn"
+const TasksWaitName = "tasks_wait"
+const TasksRunName = "tasks_run"
+const TasksCancelName = "tasks_cancel"
+const TasksReplayName = "tasks_replay"
+const TasksCollectName = "tasks_collect"
+const TasksDeadletterListName = "tasks_deadletter_list"
+const SubagentsName = "subagents"
+const AgentStepName = "agent_step"
+
+func TasksSpawnDefinition() tool.Definition
+func TasksWaitDefinition() tool.Definition
+func TasksRunDefinition() tool.Definition
+func TasksCancelDefinition() tool.Definition
+func TasksReplayDefinition() tool.Definition
+func TasksCollectDefinition() tool.Definition
+func TasksDeadletterListDefinition() tool.Definition
+func SubagentsDefinition() tool.Definition
+func AgentStepDefinition() tool.Definition
+```
+
 每个 `Request.Arguments` 都是防御性浅复制。Backend 不应修改调用方保存的 map；嵌套 object 的
 深复制、事务边界与持久化隔离仍由 Host 负责。
 
