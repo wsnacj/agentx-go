@@ -7,17 +7,17 @@
 | 结论 | 状态 | 含义 |
 | --- | --- | --- |
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
-| `developer_portal_build_ready` | `true` | 93页中文Portal可由lockfile本地重建；不是公共托管结论 |
-| `ubuntu_runtime_ready` | `true` | M6D已在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验；不扩张到其它平台 |
-| `pre_beta_technical_candidate_ready` | `true` | 本地与远端Go 1.25.12同版四module候选、安全扫描和只读cache均已通过；不等于发行授权 |
+| `developer_portal_build_ready` | `true` | 当前九module正文已构建为186页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
+| `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
+| `current_nine_module_pre_beta_ready` | `false` | 当前九module未形成同一批准release train，也未获得新的全量Ubuntu、安全、license或发行签署 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
 ## 已关闭项
 
-- 四module统一fixed pseudo-version；
-- 10个Developer Preview candidate API snapshot、公开类型闭包和双平台签名gate；
-- 五条标准construction和A股推荐extension的无HS fixed consumer；
+- 历史四module统一fixed pseudo-version，以及当前九module的独立fixed consumer；
+- 14个Developer Preview candidate API snapshot、公开类型闭包和双平台签名gate；
+- 五条标准construction和已选Portable Scene入口的无HS fixed consumer；
 - 中文Reference、安装、升级和回滚说明；
 - CODEOWNERS、贡献流程、支持边界和安全报告入口；
 - 本地distribution preflight与module cache/zip provenance检查。

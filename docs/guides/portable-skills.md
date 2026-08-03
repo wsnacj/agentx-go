@@ -9,13 +9,13 @@ portable加载机制。它适合需要读取 `SKILL.md`、检查资源、按路�
 私有仓库访问方式见[安装与多 Module 引用](installation-and-modules.md)。目录加载只需：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801100244-e9b2f8a65ee4
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 如果调用方直接使用 `runtime/assetfs`构造 immutable source，还应固定 Runtime：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801061901-08fdf1038850
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 这些 pseudo-version只用于 private validation，不是正式 semver。

@@ -4,8 +4,8 @@
 
 ## 候选合同
 
-兼容审阅面只包含成熟度矩阵中的10个Developer Preview candidate，以及以下五条标准
-construction：
+兼容审阅面只包含成熟度矩阵中的14个Developer Preview candidate，以及以下五条标准
+construction；七类能力的概念映射和扩展入口见[能力矩阵](capability-map.md)：
 
 1. 根`agentx.Client`与自定义`ExecutionAdapter`；
 2. `runtime/hostkit`与调用方提供的Model/Tool Adapter；
@@ -23,7 +23,7 @@ Developer Preview允许在Owner审阅后进行additive或breaking变更，但禁
 - typed error code、`errors.Is/As`、retryability和display-safe message；
 - context cancellation/deadline、并发Run和`Shutdown(ctx)`的有界/幂等/关闭后语义；
 - LLM/tool JSON、Workflow state transition、durable write顺序；
-- 推荐package路径、四module依赖方向或公开类型闭包。
+- 推荐package路径、九module依赖方向或公开类型闭包。
 
 任何候选API变化必须同时完成Owner/consumer review、中文Reference、可读API snapshot与
 hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaking change还必须
@@ -37,9 +37,10 @@ hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaki
 个已接受Developer Preview baseline；安全或数据完整性问题可以更快移除，但必须记录
 原因和迁移步骤。进入Beta前必须重新批准明确时间窗口和EOL政策。
 
-## 四Module release train与tag前缀
+## 历史四Module release train与tag前缀
 
-四个module属于同一仓库和同一source commit release train。未来若获准创建tag，前缀为：
+以下是历史Core四module的候选tag设计，不是当前发行授权。当前九module使用各自固定
+pseudo-version；正式release train必须在Pre-Beta阶段重新批准：
 
 | Module | Go tag前缀 |
 | --- | --- |
@@ -48,8 +49,9 @@ hash、CHANGELOG、升级/回滚说明、fixed consumer和双平台gate。breaki
 | `github.com/wsnacj/agentx-go/runtime` | `runtime/vX.Y.Z...` |
 | `github.com/wsnacj/agentx-go/extensions` | `extensions/vX.Y.Z...` |
 
-同一release train应使用相同语义版本和source commit，避免调用方组合不同checkpoint。
-当前pseudo-version只用于private validation，不预先批准首次tag或版本号。
+如果未来批准同一release train，应明确哪些module同版、哪些独立版，并避免调用方组合
+未经验证的checkpoint。当前pseudo-version只用于private validation，不预先批准首次
+tag或版本号。
 
 ## Version epoch必须分离
 
@@ -76,5 +78,6 @@ native支持承诺。
 `private_validation_ready=true`。Public Beta还要求Owner选择并批准license/NOTICE、
 具名security和release approver、正式tag/release授权、正式兼容等级以及剩余Pre-Beta
 门禁。M6C已关闭Ubuntu实机证据项，但缺其它任一项时`public_beta_ready=false`。
-M6D又关闭同版四module候选、漏洞扫描、离线消费与当前Go 1.25.12 Ubuntu复验的技术项；
-该结论仍不代替Owner对License、具名security/release责任和正式兼容等级的批准。
+M6D关闭的是当时同版四module候选、漏洞扫描、离线消费与Go 1.25.12 Ubuntu复验的历史
+技术项；它不自动覆盖后续五个module和当前source revision，也不代替Owner对License、
+具名security/release责任和正式兼容等级的批准。

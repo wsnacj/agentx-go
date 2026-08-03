@@ -50,7 +50,7 @@ export default defineConfig({
     },
     nav: [
       { text: '开始', link: '/docs/quickstart' },
-      { text: '接入指南', link: '/docs/concepts/execution-model' },
+      { text: '接入指南', link: '/docs/guides/capability-map' },
       { text: 'Package API', link: '/packages' },
       { text: '成熟度', link: '/docs/maturity' },
       { text: '分发边界', link: '/docs/reference/distribution-readiness' },
@@ -62,15 +62,18 @@ export default defineConfig({
           items: [
             { text: '文档导航', link: '/docs/' },
             { text: 'Quickstart', link: '/docs/quickstart' },
+            { text: '七类能力矩阵', link: '/docs/guides/capability-map' },
             { text: '执行模型', link: '/docs/concepts/execution-model' },
           ],
         },
         {
-          text: '三条构造路径',
+          text: '标准构造与控制路径',
           items: [
             { text: '自定义 ExecutionAdapter', link: '/docs/guides/custom-adapter' },
             { text: 'Model / Tool Host Kit', link: '/docs/guides/model-tool-hostkit' },
             { text: 'Workflow Host Kit', link: '/docs/guides/workflow-hostkit' },
+            { text: 'Objective Host Kit', link: '/docs/guides/objective-hostkit' },
+            { text: 'Session / Subagent Host Kit', link: '/docs/guides/session-subagent-hostkit' },
           ],
         },
         {
@@ -88,6 +91,11 @@ export default defineConfig({
       '/runtime/workflow/': [{ text: 'Workflow API', items: packageItems('/runtime/workflow/') }],
       '/runtime/': [{ text: 'Runtime API', items: packageItems('/runtime/') }],
       '/extensions/': [{ text: 'Extensions API', items: packageItems('/extensions/') }],
+      '/providers/': [{ text: 'Providers API', items: [{ text: 'Providers 总览', link: '/providers/API' }] }],
+      '/tools/': [{ text: 'Tools API', items: [{ text: 'Tools 总览', link: '/tools/API' }] }],
+      '/browser/': [{ text: 'Browser API', items: [{ text: 'Browser 总览', link: '/browser/API' }] }],
+      '/document/': [{ text: 'Document API', items: [{ text: 'Document 总览', link: '/document/API' }] }],
+      '/scenes/': [{ text: 'Portable Scenes API', items: [{ text: '成熟度矩阵', link: '/docs/reference/package-maturity' }] }],
       '/packages': [
         {
           text: 'Package Reference',
@@ -111,4 +119,3 @@ export default defineConfig({
     },
   },
 })
-

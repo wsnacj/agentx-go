@@ -46,7 +46,19 @@ func main() {
 
 func markdownFiles(root string) ([]string, error) {
 	var files []string
-	for _, relative := range []string{"README.md", "docs", "components", "runtime", "extensions"} {
+	for _, relative := range []string{
+		"README.md",
+		"docs",
+		"examples",
+		"components",
+		"runtime",
+		"extensions",
+		"providers",
+		"tools",
+		"browser",
+		"document",
+		"scenes",
+	} {
 		path := filepath.Join(root, relative)
 		info, err := os.Stat(path)
 		if err != nil {

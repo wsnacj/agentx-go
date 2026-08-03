@@ -13,7 +13,7 @@ module：
 | `github.com/wsnacj/agentx-go/tools` | 可选通用tool catalog与实现；当前含线程安全Registry、保守名称修复和纯文本diffs |
 | `github.com/wsnacj/agentx-go/browser` | 可选Browser runtime、browserd host与推荐Browser tools |
 | `github.com/wsnacj/agentx-go/document` | 可选OCR、Document pipeline、PDF与推荐Document tools |
-| `github.com/wsnacj/agentx-go/scenes` | 可移植Domain Kits；当前首个真实owner为A股kit |
+| `github.com/wsnacj/agentx-go/scenes` | 可移植Domain Kits；当前覆盖A股、研究/公开来源、文档、浏览器操作、公共交通、港/美股与财报 |
 
 自定义 ExecutionAdapter 路径只需要根 module。Host Kit + Model/Tool Adapter
 路径需要根、components和 runtime三个 module，因为配置显式使用根合同、LLM响应
@@ -33,7 +33,7 @@ components即可。Runtime不反向依赖tools，Host仍显式拥有授权、安
 github.com/wsnacj/agentx-go
   v0.0.0-20260802113655-f41de95ec5be
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260802113655-f41de95ec5be
+  v0.0.0-20260802130858-34ec103e09d9
 github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260802113655-f41de95ec5be
 github.com/wsnacj/agentx-go/extensions
@@ -47,21 +47,21 @@ github.com/wsnacj/agentx-go/browser
 github.com/wsnacj/agentx-go/document
   v0.0.0-20260802203835-ec74047cbe60
 github.com/wsnacj/agentx-go/scenes
-  v0.0.0-20260802210630-68ea44b615cc
+  v0.0.0-20260803022834-4043fbe78ff3
 ```
 
 这些是不可变 private validation pseudo-version，不是 tag或正式 semver。
 
 ```bash
 go get github.com/wsnacj/agentx-go@v0.0.0-20260802113655-f41de95ec5be
-go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/components@v0.0.0-20260802130858-34ec103e09d9
 go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 go get github.com/wsnacj/agentx-go/providers@v0.0.0-20260802124746-c7f90139a1cc
 go get github.com/wsnacj/agentx-go/tools@v0.0.0-20260802165151-c51d7391dbb4
 go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802183055-f15e2f99ed1a
 go get github.com/wsnacj/agentx-go/document@v0.0.0-20260802203835-ec74047cbe60
-go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260802210630-68ea44b615cc
+go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260803022834-4043fbe78ff3
 ```
 
 ## Private 仓库访问
@@ -129,13 +129,19 @@ Browser Runtime使用独立可选module：
 go get github.com/wsnacj/agentx-go/browser@v0.0.0-20260802183055-f15e2f99ed1a
 ```
 
-P3-A已完成`browser/runtime`、`browser/host/browserd`、`browser/tools`与统一fixed consumer。
+P3已完成`browser/runtime`、`browser/host/browserd`、`browser/tools`与统一fixed consumer。
 module不会自动启动browserd，也不提供默认credential、proxy、登录态或网络；这些继续由Host
 显式注入和授权。
 
+Document与Portable Scenes分别使用独立固定版本。对应external-style consumer位于
+`document/conformance/*-consumer`与`scenes/conformance/*-consumer`；它们覆盖推荐高层
+入口，不把低层OCR/Pipeline实现包自动升级为Developer Preview API。完整能力与入口见
+[七类能力矩阵](capability-map.md)，package分级见
+[API索引与成熟度矩阵](../reference/package-maturity.md)。
+
 ## Ubuntu实机复跑
 
-仓库内当前候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module
+历史M6D候选lane固定Ubuntu 24.04 amd64与Go 1.25.12，在真实Linux进程中运行四module
 normal/race/vet/tidy/list、双平台API gate、fixed-version空缓存consumer和module
 artifact provenance：
 
@@ -154,7 +160,8 @@ GOWORK=off go run ./scripts/check_pre_beta_candidate.go
 
 该命令只在临时目录使用`v0.0.0-m6d.0`组装四module同版候选，不修改tracked `go.mod`，
 并运行固定漏洞扫描、无replace consumer和只读cache复验。不得把token、URL rewrite或
-runner credential写入仓库。
+runner credential写入仓库。该历史四module发行证据没有自动覆盖后续五个可选module，
+因此不能据此宣称当前九module已获得Beta或正式发行授权。
 
 ## 升级方式
 

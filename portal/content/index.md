@@ -13,7 +13,7 @@ hero:
       link: /docs/quickstart
     - theme: alt
       text: 选择接入路径
-      link: /docs/concepts/execution-model
+      link: /docs/guides/capability-map
     - theme: alt
       text: 浏览 Package API
       link: /packages
@@ -29,7 +29,7 @@ features:
     details: 组合 lowering、validation、journal、node execution 与 orchestration portable mechanism。
     link: /docs/guides/workflow-hostkit
   - title: 成熟度可见
-    details: 48 个 package 与 10 个 Developer Preview candidate 分级展示，不把 exported 误报为 Public API。
+    details: 77 个 focused package 与 14 个 Developer Preview candidate 分级展示，不把 exported 误报为 Public API。
     link: /docs/reference/package-maturity
   - title: 生命周期合同
     details: 明确并发、context cancellation、deadline、typed error 与有界幂等 Shutdown。
@@ -41,12 +41,16 @@ features:
 
 ::: warning Developer Preview
 当前站点是private Developer Preview Candidate，不构成Public、Beta、Stable、生产SLA或
-正式发行授权。调用方应固定文档记录的四module伪版本。
+正式发行授权。调用方应固定安装指南记录的九module实际版本组合。
 :::
 
-## 两类标准执行路径
+## 七类能力，独立入口
 
-- **Open Tool Loop**：使用Model / Tool Host Kit组合模型请求、工具调用与结果协调；
-- **Workflow**：使用Workflow Host Kit执行显式图、结构校验、状态转换和durable journal。
+- **Open Tool Loop / Tool Direct Answer**：使用Model / Tool Host Kit组合模型请求、工具调用
+  与结果协调；
+- **Workflow**：使用Workflow Host Kit执行显式图、结构校验、状态转换和durable journal；
+- **Objective / 长任务 / 子任务**：分别使用Objective与Session Host Kit，生产policy、
+  scheduler和backend仍由Host注入；
+- **Deterministic Scene**：使用Domain Kit与选定Portable Scene，不属于根Client mode。
 
 根`agentx.Client`与自定义`ExecutionAdapter`是最窄合同接入方式，不是第三种执行语义。

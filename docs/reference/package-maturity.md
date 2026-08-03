@@ -1,8 +1,9 @@
 # Package API 索引与成熟度矩阵
 
-本页只评估当前root、components、runtime、extensions与scenes五个module中实际存在的
-77个 production package。它不是历史
-surface inventory，也不会把任何符号自动升级为 Public、Beta 或 Stable。
+本页的focused gate评估root、components、runtime、extensions与scenes五个module中
+实际存在的77个production package；其中14个Developer Preview candidate进入签名门禁。
+Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
+surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
 ## 分级含义
 
@@ -125,6 +126,35 @@ Developer Preview candidate、Public、Beta或Stable。
 tools module使用独立fixed pseudo-version与consumer验证；不拥有授权、sandbox或具体
 backend，也不因出现在本表而升级为Developer Preview candidate、Public、Beta或Stable。
 
+## 可选 Browser module
+
+| Package | 分级 | 中文 Reference | 主要用途 |
+| --- | --- | --- | --- |
+| `browser` | Experimental extension | [API](../../browser/API.md) | Browser module总览与portable合同 |
+| `browser/runtime` | Experimental extension | [API](../../browser/runtime/API.md) | session/action/route/snapshot/state/recovery/watch真实实现 |
+| `browser/host/browserd` | Experimental extension | [API](../../browser/host/browserd/API.md) | 显式Plan/Probe驱动的browserd process manager |
+| `browser/tools` | Experimental extension | [API](../../browser/tools/API.md) | Browser推荐tools与Host能力接缝 |
+
+Browser内部process capture、network policy和script formatting package位于Go `internal`
+边界，不是外部import surface。Browser module保持显式选择，不默认启动进程、访问网络或
+读取credential。
+
+## 可选 Document module
+
+| Package | 分级 | 中文 Reference | 主要用途 |
+| --- | --- | --- | --- |
+| `document` | Experimental extension | [API](../../document/API.md) | Document module总览 |
+| `document/contracts` | Experimental extension | [API](../../document/contracts/API.md) | provider-neutral文档合同 |
+| `document/ocr` | Experimental extension | [API](../../document/ocr/API.md) | OCR推荐入口与Host/provider边界 |
+| `document/pdf` | Experimental extension | [API](../../document/pdf/API.md) | PDF处理推荐入口 |
+| `document/pdf/python` | Experimental extension | [API](../../document/pdf/python/API.md) | 显式Python Host adapter |
+| `document/pipeline` | Experimental extension | [API](../../document/pipeline/API.md) | 文档pipeline推荐入口 |
+| `document/tools` | Experimental extension | [API](../../document/tools/API.md) | Document推荐tools |
+
+Document module中其它可外部import的低层OCR/Pipeline实现包暂按internalization candidate
+治理，不是推荐接入面，也没有兼容承诺。P5必须在Developer Preview最终checkpoint前决定
+将其收进`internal`还是补齐独立Reference；当前不得仅因目录可import就视为稳定API。
+
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
 77个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
@@ -139,13 +169,13 @@ GOWORK=off go run scripts/check_docs_links.go
 
 门禁会确认：
 
-1. 五个 module 当前 production package 与矩阵一一对应；
+1. 五个focused module当前production package与机器清单一一对应；
 2. 每个 package 都有非空中文 Reference；
 3. 十四个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；
-6. 中文正文中扫描到的仓库本地链接均可解析且不越出仓库。
+6. 九个library module、examples及中文正文中扫描到的仓库本地链接均可解析且不越出仓库。
 
 更新候选签名必须同时完成 focused owner/consumer review、中文 Reference 修订和
 baseline及`docs/reference/api-snapshots/`更新。`-check-platforms`只把目标平台参数

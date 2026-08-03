@@ -5,17 +5,19 @@
 | 项目 | 状态 |
 | --- | --- |
 | 仓库 | private validation |
-| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A/P4-B Portable Scenes闭环完成；仍处于private validation |
-| Developer Portal | 68 package/14 candidate focused API gate已通过；Public Transport因依赖Experimental controlcontract保持Experimental；完整Scene站点编排仍属于后续文档产品化 |
+| 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A～P4-E Portable Scenes闭环完成；P5 Developer Preview产品化进行中 |
+| Developer Portal | 77 package/14 candidate focused API gate与186页九module本地Portal构建已通过；Public Transport因依赖Experimental controlcontract保持Experimental |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
-| Pre-Beta technical candidate | `true`；四module同版候选、Go 1.25.12漏洞扫描、离线consumer和Ubuntu远端复验已通过 |
+| Current nine-module Pre-Beta candidate | `false`；M6D四module历史快照通过不自动覆盖当前九module、license、安全与发行授权 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
 | 根 contract | Developer Preview candidate；未承诺兼容性 |
 | LLM contract component | W3-01 已落地，Experimental |
-| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前68个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
+| agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前77个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
 | Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
-| Experimental browser | P3-A已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
+| Experimental browser | P3已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
+| Experimental document | P3已完成OCR、PDF、pipeline、推荐Document tools、fixed consumer与HS cutover；低层可import实现包仍是P5 internalization/documentation决策项 |
+| Portable scenes | P4-A～P4-E已覆盖A股、研究/新闻、Docparse、Browser Ops、公共交通、公开来源、公众号、港/美股与财报；P4 Portfolio Checkpoint后不再逐Scene扩张 |
 | Immutable AssetFS | M5A迁入完整 snapshot/fingerprint/resolver implementation，Experimental |
 | Extensions module | 单一private-preview共享module；ProductShell temporary planning继续使用既有Experimental package，不新增package或成熟度等级 |
 | Shared Host HTTP | M4A 已迁入3个 Experimental owner；只提供 transport/request/policy mechanism，不拥有 Scene handler或 backend |
@@ -28,18 +30,19 @@
 | Portable Scheduler/Resume | P1-D已落地queue、dispatcher、lease heartbeat与bounded Resume Host Kit；生产durable backend、process与产品policy仍由Host拥有 |
 | 普通新项目接入 | Model Conversation/Tool Direct Answer可用`runtime/hostkit`，Open Tool Loop可用 `NewModelToolClient`，Workflow可用 `workflow/hostkit.New`，Objective可用`objective/hostkit.New`，child worker lifecycle可用`session/hostkit.New`，bounded Resume可用`session/hostkit.NewResumeRuntime`；均显式要求 Host capabilities |
 | 无需 host-provided adapter/policy 的完整 Runtime | `not_ready_for_hostless_w2b` |
-| Examples/conformance | fixed-version consumer覆盖五条标准construction；其它focused consumer继续覆盖LLM、Runtime、Extension、channel、provider及P2-D十个tool入口；均无HS/Runner/Scene/长期replace，P2-D consumer也无真实副作用 |
+| Examples/conformance | 根fixed-version consumer覆盖五条标准construction；九module各有focused consumer，examples版本已对齐当前根合同；均无长期replace，fixture路径无真实副作用 |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 51个全部纳入中文Reference矩阵；10个候选有hash、可读snapshot、公开类型闭包和darwin/linux平台一致性门禁 |
+| 当前 package surface | 五个focused module的77个package纳入成熟度矩阵，14个候选有hash、可读snapshot、公开类型闭包和darwin/linux门禁；九module共有102份中文`API.md` |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
 
 ## 三类结论必须分开
 
-- **API文档正文覆盖**：当前51个 production package均纳入中文 Reference；只说明
-  实际签名、语义和 non-goal已经被描述。
+- **API文档正文覆盖**：五个focused module的77个production package均纳入中文
+  Reference矩阵，九module共有102份中文`API.md`；这只说明推荐入口与已选surface的
+  实际签名、语义和non-goal已经被描述。Document低层可import包仍需P5决策。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
 - **正式发布成熟度**：tag、license/NOTICE、security/legal、维护 owner和 release

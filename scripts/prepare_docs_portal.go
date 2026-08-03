@@ -50,7 +50,18 @@ func main() {
 		filepath.Join(output, "index.md"),
 	))
 	check(copyMarkdownTree(root, filepath.Join(root, "docs"), filepath.Join(output, "docs"), commit))
-	for _, directory := range []string{"components", "runtime", "extensions", "conformance", "examples"} {
+	for _, directory := range []string{
+		"components",
+		"runtime",
+		"extensions",
+		"providers",
+		"tools",
+		"browser",
+		"document",
+		"scenes",
+		"conformance",
+		"examples",
+	} {
 		check(copyMarkdownTree(root, filepath.Join(root, directory), filepath.Join(output, directory), commit))
 	}
 
@@ -60,8 +71,8 @@ func main() {
 
 	entries, err := readPackages(filepath.Join(root, "docs", "reference", "developer-preview-packages.tsv"))
 	check(err)
-	if len(entries) != 51 {
-		check(fmt.Errorf("package maturity source has %d entries, want 51", len(entries)))
+	if len(entries) != 77 {
+		check(fmt.Errorf("package maturity source has %d entries, want 77", len(entries)))
 	}
 	candidates := 0
 	for _, entry := range entries {
@@ -69,8 +80,8 @@ func main() {
 			candidates++
 		}
 	}
-	if candidates != 10 {
-		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 10", candidates))
+	if candidates != 14 {
+		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 14", candidates))
 	}
 
 	for index := range entries {

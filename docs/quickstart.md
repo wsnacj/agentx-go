@@ -1,6 +1,6 @@
 # 快速开始
 
-当前 Core提供三类推荐执行路径、四个接入选择：
+当前Core提供七类能力对应的标准入口。最常用的四个接入选择是：
 
 1. Model Conversation：使用`NewChatClient`并显式注入 model requester；
 2. Open Tool Loop：已有完整 Runtime时实现自定义 `ExecutionAdapter`，普通新项目
@@ -10,6 +10,8 @@
 
 Open Tool Loop两种接入最终都返回根 `Client`，共享 Run、typed error、context、
 并发和 Shutdown合同。Workflow保持独立显式图 Runtime，不伪装成根 Client mode。
+Objective、长任务/子任务和Deterministic Scene也各自使用独立Host Kit或Domain Kit；
+完整选择见[七类能力与标准接入路径](guides/capability-map.md)。
 
 ## 路径一：模型对话
 
@@ -155,6 +157,16 @@ Host Kit复用 canonical validation/lowering/journal/nodeexec/orchestration/comp
 继续保留为 focused compatibility consumer。
 
 安装前先阅读[安装与多 Module 引用](guides/installation-and-modules.md)。
+
+## 其它三类能力
+
+- Objective Runtime Loop：使用[Objective Host Kit](guides/objective-hostkit.md)，由Host
+  注入catalog、policy、真实执行和verification标准。
+- 长任务与子任务：使用[Task / Session / Subagent Host Kit](guides/session-subagent-hostkit.md)，
+  portable scheduler/resume不替代生产system scheduler或durable backend。
+- Deterministic Scene：组合[`extensions/domainkit`](../extensions/domainkit/API.md)与
+  [成熟度矩阵](reference/package-maturity.md)列出的目标Scene入口，并显式注入provider、
+  授权和副作用handler。
 
 重要边界：
 

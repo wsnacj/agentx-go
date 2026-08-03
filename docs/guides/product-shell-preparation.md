@@ -14,13 +14,13 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 当前 private-preview验证版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801144943-16d9426fd82a
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 如果代码直接导入 `runtime/cases`，当前验证版本为：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801112448-651dab4f0a53
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 这些 pseudo-version用于可重复验证，不是正式 semver。完整的无 HS、无 Runner、无

@@ -11,7 +11,7 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 当前private-preview固定版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260801133815-af05058a8a7f
+go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 该pseudo-version只用于本轮可重复验证，不是正式semver，也不构成Public、Beta或Stable

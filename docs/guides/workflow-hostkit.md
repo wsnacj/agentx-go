@@ -9,7 +9,7 @@ lowering、journal、node execution coordination、orchestration和 composition�
 当前 private validation固定版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260801061901-08fdf1038850
+go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
 ```
 
 调用方只需两个 AgentX import：

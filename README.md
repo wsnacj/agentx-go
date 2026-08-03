@@ -2,24 +2,21 @@
 
 `agentx-go` 是 AgentX 面向 Go consumer 的独立源码仓库。当前根 module 提供经过
 HS/M2 验证的最小执行合同；独立 `components` module拥有 provider-neutral LLM
-合同；独立 `runtime` module 已逐步迁入协议、遥测、预算、Workflow portable
-implementation owner 和 Run/Open Tool Loop 通用机制；`providers`、`tools`和`browser`
-提供显式选择的可选重型能力。
+合同；独立 `runtime` module 已迁入协议、遥测、预算、Workflow、Objective、长任务与
+Run/Open Tool Loop 的 portable implementation owner；`providers`、`tools`、`browser`、
+`document`和`scenes`提供显式选择的可选能力。
 
 > M6A Core Pre-Beta Contract and Distribution Preflight Closure已获Owner接受。
 > M6B Core中文Developer Portal与API Reference交付闭环已获Owner接受。
 > M6C Core Ubuntu Runtime与跨平台分发证据闭环已获Owner接受。
-> 当前里程碑：**M7A P1-A至P1-E C1-C7 Core能力闭环已完成；P2-A至P2-D Providers与
-> 通用Tools均已纵向闭环；P3-A Browser Platform正在迁移，Browser Runtime首个真实owner
-> 已落地**；M6D Core
-> Foundation发行门禁继续独立fail closed。
-> M5S三条标准construction、44包中文Reference、8个候选API gate与统一fixed consumer
-> 已获Owner接受；P1-D新增bounded Scheduler/Resume Host Kit；P1-E新增
-> Experimental Domain Kit无模型执行边界并完成fixed consumer与HS production cutover，
-> 当前为51包分类/10个候选API。
-> M5T也已收口四module固定版本、升级/回滚说明与独立消费证据并获接受。
-> M6B已把现有中文正文、44个package Reference与8个candidate交付成可构建、导航、
-> 搜索的85页Developer Portal Candidate。M6C已经证明Ubuntu真实运行与跨平台分发；
+> 当前里程碑：**M7A P1 Core七类能力、P2 Providers/通用Tools、P3 Browser/Document与
+> P4首批Portable Scenes均已形成真实source authority、fixed-version consumer和HS
+> production cutover；P5 Core Developer Preview产品化正在收口**。当前九个module共有
+> 102份中文`API.md`，其中root/components/runtime/extensions/scenes的77个候选范围
+> package和14个Developer Preview candidate进入focused API gate。
+> P4 Portfolio Checkpoint已经停止按Scene逐个扩张；后续只在P5 closure证明必要时增加
+> 一个有界cohort。M6D Core Foundation发行门禁继续独立fail closed。
+> M6C已经为历史Core四module快照形成Ubuntu真实运行与跨平台分发证据；
 > M6D已用Go 1.25.12、固定`govulncheck`、临时同版四module proxy、只读cache
 > consumer和Ubuntu远端run形成可复验技术候选。它不新增Runtime能力，也不是Public、
 > Beta、Stable或production-ready发布。
@@ -33,7 +30,7 @@ implementation owner 和 Run/Open Tool Loop 通用机制；`providers`、`tools`
 - 有界、幂等的 `Shutdown(ctx)` 合同
 - 供 Runtime/host 实现的窄 `ExecutionAdapter`
 
-安装、六module固定版本和升级边界见[安装与多 Module 引用](docs/guides/installation-and-modules.md)
+安装、九module固定版本和升级边界见[安装与多 Module 引用](docs/guides/installation-and-modules.md)
 与[版本、升级与回滚](docs/guides/versioning-and-upgrades.md)。当前Developer Preview
 变更摘要见[CHANGELOG](CHANGELOG.md)。
 
@@ -128,11 +125,21 @@ npm run docs:check
 - [`browser`](browser/API.md)独立可选module：`github.com/wsnacj/agentx-go/browser`
 - [`browser/runtime`](browser/runtime/API.md)拥有30,906行provider-neutral Browser
   session/action/route/snapshot/capability/result与state/recovery/watch implementation；
-  HS production consumer已开始使用固定版本
+  HS production consumer已使用固定版本
 - [`browser/host/browserd`](browser/host/browserd/API.md)提供显式Plan/StatusProbe驱动的
   browserd process manager、内置Node资产和Playwright bootstrap/cache；构造阶段无副作用
-- [`browser/tools`](browser/tools/API.md)与统一fixed consumer已完成P3-A闭环；默认仍不启动
+- [`browser/tools`](browser/tools/API.md)与统一fixed consumer已完成P3闭环；默认仍不启动
   browserd、不访问网络、不读取credential，真实代理、登录态和企业网络由Host注入
+
+## 当前提供：Experimental Document
+
+- [`document`](document/API.md)独立可选module：`github.com/wsnacj/agentx-go/document`
+- [`document/ocr`](document/ocr/API.md)、[`document/pdf`](document/pdf/API.md)与
+  [`document/pipeline`](document/pipeline/API.md)提供OCR、PDF和结构化文档处理的真实实现
+- [`document/tools`](document/tools/API.md)提供显式Host能力边界内的推荐Document tools；
+  fixed consumer与HS production cutover已经完成
+- provider credential、文件权限、外部Python环境、生产存储和资源预算仍由Host治理；
+  默认接入不隐式读取credential或启动外部服务
 
 ## 当前提供：Experimental Extensions 与 Portable Scenes
 
@@ -149,6 +156,14 @@ npm run docs:check
 - [`scenes/browserops`](scenes/browserops/API.md)：Browser Ops Pack、证据投影、六类确定性
   evaluator与显式[Host Kit](scenes/browserops/hostkit/API.md)；真实浏览器、profile/login、
   credential、审批、文件/artifact和站点副作用策略由Host注入
+- [`scenes/publictransport`](scenes/publictransport/API.md)：公共交通只读合同、协调、证据
+  evaluator与Pack；真实票务provider、endpoint、限流和合规策略由Host注入
+- [`scenes/publicsource`](scenes/publicsource/API.md)与
+  [`scenes/wechatarticle`](scenes/wechatarticle/API.md)：公开来源与公众号文章的typed合同、
+  evidence、evaluator和Host Client协调
+- [`scenes/globalstock`](scenes/globalstock/API.md)与
+  [`scenes/finance`](scenes/finance/API.md)：港/美股与财报的只读合同、Pack、Workflow、
+  evidence/readiness和显式Host Kit；行情、财报provider及真实网络继续留在Host
 - [`extensions/domainkit`](extensions/domainkit/API.md)：无模型module/tool dispatch、typed
   error与deterministic output digest；provider与真实副作用必须由Host handler注入
 - [`extensions/domainmodule`](extensions/domainmodule/API.md)与
@@ -199,7 +214,7 @@ github.com/wsnacj/agentx-go
   v0.0.0-20260802113655-f41de95ec5be
 
 github.com/wsnacj/agentx-go/components
-  v0.0.0-20260802113655-f41de95ec5be
+  v0.0.0-20260802130858-34ec103e09d9
 
 github.com/wsnacj/agentx-go/runtime
   v0.0.0-20260802113655-f41de95ec5be
@@ -211,13 +226,16 @@ github.com/wsnacj/agentx-go/providers
   v0.0.0-20260802124746-c7f90139a1cc
 
 github.com/wsnacj/agentx-go/tools
-  v0.0.0-20260802150550-743059e6da69
+  v0.0.0-20260802165151-c51d7391dbb4
 
 github.com/wsnacj/agentx-go/browser
-  v0.0.0-20260802154551-56dc2b2c3a2b
+  v0.0.0-20260802183055-f15e2f99ed1a
+
+github.com/wsnacj/agentx-go/document
+  v0.0.0-20260802203835-ec74047cbe60
 
 github.com/wsnacj/agentx-go/scenes
-  v0.0.0-20260802220352-a8c81c2c9118
+  v0.0.0-20260803022834-4043fbe78ff3
 ```
 
 它们是不可变 private validation pseudo-version，不是正式发布版本。
@@ -226,6 +244,7 @@ github.com/wsnacj/agentx-go/scenes
 
 - [文档入口](docs/README.md)
 - [快速开始](docs/quickstart.md)
+- [七类能力与标准接入路径](docs/guides/capability-map.md)
 - [安装与多 Module 引用](docs/guides/installation-and-modules.md)
 - [执行模型](docs/concepts/execution-model.md)
 - [Go API Reference](docs/reference/agentx.md)
@@ -272,6 +291,7 @@ github.com/wsnacj/agentx-go/scenes
 - [`extensions/skills` 中文 API Reference](extensions/skills/API.md)
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
+- [示例与可运行消费证据](examples/README.md)
 - [三条标准路径统一 External-style consumer](conformance/consumer)
 - [Objective Host Kit external-style consumer](runtime/conformance/objective-hostkit-consumer)
 - [Session/Subagent Host Kit external-style consumer](runtime/conformance/session-hostkit-consumer)

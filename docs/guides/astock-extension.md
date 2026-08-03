@@ -9,7 +9,7 @@
 ## 安装
 
 ```bash
-go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260802210630-68ea44b615cc
+go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260803022834-4043fbe78ff3
 ```
 
 当前版本是 private validation pseudo-version，不是正式 tag或 semver承诺。

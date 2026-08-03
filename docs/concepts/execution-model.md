@@ -58,20 +58,21 @@ AgentX 使用六个正交维度描述执行，而不是把所有能力折叠为�
 
 ## 与既有七种“模式”的关系
 
-| 既有概念 | M3E 状态 |
+| 既有概念 | 当前状态 |
 | --- | --- |
 | A0 控制面关闭 | 进入画像：`Activation=off` |
 | Open Tool Loop | 进入画像：`Driver=open_tool_loop`；Host Kit已有真实 portable implementation |
 | Tool Direct Answer | 已进入 Host Kit 显式结果策略；不新增根 `ExecutionProfile` 组合 |
 | Workflow | canonical Runtime已有真实实现和独立 Host Kit标准入口；不进入根 Client Facade |
-| Objective Runtime Loop | non-goal |
-| 长任务编排 | non-goal |
-| Deterministic Scene | 生态验收路径，不属于根 Client 模式 |
+| Objective Runtime Loop | `runtime/objective/hostkit`已有真实portable控制与Host dispatch/verification组合；不进入根Client Facade |
+| 长任务编排 | `runtime/session/hostkit`已组合Task/Session/Subagent、Scheduler与Resume内核；生产scheduler/backend仍由Host拥有 |
+| Deterministic Scene | `extensions/domainkit`与`scenes`已有真实实现和fixed consumer；不属于根Client模式 |
 
 因此，这不是把七项删成一种 mode，也不把 Workflow强塞进根 Client。Model Conversation
 使用`NewChatClient`，Open Tool Loop与 Tool Direct Answer通过根 Client/Host Kit接入；
-Workflow通过独立 Workflow Host Kit接入。Objective、
-Resume和完整 durable lifecycle仍不提供空实现，也不通过文档暗示已支持。
+Workflow通过独立 Workflow Host Kit接入。Objective和长任务通过各自Host Kit接入；它们
+已提供portable机制，但不伪装为根Client mode，也不声称包含生产backend。七类能力的
+入口、证据和Host责任见[能力矩阵](../guides/capability-map.md)。
 
 ## Open Tool Loop 与 Workflow 边界
 

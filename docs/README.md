@@ -1,12 +1,14 @@
 # AgentX Go 中文文档
 
-M5S已形成并获Owner接受的Core Developer Preview Candidate技术checkpoint；P1-D已扩展为六条标准construction路径，P1-E已闭合无模型Domain Kit执行路径；P2-A/P2-B又完成OpenAI-compatible、Anthropic和Codex三个provider protocol纵向闭环，P2-C完成首个通用Tool vertical slice；
-70个package中文Reference、14个候选API snapshot/平台/类型闭包门禁及fixed-version
-consumer并完成HS production cutover。M5T四module统一版本、升级/回滚说明与clean-room消费证据也已形成
-技术checkpoint并获Owner接受。M6A已补齐Developer Preview兼容、维护、支持、安全报告、
-版本epoch与分发预检合同并获Owner接受。M6B已把现有正文交付为可本地构建、导航、
-搜索的85页Core中文Developer Portal Candidate，并形成等待Owner接受的技术checkpoint。
-这些结论仍处于private validation，不构成Public、Beta、Stable、semver或正式发行。
+P1已完成Core七类能力，P2已完成Providers与通用Tools，P3已完成Browser与Document，
+P4-A至P4-E已迁入首批互补Portable Scenes并完成Portfolio Checkpoint。当前P5只收口
+Developer Preview接入、中文API导航、固定版本和HS portable source-authority closure，
+不再按Scene逐个扩张。九个module当前共有102份中文`API.md`；focused gate管理
+root/components/runtime/extensions/scenes的77个production package和14个Developer
+Preview candidate。其它可选module仍按Experimental边界独立验证。
+
+这些结论仍处于private validation，不构成Public、Beta、Stable、semver、正式发行或
+production-ready声明。API正文覆盖、兼容性承诺和正式发布成熟度是三件不同的事。
 
 P1-A又补齐Model Conversation与Tool Direct Answer推荐路径；当前文档对应 M3E Core
 Developer Preview candidate、M4A Experimental Host
@@ -32,6 +34,9 @@ temporary Workflow planning机制、LLM组件和
 9. 哪些能力仍是后续工作，不能从 package 名或示例中误判为完整 SDK。
 
 建议阅读顺序：
+
+先用[七类能力与标准接入路径](guides/capability-map.md)选择入口，再按以下顺序阅读合同和
+专题文档：
 
 1. [快速开始](quickstart.md)
 2. [安装与多 Module 引用](guides/installation-and-modules.md)
@@ -116,6 +121,17 @@ temporary Workflow planning机制、LLM组件和
 81. [`scenes/publictransport` 中文 API Reference](../scenes/publictransport/API.md)
 82. [`scenes/publicsource` 中文 API Reference](../scenes/publicsource/API.md)
 83. [`scenes/wechatarticle` 中文 API Reference](../scenes/wechatarticle/API.md)
+84. [`document` 中文 API 总览](../document/API.md)
+85. [`document/ocr` 中文 API Reference](../document/ocr/API.md)
+86. [`document/pdf` 中文 API Reference](../document/pdf/API.md)
+87. [`document/pipeline` 中文 API Reference](../document/pipeline/API.md)
+88. [`document/tools` 中文 API Reference](../document/tools/API.md)
+89. [`scenes/globalstock` 中文 API Reference](../scenes/globalstock/API.md)
+90. [`scenes/globalstock/hostkit` 中文 API Reference](../scenes/globalstock/hostkit/API.md)
+91. [`scenes/finance` 中文 API Reference](../scenes/finance/API.md)
+92. [`scenes/finance/metrics` 中文 API Reference](../scenes/finance/metrics/API.md)
+93. [`scenes/finance/brief` 中文 API Reference](../scenes/finance/brief/API.md)
+94. [`scenes/finance/hostkit` 中文 API Reference](../scenes/finance/hostkit/API.md)
 
 可运行验证位于：
 
@@ -147,16 +163,26 @@ temporary Workflow planning机制、LLM组件和
 - [`providers/conformance/provider-cohort-consumer`](../providers/conformance/provider-cohort-consumer)
 - [`tools/conformance/catalog-diffs-consumer`](../tools/conformance/catalog-diffs-consumer)
 - [`tools/conformance/general-tools-consumer`](../tools/conformance/general-tools-consumer)
+- [`browser/conformance/browser-platform-consumer`](../browser/conformance/browser-platform-consumer)
+- [`document/conformance/ocr-consumer`](../document/conformance/ocr-consumer)
+- [`document/conformance/pdf-consumer`](../document/conformance/pdf-consumer)
+- [`document/conformance/pipeline-consumer`](../document/conformance/pipeline-consumer)
+- [`document/conformance/tools-consumer`](../document/conformance/tools-consumer)
+- [`scenes/conformance/sourceacquisition-consumer`](../scenes/conformance/sourceacquisition-consumer)
+- [`scenes/conformance/finance-consumer`](../scenes/conformance/finance-consumer)
 
 `docs/**` 的主体页面描述根 contract module；`components/llm/API.md` 描述 LLM
 合同；`runtime/**/API.md` 描述已经真实落地且各自标注成熟度的 Runtime owner；
 `extensions/**/API.md`描述获准迁入的 portable extension合同。
-`providers/**/API.md`描述可选provider module；它不属于当前四module Core API gate，
+`providers/**/API.md`描述可选provider module；它不属于当前五module focused API gate，
 但自身必须完成fixed consumer、test/race/vet/tidy/list和无HS反向依赖验证。
 `tools/**/API.md`描述可选通用tool module；它同样不属于Core API gate，必须独立证明
 固定版本消费、行为合同和无HS/Runner/Scene反向依赖。
-`browser/**/API.md`描述可选重型Browser module。P3-A当前只完成runtime真实owner landing
-与HS fixed-version cutover；在host/tools/consumer闭合前不得标记Browser Platform完成。
+`browser/**/API.md`描述可选重型Browser module；P3已完成runtime、browserd host、tools、
+fixed consumer与HS cutover。`document/**/API.md`描述Document推荐高层入口；低层OCR/
+Pipeline实现包仍按internalization candidate治理，不能因可import自动视为稳定API。
+`scenes/**/API.md`描述P4已选定的portable Domain Kits；P4 Portfolio Checkpoint已经停止
+继续按Scene逐个迁移。
 M5D只批准且已完成 A股 portable Manifest/assets/tool schema/Pack/hostkit切片。M5E
 只迁入 Skill contracts、loader/cache、activation、requested semantics与 resource
 refs；prompt catalog/filter、安全规则、安装执行、bundled内容和 Runner仍由 Host拥有。
@@ -173,5 +199,6 @@ ObservationSnapshot、inventory、readback和真实delivery继续由Host拥有�
 M5I继续在同一package内增加临时Workflow typed plan、prompt/schema构造、有限重试、
 binding lowering、Workflow Spec构造和固定`Should → Resolve → Apply`阶段；具体model/
 provider、tool policy、validator policy、execution snapshot和Workflow执行继续由Host拥有。
-尚未落地的 hostless完整 Runtime construction、A股 livekit/provider、更多
-components、其它 extensions和 Scene不会预先获得虚假 API 页面。
+尚未落地的hostless完整Runtime construction、默认provider/credential、产品backend与
+其余HS业务Scene不会预先获得虚假API页面。示例与fixed consumer的职责和映射见
+[`examples/README.md`](../examples/README.md)。
