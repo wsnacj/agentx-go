@@ -27,6 +27,14 @@ P5-C最终验证覆盖九module normal/race/vet/tidy/list、33个无`replace` fi
 consumer、仓库外clean-room consumer、九module zip/Sum/Origin、反向依赖和中文Portal。
 它证明private Developer Preview Candidate可复验，不构成正式发行或兼容性承诺。
 
+## 从可运行示例开始
+
+[`examples`](examples/README.md)提供固定pseudo-version、`GOWORK=off`、无HS/Runner的
+七条教学路径，覆盖模型对话、Open Tool Loop、Tool Direct Answer、Workflow、Objective、
+Session/Subagent/Resume与Deterministic Scene。[`reference-host`](examples/reference-host)
+进一步演示默认离线、显式选择provider/tool/backend的组合方式；它不读取credential、
+不访问网络、不启动进程，也不伪装为生产Host。
+
 ## 当前提供：根合同
 
 - `Client`、`Config`、`New`

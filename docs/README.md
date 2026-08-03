@@ -50,7 +50,8 @@ temporary Workflow planning机制、LLM组件和
 7. [Go API Reference](reference/agentx.md)
 8. [生命周期与错误处理](guides/lifecycle-and-errors.md)
 9. [自定义 Adapter](guides/custom-adapter.md)
-10. [Host Kit + Model/Tool Adapter](guides/model-tool-hostkit.md)
+10. [Host Kit + Model/Tool Adapter](guides/model-tool-hostkit.md)，并配合
+    [Reference Host：显式组合Core与可选能力](guides/reference-host.md)
 11. [Task / Session / Subagent Host Kit](guides/session-subagent-hostkit.md)
 12. [模型对话](guides/chat.md)
 13. [Tool Direct Answer](guides/tool-direct-answer.md)
@@ -139,6 +140,14 @@ temporary Workflow planning机制、LLM组件和
 
 可运行验证位于：
 
+- [`examples`七条能力路径与Reference Host](../examples/README.md)
+- [`examples/chat`](../examples/chat)
+- [`examples/tool-loop`](../examples/tool-loop)
+- [`examples/workflow`](../examples/workflow)
+- [`examples/objective`](../examples/objective)
+- [`examples/session-subagent`](../examples/session-subagent)
+- [`examples/deterministic-scene`](../examples/deterministic-scene)
+- [`examples/reference-host`](../examples/reference-host)
 - [`examples/contract-basic`](../examples/contract-basic)
 - [`examples/custom-adapter`](../examples/custom-adapter)
 - [`conformance/consumer`](../conformance/consumer)
