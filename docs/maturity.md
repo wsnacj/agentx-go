@@ -560,6 +560,34 @@ source-scope stale/mismatch与1项P3-A删除旧browserruntime后的runtime-bound
 本checkpoint不授权Public/Beta/Stable、semver、license、tag或release，也不把真实
 票务后端、凭据、安全/合规、商业条款或产品结果权威下沉canonical。
 
+## P4-D Source Acquisition Domain Kit source-authority 闭环
+
+P4-D在`scenes/publicsource`与`scenes/wechatarticle`落地12个production Go source、
+1,631行真实implementation。Public Source拥有typed request/report/evidence/display-summary、
+Host规则驱动的HTTPS/allowlist机制、provider-neutral search/document投影、exact-once
+Collector协调、确定性Evaluator与read-only Pack/Workflow；WeChat Article拥有
+login/account/article/dedup/download合同、显式Host Client port、可注入typed错误分类、
+search/list/download协调、evidence digest、Evaluator与read-only Pack/Workflow。
+
+无HS、Runner、长期`replace`、credential、真实网络或文件副作用的fixed consumer锁定
+`scenes@v0.0.0-20260803013146-6ba7e01b9d26`，normal/race/vet/run与`GOPROXY=off`
+module graph验证通过，输出为
+`agentx-sourceacquisition-ok:public-source-readonly-pack:wechat-article-readonly-pack:1:1`。
+HS Public Source service直接消费canonical Report/Collector/SourcePolicy；WeChat service与
+objective直接消费canonical合同、strategy和evidence identity，原portable协调/类型实现删除
+或降为Host translation/error-classifier薄层。HS cutover提交增加261行、删除1,404行；
+Public Source Host package从3,474行降至2,708行，两Scene合计production从10,716行降至
+10,259行。
+
+scenes module normal/race/vet/tidy/list、Linux/amd64 CGO-disabled build、import boundary、
+70 package/14 candidate/2 target API gate与77文件/399本地链接文档gate通过。HS相关Scene
+normal/race/vet、engine/pack/inlinespec/business-host兼容通过；本wave唯一完整AgentX回归
+仍只失败2个既有治理package的4项历史断言，没有P4-D功能回归。
+
+HTTP/retrieval、exporter concrete client、credential/cookie、login QR、artifact/filesystem、
+真实网络和产品结果权威继续留在Host。本checkpoint不授权Public/Beta/Stable、semver、
+license、tag或release。
+
 ## 明确 non-goal
 
 以下能力没有进入当前根 Facade，不得根据 package名、文档愿景或未来目录推断
