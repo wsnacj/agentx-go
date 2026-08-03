@@ -125,6 +125,12 @@ func decodeSSE(reader io.Reader, out chan<- types.Event) error {
 	})
 }
 
+// DecodeSSE decodes Ark Responses data events from an SSE stream.
+// It is primarily useful for custom transports that cannot use Client.StreamResponse.
+func DecodeSSE(reader io.Reader, out chan<- types.Event) error {
+	return decodeSSE(reader, out)
+}
+
 func decodeImageGenerationSSE(reader io.Reader, out chan<- types.ImageGenerationEvent) error {
 	return decodeDataSSE(reader, func(data []byte) error {
 		event, err := types.DecodeImageGenerationEvent(data)
@@ -133,6 +139,11 @@ func decodeImageGenerationSSE(reader io.Reader, out chan<- types.ImageGeneration
 		}
 		return err
 	})
+}
+
+// DecodeImageGenerationSSE decodes Ark Images data events from an SSE stream.
+func DecodeImageGenerationSSE(reader io.Reader, out chan<- types.ImageGenerationEvent) error {
+	return decodeImageGenerationSSE(reader, out)
 }
 
 func decodeDataSSE(source io.Reader, emit func([]byte) error) error {
