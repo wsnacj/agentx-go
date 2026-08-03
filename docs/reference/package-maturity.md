@@ -122,6 +122,12 @@ Developer Preview candidate、Public、Beta或Stable。
 | --- | --- | --- | --- |
 | `tools` | Experimental extension | [API](../../tools/API.md) | 并发安全catalog、稳定definition投影与保守名称修复 |
 | `tools/diffs` | Experimental extension | [API](../../tools/diffs/API.md) | 无文件、Git或网络副作用的纯文本diff |
+| `tools/message` | Experimental extension | [API](../../tools/message/API.md) | 显式channel sender驱动的消息协调 |
+| `tools/httprequest` | Experimental extension | [API](../../tools/httprequest/API.md) | Host Preparer/HTTPDoer驱动的有界HTTP请求 |
+| `tools/filesystem` | Experimental extension | [API](../../tools/filesystem/API.md) | Host Workspace驱动的文件工具协调 |
+| `tools/memory` | Experimental extension | [API](../../tools/memory/API.md) | Host Backend驱动的memory search/get |
+| `tools/scheduler` | Experimental extension | [API](../../tools/scheduler/API.md) | Host Scheduler Backend驱动的cron命令路由 |
+| `tools/llmtask` | Experimental extension | [API](../../tools/llmtask/API.md) | 显式model adapter驱动的LLM-only JSON子任务 |
 
 tools module使用独立fixed pseudo-version与consumer验证；不拥有授权、sandbox或具体
 backend，也不因出现在本表而升级为Developer Preview candidate、Public、Beta或Stable。

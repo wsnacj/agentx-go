@@ -267,6 +267,17 @@ ranking、scheduler/RunStore/queue、authorization、approval与产品默认。o
 的独立module中注册、执行全部10个工具入口。它证明外部Host可组合P2-D合同，不表示任何
 默认网络、文件、memory或scheduler backend，也不形成Public/Beta/Stable承诺。
 
+## P6-A2 LLM Task收口
+
+canonical `tools/llmtask`拥有单次LLM-only JSON子任务的参数兼容、model input、
+`tool_choice=none`、JSON/schema校验、response budget和timeout/cancellation。HS原入口继续
+存在，但只负责把既有全局`llmx.ChatWithInput`选择作为Host adapter注入；新项目必须显式提供
+`ChatWithInputFunc`，canonical不会读取credential或选择provider。
+
+`tools/conformance/llm-task-consumer`固定tools pseudo-version且无`replace`/HS import，证明新
+项目可以只依赖canonical package完成注册和执行。Session/Task Host Kit可复用advanced
+composition API，但Store、Scheduler、visibility、durable lifecycle和生产授权仍属于Host。
+
 ## 尚未迁移
 
 M5S没有开启新的HS source-authority迁移。它把已经完成cutover的根Client、

@@ -127,6 +127,10 @@ canonical consumer。
 Scene、真实网络、文件、credential或scheduler backend；生产Host仍必须显式提供并治理
 这些能力。
 
+`tools/conformance/llm-task-consumer`固定P6-A2 tools版本，不使用`replace`，通过显式fake
+model adapter验证`llm_task`的JSON/schema/model identity与取消合同。它不发现provider、
+credential或全局模型配置；真实模型接入仍由Host显式注入。
+
 Browser Runtime使用独立可选module：
 
 ```bash

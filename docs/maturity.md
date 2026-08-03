@@ -14,7 +14,7 @@
 | LLM contract component | W3-01 已落地，Experimental |
 | agentx-go production packages | root/components/runtime/extensions/scenes focused surface当前77个package、14个Developer Preview candidate；providers/tools/browser/document使用各自独立module gate |
 | Experimental providers | P2-A/P2-B已落地OpenAI-compatible、Anthropic Messages、Codex Responses真实client、transport/fault/retry/usage机制和fixed consumer；credential、token store、模型选择与生产网络仍由Host拥有 |
-| Experimental tools | 7个package已落地tool合同、invocation kernel、diffs及message/filesystem/HTTP/memory/scheduler真实coordination，并完成统一fixed consumer与HS production cutover；授权、sandbox、credential与具体backend仍由Host拥有 |
+| Experimental tools | 8个package已落地tool合同、invocation kernel、diffs、message/filesystem/HTTP/memory/scheduler及LLM Task真实coordination，并完成fixed consumer与HS production cutover；授权、sandbox、credential、模型backend与具体副作用仍由Host拥有 |
 | Experimental browser | P3已完成Browser runtime、browserd host、Browser tools、fixed consumer、HS cutover与跨平台focused gate |
 | Experimental document | P3已完成OCR、PDF、pipeline、推荐Document tools、fixed consumer与HS cutover；P5-B已完成21个低层可import package的owner审阅和中文Reference，不自动升级成熟度 |
 | Portable scenes | P4-A～P4-E已覆盖A股、研究/新闻、Docparse、Browser Ops、公共交通、公开来源、公众号、港/美股与财报；P4 Portfolio Checkpoint后不再逐Scene扩张 |
