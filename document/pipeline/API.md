@@ -36,6 +36,11 @@ result, err := runtime.Run(ctx, pipeline.ParseRequest{
 
 结果类型位于 `document/pipeline/types`，配置合同位于 `document/pipeline/configs`。JSON 字段保持与 HS 既有 docparse 合同一致。
 
+低层扩展入口：[`configs`](configs/API.md)、[`types`](types/API.md)、
+[`section`](section/API.md)、[`preprocessing`](preprocessing/API.md)、
+[`extractors`](extractors/API.md)、[`expr`](expr/API.md)、[`derive`](derive/API.md)和
+[`utils`](utils/API.md)。这些package有独立中文Reference，但仍为Experimental。
+
 ## 明确边界
 
 本包不拥有：
@@ -47,4 +52,3 @@ result, err := runtime.Run(ctx, pipeline.ParseRequest{
 - 发布稳定性承诺。
 
 HS 迁移期间可以保留兼容入口，但通用解析实现应只存在于本包。
-

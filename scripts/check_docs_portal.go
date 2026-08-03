@@ -65,6 +65,8 @@ func main() {
 		"packages.html",
 		"docs/quickstart.html",
 		"docs/guides/capability-map.html",
+		"document/ocr/cache/API.html",
+		"document/pipeline/types/API.html",
 		"docs/concepts/execution-model.html",
 		"docs/guides/custom-adapter.html",
 		"docs/guides/model-tool-hostkit.html",
@@ -95,8 +97,8 @@ func main() {
 		}
 		return nil
 	}))
-	if htmlCount < 60 {
-		check(fmt.Errorf("portal built only %d HTML pages, want at least 60", htmlCount))
+	if htmlCount < 200 {
+		check(fmt.Errorf("portal built only %d HTML pages, want at least 200", htmlCount))
 	}
 	if !searchAsset {
 		check(fmt.Errorf("portal build does not contain a local-search asset"))

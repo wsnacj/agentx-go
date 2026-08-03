@@ -7,8 +7,8 @@ deterministic document pipeline、PDF adapter 和推荐工具入口。当前处�
 ## 目录
 
 - `contracts`：page、block、table、artifact 等 provider-neutral 数据合同；
-- `ocr`：OCR split/cache/worker/diff/processor/pipeline 与显式 provider；
-- `pipeline`：spec、expression、derive、extract/preprocess 和 document orchestration；
+- [`ocr`](ocr/API.md)：OCR split/cache/worker/diff/processor/pipeline 与显式 provider；
+- [`pipeline`](pipeline/API.md)：spec、expression、derive、extract/preprocess 和 document orchestration；
 - `pdf`：PDF Go mechanism 及显式 Python/native adapter；
 - [`tools`](./tools/API.md)：AgentX document/PDF 推荐工具入口、显式 Host ports 与统一 PDF 协调。
 
@@ -20,5 +20,6 @@ module 不拥有 credential 发现、默认 provider、客户 schema、商业 SD
 
 ## 当前状态
 
-P3-B 正在按 `contracts -> ocr -> pdf -> pipeline -> tools` 完成 source-authority 与 HS
-consumer cutover。只有已落地并通过 external-package test 的入口才视为当前可用能力。
+P3-B已经完成`contracts -> ocr -> pdf -> pipeline -> tools` source-authority、fixed consumer
+与HS production cutover。P5-B又为全部可外部import的低层OCR/Pipeline package补齐中文
+Experimental Reference；这不把它们升级为Developer Preview或稳定API。

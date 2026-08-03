@@ -6,7 +6,7 @@
 | --- | --- |
 | 仓库 | private validation |
 | 当前产品里程碑 | P1 Core七能力、P2 Providers/Tools、P3 Browser/Document与P4-A～P4-E Portable Scenes闭环完成；P5 Developer Preview产品化进行中 |
-| Developer Portal | 77 package/14 candidate focused API gate与186页九module本地Portal构建已通过；Public Transport因依赖Experimental controlcontract保持Experimental |
+| Developer Portal | 77 package/14 candidate focused API gate与207页九module本地Portal构建已通过；Public Transport因依赖Experimental controlcontract保持Experimental |
 | Private validation readiness | `true`；空缓存私有VCS fixed-version consumer已通过 |
 | Current nine-module Pre-Beta candidate | `false`；M6D四module历史快照通过不自动覆盖当前九module、license、安全与发行授权 |
 | Public Beta readiness | `false`；license、具名安全/发行复核、正式兼容等级和release authorization仍阻断 |
@@ -33,7 +33,7 @@
 | Examples/conformance | 根fixed-version consumer覆盖五条标准construction；九module各有focused consumer，examples版本已对齐当前根合同；均无长期replace，fixture路径无真实副作用 |
 | HS canonical import | W1-C、M5A～M5R production consumer已使用固定 private pseudo-version；M5R cutover已完成 |
 | HS LLM contract authority | W3-01 已切换到 `components/llm`，旧路径为 Deprecated shim |
-| 当前 package surface | 五个focused module的77个package纳入成熟度矩阵，14个候选有hash、可读snapshot、公开类型闭包和darwin/linux门禁；九module共有102份中文`API.md` |
+| 当前 package surface | 五个focused module的77个package纳入成熟度矩阵，14个候选有hash、可读snapshot、公开类型闭包和darwin/linux门禁；九module的120个可外部import package均有中文Reference，共123份`API.md` |
 | Public/Beta/Stable | 未授权；Developer Preview candidate不等于任一正式等级 |
 | 正式 tag/semver | 未授权 |
 | License/NOTICE/release security | 仍是发行门禁 |
@@ -41,8 +41,8 @@
 ## 三类结论必须分开
 
 - **API文档正文覆盖**：五个focused module的77个production package均纳入中文
-  Reference矩阵，九module共有102份中文`API.md`；这只说明推荐入口与已选surface的
-  实际签名、语义和non-goal已经被描述。Document低层可import包仍需P5决策。
+  Reference矩阵，九module全部120个可外部import package均有中文Reference，共123份
+  `API.md`；这只说明实际职责、签名入口和non-goal已被描述，不形成兼容性承诺。
 - **兼容性承诺**：当前没有 semver、Public/Beta/Stable承诺；Developer Preview
   candidate签名门禁用于发现意外漂移，不等于禁止经审阅的变更。
 - **正式发布成熟度**：tag、license/NOTICE、security/legal、维护 owner和 release

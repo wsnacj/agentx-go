@@ -7,7 +7,7 @@
 | 结论 | 状态 | 含义 |
 | --- | --- | --- |
 | `private_validation_ready` | `true` | 已通过空缓存私有VCS获取与clean-room运行；只面向已获私有仓库权限的开发者，不是客户发行 |
-| `developer_portal_build_ready` | `true` | 当前九module正文已构建为186页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
+| `developer_portal_build_ready` | `true` | 当前九module正文已构建为207页本地Portal，77/14 coverage与本地搜索通过；不是公共托管结论 |
 | `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
 | `current_nine_module_pre_beta_ready` | `false` | 当前九module未形成同一批准release train，也未获得新的全量Ubuntu、安全、license或发行签署 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |

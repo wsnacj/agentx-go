@@ -4,6 +4,11 @@
 provider-neutral pipeline。package 名暂保留为 `ocrx`，以降低 HS consumer 迁移风险；import
 path 以 `github.com/wsnacj/agentx-go/document/ocr` 为准。
 
+低层扩展入口：[`config`](config/API.md)、[`model`](model/API.md)、
+[`provider`](provider/API.md)、[`processor`](processor/API.md)、[`splitter`](splitter/API.md)、
+[`cache`](cache/API.md)、[`worker`](worker/API.md)、[`pipeline`](pipeline/API.md)、
+[`diff`](diff/API.md)和[`util`](util/API.md)。它们全部保持Experimental。
+
 ## 推荐构造
 
 1. 构造 `config.ServiceConfig`；

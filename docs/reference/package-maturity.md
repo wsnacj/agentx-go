@@ -150,10 +150,32 @@ Browser内部process capture、network policy和script formatting package位于G
 | `document/pdf/python` | Experimental extension | [API](../../document/pdf/python/API.md) | 显式Python Host adapter |
 | `document/pipeline` | Experimental extension | [API](../../document/pipeline/API.md) | 文档pipeline推荐入口 |
 | `document/tools` | Experimental extension | [API](../../document/tools/API.md) | Document推荐tools |
+| `document/ocr/cache` | Experimental extension | [API](../../document/ocr/cache/API.md) | context-aware OCR cache合同与可选文件实现 |
+| `document/ocr/config` | Experimental extension | [API](../../document/ocr/config/API.md) | OCR service/provider/splitter/cache配置合同 |
+| `document/ocr/diff` | Experimental extension | [API](../../document/ocr/diff/API.md) | OCR与表格结果确定性diff |
+| `document/ocr/model` | Experimental extension | [API](../../document/ocr/model/API.md) | OCR operation与payload数据模型 |
+| `document/ocr/pipeline` | Experimental extension | [API](../../document/ocr/pipeline/API.md) | OCR低层协作者组合与并发执行 |
+| `document/ocr/processor` | Experimental extension | [API](../../document/ocr/processor/API.md) | provider response解析扩展点 |
+| `document/ocr/processor/baidu` | Experimental extension | [API](../../document/ocr/processor/baidu/API.md) | Baidu response processor |
+| `document/ocr/processor/textin` | Experimental extension | [API](../../document/ocr/processor/textin/API.md) | TextIn response processor |
+| `document/ocr/processor/volcengine` | Experimental extension | [API](../../document/ocr/processor/volcengine/API.md) | Volcengine response processor |
+| `document/ocr/provider` | Experimental extension | [API](../../document/ocr/provider/API.md) | OCR provider port与显式HTTP adapter |
+| `document/ocr/splitter` | Experimental extension | [API](../../document/ocr/splitter/API.md) | Poppler/remote splitter与cleanup合同 |
+| `document/ocr/util` | Experimental extension | [API](../../document/ocr/util/API.md) | OCR hash/identity helper |
+| `document/ocr/worker` | Experimental extension | [API](../../document/ocr/worker/API.md) | context-aware并发限制器 |
+| `document/pipeline/configs` | Experimental extension | [API](../../document/pipeline/configs/API.md) | 文档spec YAML合同与推荐 |
+| `document/pipeline/derive` | Experimental extension | [API](../../document/pipeline/derive/API.md) | 派生字段求值 |
+| `document/pipeline/expr` | Experimental extension | [API](../../document/pipeline/expr/API.md) | 有限数字/布尔表达式 |
+| `document/pipeline/extractors` | Experimental extension | [API](../../document/pipeline/extractors/API.md) | regex/table/宽松JSON候选提取 |
+| `document/pipeline/preprocessing` | Experimental extension | [API](../../document/pipeline/preprocessing/API.md) | 页眉页脚清理与可选LLM port |
+| `document/pipeline/section` | Experimental extension | [API](../../document/pipeline/section/API.md) | provider-neutral section tree |
+| `document/pipeline/types` | Experimental extension | [API](../../document/pipeline/types/API.md) | pipeline结果与诊断合同 |
+| `document/pipeline/utils` | Experimental extension | [API](../../document/pipeline/utils/API.md) | 文档tree/page纯函数helper |
 
-Document module中其它可外部import的低层OCR/Pipeline实现包暂按internalization candidate
-治理，不是推荐接入面，也没有兼容承诺。P5必须在Developer Preview最终checkpoint前决定
-将其收进`internal`还是补齐独立Reference；当前不得仅因目录可import就视为稳定API。
+P5-B consumer核对发现这些低层package均有canonical owner，且其中15个package已有HS
+direct consumer；强制internalize会制造新的顶层adapter并扩大迁移风险。因此本阶段选择保留
+Experimental并补齐Reference，而不是伪装成推荐稳定入口。Go `internal` package继续不进入
+外部API覆盖分母。
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
@@ -164,6 +186,7 @@ Document module中其它可外部import的低层OCR/Pipeline实现包暂按inter
 ```bash
 GOWORK=off go run scripts/check_developer_preview_api.go
 GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
+GOWORK=off go run scripts/check_package_api_docs.go
 GOWORK=off go run scripts/check_docs_links.go
 ```
 
@@ -175,7 +198,8 @@ GOWORK=off go run scripts/check_docs_links.go
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；
-6. 九个library module、examples及中文正文中扫描到的仓库本地链接均可解析且不越出仓库。
+6. 九module全部可外部import的production package都有非空中文Reference；
+7. 九个library module、examples及中文正文中扫描到的仓库本地链接均可解析且不越出仓库。
 
 更新候选签名必须同时完成 focused owner/consumer review、中文 Reference 修订和
 baseline及`docs/reference/api-snapshots/`更新。`-check-platforms`只把目标平台参数

@@ -12,7 +12,8 @@ Run/Open Tool Loop 的 portable implementation owner；`providers`、`tools`、`
 > 当前里程碑：**M7A P1 Core七类能力、P2 Providers/通用Tools、P3 Browser/Document与
 > P4首批Portable Scenes均已形成真实source authority、fixed-version consumer和HS
 > production cutover；P5 Core Developer Preview产品化正在收口**。当前九个module共有
-> 102份中文`API.md`，其中root/components/runtime/extensions/scenes的77个候选范围
+> 123份中文`API.md`，覆盖全部120个可外部import的production package；其中
+> root/components/runtime/extensions/scenes的77个候选范围
 > package和14个Developer Preview candidate进入focused API gate。
 > P4 Portfolio Checkpoint已经停止按Scene逐个扩张；后续只在P5 closure证明必要时增加
 > 一个有界cohort。M6D Core Foundation发行门禁继续独立fail closed。
@@ -338,6 +339,7 @@ GOWORK=off go -C scenes vet ./...
 GOWORK=off go -C scenes mod tidy -diff
 GOWORK=off go run scripts/check_developer_preview_api.go
 GOWORK=off go run scripts/check_developer_preview_api.go -check-platforms
+GOWORK=off go run scripts/check_package_api_docs.go
 GOWORK=off go run scripts/check_docs_links.go
 GOWORK=off go run scripts/check_developer_preview_distribution.go
 ```
