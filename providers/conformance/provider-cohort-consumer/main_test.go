@@ -10,7 +10,7 @@ func TestFixedVersionProviderCohort(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if value.AnthropicContent != "anthropic-ready" || value.AnthropicTokens != 5 || value.CodexContent != "codex-ready" || value.CodexTool != "lookup" || value.CodexTokens != 6 || value.Authorization != "Bearer codex-fixture" || value.AccountID != "acct-fixture" {
+	if value.AnthropicContent != "anthropic-ready" || value.AnthropicTokens != 5 || value.CodexContent != "codex-ready" || value.CodexTool != "lookup" || value.CodexTokens != 6 || value.Authorization != "Bearer codex-fixture" || value.AccountID != "acct-fixture" || value.ArkResponseID != "ark-ready" || value.ArkAuthorization != "Bearer ark-fixture" || value.GeminiContent != "gemini-ready" || value.GeminiAPIKey != "gemini-fixture" {
 		t.Fatalf("result = %#v", value)
 	}
 }
