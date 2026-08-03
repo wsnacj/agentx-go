@@ -4,6 +4,8 @@
 合同。它是技术和责任准入清单，不是发行授权；任一具名决定缺失时，
 `public_beta_ready`必须保持`false`。
 
+剩余人工选择及推荐边界集中在[Pre-Beta Owner决策单](pre-beta-owner-decisions.md)。
+
 ## Release train
 
 九个library module组成一个受控release train：root、components、runtime、extensions、

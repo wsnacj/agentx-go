@@ -3,6 +3,29 @@
 本页说明当前 source authority 在哪里，帮助 HS维护者避免恢复双写。它不是要求
 业务 consumer 一次性迁仓，也不授权 Scene迁移。
 
+## 当前完成度不是“删除HS目录”
+
+截至2026-08-03，HS根`go.mod`已经固定消费九个agentx-go module；`core/agentx`有432个
+production Go文件、`scene/agentx_*`有120个production Go文件直接import canonical路径。
+agentx-go本身约有773个production Go文件、23.9万行，且production代码没有HS反向依赖。
+
+HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为：
+
+- concrete model/tool/backend、授权、安全、配置、存储与产品策略等Host实现；
+- 为仍使用`hs/core/agentx/...`的调用方保留的Deprecated alias/forwarder；
+- 大型examples、selftest、live harness和历史治理代码；
+- 具体Scene的provider、credential、HTTP/CLI、业务聚合和真实副作用。
+
+当前仍有约1,920个Go文件import `hs/core/agentx/...`：大多数是`core/agentx`内部package
+关系，其次是Scene，另有少量其它HS consumer。因此不能把`core/agentx`目录直接删除或把
+所有import机械替换成新仓路径：canonical没有、也不应拥有客户/部署Host语义。
+
+如果最终目标进一步要求“HS不再提供任何`core/agentx`旧路径，只作为agentx-go的产品
+Host”，还需要一个独立的兼容退役阶段：先把所有portable authority核对为canonical唯一
+owner，再把HS专属实现移到明确的`internal/agentxhost`或Scene/应用owner，逐批切完旧import，
+最后删除closure为零的shim。P1至P5完成的是公共portable Platform与接入文档，不包含这次
+大范围目录/旧路径退役，不能把两种完成定义混为一谈。
+
 ## 当前依赖方向
 
 ```text

@@ -4,3 +4,8 @@
 /components/ @wsnacj
 /runtime/ @wsnacj
 /extensions/ @wsnacj
+/providers/ @wsnacj
+/tools/ @wsnacj
+/browser/ @wsnacj
+/document/ @wsnacj
+/scenes/ @wsnacj
