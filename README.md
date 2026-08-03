@@ -19,8 +19,8 @@ Run/Open Tool Loop 的 portable implementation owner；`providers`、`tools`、`
 > 公共能力，因此未增加新cohort。M6D Core Foundation发行门禁继续独立fail closed。
 > M6C已经为历史Core四module快照形成Ubuntu真实运行与跨平台分发证据；
 > M6D历史四module证据继续保留；当前Pre-Beta本地、distribution与Ubuntu入口已升级到
-> 九module release train。九module本地技术候选已经通过，当前仍等待九module Ubuntu复验
-> 及具名License、安全、兼容范围和发行决定。它不新增Runtime能力，也不是Public、Beta、
+> 九module release train。九module本地及Ubuntu技术候选已经通过，当前仍等待具名License、
+> 安全、兼容范围和发行决定。它不新增Runtime能力，也不是Public、Beta、
 > Stable或production-ready发布。
 
 P5-C最终验证覆盖九module normal/race/vet/tidy/list、33个无`replace` fixed-version

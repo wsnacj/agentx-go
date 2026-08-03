@@ -49,7 +49,7 @@ tag必须全部指向同一个批准source revision，并保持immutable。失�
 | Security approval | pending | 指定具名security approver，审阅九module扫描、响应流程和残余依赖风险 |
 | Compatibility promotion | Developer Preview only | 明确批准14个候选package的Beta兼容范围和允许变更规则 |
 | Release authorization | pending | release owner与独立reviewer批准版本、tag、回滚、支持平台和发布窗口 |
-| Ubuntu九module证据 | pending | 在Linux amd64、固定Go工具链和CGO=1条件下运行同一九module门禁 |
+| Ubuntu九module证据 | passed | Actions run `30792532517`在Ubuntu 24.04、Go 1.25.12、CGO=1与source `2ae4fbd671fa...`上通过同一门禁 |
 
 固定扫描仍报告少量“module已依赖、但生产调用图不可达”的上游记录：extensions和document
 中的`golang.org/x/sys`，以及scenes中的`golang.org/x/net`。直接升级extensions到当前修复
@@ -80,3 +80,9 @@ GOWORK=off go run ./scripts/check_pre_beta_candidate.go
 第一条验证当前九module固定Developer Preview版本；第二条从当前tracked source构建同版
 九module临时候选。两条命令均不得创建tag或发布版本。Ubuntu复验使用
 `GOWORK=off CGO_ENABLED=1 go run ./scripts/check_ubuntu_runtime.go`。
+
+远端run `30792532517`的job `91618919616`耗时13分11秒，候选artifact
+`8847878284`的归档digest为
+`sha256:0438657392a3d3779e0fa4d37371961284ae39212294b2c637c8c477755f70c4`。
+它同时通过Ubuntu runtime gate和九module候选门禁；`public_beta_ready`仍因License、
+具名安全、兼容范围和发行授权保持`false`。

@@ -8,7 +8,8 @@ semver兼容承诺或Public/Beta/Stable声明。
 - Pre-Beta本地技术门禁、distribution full gate和Ubuntu入口已从历史四module范围升级为
   当前九module release train，并新增无HS、无`replace`的九module聚合consumer；
 - 九module本地候选已在Go 1.25.12上完成132 package、同版zip、固定漏洞扫描、聚合consumer
-  与离线cache复验，已知可达漏洞为0；Public Beta仍因Ubuntu和具名责任决定保持关闭；
+  与离线cache复验，已知可达漏洞为0；Ubuntu run `30792532517`又在相同九module范围通过，
+  Public Beta仍因具名责任决定保持关闭；
 - 新增Pre-Beta准入合同与九module候选tag前缀。该合同不选择License、不创建tag，具名
   security/release责任和Public Beta授权继续fail closed；
 - 九module的120个可外部import production package均有中文Reference，共123份`API.md`；

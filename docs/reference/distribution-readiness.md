@@ -11,7 +11,8 @@
 | `historical_core_ubuntu_snapshot_ready` | `true` | M6D曾在Ubuntu 24.04/amd64/Go 1.25.12/CGO=1复验四module快照；不自动覆盖当前九module |
 | `current_nine_module_local_candidate_gate` | `true` | source `f57ecda758b5d43614bac2e5f9b005e24dff8228`已通过九module同版候选、132 package、固定漏洞扫描、聚合consumer和离线cache复验 |
 | `current_nine_module_pre_beta_technical_candidate` | `true` | 本地技术候选成立；这不是Public Beta、正式tag或发行授权 |
-| `current_nine_module_pre_beta_ready` | `false` | 当前九module仍缺新的全量Ubuntu、具名安全、license、兼容范围和发行签署 |
+| `current_nine_module_ubuntu_ready` | `true` | run `30792532517`在Ubuntu 24.04、Go 1.25.12、CGO=1和source `2ae4fbd671fa...`上通过九module门禁 |
+| `current_nine_module_pre_beta_ready` | `false` | 当前九module仍缺具名安全、license、兼容范围和发行签署 |
 | `public_docs_hosting_ready` | `false` | 未批准域名、访问策略、部署或正式版本视图 |
 | `public_beta_ready` | `false` | 不得创建Beta tag、公开推广或宣称production-ready |
 
@@ -54,6 +55,11 @@
 - extensions、document与scenes仍有`x/sys`或`x/net`的module-only记录；生产import/call
   graph不可达。extensions的直接修复版本会提升最低Go版本，因此未在无Owner决定时改变
   工具链合同；这些记录留给具名security approver处理。
+- GitHub Actions run `30792532517`在source
+  `2ae4fbd671fab7a36cbf5582a1c627de95879fba`上完成Ubuntu runtime及九module候选门禁，
+  job `91618919616`耗时13分11秒。artifact `8847878284`归档digest为
+  `sha256:0438657392a3d3779e0fa4d37371961284ae39212294b2c637c8c477755f70c4`；
+  manifest继续报告0个可达漏洞和`public_beta_ready=false`。
 
 ## Public Beta阻断
 
