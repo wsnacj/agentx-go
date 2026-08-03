@@ -497,3 +497,17 @@ func TestValidateJSONSchemaSubset_EnumAndConstUseNumericEquality(t *testing.T) {
 		t.Fatalf("expected numeric const equality to pass, got %v", err)
 	}
 }
+
+func TestSchemaTypeHelpersRejectNonCanonicalTypeLabels(t *testing.T) {
+	for _, schemaType := range []string{" string ", "STRING"} {
+		if schemaValueMatchesType("ok", schemaType) {
+			t.Fatalf("expected schema value helper to reject non-canonical type %q", schemaType)
+		}
+		if matchesSchemaType("ok", schemaType) {
+			t.Fatalf("expected schema matcher to reject non-canonical type %q", schemaType)
+		}
+		if isSupportedSchemaType(schemaType) {
+			t.Fatalf("expected schema type whitelist to reject non-canonical type %q", schemaType)
+		}
+	}
+}
