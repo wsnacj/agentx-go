@@ -15,6 +15,11 @@ client；`providers/ark/types` 是对应的 request、response、tool、stream e
 - `UploadFile`：multipart Files API；
 - `ListFiles`、`ListInputItems`：分页查询。
 
+`CreateResponse`、`StreamResponse`、`CreateImageGeneration` 和
+`StreamImageGeneration` 提供不带模型路由的直接协议入口；
+`CollectFunctionCallsFromStream`、`ExecuteFunctionCalls`、
+`BuildToolOutputRequest` 与 `StreamResponseWithTools` 提供可移植的 tool-call
+协调。具体工具授权与执行副作用仍由调用方提供的 `ToolExecutor` 决定。
+
 能力探测、模型路由、降级策略、凭据管理和业务重试继续由 Host 负责。当前包为
 Experimental，不构成 Public/Beta/Stable 承诺。
-
