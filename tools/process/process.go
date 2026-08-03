@@ -427,9 +427,9 @@ func resolveDirWithinRoot(root string, target string) (string, error) {
 		return "", fmt.Errorf("resolve workdir: %w", err)
 	}
 	candidate = filepath.Clean(candidate)
-	realCandidate, err := filepath.EvalSymlinks(candidate)
+	realCandidate, err := resolvePathForBoundaryCheck(candidate)
 	if err != nil {
-		return "", fmt.Errorf("resolve workdir symlinks: %w", err)
+		return "", err
 	}
 	rel, err := filepath.Rel(filepath.Clean(rootReal), filepath.Clean(realCandidate))
 	if err != nil {
@@ -439,12 +439,31 @@ func resolveDirWithinRoot(root string, target string) (string, error) {
 	if rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("workdir escapes root: %s", target)
 	}
-	info, err := os.Stat(candidate)
-	if err != nil {
-		return "", fmt.Errorf("stat workdir: %w", err)
-	}
-	if !info.IsDir() {
-		return "", fmt.Errorf("workdir is not a directory: %s", target)
-	}
 	return candidate, nil
+}
+
+func resolvePathForBoundaryCheck(path string) (string, error) {
+	ancestor := filepath.Clean(path)
+	suffix := make([]string, 0, 4)
+	for {
+		if _, err := os.Lstat(ancestor); err == nil {
+			resolvedAncestor, err := filepath.EvalSymlinks(ancestor)
+			if err != nil {
+				return "", fmt.Errorf("resolve workdir symlinks: %w", err)
+			}
+			resolved := filepath.Clean(resolvedAncestor)
+			for i := len(suffix) - 1; i >= 0; i-- {
+				resolved = filepath.Join(resolved, suffix[i])
+			}
+			return filepath.Clean(resolved), nil
+		} else if !os.IsNotExist(err) {
+			return "", fmt.Errorf("stat workdir: %w", err)
+		}
+		parent := filepath.Dir(ancestor)
+		if parent == ancestor {
+			return "", fmt.Errorf("resolve workdir symlinks: no existing ancestor for %s", path)
+		}
+		suffix = append(suffix, filepath.Base(ancestor))
+		ancestor = parent
+	}
 }

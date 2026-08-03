@@ -95,6 +95,15 @@ func TestLocalAdapterRejectsSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestLocalAdapterPreservesCommandFailureForMissingWorkdir(t *testing.T) {
+	adapter := process.NewLocalAdapter(process.LocalOptions{Root: t.TempDir()})
+	_, err := adapter.Run(context.Background(), process.Command{Command: "pwd", Workdir: "missing"})
+	typed, ok := process.AsError(err)
+	if !ok || typed.Code != process.ErrorCodeCommandFailed {
+		t.Fatalf("typed error=%#v ok=%t err=%v", typed, ok, err)
+	}
+}
+
 func TestLocalAdapterListIsReadOnlyAndBoundedByRows(t *testing.T) {
 	adapter := process.NewLocalAdapter(process.LocalOptions{Root: t.TempDir()})
 	result, err := adapter.List(context.Background(), process.ListRequest{Limit: 2})
