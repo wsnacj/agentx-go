@@ -119,6 +119,8 @@ hook和具体network backend不属于该合同。
   Backend方法接入Host scheduler、RunStore、授权和durable lifecycle。
 - [`tools/llmtask`](./llmtask/API.md)：拥有单次LLM-only JSON子任务的参数兼容、模型输入、
   schema校验、响应提取和timeout/cancellation，通过显式`ChatWithInputFunc`接入Host模型。
+- [`tools/process`](./process/API.md)：提供显式opt-in本地前台命令与只读进程列表adapter，拥有
+  command/result、bounded output、取消/超时和终止证据；授权、sandbox与signal policy留在Host。
 - [`tools/web`](./web/API.md)：拥有Search、WebFetch、OpenPage、FindInPage的provider协议、
   正文提取、缓存与模型调用协调，通过显式`retrieval.Preparer`接入Host URL、redirect、proxy与
   network policy；凭据只允许显式注入。
