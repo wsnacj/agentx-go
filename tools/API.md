@@ -5,6 +5,11 @@
 该module提供线程安全、provider-neutral的工具catalog与可选通用tool implementation。它不
 属于Core Runtime依赖，Runtime不会反向导入本module。
 
+## Agent / Task / Subagent
+
+- [`tools/agent`](agent/API.md)：模型侧Task、Subagent、bounded Agent Step定义与action协调；
+  concrete Store、Scheduler、worker与durable lifecycle由Host注入。
+
 ## Registry
 
 ```go
