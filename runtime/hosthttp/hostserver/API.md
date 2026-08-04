@@ -16,6 +16,9 @@ err = config.Serve(ctx, hostserver.ServeOptions{
 })
 ```
 
+- `DefaultConfig`是纯默认值，不读取环境变量或credential；
+- Host若明确采用约定环境变量，可调用`ConfigFromEnv`加载
+  `AGENTX_BUSINESS_HOST_TOKEN`和`AGENTX_BUSINESS_HOST_TRUSTED_PROXY_CIDRS`；
 - loopback默认允许无 token启动；
 - 非 loopback同时要求 bearer token和 immediate trusted-proxy CIDR；
 - `MaxBodyBytes`、header/read/write/idle timeout和 graceful shutdown都有有界默认值；

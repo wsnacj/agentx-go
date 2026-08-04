@@ -38,6 +38,27 @@ func TestConfigValidateExposurePolicy(t *testing.T) {
 	}
 }
 
+func TestDefaultConfigIsPureAndConfigFromEnvIsExplicit(t *testing.T) {
+	t.Setenv("AGENTX_BUSINESS_HOST_TOKEN", "environment-secret-token")
+	t.Setenv("AGENTX_BUSINESS_HOST_TRUSTED_PROXY_CIDRS", "10.0.0.0/8")
+
+	pure := DefaultConfig("0.0.0.0:8792")
+	if pure.AccessToken != "" || pure.TrustedProxyCIDRs != "" {
+		t.Fatalf("DefaultConfig read environment: token=%t cidrs=%q", pure.AccessToken != "", pure.TrustedProxyCIDRs)
+	}
+	if err := pure.Validate(); !errors.Is(err, ErrExposedTokenRequired) {
+		t.Fatalf("pure exposed config validation = %v, want token required", err)
+	}
+
+	loaded := ConfigFromEnv("0.0.0.0:8792")
+	if loaded.AccessToken != "environment-secret-token" || loaded.TrustedProxyCIDRs != "10.0.0.0/8" {
+		t.Fatalf("ConfigFromEnv token=%t cidrs=%q", loaded.AccessToken != "", loaded.TrustedProxyCIDRs)
+	}
+	if err := loaded.Validate(); err != nil {
+		t.Fatalf("ConfigFromEnv validation: %v", err)
+	}
+}
+
 func TestServeUntilSignalStableMethodContract(t *testing.T) {
 	var serve func(Config, ServeOptions) error = Config.ServeUntilSignal
 	if serve == nil {
@@ -47,7 +68,7 @@ func TestServeUntilSignalStableMethodContract(t *testing.T) {
 
 func TestConfigBindFlagsDoesNotExposeEnvironmentToken(t *testing.T) {
 	t.Setenv("AGENTX_BUSINESS_HOST_TOKEN", "environment-secret-token")
-	config := DefaultConfig("127.0.0.1:8792")
+	config := ConfigFromEnv("127.0.0.1:8792")
 	flags := flag.NewFlagSet("hostserver", flag.ContinueOnError)
 	var output bytes.Buffer
 	flags.SetOutput(&output)

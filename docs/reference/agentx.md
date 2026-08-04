@@ -157,6 +157,17 @@ open_tool_loop / runner_final_reply / synchronous_run
 
 其他组合返回 `CodeUnsupportedProfile`，不代表相应能力已实现。
 
+<!-- api:DefaultExecutionProfile -->
+### `DefaultExecutionProfile`
+
+```go
+func DefaultExecutionProfile() ExecutionProfile
+```
+
+返回根 `Client` 当前唯一支持的同步 Open Tool Loop 画像。`Config.Profile` 零值与
+该返回值等价。Workflow、Objective、Resume 和长任务由各自 Runtime Host Kit
+显式组合，不通过修改字符串字段启用。
+
 ## Typed error
 
 <!-- api:ErrorCode -->

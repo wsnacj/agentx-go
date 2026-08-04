@@ -265,12 +265,5 @@ func TestQueuedRunRespectsDeadline(t *testing.T) {
 }
 
 func supportedProfile() agentx.ExecutionProfile {
-	return agentx.ExecutionProfile{
-		Activation:         "off",
-		ControlMode:        "tool",
-		ExecutionIntensity: "l2_bounded_tool_loop",
-		Driver:             "open_tool_loop",
-		ResultPolicy:       "runner_final_reply",
-		Lifecycle:          "synchronous_run",
-	}
+	return agentx.DefaultExecutionProfile()
 }

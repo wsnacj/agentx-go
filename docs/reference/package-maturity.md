@@ -11,7 +11,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | --- | --- | --- |
 | Developer Preview candidate | M3E 选定的 Core标准路径或 M5D选定的 A股推荐入口直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
 | Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定伪版本并评估升级差异 |
-| internalization candidate | 当前属于低层迁移 owner，或已位于 `internal`并由上层 Facade隐藏 | 新项目不得或不应直接依赖 |
+| internalization candidate | 已位于 Go `internal`，并由上层入口隐藏 | 外部项目不能直接依赖 |
 
 ## 当前矩阵
 
@@ -43,13 +43,13 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `scenes/companyresearch/hostkit` | Experimental extension | [API](../../scenes/companyresearch/hostkit/API.md) | 显式研究数据ports驱动的无provider协调 |
 | `scenes/docparse` | Developer Preview candidate | [API](../../scenes/docparse/API.md) | 文档解析Pack、资产、tool schema与推荐入口 |
 | `scenes/docparse/hostkit` | Experimental extension | [API](../../scenes/docparse/hostkit/API.md) | 显式Parse/ResultLoader ports驱动的文档协调与结果投影 |
-| `scenes/docparse/adapters` | internalization candidate | [API](../../scenes/docparse/adapters/API.md) | portable字段与表格适配机制 |
-| `scenes/docparse/fusion` | internalization candidate | [API](../../scenes/docparse/fusion/API.md) | 多来源文档结果融合机制 |
-| `scenes/docparse/planner` | internalization candidate | [API](../../scenes/docparse/planner/API.md) | profile驱动的文档路由规划 |
-| `scenes/docparse/profile` | internalization candidate | [API](../../scenes/docparse/profile/API.md) | 文档profile探测与规范化 |
-| `scenes/docparse/qualityevidence` | internalization candidate | [API](../../scenes/docparse/qualityevidence/API.md) | 质量证据与评估投影 |
-| `scenes/docparse/representation` | internalization candidate | [API](../../scenes/docparse/representation/API.md) | provider-neutral Document/Page表征 |
-| `scenes/docparse/understanding` | internalization candidate | [API](../../scenes/docparse/understanding/API.md) | 文档理解与review-required判定机制 |
+| `scenes/docparse/adapters` | Experimental extension | [API](../../scenes/docparse/adapters/API.md) | portable字段与表格适配机制 |
+| `scenes/docparse/fusion` | Experimental extension | [API](../../scenes/docparse/fusion/API.md) | 多来源文档结果融合机制 |
+| `scenes/docparse/planner` | Experimental extension | [API](../../scenes/docparse/planner/API.md) | profile驱动的文档路由规划 |
+| `scenes/docparse/profile` | Experimental extension | [API](../../scenes/docparse/profile/API.md) | 文档profile探测与规范化 |
+| `scenes/docparse/qualityevidence` | Experimental extension | [API](../../scenes/docparse/qualityevidence/API.md) | 质量证据与评估投影 |
+| `scenes/docparse/representation` | Experimental extension | [API](../../scenes/docparse/representation/API.md) | provider-neutral Document/Page表征 |
+| `scenes/docparse/understanding` | Experimental extension | [API](../../scenes/docparse/understanding/API.md) | 文档理解与review-required判定机制 |
 | `scenes/globalstock` | Experimental extension | [API](../../scenes/globalstock/API.md) | 港股/美股只读Pack、Workflow、tool identity与evaluator入口 |
 | `scenes/globalstock/contracts` | Experimental extension | [API](../../scenes/globalstock/contracts/API.md) | HK/US证券、行情、证据、identity与readiness合同 |
 | `scenes/globalstock/hostkit` | Experimental extension | [API](../../scenes/globalstock/hostkit/API.md) | 显式handler ports驱动的provider-neutral investigation协调 |
@@ -89,11 +89,11 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `runtime/workflow/journal` | Experimental extension | [API](../../runtime/workflow/journal/API.md) | durable 顺序与 host port |
 | `runtime/workflow/lowering` | Experimental extension | [API](../../runtime/workflow/lowering/API.md) | portable lowering |
 | `runtime/workflow/validation` | Experimental extension | [API](../../runtime/workflow/validation/API.md) | structural validation 与 policy port |
-| `runtime/workflow/bindingstate` | internalization candidate | [API](../../runtime/workflow/bindingstate/API.md) | binding/state mechanism |
-| `runtime/workflow/nodeexec` | internalization candidate | [API](../../runtime/workflow/nodeexec/API.md) | node execution coordination |
-| `runtime/workflow/orchestration` | internalization candidate | [API](../../runtime/workflow/orchestration/API.md) | lowered-plan orchestration 内核 |
-| `runtime/workflow/schema` | internalization candidate | [API](../../runtime/workflow/schema/API.md) | schema normalization/validation 内核 |
-| `runtime/workflow/transition` | internalization candidate | [API](../../runtime/workflow/transition/API.md) | state transition 内核 |
+| `runtime/workflow/bindingstate` | Experimental extension | [API](../../runtime/workflow/bindingstate/API.md) | binding/state mechanism |
+| `runtime/workflow/nodeexec` | Experimental extension | [API](../../runtime/workflow/nodeexec/API.md) | node execution coordination |
+| `runtime/workflow/orchestration` | Experimental extension | [API](../../runtime/workflow/orchestration/API.md) | lowered-plan orchestration 内核 |
+| `runtime/workflow/schema` | Experimental extension | [API](../../runtime/workflow/schema/API.md) | schema normalization/validation 内核 |
+| `runtime/workflow/transition` | Experimental extension | [API](../../runtime/workflow/transition/API.md) | state transition 内核 |
 
 ## 可选 Providers module
 

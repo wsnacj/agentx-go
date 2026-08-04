@@ -39,6 +39,7 @@ func TestExactPackageExports(t *testing.T) {
 		"CodeShutdownFailed",
 		"CodeUnsupportedProfile",
 		"Config",
+		"DefaultExecutionProfile",
 		"Error",
 		"ErrorCode",
 		"ExecutionAdapter",

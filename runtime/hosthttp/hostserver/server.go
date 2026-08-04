@@ -58,11 +58,13 @@ type ServeOptions struct {
 }
 
 // DefaultConfig returns the bounded local-first host transport profile.
+//
+// It is a pure default and never reads credentials or deployment policy from
+// the process environment. Hosts that intentionally use the conventional
+// environment variables must call ConfigFromEnv explicitly.
 func DefaultConfig(addr string) Config {
 	return Config{
 		Addr:              strings.TrimSpace(addr),
-		AccessToken:       strings.TrimSpace(os.Getenv("AGENTX_BUSINESS_HOST_TOKEN")),
-		TrustedProxyCIDRs: strings.TrimSpace(os.Getenv("AGENTX_BUSINESS_HOST_TRUSTED_PROXY_CIDRS")),
 		MaxBodyBytes:      DefaultMaxBodyBytes,
 		ReadTimeout:       15 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
@@ -71,6 +73,18 @@ func DefaultConfig(addr string) Config {
 		ShutdownTimeout:   10 * time.Second,
 		MaxHeaderBytes:    DefaultMaxHeaderBytes,
 	}
+}
+
+// ConfigFromEnv returns DefaultConfig enriched with the conventional Host
+// access token and trusted proxy CIDRs from the process environment.
+//
+// This function is an explicit deployment adapter. It does not mutate the
+// environment, log credentials, or read any other provider or Scene setting.
+func ConfigFromEnv(addr string) Config {
+	config := DefaultConfig(addr)
+	config.AccessToken = strings.TrimSpace(os.Getenv("AGENTX_BUSINESS_HOST_TOKEN"))
+	config.TrustedProxyCIDRs = strings.TrimSpace(os.Getenv("AGENTX_BUSINESS_HOST_TRUSTED_PROXY_CIDRS"))
+	return config
 }
 
 // BindFlags registers the common host transport flags.
