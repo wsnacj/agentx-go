@@ -6,8 +6,9 @@
 
 代码、examples、中文 API 和多 module 验证已经达到 Developer Preview 候选水平。
 Apache-2.0、`v0.1.0`九module release-train、9包核心兼容候选面及具名责任已经批准。
-tag和正式公开仍保持fail closed，直到当前release commit的技术/安全门禁与远端readback完成；
-仓库public开关继续需要独立授权。
+当前源码已经通过九module test/race/vet/tidy/list、module zip、clean-room/offline consumer、
+双平台API签名、文档站和可达漏洞扫描。tag与私有GitHub Release只在远端提交及readback
+一致后创建；仓库public开关继续需要独立授权。
 
 ## 技术门禁
 
@@ -35,6 +36,8 @@ Browser、Document、CGO 和系统命令路径还需要在受支持平台执行�
 | Developer Preview兼容范围 | 已批准：9包核心候选面；其它可导入包保持Experimental |
 | 安全响应责任 | `@wsnacj`；目标3个工作日确认收到，无修复SLA |
 | 发布审批与回滚责任 | `@wsnacj`；首版暂无backup owner |
+| 本地技术与安全门禁 | 已通过；所有module可达漏洞为0 |
+| 远端tag / Release readback | 待发布流程完成 |
 | 正式公开开关 | 待批准 |
 
 任何技术测试通过都不能替代这些决定。

@@ -81,10 +81,10 @@ Developer Preview 期间：
 
 1. 已完成：提交 Apache-2.0、NOTICE、九个 library module 的分发副本和直接依赖归属摘要；
 2. 已完成：批准`v0.1.0`九module同版tag与9包核心兼容候选面；
-3. 完成当前源码的 test、race、vet、tidy、list、module zip 和 clean-room consumer；
-4. 完成安全、依赖和凭据扫描；
-5. 文档、examples、Package API 与 Release 内容一致；
+3. 已完成：当前源码通过test、race、vet、tidy、list、module zip和clean-room/offline consumer；
+4. 已完成：安全与依赖扫描通过，九module可达漏洞为0；
+5. 已完成：文档站、examples、Package API、双平台签名和Release内容一致；
 6. 已完成：`@wsnacj`承担首版安全、发布与回滚责任，暂无backup owner。
 
-第3～5项缺少任一项时，只能称为Developer Preview候选，不能创建tag或声明正式公开。
+上述技术条件允许创建私有Developer Preview tag和Release，但仓库公开可见性仍需独立授权。
 即使全部完成，`v0.1.0`仍不是Beta、Stable或production-ready。
