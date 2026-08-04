@@ -1,4 +1,4 @@
-github.com/wsnacj/agentx-go v0.1.0 h1:tAHMRK891VwWRkViD6zpfaAwOJSRzxjuu5Yyw4zGWNw=
-github.com/wsnacj/agentx-go v0.1.0/go.mod h1:1lO78EX3Jj63/41OlIQdsi8baHcm9JbvwUvozZeOvWU=
-github.com/wsnacj/agentx-go/runtime v0.1.0 h1:tzpa/cbotEfW1J2VVTQFv/G5OKW2iYXxkUETiTI8paI=
-github.com/wsnacj/agentx-go/runtime v0.1.0/go.mod h1:jBTpusRBU66KEUK4txN4KBm+z1bQxt7Z/hVZtA0uvp0=
+github.com/wsnacj/agentx-go v0.1.0 h1:kIj2RYXEPjp+sC8ariaVN9jNWbdsYOpN+o54BjY4VzE=
+github.com/wsnacj/agentx-go v0.1.0/go.mod h1:vsbzjypYD4sYIhmYwaO2S6fHIVfSs6XsXZlEt8Dv5EI=
+github.com/wsnacj/agentx-go/runtime v0.1.0 h1:WqQ1XMuLlVGEyoMQCGCFSbj4PlGUOo/VWTaYU+iJXkM=
+github.com/wsnacj/agentx-go/runtime v0.1.0/go.mod h1:dcFVZmgcr+HQbGRB2A9/jqrTNtkppv7U20nwsvxBtrE=

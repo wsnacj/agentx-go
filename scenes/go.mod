@@ -11,5 +11,3 @@ require (
 	github.com/wsnacj/agentx-go/tools v0.1.0
 	golang.org/x/net v0.56.0
 )
-
-require golang.org/x/text v0.39.0 // indirect

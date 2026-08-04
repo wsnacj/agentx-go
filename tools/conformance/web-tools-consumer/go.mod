@@ -1,6 +1,6 @@
 module github.com/wsnacj/agentx-go/tools/conformance/web-tools-consumer
 
-go 1.24.1
+go 1.25.0
 
 require (
 	github.com/wsnacj/agentx-go/components v0.1.0
@@ -15,6 +15,6 @@ require (
 	github.com/go-shiori/dom v0.0.0-20230515143342-73569d674e1c // indirect
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f // indirect
 	github.com/wsnacj/agentx-go/runtime v0.1.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/text v0.39.0 // indirect
 )

@@ -1,6 +1,6 @@
 module github.com/wsnacj/agentx-go/extensions/conformance/productshell-consumer
 
-go 1.24.1
+go 1.25.0
 
 require (
 	github.com/wsnacj/agentx-go/components v0.1.0

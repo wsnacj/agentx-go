@@ -1,6 +1,6 @@
 module github.com/wsnacj/agentx-go/browser/conformance/browser-platform-consumer
 
-go 1.24.1
+go 1.25.0
 
 require (
 	github.com/wsnacj/agentx-go/browser v0.1.0
