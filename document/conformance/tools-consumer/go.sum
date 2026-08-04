@@ -6,11 +6,11 @@ github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOf
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/wsnacj/agentx-go/components v0.1.0 h1:ZwQfDAKpWVElBq7iTb/wAhfUWNAG/pCnVb1HBtCDfrI=
 github.com/wsnacj/agentx-go/components v0.1.0/go.mod h1:vzDNyIfw/9k4wzNf4IKLEbk9F4qhjg7fkK57Id3Y0oc=
-github.com/wsnacj/agentx-go/document v0.1.0 h1:0t5hd7ADNfUif+TDFZxzP2Lsah6vPU+h/cGBiSW7/e4=
+github.com/wsnacj/agentx-go/document v0.1.0 h1:ZSM/gJSYfgU5Mr6nEqMvprVu72YYfJ+0c/M71oPuD6k=
 github.com/wsnacj/agentx-go/document v0.1.0/go.mod h1:kGu1xmoPtFBJAwdeiK6bzP4wBsqXM6piSTCK9CGNj2U=
-github.com/wsnacj/agentx-go/runtime v0.1.0 h1:WqQ1XMuLlVGEyoMQCGCFSbj4PlGUOo/VWTaYU+iJXkM=
+github.com/wsnacj/agentx-go/runtime v0.1.0 h1:5ezpwf79BkExomP+JqZlEztciCSLZbQ6sAmJ5E4ZnpM=
 github.com/wsnacj/agentx-go/runtime v0.1.0/go.mod h1:dcFVZmgcr+HQbGRB2A9/jqrTNtkppv7U20nwsvxBtrE=
-github.com/wsnacj/agentx-go/tools v0.1.0 h1:T2emSI7qbDxuaEzgdhaPl0pCfIJ9JdyOv/Le3um27cg=
+github.com/wsnacj/agentx-go/tools v0.1.0 h1:q+0x/mJXSutogrg1ze7QttQTBkXpcZ2tvp98zroQMMo=
 github.com/wsnacj/agentx-go/tools v0.1.0/go.mod h1:IQTtCnFZ/h+0ok2rpIIoHxgcH84gI8xe/P/PX+zHBiY=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
