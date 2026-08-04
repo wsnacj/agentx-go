@@ -54,7 +54,7 @@ func main() {
 
 func runResume(ctx context.Context) (string, error) {
 	queue := scheduler.NewMemoryQueue(scheduler.QueueConfig{})
-	runtime, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
+	enqueueRuntime, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
 		Queue:  queue,
 		Worker: readyResumeWorker(),
 		Lane:   scheduler.LaneBackground,
@@ -68,11 +68,26 @@ func runResume(ctx context.Context) (string, error) {
 		TrustedCaller:  true,
 		IdempotencyKey: "resume-conformance",
 	}
-	enqueue, err := runtime.Enqueue(ctx, request)
+	enqueue, err := enqueueRuntime.Enqueue(ctx, request)
 	if err != nil || !enqueue.TickEnqueued {
 		return "", fmt.Errorf("resume enqueue blocked: report=%#v err=%v", enqueue, err)
 	}
-	report, err := runtime.Run(ctx, sessionhostkit.ResumeRunRequest{
+	if err := enqueueRuntime.Shutdown(context.Background()); err != nil {
+		return "", err
+	}
+
+	// A fresh construction consumes the tick from the Host-owned queue. This is
+	// the minimum cross-process-shaped resume proof; production Hosts replace
+	// MemoryQueue with a durable backend while keeping the same seam.
+	workerRuntime, err := sessionhostkit.NewResumeRuntime(sessionhostkit.ResumeConfig{
+		Queue:  queue,
+		Worker: readyResumeWorker(),
+		Lane:   scheduler.LaneBackground,
+	})
+	if err != nil {
+		return "", err
+	}
+	report, err := workerRuntime.Run(ctx, sessionhostkit.ResumeRunRequest{
 		Enabled:          true,
 		MaxCycles:        1,
 		MaxTicksPerCycle: 1,
@@ -83,14 +98,14 @@ func runResume(ctx context.Context) (string, error) {
 	if report.TicksAcked != 1 || !report.HostRuntimeDispatchByHost {
 		return "", fmt.Errorf("resume run blocked: status=%s acked=%d dispatch=%t", report.Status, report.TicksAcked, report.HostRuntimeDispatchByHost)
 	}
-	if err := runtime.Shutdown(context.Background()); err != nil {
+	if err := workerRuntime.Shutdown(context.Background()); err != nil {
 		return "", err
 	}
-	if err := runtime.Shutdown(context.Background()); err != nil {
+	if err := workerRuntime.Shutdown(context.Background()); err != nil {
 		return "", err
 	}
-	if _, err := runtime.Enqueue(context.Background(), request); !errors.Is(err, sessionhostkit.ErrResumeRuntimeClosed) {
+	if _, err := workerRuntime.Enqueue(context.Background(), request); !errors.Is(err, sessionhostkit.ErrResumeRuntimeClosed) {
 		return "", fmt.Errorf("resume closed call error = %v", err)
 	}
-	return fmt.Sprintf("agentx-resume-hostkit-ok:%s:%d:%t", report.Status, report.TicksAcked, report.HostRuntimeDispatchByHost), nil
+	return fmt.Sprintf("agentx-resume-hostkit-ok:%s:%d:%t:cross-construction", report.Status, report.TicksAcked, report.HostRuntimeDispatchByHost), nil
 }

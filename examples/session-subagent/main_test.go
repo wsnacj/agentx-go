@@ -22,4 +22,7 @@ func TestRun(t *testing.T) {
 	if !strings.HasPrefix(resumeOutput, "agentx-resume-hostkit-ok:") {
 		t.Fatalf("unexpected resume output: %s", resumeOutput)
 	}
+	if !strings.Contains(resumeOutput, "cross-construction") {
+		t.Fatalf("expected cross-construction resume proof, got %s", resumeOutput)
+	}
 }

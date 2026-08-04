@@ -13,7 +13,7 @@ v0.0.0-20260803174825-74ef1c50b0d7
 私有仓库首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`
 以及可读取仓库的 Git 凭据；凭据不能写入本目录、源码或 `go.mod`。
 
-## 七条能力路径
+## 七条核心能力与两条重型扩展路径
 
 | 示例 | 覆盖能力 | Host显式提供 | 默认副作用 |
 | --- | --- | --- | --- |
@@ -21,9 +21,11 @@ v0.0.0-20260803174825-74ef1c50b0d7
 | [`tool-loop`](tool-loop) | Open Tool Loop + Tool Direct Answer | fixture model、`diffs`注册与结果确认 | 无 |
 | [`workflow`](workflow) | 显式Workflow图 | validator、mapper、executor、identity、clock | 无 |
 | [`objective`](objective) | Objective Runtime Loop | strategy、policy、approval与fixture handler | 无 |
-| [`session-subagent`](session-subagent) | Session、Subagent、Scheduler、Resume | worker、readback、内存state/queue | 无 |
+| [`session-subagent`](session-subagent) | Session、Subagent、Scheduler、跨construction Resume | worker、readback、Host-owned内存state/queue | 无 |
 | [`deterministic-scene`](deterministic-scene) | Deterministic Scene | fixture行情handler与确定性evaluator | 无网络 |
 | [`reference-host`](reference-host) | 可配置的Chat或Tool Loop参考Host | provider、tools、RunStore选择 | 默认全离线 |
+| [`browser`](browser) | Browser Tool最小接入 | 显式memory backend | 无网络 |
+| [`document`](document) | PDF Tool最小接入 | 显式memory PDF/model/input ports | 无文件/网络 |
 
 逐个运行：
 
@@ -34,6 +36,8 @@ GOWORK=off go run ./workflow
 GOWORK=off go run ./objective
 GOWORK=off go run ./session-subagent
 GOWORK=off go run ./deterministic-scene
+GOWORK=off go run ./browser
+GOWORK=off go run ./document
 ```
 
 所有示例使用fixture、pure tool或in-memory port，不读取credential，不访问真实网络，

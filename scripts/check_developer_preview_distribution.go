@@ -64,6 +64,7 @@ func main() {
 
 	env := append(os.Environ(), "GOWORK=off")
 	printRun(root, env, "go", "run", "./scripts/check_developer_preview_version.go")
+	printRun(root, env, "go", "run", "./scripts/check_examples_version.go")
 	printRun(root, env, "go", "run", "./scripts/check_developer_preview_api.go", "-check-platforms")
 	printRun(root, env, "go", "run", "./scripts/check_docs_links.go")
 	cleanroomArgs := []string{"run", "./scripts/check_cleanroom_consumer.go"}

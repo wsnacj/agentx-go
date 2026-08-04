@@ -134,7 +134,8 @@ Host 必须显式调用 `ConfigFromEnv`。
 
 ## 示例与验证
 
-[examples](examples/README.md) 提供七类能力和 Reference Host 的可运行示例。它们使用
+[examples](examples/README.md) 提供七类核心能力、Browser/Document 重型扩展和 Reference Host
+的可运行示例。它们使用
 fixture、纯函数工具或内存 backend，适合作为新项目模板。
 
 [conformance](conformance/consumer) 和各 module 下的 `conformance/*-consumer` 用于验证

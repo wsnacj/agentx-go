@@ -44,7 +44,7 @@
 
 ## 示例与验证
 
-- [七类能力示例](../examples/README.md)
+- [七类核心能力与 Browser/Document 示例](../examples/README.md)
 - [Reference Host](../examples/reference-host)
 - [External-style consumer](../conformance/consumer)
 - [Opt-in Provider Smoke](../conformance/live/README.md)
