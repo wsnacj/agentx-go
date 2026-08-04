@@ -7,7 +7,7 @@ pseudo-version，在 `GOWORK=off`、无本地 `replace`、无 HS、无 Runner �
 当前固定版本：
 
 ```text
-v0.0.0-20260803174825-74ef1c50b0d7
+v0.0.0-20260804140828-54e119ec498d
 ```
 
 私有仓库首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`

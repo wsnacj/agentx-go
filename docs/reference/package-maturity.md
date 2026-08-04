@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页的focused gate评估root、components、runtime、extensions与scenes五个module中
-实际存在的77个production package；其中14个Developer Preview candidate进入签名门禁。
+实际存在的78个production package；其中14个Developer Preview candidate进入签名门禁。
 Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
 surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
@@ -66,6 +66,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `runtime/hosthttp/requestjson` | Experimental extension | [API](../../runtime/hosthttp/requestjson/API.md) | 有界严格 JSON 请求解码 |
 | `runtime/hosthttp/resourcepolicy` | Experimental extension | [API](../../runtime/hosthttp/resourcepolicy/API.md) | Host 资源 allowlist 与预算收窄 |
 | `runtime/toolloop` | Developer Preview candidate | [Tool Loop API](../../runtime/toolloop/API.md) | portable 多轮驱动、phase、检测和 assembly |
+| `runtime/transcript` | Experimental extension | [API](../../runtime/transcript/API.md) | 对话预算、压缩、工具协议修复与历史裁剪机制 |
 | `runtime/workflow` | Developer Preview candidate | [API](../../runtime/workflow/API.md) | Workflow Spec 数据合同与 Host admission seam |
 | `runtime/workflow/hostkit` | Developer Preview candidate | [Workflow Host Kit API](../../runtime/workflow/hostkit/API.md) | Workflow标准构造入口；组合 portable lowering、journal、node execution和orchestration |
 | `runtime/budget` | Experimental extension | [API](../../runtime/budget/API.md) | 预算判定 mechanism |

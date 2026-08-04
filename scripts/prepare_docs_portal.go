@@ -71,8 +71,8 @@ func main() {
 
 	entries, err := readPackages(filepath.Join(root, "docs", "reference", "developer-preview-packages.tsv"))
 	check(err)
-	if len(entries) != 77 {
-		check(fmt.Errorf("package maturity source has %d entries, want 77", len(entries)))
+	if len(entries) != 78 {
+		check(fmt.Errorf("package maturity source has %d entries, want 78", len(entries)))
 	}
 	candidates := 0
 	for _, entry := range entries {

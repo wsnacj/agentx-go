@@ -1,8 +1,16 @@
 github.com/wsnacj/agentx-go/browser v0.0.0-20260804113504-8477327bbe4e h1:ASBqxlR7/jSugxW+51glLrPLBhQVbEVsQleVvwNQK2A=
 github.com/wsnacj/agentx-go/browser v0.0.0-20260804113504-8477327bbe4e/go.mod h1:KCP/fWlzT1o25QZeBFIoSxW0yGHVQp/vtRAaKZ9Ysp4=
+github.com/wsnacj/agentx-go/browser v0.0.0-20260804140828-54e119ec498d h1:nlLKEJ4BLA93ml+XU/LH7+EOXVT4Q1/CTsqVz4/kHyw=
+github.com/wsnacj/agentx-go/browser v0.0.0-20260804140828-54e119ec498d/go.mod h1:KCP/fWlzT1o25QZeBFIoSxW0yGHVQp/vtRAaKZ9Ysp4=
 github.com/wsnacj/agentx-go/components v0.0.0-20260804113504-8477327bbe4e h1:gsvjGp8UvdD68z1mQhZHWfAGKBGENXB8If1hW/ib+Xo=
 github.com/wsnacj/agentx-go/components v0.0.0-20260804113504-8477327bbe4e/go.mod h1:dZpFtQUci6okqwTXJCq3XTSXmP96x21NsFrStSstLGk=
+github.com/wsnacj/agentx-go/components v0.0.0-20260804140828-54e119ec498d h1:wZtw1RtAJlCIRFaixA49yTZXpHNq73zvqNjgVRXqx+w=
+github.com/wsnacj/agentx-go/components v0.0.0-20260804140828-54e119ec498d/go.mod h1:dZpFtQUci6okqwTXJCq3XTSXmP96x21NsFrStSstLGk=
 github.com/wsnacj/agentx-go/runtime v0.0.0-20260804113504-8477327bbe4e h1:VoZM5kUR4hEy/n7v4W8BVU4F4B89UaudueWxMOQOzdQ=
 github.com/wsnacj/agentx-go/runtime v0.0.0-20260804113504-8477327bbe4e/go.mod h1:OgsFIwN+Yf+xl8YhkaIeiB26dKDtjX6szM21xaAE4gs=
+github.com/wsnacj/agentx-go/runtime v0.0.0-20260804140828-54e119ec498d h1:hMfaUCxfgUNNRVLw42DeikoZxf3qYRiun9GSGyALaEQ=
+github.com/wsnacj/agentx-go/runtime v0.0.0-20260804140828-54e119ec498d/go.mod h1:OgsFIwN+Yf+xl8YhkaIeiB26dKDtjX6szM21xaAE4gs=
 github.com/wsnacj/agentx-go/tools v0.0.0-20260804113504-8477327bbe4e h1:0hh/ySfXm1ezuQevtLwj1Qv8eybXW0Ej/kbihd9Knrg=
 github.com/wsnacj/agentx-go/tools v0.0.0-20260804113504-8477327bbe4e/go.mod h1:7qeFJ8c0aqQUlOvayEyz84PWU0vjTmNuO/97K4bm//0=
+github.com/wsnacj/agentx-go/tools v0.0.0-20260804140828-54e119ec498d h1:ZobafBT6QJlGMhxdGAEPbELNqGXXcMhIzlaW0X/vAz8=
+github.com/wsnacj/agentx-go/tools v0.0.0-20260804140828-54e119ec498d/go.mod h1:7qeFJ8c0aqQUlOvayEyz84PWU0vjTmNuO/97K4bm//0=

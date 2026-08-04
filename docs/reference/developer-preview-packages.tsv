@@ -1,6 +1,6 @@
 # package_dir<TAB>maturity<TAB>Chinese_Reference<TAB>go_doc_sha256_or_dash
 .	developer_preview_candidate	docs/reference/agentx.md	844fa64f12515d47fccf937b96762bc0d29b1e1ab433e74739c8f44489e22fa2
-components/llm	developer_preview_candidate	components/llm/API.md	8d2ee6387e52fd7fa6865d0aede6141df2552b353c3b8e47aff8cbc9964728ca
+components/llm	developer_preview_candidate	components/llm/API.md	28167beefcaf477e4f3f639840cb05e0a53eb5ad36c48acc8c3a0a31bc98094c
 components/tool	experimental_extension	components/tool/API.md	-
 scenes/astock	developer_preview_candidate	scenes/astock/API.md	ee3865566d06b120725e89a307c6adfefc0d74409f83325830e4e35041773624
 scenes/astock/contracts	experimental_extension	scenes/astock/contracts/API.md	-
@@ -65,6 +65,7 @@ runtime/telemetry	experimental_extension	runtime/telemetry/API.md	-
 runtime/telemetry/safeerror	experimental_extension	runtime/telemetry/safeerror/API.md	-
 runtime/toolerrors	experimental_extension	runtime/toolerrors/API.md	-
 runtime/toolloop	developer_preview_candidate	runtime/toolloop/API.md	ef5ca50321470d3e0fb3ba6f5e250fa11515474c9559cc870eaa5633e0106c43
+runtime/transcript	experimental_extension	runtime/transcript/API.md	-
 runtime/workflow	developer_preview_candidate	runtime/workflow/API.md	893b9715ee14333b445580af13dc3492f66073f16a4bc0479ab0816d6a2e5bb7
 runtime/workflow/bindingstate	experimental_extension	runtime/workflow/bindingstate/API.md	-
 runtime/workflow/composition	experimental_extension	runtime/workflow/composition/API.md	-
