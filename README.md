@@ -306,6 +306,7 @@ github.com/wsnacj/agentx-go/scenes
 - [最小合同示例](examples/contract-basic)
 - [自定义 Adapter 示例](examples/custom-adapter)
 - [示例与可运行消费证据](examples/README.md)
+- [Live conformance边界与真实Provider Smoke](conformance/live/README.md)
 - [三条标准路径统一 External-style consumer](conformance/consumer)
 - [Objective Host Kit external-style consumer](runtime/conformance/objective-hostkit-consumer)
 - [Session/Subagent Host Kit external-style consumer](runtime/conformance/session-hostkit-consumer)

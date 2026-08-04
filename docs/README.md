@@ -150,6 +150,7 @@ temporary Workflow planning机制、LLM组件和
 - [`examples/reference-host`](../examples/reference-host)
 - [`examples/contract-basic`](../examples/contract-basic)
 - [`examples/custom-adapter`](../examples/custom-adapter)
+- [`conformance/live/provider-smoke`](../conformance/live/provider-smoke)：显式opt-in、无HS的真实provider对话验收
 - [`conformance/consumer`](../conformance/consumer)
 - [`runtime/conformance/protocol-consumer`](../runtime/conformance/protocol-consumer)
 - [`runtime/conformance/construction-consumer`](../runtime/conformance/construction-consumer)

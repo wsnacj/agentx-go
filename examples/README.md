@@ -39,6 +39,10 @@ GOWORK=off go run ./deterministic-scene
 所有示例使用fixture、pure tool或in-memory port，不读取credential，不访问真实网络，
 不启动外部进程，不写文件，也不表示生产backend已经由AgentX默认提供。
 
+`examples`不会加入需要credential或真实网络的“隐藏模式”。真实provider验收位于
+[`conformance/live/provider-smoke`](../conformance/live/provider-smoke)，它是独立、显式
+opt-in的external-style consumer，不是教学示例，也不会被默认测试隐式执行。
+
 ## Reference Host
 
 `reference-host` 演示“小而稳定的Core + 可选Batteries + 显式Host”的最终组合方式。
