@@ -19,5 +19,9 @@
 `EmbeddingConfig` 显式传入；本地媒体只能通过 `Config.ResolveMedia` 由 Host 批准和解析，
 provider 本身不读取文件系统。
 
+`ModelConfig.ModelCapabilities()` 返回 provider-neutral 能力描述。当前高层 `Provider`
+会拒绝带 tools 的请求，因此即使 native API 类型包含 tools，该映射也保持
+`ToolCalling=false`，不会虚报尚未开放的高层路径。
+
 默认 endpoint 仅用于协议兼容。生产 Host 仍应显式确认 endpoint、凭据、代理、配额、
 重试和网络授权。当前包为 Experimental，不构成 Public/Beta/Stable 承诺。

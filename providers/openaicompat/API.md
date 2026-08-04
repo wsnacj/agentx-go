@@ -28,6 +28,8 @@ client, err := openaicompat.New(openaicompat.Config{
 
 `ModelConfig` 和 `EmbeddingConfig` 是 Host 已完成模型选择后的显式输入，不是产品模型目录。
 `Capability` 控制可选协议字段；缺少 streaming 等能力时返回 `providers.ErrUnsupported`。
+`ModelConfig.ModelCapabilities()` 将已显式配置的 text/tool/vision/stream/local-media/
+reasoning/parallel-tools/bot 能力投影为 `llm.ModelCapabilities`；它不探测远端模型。
 
 ## 取消、错误与 usage
 

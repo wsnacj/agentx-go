@@ -24,6 +24,9 @@ func (*Client) Chat(context.Context, ModelConfig, llm.ChatRequest) (*llm.ChatRes
 reasoning effort、prompt cache key和usage。非200响应保持`*providers.APIError` identity；
 failed/incomplete/缺少terminal event保持稳定typed-text错误边界。
 
+`ModelConfig.ModelCapabilities()` 将 text generation、tool calling 和当前配置显式开启的
+reasoning control 投影为 `llm.ModelCapabilities`，不读取账号或远端模型目录。
+
 ## Host责任
 
 Host必须显式完成token发现/刷新、account ID投影、credential rotation、endpoint/proxy、审计、

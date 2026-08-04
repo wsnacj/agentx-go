@@ -24,6 +24,9 @@ func (*Client) Chat(context.Context, ModelConfig, llm.ChatRequest) (*llm.ChatRes
 tool schema和tool choice；非200响应返回`*providers.APIError`。credential、模型路由、配额、
 proxy、审计与生产出网授权必须由Host提供。
 
+`ModelConfig.ModelCapabilities()` 声明当前 canonical Messages adapter 的 text generation
+与 tool calling；未实现的 stream/vision 等字段保持 fail-closed。
+
 ## 并发与取消
 
 `Client`构造后不修改内部状态，可并发调用。`Chat`遵守调用方context；若调用方没有更短
