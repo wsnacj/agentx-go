@@ -5,7 +5,7 @@
 
 ## 当前完成度不是“删除HS目录”
 
-截至2026-08-03，HS根`go.mod`已经固定消费九个agentx-go module；`core/agentx`有432个
+截至2026-08-04，HS根`go.mod`已经固定消费九个agentx-go module；`core/agentx`有427个
 production Go文件、`scene/agentx_*`有120个production Go文件直接import canonical路径。
 agentx-go本身约有773个production Go文件、23.9万行，且production代码没有HS反向依赖。
 
@@ -16,9 +16,10 @@ HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为
 - 大型examples、selftest、live harness和历史治理代码；
 - 具体Scene的provider、credential、HTTP/CLI、业务聚合和真实副作用。
 
-当前仍有约1,920个Go文件import `hs/core/agentx/...`：大多数是`core/agentx`内部package
-关系，其次是Scene，另有少量其它HS consumer。因此不能把`core/agentx`目录直接删除或把
-所有import机械替换成新仓路径：canonical没有、也不应拥有客户/部署Host语义。
+当前production范围仍有2,170处`hs/core/agentx/...` import，分布于1,031个Go文件：大多数是
+`core/agentx`内部package关系，其次是Scene，另有少量其它HS consumer。因此不能把
+`core/agentx`目录直接删除，或把所有import机械替换成新仓路径：canonical没有、也不应拥有
+客户/部署Host语义。
 
 如果最终目标进一步要求“HS不再提供任何`core/agentx`旧路径，只作为agentx-go的产品
 Host”，还需要一个独立的兼容退役阶段：先把所有portable authority核对为canonical唯一
@@ -38,6 +39,26 @@ provider、credential、Scene和真实副作用
 
 agentx-go production code不得 import `hs/...`、Runner或 `scene/...`。HS可以固定
 pseudo-version消费 canonical owner，但 owner package不得反向依赖 Facade或 HS。
+
+## P6-B Host owner与compatibility checkpoint
+
+P6-B1至P6-B3已把Runner registration、Tool Registry、Pack、Extension Runtime与AfterRun接线
+归位到HS `internal/agentxhost/runnerwiring`，并切换core及应用production consumer。旧
+`core/agentx/hostwiring`不再拥有Runner mutation实现。
+
+P6-B4又删除4个零production closure直连helper，并将其行为测试归位真实internal owner。
+P6-B0.5完整live/NL矩阵复测Core 5/5、只读Scene 3/3；完整AgentX回归没有新增功能失败。
+
+该checkpoint不表示严格旧路径已经清零：17个Scene导出facade仍以`hostwiring.Surface`作为
+兼容签名，另有4个core文件承载`domainmodule.Target`合同或Host diagnostics。它们都有真实
+consumer，不能当作零closure shim删除。把签名直接改成HS internal类型会产生不可导入的公共
+合同；新增canonical Surface则属于新的公共API与module决策。因此P6-B4停在
+`completed_with_scene_contract_residual_checkpoint`，等待独立Owner决定公共Scene Host
+registration port及17个签名的迁移方式。
+
+这不会增加新项目的接入成本：仓库外项目不需要、也不应实现HS compatibility层，应直接使用
+`agentx-go`的根Client、`runtime/hostkit`、Workflow/Objective/Session Host Kit和各Domain Kit。
+剩余compatibility只服务HS现有Scene与历史调用路径。
 
 ## P2-A OpenAI-compatible provider收口
 
