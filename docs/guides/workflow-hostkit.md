@@ -1,15 +1,15 @@
 # 使用 Workflow Host Kit
 
-这是 M3E 推荐给显式图执行调用方的标准接入路径。它适用于已经拥有业务 validation
+这是推荐给显式图执行调用方的标准接入路径。它适用于已经拥有业务 validation
 policy、node mapping、executor和可选存储 backend，但不希望了解或重复组合
 lowering、journal、node execution coordination、orchestration和 composition的 Host。
 
 ## 1. 安装与导入
 
-当前 private validation固定版本：
+安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/runtime@latest
 ```
 
 调用方只需两个 AgentX import：
@@ -97,11 +97,11 @@ hello workflow
 
 仓库内同一代码路径的 fixed-version证据位于
 [`runtime/conformance/workflow-hostkit-consumer`](../../runtime/conformance/workflow-hostkit-consumer)。
-该 nested module没有 `replace`，也不依赖 HS或 Runner。
+该 nested module没有 `replace`，也不依赖专有Runner。
 
 ## 3. Host 必须拥有的能力
 
-| 能力 | 是否必需 | Owner |
+| 能力 | 是否必需 | 责任方 |
 | --- | --- | --- |
 | `Validator` | 是 | Host产品 admission policy |
 | `Mapper` | 是 | Host tool/model/task mapping |

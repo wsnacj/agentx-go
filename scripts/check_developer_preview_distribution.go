@@ -111,7 +111,7 @@ func checkRequiredFiles(root string) {
 		".github/CODEOWNERS",
 		"docs/guides/developer-preview-policy.md",
 		"docs/reference/distribution-readiness.md",
-		"docs/reference/pre-beta-admission.md",
+		"docs/maturity.md",
 		"docs/architecture/developer-portal-generator.md",
 		"package.json",
 		"package-lock.json",

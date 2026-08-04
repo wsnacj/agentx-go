@@ -1,38 +1,71 @@
-# 参与开发
+# 贡献指南
 
-AgentX Go优先保持架构owner和公共合同清晰。Core只接受substrate-neutral合同与机制；
-provider、credential、授权/安全策略、具体backend、Scene规则和真实副作用应留在Host。
+感谢你改进 AgentX Go。架构合理性和可验证的外部合同优先于快速增加功能。
 
-## 工作流程
+## 开始之前
 
-本仓不要求GitHub付费PR能力。受信维护者可以使用以下等价流程：
+1. 先确认能力应属于 root、components、runtime、extensions、providers、tools、
+   browser、document 或 scenes 中的哪一个 owner；
+2. 领域规则、客户 schema、credential、安全策略和生产 backend 应留在调用方 Host，
+   不得下沉到通用 Runtime；
+3. 新的进程、文件、网络或系统副作用必须显式构造、默认关闭并可替换；
+4. 修改推荐 API 时，同时更新中文 Reference、examples、签名快照和升级说明。
 
-1. 从已接受checkpoint创建短期分支；
-2. 运行受影响package的focused test/race/vet；
-3. 修改Developer Preview candidate时更新中文Reference、API snapshot、CHANGELOG和迁移说明；
-4. 运行`GOWORK=off go run scripts/check_developer_preview_distribution.go`；
-5. 进入Pre-Beta候选时再运行`GOWORK=off go run scripts/check_pre_beta_candidate.go`；
-6. 以单一责任组织commit并推送分支；
-7. 由CODEOWNERS对明确commit range做人工审阅后合并或继续推进。
+## 开发流程
 
-PR可以作为审阅载体，但不是准入证据的唯一形式。审阅必须能定位source commit、变更
-范围、测试结果和回滚点，不能以聊天确认替代。
+- 从当前开发分支创建短期分支；
+- 保持提交聚焦，使用 `<area>: <imperative summary>` 风格；
+- 不提交凭据、机器路径、缓存、构建产物或真实客户数据；
+- 可以通过 Pull Request 或提交范围审阅协作；无论采用哪种方式，都必须保留测试证据。
 
-## API变更
+## 九个 Library Module
 
-- 不得静默改变Run、error identity/code、JSON、取消/deadline、并发或Shutdown语义；
-- Developer Preview的breaking change必须先获Owner批准，再同时更新snapshot、中文
-  Reference、CHANGELOG、consumer和升级说明；
-- 仅在确认变更后使用`check_developer_preview_api.go -update-snapshots`更新baseline；
-- Experimental package可以调整，但若已有external consumer，仍需记录迁移影响；
-- 不得把新的exported symbol自动标为Developer Preview candidate。
+```text
+.
+├── components
+├── runtime
+├── extensions
+├── providers
+├── tools
+├── browser
+├── document
+└── scenes
+```
 
-## 验证与安全
+根目录本身也是一个 module。`examples` 是独立教学 module，不属于 library release
+surface。修改多个 module 时，应从依赖图底部向上验证，禁止 owner package 反向依赖
+Host、具体 provider 或 Scene。
 
-四个nested module必须分别在`GOWORK=off`下测试、vet和tidy check。示例使用fixture、
-占位URL和无副作用adapter，不访问真实provider。不得提交`.env`、token、cookie、私钥、
-客户数据、机器本地路径或长期`replace`。
+## 测试
 
-安全问题请遵循[SECURITY.md](SECURITY.md)，不要通过公开commit提供可利用细节。
-`check_pre_beta_candidate.go`固定Go 1.25.12与`govulncheck@v1.6.0`，只从tracked source
-构建临时候选；不得用`-mod=mod`、长期`replace`或忽略扫描失败来伪造通过。
+在每个受影响 module 中运行：
+
+```bash
+GOWORK=off go test ./...
+GOWORK=off go test -race ./...
+GOWORK=off go vet ./...
+GOWORK=off go mod tidy -diff
+GOWORK=off go list ./...
+```
+
+涉及公开合同或文档时，再运行：
+
+```bash
+GOWORK=off go run ./scripts/check_developer_preview_api.go
+GOWORK=off go run ./scripts/check_package_api_docs.go
+GOWORK=off go run ./scripts/check_docs_links.go
+npm run docs:check
+```
+
+依赖浏览器、OCR、CGO 或系统命令的改动需要记录实际验证平台。默认测试不得要求真实
+credential 或生产网络。
+
+## API 与兼容性
+
+- Go exported 不自动等于承诺兼容的公共 API；
+- Developer Preview candidate 受到签名和中文 Reference gate；
+- Experimental package 可以调整，但必须在 CHANGELOG 中说明调用方可见影响；
+- 不得静默改变 error code、JSON、取消、状态转换、durable write 顺序或 `Shutdown` 语义；
+- 删除入口前应提供替代路径和迁移说明。
+
+安全问题请按照 [SECURITY.md](SECURITY.md) 私下报告。

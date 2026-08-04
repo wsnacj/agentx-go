@@ -9,7 +9,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 
 | 分级 | 本阶段含义 | 兼容性含义 |
 | --- | --- | --- |
-| Developer Preview candidate | M3E 选定的 Core标准路径或 M5D选定的 A股推荐入口直接需要，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
+| Developer Preview candidate | 推荐标准路径，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
 | Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定伪版本并评估升级差异 |
 | internalization candidate | 已位于 Go `internal`，并由上层入口隐藏 | 外部项目不能直接依赖 |
 
@@ -111,7 +111,7 @@ gate，全部保持Experimental：
 | `providers/retry` | Experimental extension | [API](../../providers/retry/API.md) | bounded context-aware retry |
 | `providers/usage` | Experimental extension | [API](../../providers/usage/API.md) | usage collector port |
 
-providers module使用独立fixed pseudo-version与consumer验证；不因出现在本表而升级为
+providers module使用独立不可变版本与consumer验证；不因出现在本表而升级为
 Developer Preview candidate、Public、Beta或Stable。
 
 ## 可选 Tools module
@@ -129,7 +129,7 @@ Developer Preview candidate、Public、Beta或Stable。
 | `tools/scheduler` | Experimental extension | [API](../../tools/scheduler/API.md) | Host Scheduler Backend驱动的cron命令路由 |
 | `tools/llmtask` | Experimental extension | [API](../../tools/llmtask/API.md) | 显式model adapter驱动的LLM-only JSON子任务 |
 
-tools module使用独立fixed pseudo-version与consumer验证；不拥有授权、sandbox或具体
+tools module使用独立不可变版本与consumer验证；不拥有授权、sandbox或具体
 backend，也不因出现在本表而升级为Developer Preview candidate、Public、Beta或Stable。
 
 ## 可选 Browser module
@@ -178,8 +178,8 @@ Browser内部process capture、network policy和script formatting package位于G
 | `document/pipeline/types` | Experimental extension | [API](../../document/pipeline/types/API.md) | pipeline结果与诊断合同 |
 | `document/pipeline/utils` | Experimental extension | [API](../../document/pipeline/utils/API.md) | 文档tree/page纯函数helper |
 
-P5-B consumer核对发现这些低层package均有canonical owner，且其中15个package已有HS
-direct consumer；强制internalize会制造新的顶层adapter并扩大迁移风险。因此本阶段选择保留
+consumer核对发现这些低层package已有真实调用方；强制internalize会制造新的顶层adapter并
+扩大迁移风险。因此当前选择保留
 Experimental并补齐Reference，而不是伪装成推荐稳定入口。Go `internal` package继续不进入
 外部API覆盖分母。
 

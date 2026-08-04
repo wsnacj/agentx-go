@@ -7,9 +7,13 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"unicode"
 )
@@ -40,17 +44,73 @@ func main() {
 				reference = filepath.Join(root, "docs", "reference", "agentx.md")
 			}
 			content, err := os.ReadFile(reference)
-			if err != nil || len(bytes.TrimSpace(content)) == 0 {
+			if err != nil || len(bytes.TrimSpace(content)) < 128 {
 				check(fmt.Errorf("%s: missing non-empty Chinese API reference %s", filepath.ToSlash(relative), filepath.ToSlash(reference)))
 			}
 			if !containsHan(content) {
 				check(fmt.Errorf("%s: API reference has no Chinese text", filepath.ToSlash(relative)))
+			}
+			if !bytes.HasPrefix(bytes.TrimSpace(content), []byte("# ")) {
+				check(fmt.Errorf("%s: API reference must start with a level-one heading", filepath.ToSlash(relative)))
+			}
+			exports, err := exportedIdentifiers(packageDir)
+			check(err)
+			if len(exports) > 0 && !mentionsAnyIdentifier(string(content), exports) {
+				check(fmt.Errorf("%s: API reference does not mention any of %d exported identifiers", filepath.ToSlash(relative), len(exports)))
 			}
 			packages++
 		}
 	}
 
 	fmt.Printf("agentx-package-api-docs-ok:modules=%d:packages=%d\n", len(modules), packages)
+}
+
+func exportedIdentifiers(directory string) ([]string, error) {
+	packages, err := parser.ParseDir(token.NewFileSet(), directory, func(info os.FileInfo) bool {
+		return !strings.HasSuffix(info.Name(), "_test.go")
+	}, 0)
+	if err != nil {
+		return nil, err
+	}
+	names := map[string]bool{}
+	for _, parsed := range packages {
+		for _, file := range parsed.Files {
+			ast.Inspect(file, func(node ast.Node) bool {
+				switch value := node.(type) {
+				case *ast.TypeSpec:
+					if ast.IsExported(value.Name.Name) {
+						names[value.Name.Name] = true
+					}
+				case *ast.ValueSpec:
+					for _, name := range value.Names {
+						if ast.IsExported(name.Name) {
+							names[name.Name] = true
+						}
+					}
+				case *ast.FuncDecl:
+					if ast.IsExported(value.Name.Name) {
+						names[value.Name.Name] = true
+					}
+				}
+				return true
+			})
+		}
+	}
+	result := make([]string, 0, len(names))
+	for name := range names {
+		result = append(result, name)
+	}
+	sort.Strings(result)
+	return result, nil
+}
+
+func mentionsAnyIdentifier(content string, identifiers []string) bool {
+	for _, identifier := range identifiers {
+		if strings.Contains(content, identifier) {
+			return true
+		}
+	}
+	return false
 }
 
 func hasInternalSegment(path string) bool {

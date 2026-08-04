@@ -1,6 +1,6 @@
 # 公共执行模型
 
-## M3E 代码合同
+## 公共代码合同
 
 自定义 Adapter路径：
 
@@ -53,7 +53,7 @@ AgentX 使用六个正交维度描述执行，而不是把所有能力折叠为�
 | ResultPolicy | `runner_final_reply` | 由 Runner 最终回复收口 |
 | Lifecycle | `synchronous_run` | 单次同步调用生命周期 |
 
-当前根合同只接受这一个完整画像。字段使用字符串是为了保留 M2已验证合同，并不代表任意
+当前根合同只接受这一个完整画像。字段使用字符串是为了保持可观测合同，并不代表任意
 组合都获得支持。
 
 ## 与既有七种“模式”的关系
@@ -81,7 +81,7 @@ provider、授权、sandbox、RunStore或产品默认值。`runtime/workflow/*`�
 真实 portable implementation owner，但 concrete executor、backend、产品 validation
 policy和根 Facade construction继续由 Host拥有。
 
-M3E补齐了“代码已经迁入”与“可被新项目标准接入”之间的缺口：Workflow调用方只
+Workflow Host Kit补齐了“低层机制已经存在”与“可被新项目标准接入”之间的缺口：调用方只
 依赖 `workflow`和 `workflow/hostkit`，低层 composition/journal/nodeexec等 package
 仍按 Experimental或 internalization candidate治理。
 

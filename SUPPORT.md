@@ -1,37 +1,43 @@
-# 支持边界
+# 支持政策
 
-AgentX Go当前只提供private Developer Preview的best-effort开发支持，没有生产SLA、长期
-支持版本或兼容保证。
+## 当前状态
 
-## 当前支持对象
+AgentX Go 当前是 Developer Preview：
 
-- 文档中记录的九module fixed pseudo-version矩阵；
-- 自定义`ExecutionAdapter`、Model/Tool Host Kit和Workflow Host Kit三条标准路径；
-- 成熟度矩阵中标为Developer Preview candidate的14个package入口；
-- 无HS、无Runner、无长期`replace`的conformance consumer。
+- 推荐入口有中文 Reference、examples 和可重复测试；
+- Experimental package 可能在正式稳定版本前调整；
+- 当前不提供生产 SLA、长期支持期限或跨大版本兼容承诺；
+- 真实 provider、网络、浏览器、OCR、进程和 durable backend 由调用方环境决定。
 
-非敏感缺陷和文档问题可通过仓库Issue或Owner批准的协作渠道提交。安全问题必须遵循
-[SECURITY.md](SECURITY.md)，不得进入公开Issue。
+## 获取帮助
 
-问题报告应包含`go version`、`go env GOOS GOARCH CGO_ENABLED`、九module最终
-`go list -m`结果、最小复现、期望/实际行为和已运行的gate。不得附带真实credential。
+非敏感问题可以通过仓库 Issue 提交。请包含：
 
-## 当前验证矩阵
+- 使用的 Go 版本、操作系统和架构；
+- 相关 module 与精确版本；
+- 最小复现代码；
+- 期望行为和实际行为；
+- 已去除 credential、客户数据和私有 endpoint 的日志。
 
-| 维度 | 当前事实 |
-| --- | --- |
-| Go module语言基线 | `go 1.24.1`；该directive不是Go 1.24 patch安全支持承诺 |
-| 当前安全候选工具链 | Go 1.25.12；M6D发现Go 1.25.5标准库可达漏洞后已fail closed升级 |
-| 已接受完整测试主机 | macOS arm64，以及M6C的Ubuntu 24.04.4 amd64/Go 1.25.5历史证据 |
-| API/build surface | darwin/arm64与linux/amd64，`CGO_ENABLED=0` |
-| Ubuntu真实运行 | Platform run `30792532517`在`2ae4fbd671fa`、Go 1.25.12上重跑九module normal/race/vet/tidy/list、聚合consumer、候选zip与安全扫描 |
-| CGO/native | Ubuntu批准矩阵以`CGO_ENABLED=1`通过；Core推荐路径仍不要求CGO，未声明的native能力不属于支持面 |
+安全问题必须按照 [SECURITY.md](SECURITY.md) 私下报告。
 
-当前证据只证明上述单一Ubuntu/amd64/Go版本矩阵；它不自动承诺其它发行版、架构、Go版本、
-系统级native依赖或生产SLA。可复跑入口为`.github/workflows/m6c-ubuntu-runtime.yml`与
-`go run ./scripts/check_ubuntu_runtime.go`，后者会拒绝非Linux amd64或非Go 1.25.12主机。
-M6D把当前安全候选固定到Go 1.25.12；在正式批准最低支持工具链前，不得从`go.mod`的
-语言directive推导Go 1.24运行时仍受安全支持。
+## 支持的接入路径
 
-provider、credential、授权/审批、真实网络、durable backend、Scene业务规则、部署容量和
-生产可用性不属于本仓Developer Preview支持承诺。
+优先支持以下路径：
+
+1. 根 `Client` + 自定义 `ExecutionAdapter`；
+2. Model / Tool Host Kit；
+3. Workflow Host Kit；
+4. Objective Host Kit；
+5. Session / Subagent Host Kit；
+6. 文档中列出的可选 Providers、Tools、Browser、Document 与 Scenes 推荐入口。
+
+直接依赖低层 Experimental package 的调用方需要自行评估升级差异。
+
+## 不包含
+
+- 调用方私有 provider、credential、网络、代理或账号问题；
+- 未经授权的生产副作用和第三方服务条款；
+- 调用方自定义 Host policy、backend 或 Scene 业务规则；
+- 未记录版本、无法复现或包含敏感信息的问题；
+- 非正式发布 commit 的长期维护承诺。

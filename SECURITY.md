@@ -1,50 +1,44 @@
-# 安全报告政策
+# 安全政策
 
-AgentX Go当前是私有Developer Preview，不是Public、Beta、Stable或生产支持版本。
+## 报告漏洞
 
-## 如何报告
+请不要在公开 Issue、讨论、日志或提交中披露尚未修复的漏洞、凭据或可利用细节。
 
-请优先使用GitHub仓库的私有Security Advisory入口报告漏洞。若该入口不可用，请通过
-仓库Owner批准的私密渠道联系`@wsnacj`。不要在公开Issue、讨论、日志或提交中披露漏洞
-细节、凭据、token、cookie、真实客户数据或可复用攻击载荷。
+优先使用本仓库的 GitHub Private Vulnerability Reporting / Security Advisory。若该功能
+不可用，请通过 CODEOWNERS 中维护者公布的私密联系方式提交：
 
-报告至少应包含：
-
-- 受影响module、package和固定版本；
-- 无真实secret的最小复现；
-- 影响范围、攻击前提和是否涉及网络/文件/命令副作用；
+- 受影响的 module、package 和版本；
+- 最小复现步骤；
+- 可能的影响和攻击前提；
 - 已知缓解方式；
-- 报告者希望使用的后续联络方式。
+- 可以安全公开的时间范围。
 
-## 响应目标
+维护者会先确认收到报告，再评估影响、修复范围和披露计划。正式响应时限将在首个公开
+版本发布前明确。
 
-私有Developer Preview阶段的目标是3个工作日内确认收到、7个工作日内给出初步分级和
-下一步。这是best-effort响应目标，不是生产SLA或修复期限。若怀疑凭据已经暴露，应由
-对应Host/Provider owner立即吊销或轮换；AgentX Core不保存或恢复调用方secret。
+## 安全边界
 
-## 范围
+AgentX 不应默认发现或持久化 credential。Provider、网络、进程、文件、浏览器、OCR 和
+生产 backend 必须由 Host 显式配置并承担授权边界。
 
-本仓安全入口覆盖root、components、runtime、extensions、providers、tools、browser、
-document和scenes九个library module。这里的scenes是新仓中的portable Domain Kit；HS中的
-具体Scene Host、credential、授权策略、真实backend和部署环境仍由各自owner负责。若问题
-跨越边界，仓库maintainer会协助路由。当前只支持文档记录的固定版本矩阵，不承诺旧
-pseudo-version安全回补。
+以下内容不应提交到仓库、示例或构建日志：
 
-## 自动扫描边界
+- API key、token、cookie、私钥和真实生产 endpoint credential；
+- 客户数据、真实会话内容和未脱敏 artifact；
+- 本机绝对路径、临时 secret 文件和 credential store 导出；
+- 含敏感值的 HTTP request/response dump。
 
-Pre-Beta候选使用固定
-`golang.org/x/vuln/cmd/govulncheck@v1.6.0`扫描九module全部package。执行工具链与
-source-mode标准库模型均显式固定为Go 1.25.12；仅用新版Go启动扫描器不能替代后者。
-M6D曾在Go 1.25.5上命中10个标准库可达漏洞并按fail-closed停止，升级到Go 1.25.12后
-当前可达漏洞为0。漏洞数据库或工具下载不可达时只允许有界重试，不能把
-执行失败写成零漏洞。
+## 支持范围
 
-当前extensions与document graph各有1个不可达module-level finding：`GO-2026-5024`位于
-`golang.org/x/sys`；scenes另有10个`golang.org/x/net` module-only finding。九module
-production import/call graph均未触达这些记录，已知可达漏洞为0。直接把extensions升级到
-当前修复版本会同时提升最低Go版本，因此该结论不是永久豁免；具名security approver仍需
-在Beta前决定兼容升级、工具链提升或接受残余平台边界。自动扫描也不能覆盖
-反射/unsafe不可见调用、Host credential、授权策略、部署配置或业务readback。
+当前代码属于 Developer Preview。只有仓库中正式发布并列入支持矩阵的版本才获得安全
+回补承诺；开发分支和任意 commit 不自动形成长期支持版本。
 
-正式Public/Beta发布前仍需具名security approver、漏洞响应授权、license和release
-流程；本文件不代表这些门禁已经关闭。
+安全修复可能要求调用方升级依赖或调整配置，但不会以安全名义隐瞒 error、JSON、授权或
+副作用语义变化。无法安全兼容时，发布说明必须明确迁移和缓解步骤。
+
+## 依赖与供应链
+
+- Go module、Node lockfile 和嵌入资产变更必须经过差异审阅；
+- 发布候选应执行依赖漏洞扫描、module zip/readback 和 clean-room consumer；
+- 生成文件、缓存、测试 credential 和本地 replace 不得进入发行 artifact；
+- 未选择 License、未完成安全复核或未获得发行授权时，不得声明正式公开发行。

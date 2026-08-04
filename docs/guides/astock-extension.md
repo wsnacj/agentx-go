@@ -9,10 +9,10 @@
 ## 安装
 
 ```bash
-go get github.com/wsnacj/agentx-go/scenes@v0.0.0-20260803022834-4043fbe78ff3
+go get github.com/wsnacj/agentx-go/scenes@latest
 ```
 
-当前版本是 private validation pseudo-version，不是正式 tag或 semver承诺。
+可重复构建的项目应把解析结果固定在`go.mod`和`go.sum`中。
 
 ## 读取目录与资产
 
@@ -51,7 +51,7 @@ binding, ok, err := coordinator.ResolveBinding(
 ```
 
 `RegisterPacks`按 valuation→research→signal稳定顺序注册。Validator与
-ToolArgumentLowerer必须由 Host显式提供；扩展不会把 HS validation policy、具体
+ToolArgumentLowerer必须由 Host显式提供；扩展不会把产品 validation policy、具体
 工具映射或 backend藏进默认值。
 
 ## 接入 Host handler
@@ -82,7 +82,7 @@ task frame协调调用并聚合 readiness。未注入的能力会产生结构化
 ## 可运行证据
 
 [`scenes/conformance/astock-consumer`](../../scenes/conformance/astock-consumer)
-是独立 nested module，固定远端 pseudo-version，不使用 HS、Runner、长期 `replace`
+是独立 nested module，固定远端不可变版本，不使用专有Runner、长期 `replace`
 或网络。它完整验证：
 
 ```text
@@ -98,6 +98,5 @@ GOWORK=off go -C scenes/conformance/astock-consumer run .
 `scenes`会固定其所需的`extensions`与`runtime`依赖；只有调用方源码直接import这些module时
 才需要把它们列为直接依赖。
 
-需要真实行情/研报/信号时，HS继续通过 `scene/agentx_a_stock/module`与 `livekit`
-提供具体 Host adapter。该路径的 provider、credential、cache、source priority、
-fallback、网络与生产 readiness不属于本 portable API。
+需要真实行情、研报或信号时，调用方应提供具体 Host adapter。provider、credential、
+cache、source priority、fallback、网络与生产 readiness不属于本 portable API。

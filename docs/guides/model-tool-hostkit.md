@@ -3,7 +3,7 @@
 这是推荐给普通新项目的 Model Conversation、Open Tool Loop 与 Tool Direct Answer
 接入路径。调用方显式提供模型请求和
 工具执行函数，Host Kit 负责 portable round 顺序、多轮 assembly、根 Client、
-typed error 和 Shutdown 组合。整个路径不依赖 HS、Runner、Scene 或长期
+typed error 和 Shutdown 组合。整个路径不依赖专有 Runner、具体 Scene 或长期
 `replace`。
 
 如果已有完整 Runtime，只需要接入稳定根合同，请使用

@@ -96,10 +96,8 @@ func main() {
 		check(writeFile(target, []byte(decorated)))
 	}
 
-	versionBytes, err := os.ReadFile(filepath.Join(root, "docs", "reference", "developer-preview-version.txt"))
-	check(err)
 	nav := navigation{
-		Version:      strings.TrimSpace(string(versionBytes)),
+		Version:      "Developer Preview (unreleased)",
 		SourceCommit: commit,
 		Packages:     entries,
 	}
@@ -208,7 +206,7 @@ func packagesPage(nav navigation) string {
 	}{
 		{"developer_preview_candidate", "Developer Preview candidate", "进入focused API签名、类型闭包与中文Reference gate；尚无semver长期承诺。"},
 		{"experimental_extension", "Experimental extension", "已有真实implementation与consumer，Beta前仍可能调整入口或owner。"},
-		{"internalization_candidate", "Internalization candidate", "低层迁移owner或Go internal实现，新项目不应直接建立长期依赖。"},
+		{"internalization_candidate", "Internal", "Go internal实现，由上层入口隐藏，外部项目不能直接依赖。"},
 	}
 	for _, group := range groups {
 		fmt.Fprintf(&builder, "## %s\n\n%s\n\n<div class=\"package-grid\">\n", group.title, group.detail)

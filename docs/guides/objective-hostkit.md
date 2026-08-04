@@ -3,8 +3,7 @@
 Objective Host Kit适合“Host拥有真实执行与业务授权，AgentX拥有可移植控制语义”的场景。
 它不是自动读取凭据、自动选工具或自动写业务系统的黑盒Agent。
 
-当前private validation固定版本为
-`v0.0.0-20260802113655-f41de95ec5be`。
+可重复构建的项目应固定`go.mod`和`go.sum`中的不可变版本。
 
 ## 标准接入步骤
 
@@ -66,11 +65,10 @@ missing inputs和next action。Host确认后再执行显式dispatch。Host Kit�
 - handler并发安全、credential生命周期、连接池和Shutdown由Host负责；
 - side-effect adapter仍必须在ingress policy/approval中显式允许。
 
-## 与HS迁移的关系
+## 与既有 Host 的关系
 
-HS产品入口继续拥有产品refs、配置来源、operator approval和具体handlers；其通用dispatch、
-normalization和verification实现改由本package持有。HS兼容类型只用于平滑迁移，不是第二份
-source authority。
+既有产品入口继续拥有产品refs、配置来源、operator approval和具体handlers；通用dispatch、
+normalization和verification由本package提供。兼容类型只应用于平滑接入，不应复制通用实现。
 
 ## 当前边界
 

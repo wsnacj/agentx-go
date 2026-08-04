@@ -1,6 +1,6 @@
 # Run 与 Artifact 数据平面
 
-M5F把执行记录和产物索引的 portable source authority分别放入：
+执行记录和产物索引分别由以下 package 提供：
 
 ```go
 import (
@@ -9,7 +9,7 @@ import (
 )
 ```
 
-两个 package当前均为 **Experimental / private validation**。它们提供数据合同、窄
+两个 package当前均为 **Experimental**。它们提供数据合同、窄
 port和可用于测试或单进程接入的内存实现，不是完整 durable Runtime，也不构成
 Public、Beta、Stable或 production-ready声明。
 

@@ -1,102 +1,56 @@
 # 版本、升级与回滚
 
-AgentX Go当前仍是private Developer Preview，没有tag、semver或Public/Beta/Stable兼容
-承诺。当前九个module按各自最后一次真实source-authority checkpoint使用不可变
-pseudo-version；准确矩阵以机器可读
-[`developer-preview-module-versions.txt`](../reference/developer-preview-module-versions.txt)为
-事实源，并投影到[安装与多Module引用](installation-and-modules.md#当前固定验证版本)。调用方不得假设它们
-来自同一个commit，也不得把任意单个pseudo-version推广为整个仓库的版本。
+AgentX Go 当前处于 Developer Preview。正式版本、tag 前缀和长期支持周期以 Release
+说明为准。
 
-根、runtime与extensions当前仍使用`v0.0.0-20260802113655-f41de95ec5be`；components
-已经因后续LLM/tool合同收口使用`v0.0.0-20260802130858-34ec103e09d9`。这两个值都是
-当前消费基线的一部分，不是正式发行版本。providers、tools、browser、document和scenes
-也各自使用安装指南记录的固定版本。M5S/M5T历史回滚点仍保留在changelog和成熟度记录中。
+## 版本原则
 
-Pre-Beta技术门禁使用`v0.0.0-m6d.0`在临时file proxy中验证九module同版发行列车。该版本不会
-写入tracked `go.mod`、tag或下载入口，脚本退出后候选zip被删除；它不能作为项目依赖。
-manifest继续把当前root fixed pseudo-version记录为回滚点。
+- 每个 module 使用 Go module 版本语义；
+- 调用方应提交 `go.mod` 和 `go.sum`，固定精确不可变版本；
+- 不把分支名、HTTP API 的 `v1` 或数据 schema 的 `*_v1` 解释为稳定 Go module 版本；
+- Experimental package 的变更风险高于 Developer Preview candidate；
+- 版本升级必须可以回滚到升级前的 `go.mod`/`go.sum`。
 
-正式Beta建议使用`v0.1.0-beta.1`，九个module分别使用Go多module约定的目录tag前缀；
-该建议尚未获得发行授权，完整矩阵与fail-closed责任见
-[Pre-Beta准入合同](../reference/pre-beta-admission.md)。
+## 九 Module 发行前缀
 
-## 历史同版列车与当前独立版本
+计划采用标准 nested-module tag：
 
-M5T/M6D曾让根、components、runtime和extensions四个Core module使用同一版本，以验证
-同版发行列车。后续迁移已经让components和五个可选module前进到不同checkpoint，因此
-“四个Core module必须同commit”不再是当前事实。升级时应一次显式指定项目直接使用的
-全部AgentX module，让Go的Minimal Version Selection得到可复现组合：
+| Module | Tag 前缀 |
+| --- | --- |
+| root | `vX.Y.Z` |
+| components | `components/vX.Y.Z` |
+| runtime | `runtime/vX.Y.Z` |
+| extensions | `extensions/vX.Y.Z` |
+| providers | `providers/vX.Y.Z` |
+| tools | `tools/vX.Y.Z` |
+| browser | `browser/vX.Y.Z` |
+| document | `document/vX.Y.Z` |
+| scenes | `scenes/vX.Y.Z` |
 
-```bash
-export GOPRIVATE=github.com/wsnacj/agentx-go
-export GONOSUMDB=github.com/wsnacj/agentx-go
-export GOWORK=off
+首次正式版本发布前，该规则仍是发行候选设计，不代表仓库已经存在相应 tag。
 
-go get github.com/wsnacj/agentx-go@v0.0.0-20260802113655-f41de95ec5be \
-  github.com/wsnacj/agentx-go/components@v0.0.0-20260802130858-34ec103e09d9 \
-  github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be \
-  github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
-```
+## 升级步骤
 
-只直接import部分module的项目，可以只保留实际使用项；如果同时使用多个module，则必须
-检查最终选择版本，而不能只看`go.mod`中某一行：
+1. 阅读 [CHANGELOG](../../CHANGELOG.md)；
+2. 检查 [Package 成熟度](../reference/package-maturity.md)；
+3. 在独立分支更新一个依赖 cohort；
+4. 运行 `go mod tidy -diff`、`go test`、`go test -race` 和 `go vet`；
+5. 运行真实 Host 的代表集成案例；
+6. 检查 error、JSON、状态、取消、持久化顺序和副作用授权；
+7. 合入后保留升级前版本和回滚步骤。
 
-```bash
-go list -m -f '{{.Path}} {{.Version}}' all | grep '^github.com/wsnacj/agentx-go'
-```
+## Breaking change
 
-任何module都不应仅为“看起来同版”强行回退到旧commit。升级任一module时，应同时检查
-其`go.mod`最终选择的Core/peer module版本，并按安装指南中的九module矩阵记录实际回滚点。
+Developer Preview 的 breaking change 必须：
 
-## 升级检查顺序
-
-1. 保存升级前的`go.mod`、`go.sum`和focused测试结果；
-2. 显式指定直接使用的全部AgentX module，并检查`go mod graph`和
-   `git diff -- go.mod go.sum`；
-3. 运行本项目直接使用package的测试、race和vet；
-4. 对根Run/error/cancellation/Shutdown、LLM JSON/tool、Workflow状态/持久化顺序和
-   extension公开DTO执行差分；
-5. 再运行调用方完整回归，确认没有新增失败；
-6. 记录最终`go list -m`输出和可回滚的提交。
-
-如果调用方不能访问私有仓库，应先修复Git/GOPRIVATE配置。不要用长期本地`replace`
-绕过访问或版本问题；那样只能证明本机源码可编译，不能证明其他项目可消费。
-
-## API 差分边界
-
-- 14个Developer Preview candidate有`go doc -all`可读snapshot和hash gate；升级前后应
-  审阅签名变化，而不是默认“有文档”等于兼容；
-- 其余Experimental package仍可能在后续Owner审阅中调整；新项目优先使用七类能力矩阵的
-  construction和成熟度矩阵中的推荐入口；
-- type alias可以保持源码、字段和JSON兼容，但反射得到的定义package可能随source
-  authority迁移而变化。依赖反射package identity的调用方必须单独验证；
-- provider、credential、authorization、具体backend、Scene业务规则和真实网络不属于
-  Core版本合同。
+- 在 CHANGELOG 明确列出；
+- 提供替代入口和迁移示例；
+- 更新中文 Reference 与签名快照；
+- 使用新的不可变版本；
+- 通过 external-style consumer；
+- 不静默改变安全和副作用边界。
 
 ## 回滚
 
-回滚必须回到升级前实际记录的module版本集合，而不是猜测某个旧commit。执行与升级
-相同的`go get module@version`，然后恢复对应`go.sum`并重新运行focused测试。若升级已
-伴随调用方代码适配，应使用一个完整Git回滚提交，使代码与module版本同时恢复。
-
-不要删除module cache、改写Git历史或使用本地`replace`伪造回滚成功。无法在旧版本上
-恢复既有行为时，应保留失败证据并停止升级。
-
-## 当前验证证据
-
-`scripts/check_developer_preview_version.go`会核对九module矩阵、代表性fixed-version
-consumer和安装文档；历史四module脚本不再被当作当前九module版本证据。
-
-根[`conformance/consumer`](../../conformance/consumer)直接固定Core四module及scenes版本，并
-运行自定义ExecutionAdapter、Model/Tool Host Kit、Workflow Host Kit与A股extension
-fixture路径。`scripts/check_cleanroom_consumer.go`会把该consumer复制到仓库外临时目录，
-在`GOWORK=off`、`GOPROXY=off`、`-mod=readonly`下从module cache验证，不读取本仓源码。
-
-Providers、Tools、Browser、Document与其它Scene分别由各module的`conformance`
-consumer验证，不通过根consumer伪装成单一“全功能开箱即用”入口。示例和consumer映射见
-[`examples/README.md`](../../examples/README.md)。这些证据只说明当前固定版本可独立消费；
-正式tag、license/NOTICE、security/legal、
-release owner和生产SLA仍保持fail closed。
-
-允许/禁止变更、九module未来tag前缀、版本epoch和维护责任见
-[Developer Preview兼容与分发政策](developer-preview-policy.md)。
+回滚应恢复完整 module 组合，而不是只降级一个高层 module。若问题涉及真实 provider、
+Browser、Document 或 Scene，应同时恢复 Host 配置、backend schema 和部署 artifact。

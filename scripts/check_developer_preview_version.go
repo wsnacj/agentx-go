@@ -1,7 +1,8 @@
 //go:build ignore
 
 // check_developer_preview_version verifies the nine-module fixed-version facts
-// used by representative consumers and Chinese adoption documentation.
+// used by representative external consumers. Public adoption documentation
+// intentionally does not embed these fast-moving validation versions.
 package main
 
 import (
@@ -50,9 +51,6 @@ func main() {
 		check(fmt.Errorf("legacy root version = %q, matrix has %q", rootVersion, expected["github.com/wsnacj/agentx-go"]))
 	}
 
-	installationBytes, err := os.ReadFile(filepath.Join(root, "docs/guides/installation-and-modules.md"))
-	check(err)
-	installation := string(installationBytes)
 	for _, module := range modules {
 		version, ok := expected[module.path]
 		if !ok {
@@ -62,21 +60,6 @@ func main() {
 		check(err)
 		if selected != version {
 			check(fmt.Errorf("%s selects %s at %q, want %q", module.consumer, module.path, selected, version))
-		}
-		if !strings.Contains(installation, module.path+"\n  "+version) {
-			check(fmt.Errorf("installation guide does not reference %s at %s", module.path, version))
-		}
-	}
-
-	for _, relative := range []string{
-		"README.md",
-		"CHANGELOG.md",
-		"docs/guides/versioning-and-upgrades.md",
-	} {
-		content, err := os.ReadFile(filepath.Join(root, relative))
-		check(err)
-		if !strings.Contains(string(content), rootVersion) {
-			check(fmt.Errorf("%s does not reference accepted root version %s", relative, rootVersion))
 		}
 	}
 

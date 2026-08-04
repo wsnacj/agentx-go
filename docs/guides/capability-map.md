@@ -28,8 +28,7 @@ Objective或Workflow。通用tool、provider、Browser和Document能力分别位
   `API.md`标记为Experimental extension或internalization candidate。
 - “真实实现”表示canonical仓库拥有portable algorithm/state/orchestration，并已有
   fixed-version consumer；不表示提供默认provider、credential或生产backend。
-- 当前固定pseudo-version仅用于private validation，不构成Public、Beta、Stable、semver
-  或production-ready承诺。
+- 当前是Developer Preview，不构成Beta、Stable、SLA或production-ready承诺。
 - `not_ready_for_hostless_w2b`仍成立：新项目必须显式注入model/tool、policy和需要的
   backend。AgentX不会静默读取环境凭据或替Host决定生产副作用。
 

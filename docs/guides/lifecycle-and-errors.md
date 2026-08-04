@@ -49,5 +49,5 @@ if err != nil {
 ```
 
 不要匹配英文 Message，也不要把 `Unwrap()` 得到的 backend 原始错误直接展示给
-终端用户。`Retryable` 当前固定为 false；M3E 不在缺少真实 backend证据时承诺通用
+终端用户。`Retryable` 当前固定为 false；在缺少真实 backend证据时不承诺通用
 自动重试策略。

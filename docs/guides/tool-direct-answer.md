@@ -35,12 +35,12 @@ type ToolResult struct {
 Core只拥有“显式直接答案 -> 完成Run”的通用机制，不拥有具体工具名、JSON schema、
 provider、审批策略或业务可信度规则。
 
-## 与 HS 的映射
+## 与既有 Host 的映射
 
-HS仍解析自己的`answer_contract`并处理recovery、budget、session persistence和event；当
-业务规则确认结果可直接回答时，HS构造`ToolDirectAnswer`，再调用 canonical
-`ModelToolRoundResult.ExecutionResult()`完成portable outcome。这样既保持原有错误、事件和
-持久化顺序，也避免HS重新实现通用结果策略。
+既有 Host 可以继续处理自己的 answer contract、recovery、budget、session persistence
+和 event；当业务规则确认结果可直接回答时，构造`ToolDirectAnswer`，再调用
+`ModelToolRoundResult.ExecutionResult()`完成portable outcome。这样既保持业务投影，
+也避免Host重新实现通用结果策略。
 
 ## 错误与边界
 
@@ -49,5 +49,5 @@ HS仍解析自己的`answer_contract`并处理recovery、budget、session persis
 - Host gate停止仍是`OutcomeTerminated`；
 - Direct Answer不等于模型合成，不应把原始内部JSON直接作为`Reply`。
 
-可运行的无HS固定版本consumer位于
+可运行的external-style consumer位于
 [`runtime/conformance/hostkit-consumer`](../../runtime/conformance/hostkit-consumer)。

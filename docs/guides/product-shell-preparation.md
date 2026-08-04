@@ -1,8 +1,8 @@
 # ProductShell 两阶段准备
 
 `extensions/productshell`把“用户/Host输入如何成为可执行的Case和Workflow上下文”收口为
-一个Experimental portable owner。除两阶段preparation外，它还提供一个可选的临时
-Workflow planning mechanism；具体模型、工具策略、执行器和HS产品策略仍不进入通用
+一个Experimental portable package。除两阶段preparation外，它还提供一个可选的临时
+Workflow planning mechanism；具体模型、工具策略、执行器和产品策略仍不进入通用
 Runtime。
 
 ```go
@@ -11,20 +11,20 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 
 ## 安装与固定版本
 
-当前 private-preview验证版本：
+安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/extensions@latest
 ```
 
-如果代码直接导入 `runtime/cases`，当前验证版本为：
+如果代码直接导入 `runtime/cases`：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/runtime@latest
 ```
 
-这些 pseudo-version用于可重复验证，不是正式 semver。完整的无 HS、无 Runner、无
-长期 `replace` 示例位于
+可重复构建的项目应固定`go.mod`和`go.sum`。完整的无专有Runner、无长期
+`replace` 示例位于
 [`extensions/conformance/productshell-consumer`](../../extensions/conformance/productshell-consumer)；
 该 consumer的 `go.mod`固定实际版本，是本轮 external-style接入证据。
 
@@ -39,7 +39,7 @@ ProductShell输入同时包含两类工作：
 
 第一类由 canonical helper直接实现；第二类由 `PreparationPipeline`固定顺序，再通过
 `PreparationRuntime`把产品策略和 backend留给 Host。这样新项目可以复用稳定的准备
-顺序，而不需要引入 HS、Runner、Scene或具体 provider。
+顺序，而不需要引入专有Runner、具体Scene或provider。
 
 ## 第一阶段：投影输入
 
@@ -167,8 +167,8 @@ prepared, err := planner.ResolveTemporaryWorkflowPlan(
 
 代码片段只展示portable planner。完整stage adapter和可运行fixture见
 [`extensions/conformance/productshell-consumer`](../../extensions/conformance/productshell-consumer)。
-该consumer固定`v0.0.0-20260801144943-16d9426fd82a`，直接通过私有module版本消费，
-不使用HS、Runner、长期`replace`、真实provider、credential或网络。
+该consumer固定不可变module版本，不使用专有Runner、长期`replace`、真实provider、
+credential或网络。
 
 ### 失败和生命周期
 
@@ -200,9 +200,9 @@ resolver := productshell.WorkflowResolutionRuntime{
 execution semantics一致。该检查只保护绑定边界，完整 structural validation和执行仍交给
 `runtime/workflow`及 `runtime/workflow/hostkit`。
 
-## HS迁移边界
+## 既有 Host 接入边界
 
-HS production consumer应把 canonical package作为portable source authority，只保留：
+既有Host应直接复用portable package，只在自身代码中保留：
 
 - ProductShell选择、command/skill推断和产品默认值；
 - 临时规划的tool alias/denylist、可见性和启用策略；
@@ -212,7 +212,7 @@ HS production consumer应把 canonical package作为portable source authority，
 - session binding持久化、RunStore及其它 backend adapter；
 - authorization、approval、sandbox、provider、credential和观测产品投影。
 
-兼容层可以做必要的HS类型转换，但不得复制 canonical stage order、option codec或
+兼容层可以做必要的Host类型转换，但不得复制 canonical stage order、option codec或
 Shell Binding算法形成长期双写。
 
 ## 明确 non-goal

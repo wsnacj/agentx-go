@@ -1,7 +1,7 @@
 # Reference Host：显式组合Core与可选能力
 
-Reference Host回答一个常见问题：新项目使用AgentX时，是否必须重新实现HS中的大量
-兼容代码？答案是否定的。新项目需要实现的是自己的少量Host选择，而不是复制HS历史层。
+Reference Host回答一个常见问题：新项目使用AgentX时，是否必须重新实现大型产品宿主的
+全部兼容代码？答案是否定的。新项目只需要实现自己的少量Host选择。
 
 AgentX的责任分为三层：
 
@@ -11,7 +11,7 @@ AgentX的责任分为三层：
 3. Host选择provider、credential、授权、backend和产品策略，并把这些能力显式注入。
 
 [`examples/reference-host`](../../examples/reference-host)是第三层的默认安全参考实现。
-它不依赖HS或Runner，也不会把产品策略下沉到Runtime。
+它不依赖专有Runner，也不会把产品策略下沉到Runtime。
 
 ## 快速运行
 

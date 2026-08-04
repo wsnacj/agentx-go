@@ -8,14 +8,13 @@ canonical helper只负责构建可验证的handoff envelope，真实交付继续
 import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 ```
 
-当前private-preview固定版本：
+安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.0.0-20260802113655-f41de95ec5be
+go get github.com/wsnacj/agentx-go/extensions@latest
 ```
 
-该pseudo-version只用于本轮可重复验证，不是正式semver，也不构成Public、Beta或Stable
-兼容承诺。
+可重复构建的项目应固定`go.mod`和`go.sum`；当前API不构成Beta或Stable兼容承诺。
 
 ## 责任链
 
@@ -28,7 +27,7 @@ Host-owned session/process/backend facts
         -> Host-owned log/UI/HTTP delivery and readback
 ```
 
-这个边界让外部项目复用数据合同、规范化、redaction和接入验证，又不会把HS的raw parser、
+这个边界让外部项目复用数据合同、规范化、redaction和接入验证，又不会把Host的raw parser、
 产品观测聚合或交付策略搬入通用extension。
 
 ## 1. 构造typed session observation
@@ -146,7 +145,7 @@ focused接入测试，不替代产品审批、security审阅或发布证据。
 
 完整可运行示例位于
 [`extensions/conformance/productshell-observation-consumer`](../../extensions/conformance/productshell-observation-consumer)。
-它固定实际pseudo-version，在无HS、Runner、Scene、长期`replace`、网络和凭据的条件下
+它固定不可变版本，在无专有Runner、具体Scene、长期`replace`、网络和凭据的条件下
 验证typed Session/HostProcess/OperatorLine到handoff/conformance/runtime-use的纵向路径。
 
 ## 明确留在Host的能力

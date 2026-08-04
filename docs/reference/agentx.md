@@ -1,7 +1,7 @@
 # `agentx` Go API Reference
 
-本页是 M3D 根 contract Developer Preview candidate 的中文 Reference。正文覆盖和
-签名漂移已经进入 focused gate，但 API仍处于 private validation，不构成 Public、
+本页是根 contract Developer Preview candidate 的中文 Reference。正文覆盖和
+签名漂移已经进入 focused gate，但 API仍处于 Developer Preview，不构成 Public、
 Beta、Stable或 semver兼容性承诺。
 
 ## 创建与 Client
