@@ -9,6 +9,10 @@ AgentX Go 当前是 Developer Preview：
 - 当前不提供生产 SLA、长期支持期限或跨大版本兼容承诺；
 - 真实 provider、网络、浏览器、OCR、进程和 durable backend 由调用方环境决定。
 
+首版release approver与rollback owner均为`@wsnacj`。出现阻断问题时，维护者负责撤下
+GitHub Release、发布问题说明并给出回退版本或依赖组合；首版暂无backup owner。该安排
+不构成生产SLA。
+
 源码许可见 [Apache License 2.0](LICENSE)，直接依赖及上游归属摘要见
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 

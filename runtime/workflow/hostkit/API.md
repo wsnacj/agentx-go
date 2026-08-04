@@ -1,7 +1,7 @@
 # `runtime/workflow/hostkit` 中文 API Reference
 
-状态：**Developer Preview candidate / private validation**。本状态只表示已进入
-focused签名、文档和 consumer门禁，不构成 Public、Beta或 Stable承诺。
+状态：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名、文档和consumer门禁，但不是Beta、Stable或生产SLA。
 
 本 package是 Workflow面向普通 Host的标准 construction/access seam。它把已存在
 的 canonical lowering、journal、node execution coordination、orchestration和

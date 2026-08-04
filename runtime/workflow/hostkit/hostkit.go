@@ -1,7 +1,7 @@
 // Package hostkit 组合 canonical Workflow lowering、journal、node execution
 // coordination 和 orchestration，为不依赖 HS Runner 的宿主提供最小构造入口。
 //
-// 当前 package 处于 Developer Preview candidate/private validation。它不提供
+// 本package进入v0.1.0 Developer Preview核心兼容候选面。它不提供
 // validation/mapping policy、executor、RunStore backend、provider、credential
 // 或 Scene。
 package hostkit

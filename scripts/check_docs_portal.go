@@ -56,8 +56,8 @@ func main() {
 		}
 		checkFile(routeFile(generated, entry.Route))
 	}
-	if candidates != 14 {
-		check(fmt.Errorf("portal has %d Developer Preview candidates, want 14", candidates))
+	if candidates != 9 {
+		check(fmt.Errorf("portal has %d Developer Preview candidates, want 9", candidates))
 	}
 
 	for _, relative := range []string{

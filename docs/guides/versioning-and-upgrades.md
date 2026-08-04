@@ -1,7 +1,7 @@
 # 版本、升级与回滚
 
-AgentX Go 当前处于 Developer Preview。正式版本、tag 前缀和长期支持周期以 Release
-说明为准。
+AgentX Go 当前发布 `v0.1.0 Developer Preview`。该版本不是Beta或Stable，长期支持周期
+仍以Release说明为准。
 
 ## 版本原则
 
@@ -11,23 +11,23 @@ AgentX Go 当前处于 Developer Preview。正式版本、tag 前缀和长期支
 - Experimental package 的变更风险高于 Developer Preview candidate；
 - 版本升级必须可以回滚到升级前的 `go.mod`/`go.sum`。
 
-## 九 Module 发行前缀
+## v0.1.0 九 Module 发行前缀
 
-计划采用标准 nested-module tag：
+首版采用标准nested-module同版tag：
 
 | Module | Tag 前缀 |
 | --- | --- |
-| root | `vX.Y.Z` |
-| components | `components/vX.Y.Z` |
-| runtime | `runtime/vX.Y.Z` |
-| extensions | `extensions/vX.Y.Z` |
-| providers | `providers/vX.Y.Z` |
-| tools | `tools/vX.Y.Z` |
-| browser | `browser/vX.Y.Z` |
-| document | `document/vX.Y.Z` |
-| scenes | `scenes/vX.Y.Z` |
+| root | `v0.1.0` |
+| components | `components/v0.1.0` |
+| runtime | `runtime/v0.1.0` |
+| extensions | `extensions/v0.1.0` |
+| providers | `providers/v0.1.0` |
+| tools | `tools/v0.1.0` |
+| browser | `browser/v0.1.0` |
+| document | `document/v0.1.0` |
+| scenes | `scenes/v0.1.0` |
 
-首次正式版本发布前，该规则仍是发行候选设计，不代表仓库已经存在相应 tag。
+九个tag必须指向同一经过验证的release commit；只升级其中一部分不属于受验证组合。
 
 ## 升级步骤
 

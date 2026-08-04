@@ -1,7 +1,7 @@
 # `scenes/companyresearch` 中文 API Reference
 
-成熟度：**Developer Preview candidate**。当前没有 semver、Public、Beta 或 Stable
-兼容承诺；调用方必须固定 pseudo-version，并在升级时执行 API/行为 differential。
+成熟度：**Experimental extension**。本包随 `scenes/v0.1.0`提供，但不进入首版9包核心
+兼容候选面；调用方必须固定精确版本，并在升级时执行 API/行为 differential。
 
 本包是公司研究领域的 portable source authority：提供单公司/多公司意图与结果合同、
 主体解析 seam、任务分解、证据 readiness、回答边界、确定性 evaluator、LLM tool schema

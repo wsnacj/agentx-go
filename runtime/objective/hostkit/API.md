@@ -1,7 +1,7 @@
 # `runtime/objective/hostkit` 中文 API Reference
 
-状态：**Developer Preview candidate / private validation**。该状态只表示进入focused签名、
-文档和consumer门禁，不构成Public、Beta或Stable承诺。
+状态：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名、文档和consumer门禁，但不是Beta、Stable或生产SLA。
 
 本package是C5 Objective Runtime Loop面向普通Host的推荐construction路径。它真实组合：
 

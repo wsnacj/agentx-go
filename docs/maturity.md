@@ -26,7 +26,7 @@ Go exported 只表示语言层可见，不自动等于兼容承诺。逐 package
 | Session / Subagent / Resume | Developer Preview candidate | worker、state、queue 和持久化由 Host 提供 |
 | Providers / Tools | Experimental | credential、网络、sandbox 和产品策略显式注入 |
 | Browser / Document | Experimental | 外部进程、文件、Python、OCR 和资源预算显式启用 |
-| Portable Scenes | Developer Preview 与 Experimental 混合 | 真实数据源、客户规则和 backend 留在领域 Host |
+| Portable Scenes | Experimental | 真实数据源、客户规则和 backend 留在领域 Host |
 
 ## 模块边界
 
@@ -80,10 +80,11 @@ Developer Preview 期间：
 首次正式开源发布至少需要：
 
 1. 已完成：提交 Apache-2.0、NOTICE、九个 library module 的分发副本和直接依赖归属摘要；
-2. 确定版本号、九 module tag 规则和兼容等级；
+2. 已完成：批准`v0.1.0`九module同版tag与9包核心兼容候选面；
 3. 完成当前源码的 test、race、vet、tidy、list、module zip 和 clean-room consumer；
 4. 完成安全、依赖和凭据扫描；
 5. 文档、examples、Package API 与 Release 内容一致；
-6. 明确安全和发布责任。
+6. 已完成：`@wsnacj`承担首版安全、发布与回滚责任，暂无backup owner。
 
-第 2～6 项缺少任一项时，只能称为 Developer Preview 候选，不能称为正式稳定发布。
+第3～5项缺少任一项时，只能称为Developer Preview候选，不能创建tag或声明正式公开。
+即使全部完成，`v0.1.0`仍不是Beta、Stable或production-ready。

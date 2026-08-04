@@ -6,8 +6,8 @@
 import workflow "github.com/wsnacj/agentx-go/runtime/workflow"
 ```
 
-成熟度：**Developer Preview candidate / private validation**。当前进入 focused
-签名、文档和 consumer门禁，但不构成 Public、Beta或 Stable承诺。
+成熟度：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名、文档和consumer门禁，但不是Beta、Stable或生产SLA。
 
 该 package 定义 AgentX Workflow Spec 数据合同和最小 validator construction
 seam。它不提供 validation 实现、lowering、executor、replanning、RunStore

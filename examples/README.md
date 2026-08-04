@@ -1,13 +1,13 @@
 # 示例与可运行消费证据
 
-`examples` 是 AgentX 的中文教学入口。示例固定已经推送的 private
-pseudo-version，在 `GOWORK=off`、无本地 `replace`、无 HS、无 Runner 条件下构建，
+`examples` 是 AgentX 的中文教学入口。示例固定`v0.1.0 Developer Preview`，
+在 `GOWORK=off`、无本地 `replace`、无 HS、无 Runner 条件下构建，
 因此既能阅读，也能作为真实外部项目的最小接入样板。
 
 当前固定版本：
 
 ```text
-v0.0.0-20260804140828-54e119ec498d
+v0.1.0
 ```
 
 私有仓库首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`

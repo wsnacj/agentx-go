@@ -7,29 +7,29 @@ AgentX Go 由九个 library module 组成。项目只应安装实际使用的模
 根 Client：
 
 ```bash
-go get github.com/wsnacj/agentx-go@latest
+go get github.com/wsnacj/agentx-go@v0.1.0
 ```
 
 模型合同与 Runtime Host Kit：
 
 ```bash
-go get github.com/wsnacj/agentx-go/components@latest
-go get github.com/wsnacj/agentx-go/runtime@latest
+go get github.com/wsnacj/agentx-go/components@v0.1.0
+go get github.com/wsnacj/agentx-go/runtime@v0.1.0
 ```
 
 按需增加：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@latest
-go get github.com/wsnacj/agentx-go/providers@latest
-go get github.com/wsnacj/agentx-go/tools@latest
-go get github.com/wsnacj/agentx-go/browser@latest
-go get github.com/wsnacj/agentx-go/document@latest
-go get github.com/wsnacj/agentx-go/scenes@latest
+go get github.com/wsnacj/agentx-go/extensions@v0.1.0
+go get github.com/wsnacj/agentx-go/providers@v0.1.0
+go get github.com/wsnacj/agentx-go/tools@v0.1.0
+go get github.com/wsnacj/agentx-go/browser@v0.1.0
+go get github.com/wsnacj/agentx-go/document@v0.1.0
+go get github.com/wsnacj/agentx-go/scenes@v0.1.0
 ```
 
-在正式 tag 发布前，`@latest` 可能解析为开发版本。需要可重复构建的项目应固定
-`go.mod` 中的精确不可变版本，不要依赖浮动分支。
+`v0.1.0`是首个 Developer Preview release-train。需要可重复构建的项目应固定
+`go.mod` 中的精确不可变版本，不要依赖`@latest`或浮动分支。
 
 ## 私有仓库访问
 
@@ -71,7 +71,8 @@ GOWORK=off go list -m all
 
 ## 多 Module 版本
 
-九个 module 的版本可能独立前进。升级时：
+首个 Developer Preview 采用九module同版release-train。后续版本是否继续锁步，以对应
+Release说明为准。升级时：
 
 1. 先升级依赖图底层的 root/components；
 2. 再升级 runtime；

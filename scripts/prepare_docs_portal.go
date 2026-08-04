@@ -84,8 +84,8 @@ func main() {
 			candidates++
 		}
 	}
-	if candidates != 14 {
-		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 14", candidates))
+	if candidates != 9 {
+		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 9", candidates))
 	}
 
 	for index := range entries {
@@ -101,7 +101,7 @@ func main() {
 	}
 
 	nav := navigation{
-		Version:      "Developer Preview (unreleased)",
+		Version:      "v0.1.0 Developer Preview",
 		SourceCommit: commit,
 		Packages:     entries,
 	}

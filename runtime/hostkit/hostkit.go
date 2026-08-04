@@ -1,8 +1,8 @@
 // Package hostkit 组合 portable tool-loop、execution adapter 和根 AgentX
 // Client，为不依赖特定 Runner 的宿主提供最小执行内核。
 //
-// 当前 package 处于 Experimental/private validation。它不提供模型、工具、
-// provider、credential、Workflow 显式图或 durable backend。
+// 本package进入v0.1.0 Developer Preview核心兼容候选面。它不提供模型、工具、
+// provider、credential、Workflow显式图或durable backend。
 package hostkit
 
 import (

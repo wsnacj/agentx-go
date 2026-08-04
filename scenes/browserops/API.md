@@ -1,7 +1,7 @@
 # `scenes/browserops` 中文 API Reference
 
-成熟度：**Developer Preview candidate**。当前没有 semver、Public、Beta 或 Stable 兼容承诺；
-调用方应固定 pseudo-version，并在升级时执行 API 与行为 differential。
+成熟度：**Experimental extension**。本包随 `scenes/v0.1.0`提供，但不进入首版9包核心
+兼容候选面；调用方应固定精确版本，并在升级时执行 API 与行为 differential。
 
 本包是 Browser Ops Domain Kit 的 portable source authority：提供 Pack/Workflow Definition、
 浏览器证据结构、状态投影与确定性 evaluator。它组合 canonical Browser/Runtime 能力，但不启动

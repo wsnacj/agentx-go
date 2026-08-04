@@ -1,8 +1,8 @@
 // Package execution 提供根 AgentX Client 与 concrete execution host 之间的
 // substrate-neutral Run dispatch、result assembly和 lifecycle adapter。
 //
-// 当前 package 处于 Experimental/private validation。它不构造模型、工具、
-// Workflow、RunStore或 Scene；这些能力由 Host拥有。
+// 本package进入v0.1.0 Developer Preview核心兼容候选面。它不构造模型、工具、
+// Workflow、RunStore或Scene；这些能力由Host拥有。
 package execution
 
 import (

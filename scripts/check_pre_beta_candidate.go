@@ -25,15 +25,14 @@ import (
 )
 
 const (
-	candidateVersion     = "v0.0.0-m6d.0"
+	candidateVersion     = "v0.1.0"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
 	candidateGoToolchain = "go1.25.12"
-	fixedVersionFile     = "docs/reference/developer-preview-version.txt"
 	manifestFile         = "pre-beta-candidate-manifest.txt"
 	dependencyGraphFile  = "pre-beta-candidate-modules.txt"
 	securityLogName      = "govulncheck-%s.log"
-	technicalReadyMarker = "pre_beta_technical_candidate_ready=true"
+	technicalReadyMarker = "developer_preview_release_candidate_ready=true"
 	candidateConsumerOK  = "agentx-pre-beta-consumer-ok:"
 )
 
@@ -78,7 +77,12 @@ var candidateModules = []moduleSpec{
 
 func main() {
 	artifactDir := flag.String("artifact-dir", "", "write the value-safe manifest and scan logs to this directory")
+	persistentProxyDir := flag.String("proxy-dir", "", "write the verified local Go proxy to this empty directory instead of deleting it")
+	prepareProxyOnly := flag.Bool("prepare-proxy-only", false, "prepare the same-version local Go proxy, then stop before tests and security scans")
 	flag.Parse()
+	if *prepareProxyOnly && *persistentProxyDir == "" {
+		check(fmt.Errorf("prepare-proxy-only requires proxy-dir"))
+	}
 	checkSecurityParser()
 
 	root, err := os.Getwd()
@@ -87,7 +91,7 @@ func main() {
 	checkCleanTree(root)
 	revision := strings.TrimSpace(run(root, os.Environ(), "git", "rev-parse", "HEAD"))
 	commitTime := readCommitTime(root)
-	fixedVersion := readTrimmed(filepath.Join(root, fixedVersionFile))
+	rollbackRevision := strings.TrimSpace(run(root, os.Environ(), "git", "rev-parse", "HEAD^"))
 	goCommand := resolveCandidateGo(root)
 
 	outputDir := *artifactDir
@@ -107,10 +111,24 @@ func main() {
 	defer os.RemoveAll(work)
 
 	baseEnv := append(os.Environ(), "GOWORK=off", "GOTOOLCHAIN=local")
-	printRun(root, baseEnv, goCommand, "run", "./scripts/check_developer_preview_distribution.go")
+	printRun(root, baseEnv, goCommand, "run", "./scripts/check_release_legal.go")
+	printRun(root, baseEnv, goCommand, "run", "./scripts/check_release_policy.go")
+	printRun(root, baseEnv, goCommand, "run", "./scripts/check_developer_preview_version.go")
+	printRun(root, baseEnv, goCommand, "run", "./scripts/check_public_docs.go")
 
 	stagingRoot := filepath.Join(work, "staging")
 	proxyRoot := filepath.Join(work, "proxy")
+	if *persistentProxyDir != "" {
+		proxyRoot, err = filepath.Abs(*persistentProxyDir)
+		check(err)
+		entries, readErr := os.ReadDir(proxyRoot)
+		if readErr == nil && len(entries) > 0 {
+			check(fmt.Errorf("proxy-dir must be empty: %s", proxyRoot))
+		}
+		if readErr != nil && !os.IsNotExist(readErr) {
+			check(readErr)
+		}
+	}
 	moduleCache := filepath.Join(work, "gomodcache")
 	buildCache := filepath.Join(work, "gocache")
 	check(os.MkdirAll(stagingRoot, 0o755))
@@ -138,16 +156,6 @@ func main() {
 		"GOMODCACHE="+moduleCache,
 		"GOCACHE="+buildCache,
 	)
-	toolBin := filepath.Join(work, "bin")
-	check(os.MkdirAll(toolBin, 0o755))
-	toolEnv := replaceEnv(candidateEnv, "GOBIN", toolBin)
-	printRunTransient(root, toolEnv, work, goCommand, "install", govulncheckModule+"@"+govulncheckVersion)
-	govulncheckPath := filepath.Join(toolBin, "govulncheck")
-	if info, statErr := os.Stat(govulncheckPath); statErr != nil || !info.Mode().IsRegular() {
-		check(fmt.Errorf("pinned govulncheck binary was not installed"))
-	}
-	printRun(root, candidateEnv, govulncheckPath, "-version")
-
 	// The first pass materializes a complete candidate graph. A module near the
 	// end of the graph can otherwise retain sums that were needed only while an
 	// upstream candidate zip was still absent.
@@ -168,10 +176,31 @@ func main() {
 		artifact := writeProxyModule(proxyRoot, dir, module, commitTime, true)
 		artifacts = append(artifacts, artifact)
 	}
+	if *prepareProxyOnly {
+		checkCleanTree(root)
+		fmt.Printf("agentx-release-proxy-prepared:version=%s:modules=%d:source=%s:proxy=%s\n",
+			candidateVersion, len(candidateModules), revision, proxyRoot)
+		return
+	}
+
+	toolBin := filepath.Join(work, "bin")
+	check(os.MkdirAll(toolBin, 0o755))
+	toolEnv := replaceEnv(candidateEnv, "GOBIN", toolBin)
+	printRunTransient(root, toolEnv, work, goCommand, "install", govulncheckModule+"@"+govulncheckVersion)
+	govulncheckPath := filepath.Join(toolBin, "govulncheck")
+	if info, statErr := os.Stat(govulncheckPath); statErr != nil || !info.Mode().IsRegular() {
+		check(fmt.Errorf("pinned govulncheck binary was not installed"))
+	}
+	printRun(root, candidateEnv, govulncheckPath, "-version")
+
+	printRun(root, candidateEnv, goCommand, "run", "./scripts/check_developer_preview_api.go", "-check-platforms")
+	printRun(root, candidateEnv, goCommand, "run", "./scripts/check_package_api_docs.go")
+	printRun(root, candidateEnv, goCommand, "run", "./scripts/check_docs_links.go")
 
 	for _, module := range candidateModules {
 		dir := staged[module.path]
 		printRun(dir, candidateEnv, goCommand, "test", "./...")
+		printRun(dir, candidateEnv, goCommand, "test", "-race", "./...")
 		printRun(dir, candidateEnv, goCommand, "vet", "./...")
 		printRun(dir, candidateEnv, goCommand, "mod", "verify")
 		printRun(dir, candidateEnv, goCommand, "mod", "tidy", "-diff")
@@ -220,11 +249,11 @@ func main() {
 		check(fmt.Errorf("unexpected offline candidate consumer output %q", offlineOutput))
 	}
 
-	manifest := buildManifest(revision, commitTime, fixedVersion, artifacts, securitySummaries, releaseLegalStatus(root))
+	manifest := buildManifest(revision, commitTime, rollbackRevision, artifacts, securitySummaries, releaseLegalStatus(root))
 	check(os.WriteFile(filepath.Join(outputDir, manifestFile), []byte(manifest), 0o644))
 	checkCleanTree(root)
 
-	fmt.Printf("agentx-pre-beta-candidate-ok:version=%s:modules=%d:source=%s:scanner=%s@%s:%s:public_beta_ready=false\n",
+	fmt.Printf("agentx-developer-preview-release-candidate-ok:version=%s:modules=%d:source=%s:scanner=%s@%s:%s:public_beta_ready=false\n",
 		candidateVersion, len(candidateModules), revision, govulncheckModule, govulncheckVersion, technicalReadyMarker)
 }
 
@@ -545,7 +574,7 @@ func checkCandidateSelection(output string) {
 	}
 }
 
-func buildManifest(revision string, commitTime time.Time, fixedVersion string, artifacts []moduleArtifact, security []securitySummary, legalStatus string) string {
+func buildManifest(revision string, commitTime time.Time, rollbackRevision string, artifacts []moduleArtifact, security []securitySummary, legalStatus string) string {
 	var builder strings.Builder
 	fmt.Fprintln(&builder, "agentx_pre_beta_candidate_manifest")
 	fmt.Fprintf(&builder, "source_revision=%s\n", revision)
@@ -553,14 +582,16 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "security_standard_library_version=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
-	fmt.Fprintf(&builder, "candidate_version_scope=disposable_validation_only\n")
-	fmt.Fprintf(&builder, "rollback_version=%s\n", fixedVersion)
+	fmt.Fprintf(&builder, "candidate_version_scope=approved_v0.1.0_developer_preview\n")
+	fmt.Fprintf(&builder, "rollback_revision=%s\n", rollbackRevision)
+	fmt.Fprintf(&builder, "rollback_strategy=withdraw_release_and_restore_pre_release_branch\n")
 	fmt.Fprintf(&builder, "security_scanner=%s@%s\n", govulncheckModule, govulncheckVersion)
 	fmt.Fprintf(&builder, "known_reachable_vulnerabilities=0\n")
 	fmt.Fprintf(&builder, "license_notice_status=%s\n", legalStatus)
-	fmt.Fprintf(&builder, "named_security_approval_status=pending\n")
-	fmt.Fprintf(&builder, "release_authorization_status=pending\n")
-	fmt.Fprintf(&builder, "compatibility_promotion_status=developer_preview_only\n")
+	fmt.Fprintf(&builder, "named_security_approval_status=approved_at_wsnacj\n")
+	fmt.Fprintf(&builder, "release_authorization_status=approved_for_private_v0.1.0_tags\n")
+	fmt.Fprintf(&builder, "public_visibility_authorization_status=pending\n")
+	fmt.Fprintf(&builder, "compatibility_promotion_status=developer_preview_9_packages\n")
 	for _, artifact := range artifacts {
 		fmt.Fprintf(&builder, "module=%s version=%s zip_sha256=%s zip_bytes=%d zip_files=%d\n",
 			artifact.path, candidateVersion, artifact.sha256, artifact.size, artifact.files)
@@ -575,6 +606,7 @@ func buildManifest(revision string, commitTime time.Time, fixedVersion string, a
 	}
 	fmt.Fprintln(&builder, technicalReadyMarker)
 	fmt.Fprintln(&builder, "public_beta_ready=false")
+	fmt.Fprintln(&builder, "public_release_ready=false")
 	return builder.String()
 }
 
@@ -583,7 +615,7 @@ func releaseLegalStatus(root string) string {
 	notice := hasRegularFile(filepath.Join(root, "NOTICE")) || hasRegularFile(filepath.Join(root, "NOTICE.txt")) || hasRegularFile(filepath.Join(root, "NOTICE.md"))
 	switch {
 	case license && notice:
-		return "files_present_approval_pending"
+		return "apache_2_0_owner_approved"
 	case license:
 		return "license_present_notice_missing_owner_decision"
 	default:

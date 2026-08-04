@@ -1,7 +1,7 @@
 # `runtime/hostkit` 中文 API Reference
 
-状态：**Developer Preview candidate / private validation**。当前进入 focused
-签名/文档漂移门禁，但未获得 Public、Beta、Stable兼容承诺。
+状态：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名/文档漂移门禁，但不是Beta、Stable或生产SLA。
 
 本 package 把 canonical `runtime/toolloop` assembly、`runtime/execution`
 adapter 和根 `agentx.Client` 组合成一个 portable Host Kit。普通新项目只需

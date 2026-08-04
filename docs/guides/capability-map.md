@@ -24,7 +24,7 @@ Objective或Workflow。通用tool、provider、Browser和Document能力分别位
 
 ## 代码成熟度边界
 
-- 根合同、选定Host Kit与部分Scene入口是Developer Preview candidate；其余实现按各自
+- 根合同与选定Host Kit是Developer Preview candidate；Scene及其余实现按各自
   `API.md`标记为Experimental extension或internalization candidate。
 - “真实实现”表示canonical仓库拥有portable algorithm/state/orchestration，并已有
   fixed-version consumer；不表示提供默认provider、credential或生产backend。

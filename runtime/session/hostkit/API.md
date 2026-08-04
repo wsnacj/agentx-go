@@ -8,9 +8,9 @@ readiness -> invoke exactly once -> durable record -> record readback
 -> worker result readback -> parent verification -> optional Objective handoff
 ```
 
-当前成熟度是 **Developer Preview candidate / private validation**。它同时提供一次child
-worker闭环和P1-D bounded Resume Runtime；它不是进程管理器、系统scheduler、Runner或
-开箱即用provider，也不构成Public/Beta/Stable承诺。
+当前成熟度是 **v0.1.0 Developer Preview candidate**，进入首版9包核心兼容候选面。
+它同时提供一次child worker闭环和bounded Resume Runtime；它不是进程管理器、系统
+scheduler、Runner或开箱即用provider，也不构成Beta、Stable或生产SLA。
 
 ## 最小入口
 

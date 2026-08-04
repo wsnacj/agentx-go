@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页的focused gate评估root、components、runtime、extensions与scenes五个module中
-实际存在的78个production package；其中14个Developer Preview candidate进入签名门禁。
+实际存在的78个production package；其中9个Developer Preview candidate进入签名门禁。
 Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
 surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
@@ -10,7 +10,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | 分级 | 本阶段含义 | 兼容性含义 |
 | --- | --- | --- |
 | Developer Preview candidate | 推荐标准路径，签名和中文 Reference 进入 focused gate | 仅表示候选；当前没有 semver 或长期兼容承诺 |
-| Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定伪版本并评估升级差异 |
+| Experimental extension | 已有真实 implementation 和 consumer，但仍可能在 Beta 前调整 owner 或入口 | 调用方应固定精确版本并评估升级差异 |
 | internalization candidate | 已位于 Go `internal`，并由上层入口隐藏 | 外部项目不能直接依赖 |
 
 ## 当前矩阵
@@ -26,22 +26,22 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `runtime/hostkit` | Developer Preview candidate | [Host Kit API](../../runtime/hostkit/API.md) | Model Conversation、Model/Tool Adapter 与 Tool Direct Answer 构造 |
 | `runtime/assetfs` | Experimental extension | [API](../../runtime/assetfs/API.md) | immutable asset snapshot、fingerprint与 resolver |
 | `runtime/artifact` | Experimental extension | [API](../../runtime/artifact/API.md) | Artifact identity、lineage、registry合同与并发安全内存实现 |
-| `scenes/astock` | Developer Preview candidate | [A股 Extension API](../../scenes/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
+| `scenes/astock` | Experimental extension | [A股 Extension API](../../scenes/astock/API.md) | A股 Manifest、assets、tool schema、Pack catalog与 evaluator推荐入口 |
 | `scenes/astock/contracts` | Experimental extension | [API](../../scenes/astock/contracts/API.md) | A股 portable DTO、JSON normalization与 assessment |
 | `scenes/astock/hostkit` | Experimental extension | [API](../../scenes/astock/hostkit/API.md) | 无 provider的 A股 intent、handler协调、readiness与回答格式化 |
 | `scenes/astock/internal/packresearch` | internalization candidate | [API](../../scenes/astock/internal/packresearch/API.md) | Research Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packsignal` | internalization candidate | [API](../../scenes/astock/internal/packsignal/API.md) | Signal Pack Definition与 evaluator内部 owner |
 | `scenes/astock/internal/packvaluation` | internalization candidate | [API](../../scenes/astock/internal/packvaluation/API.md) | Valuation Pack Definition与 evaluator内部 owner |
-| `scenes/browserops` | Developer Preview candidate | [API](../../scenes/browserops/API.md) | Browser Ops Pack、证据投影与确定性 evaluator |
+| `scenes/browserops` | Experimental extension | [API](../../scenes/browserops/API.md) | Browser Ops Pack、证据投影与确定性 evaluator |
 | `scenes/browserops/hostkit` | Experimental extension | [API](../../scenes/browserops/hostkit/API.md) | 显式Host tool executor驱动的Browser Ops协调层 |
 | `scenes/publictransport` | Experimental extension | [API](../../scenes/publictransport/API.md) | 公共交通只读合同、provider-neutral协调、证据evaluator与Pack；依赖Experimental controlcontract |
-| `scenes/publicnews` | Developer Preview candidate | [API](../../scenes/publicnews/API.md) | 公开新闻合同、Pack、证据质量与确定性回答投影 |
+| `scenes/publicnews` | Experimental extension | [API](../../scenes/publicnews/API.md) | 公开新闻合同、Pack、证据质量与确定性回答投影 |
 | `scenes/publicnews/hostkit` | Experimental extension | [API](../../scenes/publicnews/hostkit/API.md) | 显式Search/Fetch ports驱动的无provider协调 |
 | `scenes/publicsource` | Experimental extension | [API](../../scenes/publicsource/API.md) | 通用公开来源合同、source policy、search/document投影、协调、evaluator与Pack |
 | `scenes/wechatarticle` | Experimental extension | [API](../../scenes/wechatarticle/API.md) | 公众号文章typed合同、Host Client协调、evidence、evaluator与Pack |
-| `scenes/companyresearch` | Developer Preview candidate | [API](../../scenes/companyresearch/API.md) | 公司研究任务、证据guard、Pack与结果投影 |
+| `scenes/companyresearch` | Experimental extension | [API](../../scenes/companyresearch/API.md) | 公司研究任务、证据guard、Pack与结果投影 |
 | `scenes/companyresearch/hostkit` | Experimental extension | [API](../../scenes/companyresearch/hostkit/API.md) | 显式研究数据ports驱动的无provider协调 |
-| `scenes/docparse` | Developer Preview candidate | [API](../../scenes/docparse/API.md) | 文档解析Pack、资产、tool schema与推荐入口 |
+| `scenes/docparse` | Experimental extension | [API](../../scenes/docparse/API.md) | 文档解析Pack、资产、tool schema与推荐入口 |
 | `scenes/docparse/hostkit` | Experimental extension | [API](../../scenes/docparse/hostkit/API.md) | 显式Parse/ResultLoader ports驱动的文档协调与结果投影 |
 | `scenes/docparse/adapters` | Experimental extension | [API](../../scenes/docparse/adapters/API.md) | portable字段与表格适配机制 |
 | `scenes/docparse/fusion` | Experimental extension | [API](../../scenes/docparse/fusion/API.md) | 多来源文档结果融合机制 |
@@ -186,7 +186,7 @@ Experimental并补齐Reference，而不是伪装成推荐稳定入口。Go `inte
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-77个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+78个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
@@ -201,7 +201,7 @@ GOWORK=off go run scripts/check_docs_links.go
 
 1. 五个focused module当前production package与机器清单一一对应；
 2. 每个 package 都有非空中文 Reference；
-3. 十四个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
+3. 九个 Developer Preview candidate 的 `go doc -all` 哈希与可读快照未漂移；
 4. 候选公开类型不泄漏 `hs/`、Go `internal`包或不推荐入口
    `runtime/controlcontract`；
 5. darwin/arm64与linux/amd64的CGO-disabled候选签名一致；

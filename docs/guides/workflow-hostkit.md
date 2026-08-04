@@ -9,7 +9,7 @@ lowering、journal、node execution coordination、orchestration和 composition�
 安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@latest
+go get github.com/wsnacj/agentx-go/runtime@v0.1.0
 ```
 
 调用方只需两个 AgentX import：

@@ -1,7 +1,7 @@
 # `scenes/astock` 中文 API Reference
 
-成熟度：**Developer Preview candidate**。当前仍无 semver、Public、Beta 或 Stable
-兼容承诺；调用方必须固定 pseudo-version并执行升级 differential。
+成熟度：**Experimental extension**。本包随 `scenes/v0.1.0`提供，但不进入首版9包核心
+兼容候选面；调用方必须固定精确版本并执行升级 differential。
 
 本包是 A股 portable领域扩展的推荐 Go入口，组合 Manifest、不可变 skill/tool资产、
 LLM tool schema、三组 Pack Definition与确定性 evaluator。它不注册 Runner，不访问

@@ -3,8 +3,8 @@ module github.com/wsnacj/agentx-go/extensions/conformance/skills-consumer
 go 1.24.1
 
 require (
-	github.com/wsnacj/agentx-go/extensions v0.0.0-20260801100244-e9b2f8a65ee4
-	github.com/wsnacj/agentx-go/runtime v0.0.0-20260801061901-08fdf1038850
+	github.com/wsnacj/agentx-go/extensions v0.1.0
+	github.com/wsnacj/agentx-go/runtime v0.1.0
 )
 
 require (

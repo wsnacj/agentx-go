@@ -11,7 +11,7 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@latest
+go get github.com/wsnacj/agentx-go/extensions@v0.1.0
 ```
 
 可重复构建的项目应固定`go.mod`和`go.sum`；当前API不构成Beta或Stable兼容承诺。

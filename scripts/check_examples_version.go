@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-var pseudoVersionPattern = regexp.MustCompile(`v0\.0\.0-[0-9]{14}-[0-9a-f]{12}`)
+var fixedVersionPattern = regexp.MustCompile(`v0\.(?:0\.0-[0-9]{14}-[0-9a-f]{12}|[1-9][0-9]*\.[0-9]+(?:-[0-9A-Za-z.-]+)?)`)
 
 func main() {
 	root, err := os.Getwd()
@@ -30,7 +30,7 @@ func main() {
 	scanner := bufio.NewScanner(strings.NewReader(string(goMod)))
 	for scanner.Scan() {
 		fields := strings.Fields(scanner.Text())
-		if len(fields) < 2 || !strings.HasPrefix(fields[0], "github.com/wsnacj/agentx-go") || !pseudoVersionPattern.MatchString(fields[1]) {
+		if len(fields) < 2 || !strings.HasPrefix(fields[0], "github.com/wsnacj/agentx-go") || !fixedVersionPattern.MatchString(fields[1]) {
 			continue
 		}
 		selected[fields[0]] = fields[1]
@@ -51,7 +51,7 @@ func main() {
 
 	readme, err := os.ReadFile(readmePath)
 	fail(err)
-	matches := pseudoVersionPattern.FindAllString(string(readme), -1)
+	matches := fixedVersionPattern.FindAllString(string(readme), -1)
 	if len(matches) != 1 || matches[0] != version {
 		fail(fmt.Errorf("examples README version = %v, want exactly [%s]", matches, version))
 	}

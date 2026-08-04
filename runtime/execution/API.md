@@ -1,7 +1,7 @@
 # `runtime/execution` API
 
-状态：**Developer Preview candidate / private validation**。当前进入 focused
-签名/文档漂移门禁，但未获得 Public、Beta、Stable兼容承诺。
+状态：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名/文档漂移门禁，但不是Beta、Stable或生产SLA。
 
 `runtime/execution` 是根 `agentx.Client` 与具体执行宿主之间的最窄 Run adapter。
 它负责请求分派、结果组装、Shutdown转发和 error classification委托，不负责模型、

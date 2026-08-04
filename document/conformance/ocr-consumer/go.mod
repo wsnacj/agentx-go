@@ -2,7 +2,7 @@ module example.com/agentx-document-ocr-consumer
 
 go 1.24.1
 
-require github.com/wsnacj/agentx-go/document v0.0.0-20260802190326-aa1d8a5fdded
+require github.com/wsnacj/agentx-go/document v0.1.0
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect

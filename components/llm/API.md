@@ -2,8 +2,8 @@
 
 ## 当前定位
 
-M3D 分级：**Developer Preview candidate / private validation**。该分级用于
-focused签名/文档漂移门禁，不构成 Public、Beta、Stable兼容承诺。
+成熟度：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+签名/文档漂移门禁，但不构成Beta、Stable或生产SLA。
 
 导入路径：
 
@@ -11,10 +11,8 @@ focused签名/文档漂移门禁，不构成 Public、Beta、Stable兼容承诺�
 import llm "github.com/wsnacj/agentx-go/components/llm"
 ```
 
-本 package 定义 provider-neutral 的 LLM 请求、响应、工具调用、多模态、usage
-和流式事件合同。它是从 HS `core/llmx/types` 原样迁移的单一 source
-authority，目前处于 **private validation / Experimental**，不构成
-Public、Beta 或 Stable 兼容承诺。
+本package定义provider-neutral的LLM请求、响应、工具调用、多模态、usage
+和流式事件合同，是AgentX Go内对应合同的单一source authority。
 
 本 package：
 

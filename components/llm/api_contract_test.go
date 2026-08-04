@@ -71,7 +71,7 @@ func TestW301ChineseReferenceCoversExactSurface(t *testing.T) {
 		}
 	}
 	for _, required := range []string{
-		"private validation / Experimental",
+		"v0.1.0 Developer Preview candidate",
 		"不创建 AgentX `Client` 或 Runtime",
 		"Callback 与 context",
 		"Stream 与 Cancel",

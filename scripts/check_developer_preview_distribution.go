@@ -57,6 +57,7 @@ func main() {
 	checkRequiredFiles(root)
 	checkGoMods(root)
 	printRun(root, append(os.Environ(), "GOWORK=off"), "go", "run", "./scripts/check_release_legal.go")
+	printRun(root, append(os.Environ(), "GOWORK=off"), "go", "run", "./scripts/check_release_policy.go")
 	versions := readVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"))
 	rootVersion := versions["github.com/wsnacj/agentx-go"]
 	if rootVersion == "" || len(versions) != len(releaseModules) {
@@ -85,7 +86,7 @@ func main() {
 		if version == "" {
 			check(fmt.Errorf("Developer Preview version matrix is missing %s", module.path))
 		}
-		checkArtifact(root, env, module, version, pseudoVersionRevision(version))
+		checkArtifact(root, env, module, version, versionRevision(root, module, version))
 	}
 	if *full {
 		for _, module := range releaseModules {
@@ -160,7 +161,7 @@ func readVersionMatrix(path string) map[string]string {
 			continue
 		}
 		fields := strings.Fields(line)
-		if len(fields) != 2 || !strings.HasPrefix(fields[1], "v0.0.0-") {
+		if len(fields) != 2 || fields[1] != "v0.1.0" {
 			check(fmt.Errorf("invalid Developer Preview version matrix line %q", line))
 		}
 		if _, exists := versions[fields[0]]; exists {
@@ -172,12 +173,22 @@ func readVersionMatrix(path string) map[string]string {
 	return versions
 }
 
-func pseudoVersionRevision(version string) string {
-	index := strings.LastIndex(version, "-")
-	if index < 0 || len(version[index+1:]) < 12 {
-		check(fmt.Errorf("cannot read revision from pseudo-version %q", version))
+func versionRevision(root string, module moduleSpec, version string) string {
+	tag := version
+	if module.dir != "." {
+		tag = module.dir + "/" + version
 	}
-	return version[index+1:]
+	command := exec.Command("git", "rev-list", "-n", "1", tag)
+	command.Dir = root
+	output, err := command.CombinedOutput()
+	if err != nil {
+		check(fmt.Errorf("resolve tag %s: %w: %s", tag, err, bytes.TrimSpace(output)))
+	}
+	revision := strings.TrimSpace(string(output))
+	if len(revision) < 12 {
+		check(fmt.Errorf("tag %s resolved to invalid revision %q", tag, revision))
+	}
+	return revision
 }
 
 func checkArtifact(root string, env []string, module moduleSpec, version, revision string) {
@@ -197,7 +208,7 @@ func checkArtifact(root string, env []string, module moduleSpec, version, revisi
 		check(fmt.Errorf("incomplete artifact metadata for %s: %#v", module.path, info))
 	}
 	if !strings.HasPrefix(info.Origin.Hash, revision) {
-		check(fmt.Errorf("%s origin %q does not match pseudo-version revision %q", module.path, info.Origin.Hash, revision))
+		check(fmt.Errorf("%s origin %q does not match tag revision %q", module.path, info.Origin.Hash, revision))
 	}
 	archive, err := zip.OpenReader(info.Zip)
 	check(err)
