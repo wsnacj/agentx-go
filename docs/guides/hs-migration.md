@@ -64,6 +64,19 @@ internalization与consumer closure中逐批处理，不能机械替换或复制�
 `agentx-go`的根Client、`runtime/hostkit`、Workflow/Objective/Session Host Kit和各Domain Kit。
 剩余compatibility只服务HS现有Scene与历史调用路径。
 
+## P6-D1 canonical leaf旧包退役
+
+P6-D1已从HS删除七个零production importer的纯alias/forwarder package surface：
+`budget`、`mediaartifact`、`runtime`直接包、`runtime/protocol`直接包、
+`telemetry`直接包、`toolerrors`与`hostadapters/delegationruntime`。同目录下仍有
+真实consumer的子package保留，唯一跨包测试consumer已直接使用canonical
+Session Host Kit。
+
+本次删除462行production forwarder，不改变agentx-go任何API或implementation。旧路径
+统计仍是2,166处/1,029文件，因为这七个包在准入时已经没有production importer；
+本轮退役的是“仍可导入的旧HS兼容面”，不是用全局替换制造import数下降。
+新项目原本就应直接import canonical owner，因此该退役不增加其接入工作。
+
 ## P2-A OpenAI-compatible provider收口
 
 `providers/openaicompat`现在拥有请求序列化、chat/vision/embedding/bot响应解码、
