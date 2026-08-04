@@ -140,7 +140,7 @@ func main() {
 	for _, module := range candidateModules {
 		target := filepath.Join(stagingRoot, module.name)
 		copyTrackedModule(root, module.dir, target, nestedRoots)
-		rewriteCandidateRequirements(target, goCommand, baseEnv)
+		rewriteCandidateRequirements(target, goCommand, baseEnv, *prepareProxyOnly)
 		staged[module.path] = target
 	}
 
@@ -362,7 +362,7 @@ func belongsToNestedModule(tracked, moduleDir string, nestedRoots []string) bool
 	return false
 }
 
-func rewriteCandidateRequirements(dir, goCommand string, env []string) {
+func rewriteCandidateRequirements(dir, goCommand string, env []string, resetCandidateSums bool) {
 	goMod := filepath.Join(dir, "go.mod")
 	content := readTrimmed(goMod)
 	for _, module := range candidateModules {
@@ -371,6 +371,26 @@ func rewriteCandidateRequirements(dir, goCommand string, env []string) {
 		}
 	}
 	checkNoReplace(goMod)
+	if resetCandidateSums {
+		resetAgentXSums(filepath.Join(dir, "go.sum"))
+	}
+}
+
+func resetAgentXSums(path string) {
+	content, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return
+	}
+	check(err)
+	var kept []string
+	for _, line := range strings.Split(string(content), "\n") {
+		if strings.HasPrefix(line, "github.com/wsnacj/agentx-go ") ||
+			strings.HasPrefix(line, "github.com/wsnacj/agentx-go/") {
+			continue
+		}
+		kept = append(kept, line)
+	}
+	check(os.WriteFile(path, []byte(strings.Join(kept, "\n")), 0o644))
 }
 
 func writeCandidateConsumer(dir string) {
