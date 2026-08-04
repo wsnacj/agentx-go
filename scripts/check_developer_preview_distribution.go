@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -46,7 +47,7 @@ var releaseModules = []moduleSpec{
 }
 
 func main() {
-	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer modules from VCS into an empty temporary cache")
+	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer and all release modules from VCS into empty temporary caches")
 	readOnlyCache := flag.Bool("read-only-cache", false, "freeze the fresh consumer module cache before verify, test and run")
 	full := flag.Bool("full", false, "also run test, vet, tidy and list for all nine source modules")
 	portal := flag.Bool("portal", false, "also build and validate the optional local Developer Portal (requires npm ci first)")
@@ -81,12 +82,41 @@ func main() {
 	}
 	printRun(root, env, "go", cleanroomArgs...)
 
+	artifactEnv := env
+	if *freshCache {
+		temporary, err := os.MkdirTemp("", "agentx-go-distribution-artifacts-")
+		check(err)
+		defer os.RemoveAll(temporary)
+		moduleCache := filepath.Join(temporary, "gomodcache")
+		artifactEnv = append(os.Environ(),
+			"GOWORK=off",
+			"GOPROXY=https://proxy.golang.org,direct",
+			"GOPRIVATE=github.com/wsnacj/agentx-go",
+			"GONOSUMDB=github.com/wsnacj/agentx-go",
+			"GOMODCACHE="+moduleCache,
+			"GOCACHE="+filepath.Join(temporary, "gocache"),
+		)
+		for _, module := range releaseModules {
+			version := versions[module.path]
+			if version == "" {
+				check(fmt.Errorf("Developer Preview version matrix is missing %s", module.path))
+			}
+			printRun(root, artifactEnv, "go", "mod", "download", module.path+"@"+version)
+		}
+		if *readOnlyCache {
+			check(setTreeWritable(moduleCache, false))
+			defer func() {
+				_ = setTreeWritable(moduleCache, true)
+			}()
+		}
+	}
+
 	for _, module := range releaseModules {
 		version := versions[module.path]
 		if version == "" {
 			check(fmt.Errorf("Developer Preview version matrix is missing %s", module.path))
 		}
-		checkArtifact(root, env, module, version, versionRevision(root, module, version))
+		checkArtifact(root, artifactEnv, module, version, versionRevision(root, module, version))
 	}
 	if *full {
 		for _, module := range releaseModules {
@@ -102,6 +132,28 @@ func main() {
 	}
 
 	fmt.Printf("agentx-developer-preview-distribution-ok:root_version=%s:modules=%d:private_validation_ready=true:public_beta_ready=false:fresh_cache=%t:read_only_cache=%t:full=%t:portal=%t\n", rootVersion, len(releaseModules), *freshCache, *readOnlyCache, *full, *portal)
+}
+
+func setTreeWritable(root string, writable bool) error {
+	return filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		mode := info.Mode()
+		if writable {
+			mode |= 0o200
+		} else {
+			mode &^= 0o222
+		}
+		return os.Chmod(path, mode)
+	})
 }
 
 func checkRequiredFiles(root string) {
