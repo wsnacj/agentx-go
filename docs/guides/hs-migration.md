@@ -5,8 +5,9 @@
 
 ## 当前完成度不是“删除HS目录”
 
-截至2026-08-04，HS根`go.mod`已经固定消费九个agentx-go module；`core/agentx`有427个
-production Go文件、`scene/agentx_*`有120个production Go文件直接import canonical路径。
+截至2026-08-04，HS根`go.mod`已经固定消费九个agentx-go module；当前实测
+`core/agentx`有398个production Go文件、`scene/agentx_*`有122个production Go文件
+直接import canonical路径。
 agentx-go本身有868个production Go文件、258,751行，且production代码没有HS反向依赖。
 
 HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为：
@@ -16,8 +17,9 @@ HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为
 - 大型examples、selftest、live harness和历史治理代码；
 - 具体Scene的provider、credential、HTTP/CLI、业务聚合和真实副作用。
 
-当前production范围仍有2,166处`hs/core/agentx/...` import，分布于1,029个Go文件：大多数是
-`core/agentx`内部package关系，其次是Scene，另有少量其它HS consumer。因此不能把
+当前production源码文本口径仍有2,159处`hs/core/agentx/...`路径，分布于
+1,028个Go文件：大多数是`core/agentx`内部package关系，其次是Scene，另有少量
+治理/fixture字符串，因此该口径不等于2,159个真实runtime import。不能把
 `core/agentx`目录直接删除，或把所有import机械替换成新仓路径：canonical没有、也不应拥有
 客户/部署Host语义。
 
@@ -76,6 +78,25 @@ Session Host Kit。
 统计仍是2,166处/1,029文件，因为这七个包在准入时已经没有production importer；
 本轮退役的是“仍可导入的旧HS兼容面”，不是用全局替换制造import数下降。
 新项目原本就应直接import canonical owner，因此该退役不增加其接入工作。
+
+## P6-D2 受管canonical shim退役
+
+P6-D2对五个API-governed候选做focused closure后，实际退役四个HS旧包：
+`assetfs`、`telemetry/safeerror`、`hostadapters/businesshttp/requestjson`和
+`hostadapters/businesshttp/resourcepolicy`。3个剩余Scene consumer已直接使用canonical
+safeerror；共删除221行production forwarder和507行重复测试/文档。
+
+focused API transition只退役32个`compatibility_surface`/`internal_candidate`符号，
+不包含Stable symbol；Stable symbols/debt/budget保持`1717/601/601`，agentx-go
+API和implementation零变化。这是已明确批准的私有HS旧路径源码兼容中断：
+潜在仓外HS consumer需要改用已文档化的canonical import，但新项目不受影响。
+
+`hostadapters/businesshttp/hostserver`本轮明确保留。原因不是runtime实现未迁移，
+而是HS `internal/productinventory`仍直接解析它的受跟踪源码，收集
+`DefaultConfig`/`Config.BindFlags`配置合同。直接删除会破坊inventory collector；
+临时改读module cache或把canonical默认值复制回HS又会破坏可复现性和唯一
+source authority。新项目仍直接使用canonical `runtime/hosthttp/hostserver`，不需要
+实现这个HS治理adapter。
 
 ## P2-A OpenAI-compatible provider收口
 
