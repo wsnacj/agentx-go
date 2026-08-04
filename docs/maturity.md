@@ -79,11 +79,11 @@ Developer Preview 期间：
 
 首次正式开源发布至少需要：
 
-1. 明确并提交 License，必要时包含 NOTICE；
+1. 已完成：提交 Apache-2.0、NOTICE、九个 library module 的分发副本和直接依赖归属摘要；
 2. 确定版本号、九 module tag 规则和兼容等级；
 3. 完成当前源码的 test、race、vet、tidy、list、module zip 和 clean-room consumer；
 4. 完成安全、依赖和凭据扫描；
 5. 文档、examples、Package API 与 Release 内容一致；
 6. 明确安全和发布责任。
 
-缺少任一项时，只能称为 Developer Preview 候选，不能称为正式稳定发布。
+第 2～6 项缺少任一项时，只能称为 Developer Preview 候选，不能称为正式稳定发布。

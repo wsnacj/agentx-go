@@ -41,4 +41,5 @@ AgentX 不应默认发现或持久化 credential。Provider、网络、进程、
 - Go module、Node lockfile 和嵌入资产变更必须经过差异审阅；
 - 发布候选应执行依赖漏洞扫描、module zip/readback 和 clean-room consumer；
 - 生成文件、缓存、测试 credential 和本地 replace 不得进入发行 artifact；
-- 未选择 License、未完成安全复核或未获得发行授权时，不得声明正式公开发行。
+- License/NOTICE 或第三方归属不完整、未完成安全复核或未获得发行授权时，不得声明
+  正式公开发行。

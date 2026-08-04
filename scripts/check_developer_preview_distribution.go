@@ -56,6 +56,7 @@ func main() {
 	check(err)
 	checkRequiredFiles(root)
 	checkGoMods(root)
+	printRun(root, append(os.Environ(), "GOWORK=off"), "go", "run", "./scripts/check_release_legal.go")
 	versions := readVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"))
 	rootVersion := versions["github.com/wsnacj/agentx-go"]
 	if rootVersion == "" || len(versions) != len(releaseModules) {
@@ -104,6 +105,9 @@ func main() {
 
 func checkRequiredFiles(root string) {
 	for _, relative := range []string{
+		"LICENSE",
+		"NOTICE",
+		"THIRD_PARTY_NOTICES.md",
 		"README.md",
 		"CHANGELOG.md",
 		"SECURITY.md",
@@ -199,19 +203,28 @@ func checkArtifact(root string, env []string, module moduleSpec, version, revisi
 	check(err)
 	defer archive.Close()
 	prefix := module.path + "@" + version + "/"
-	found := false
+	requiredFiles := map[string]bool{
+		module.required: false,
+		"LICENSE":       false,
+		"NOTICE":        false,
+	}
+	if module.dir == "." {
+		requiredFiles["THIRD_PARTY_NOTICES.md"] = false
+	}
 	for _, file := range archive.File {
 		relative := strings.TrimPrefix(file.Name, prefix)
-		if relative == module.required {
-			found = true
+		if _, required := requiredFiles[relative]; required {
+			requiredFiles[relative] = true
 		}
 		base := strings.ToLower(filepath.Base(relative))
 		if base == ".env" || base == "go.work" {
 			check(fmt.Errorf("%s module zip contains forbidden file %s", module.path, relative))
 		}
 	}
-	if !found {
-		check(fmt.Errorf("%s module zip is missing %s", module.path, module.required))
+	for required, found := range requiredFiles {
+		if !found {
+			check(fmt.Errorf("%s module zip is missing %s", module.path, required))
+		}
 	}
 	fmt.Printf("agentx-module-artifact-ok:path=%s:version=%s:origin=%s\n", module.path, version, info.Origin.Hash)
 }

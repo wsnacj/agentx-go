@@ -48,4 +48,7 @@ Experimental API 可以调整，但必须明确影响，不能把已有 consumer
 - 最低 Go 版本和支持平台；
 - 安全响应与版本维护周期；
 - module release train 和 tag；
-- License 与正式发行责任。
+- 正式发行责任。
+
+源码许可证已经确定为 [Apache License 2.0](../../LICENSE)，该决定不等于批准版本号、
+兼容等级、module tag 或正式公开发行。

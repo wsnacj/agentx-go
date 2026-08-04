@@ -68,4 +68,10 @@ credential 或生产网络。
 - 不得静默改变 error code、JSON、取消、状态转换、durable write 顺序或 `Shutdown` 语义；
 - 删除入口前应提供替代路径和迁移说明。
 
+## 贡献许可
+
+AgentX Go 使用 [Apache License 2.0](LICENSE)。除非贡献者另行明确声明，主动提交并被
+项目接收的贡献按照该许可证第 5 节处理，不附加额外条款。提交代码前还应确认自己有权
+提供相关实现、文档、测试和素材；不得复制许可证不兼容或来源不明的代码。
+
 安全问题请按照 [SECURITY.md](SECURITY.md) 私下报告。

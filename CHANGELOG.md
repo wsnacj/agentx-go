@@ -30,4 +30,5 @@
 - 当前是 Developer Preview，Experimental package 可能调整；
 - Workflow、Objective 和长任务需要调用方提供 policy、executor 或 backend；
 - 真实 provider、浏览器、OCR、进程和网络副作用必须显式配置；
-- 正式开源发布前仍需确定 License、版本号和支持周期。
+- 源码已采用 Apache-2.0；正式开源发布前仍需批准版本号、九 module tag、兼容范围和
+  支持周期。

@@ -65,8 +65,12 @@ func main() {
 		check(copyMarkdownTree(root, filepath.Join(root, directory), filepath.Join(output, directory), commit))
 	}
 
-	for _, name := range []string{"SECURITY.md", "SUPPORT.md", "CONTRIBUTING.md", "CHANGELOG.md"} {
-		check(copyFile(filepath.Join(root, name), filepath.Join(output, name)))
+	for _, name := range []string{"SECURITY.md", "SUPPORT.md", "CONTRIBUTING.md", "CHANGELOG.md", "THIRD_PARTY_NOTICES.md"} {
+		source := filepath.Join(root, name)
+		content, err := os.ReadFile(source)
+		check(err)
+		projected := projectMarkdownLinks(root, source, commit, string(content))
+		check(writeFile(filepath.Join(output, name), []byte(projected)))
 	}
 
 	entries, err := readPackages(filepath.Join(root, "docs", "reference", "developer-preview-packages.tsv"))

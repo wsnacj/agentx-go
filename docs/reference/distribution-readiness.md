@@ -5,7 +5,8 @@
 ## 当前结论
 
 代码、examples、中文 API 和多 module 验证已经达到 Developer Preview 候选水平。
-正式公开发行仍保持 fail closed，直到 License、版本、责任和当前源码验证全部完成。
+Apache-2.0、NOTICE 和直接依赖归属摘要已经落地。正式公开发行仍保持 fail closed，
+直到版本、兼容范围、责任和当前源码验证全部完成。
 
 ## 技术门禁
 
@@ -27,7 +28,8 @@ Browser、Document、CGO 和系统命令路径还需要在受支持平台执行�
 
 | 条件 | 当前状态 |
 | --- | --- |
-| License / NOTICE | 待明确选择并提交 |
+| License / NOTICE | 已采用 Apache-2.0；九个 library module 与 examples module 均携带一致副本 |
+| 直接依赖归属摘要 | 已提交；发行二进制时仍须按实际依赖闭包重新复核 |
 | 首个版本号与九 module tag | 待批准 |
 | Developer Preview/Beta 兼容范围 | 待批准 |
 | 安全响应责任 | 待明确 |

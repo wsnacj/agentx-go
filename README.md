@@ -4,8 +4,8 @@ AgentX Go 是面向 Go 项目的可组合 Agent Runtime。它提供稳定、窄�
 并把模型、工具、工作流、长任务、浏览器、文档和领域能力拆成显式选择的模块。
 
 > 当前成熟度：Developer Preview。已有真实实现、外部消费示例和中文 API Reference，
-> 但尚未承诺稳定语义版本。首次正式开源发布仍以仓库中的 License、版本说明和
-> Release 为准。
+> 但尚未承诺稳定语义版本。仓库源码使用 Apache License 2.0；首个正式版本、module
+> tag、兼容范围和 Release 仍需单独批准。
 
 ## 为什么使用 AgentX
 
@@ -173,4 +173,9 @@ npm run docs:check
 ```
 
 参与开发前请阅读[贡献指南](CONTRIBUTING.md)。当前没有稳定兼容承诺；成熟度和公开
-发行状态以[成熟度说明](docs/maturity.md)、License 与正式 Release 为准。
+发行状态以[成熟度说明](docs/maturity.md)与正式 Release 为准。
+
+## License
+
+AgentX Go 以 [Apache License 2.0](LICENSE) 提供。直接依赖及上游归属摘要见
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)；各第三方组件仍遵循其自身许可证。
