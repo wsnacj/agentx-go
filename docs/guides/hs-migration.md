@@ -7,7 +7,7 @@
 
 截至2026-08-04，HS根`go.mod`已经固定消费九个agentx-go module；`core/agentx`有427个
 production Go文件、`scene/agentx_*`有120个production Go文件直接import canonical路径。
-agentx-go本身约有773个production Go文件、23.9万行，且production代码没有HS反向依赖。
+agentx-go本身有868个production Go文件、258,751行，且production代码没有HS反向依赖。
 
 HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为：
 
@@ -16,7 +16,7 @@ HS仍有大量AgentX代码并不等于通用实现仍在双写。它主要分为
 - 大型examples、selftest、live harness和历史治理代码；
 - 具体Scene的provider、credential、HTTP/CLI、业务聚合和真实副作用。
 
-当前production范围仍有2,170处`hs/core/agentx/...` import，分布于1,031个Go文件：大多数是
+当前production范围仍有2,166处`hs/core/agentx/...` import，分布于1,029个Go文件：大多数是
 `core/agentx`内部package关系，其次是Scene，另有少量其它HS consumer。因此不能把
 `core/agentx`目录直接删除，或把所有import机械替换成新仓路径：canonical没有、也不应拥有
 客户/部署Host语义。
@@ -49,12 +49,16 @@ P6-B1至P6-B3已把Runner registration、Tool Registry、Pack、Extension Runtim
 P6-B4又删除4个零production closure直连helper，并将其行为测试归位真实internal owner。
 P6-B0.5完整live/NL矩阵复测Core 5/5、只读Scene 3/3；完整AgentX回归没有新增功能失败。
 
-该checkpoint不表示严格旧路径已经清零：17个Scene导出facade仍以`hostwiring.Surface`作为
-兼容签名，另有4个core文件承载`domainmodule.Target`合同或Host diagnostics。它们都有真实
-consumer，不能当作零closure shim删除。把签名直接改成HS internal类型会产生不可导入的公共
-合同；新增canonical Surface则属于新的公共API与module决策。因此P6-B4停在
-`completed_with_scene_contract_residual_checkpoint`，等待独立Owner决定公共Scene Host
-registration port及17个签名的迁移方式。
+P6-C随后完成该残留边界的Owner决定与收口：不新增canonical公共Surface。17个Scene导出
+facade改为返回HS-only `domainmodule.HostRegistration`构造值，应用由
+`domainmodule.Target.RegisterHost`统一应用；真正Runner mutation继续只有
+`internal/agentxhost/runnerwiring`一个owner。4个Core残留中的Host diagnostics归位
+`internal/agentxhost/diagnostics`，guardrail归位`runnerwiring`；
+`core/agentx/hostwiring`与`internal/agentxhost/scenecompat`均已删除。
+
+该变化没有扩大agentx-go API，也没有要求新项目实现HS compatibility。当前严格旧路径仍有
+2,166处/1,029文件，主要是HS内部Host/package关系；它们只能在后续owner-level package
+internalization与consumer closure中逐批处理，不能机械替换或复制到canonical。
 
 这不会增加新项目的接入成本：仓库外项目不需要、也不应实现HS compatibility层，应直接使用
 `agentx-go`的根Client、`runtime/hostkit`、Workflow/Objective/Session Host Kit和各Domain Kit。
