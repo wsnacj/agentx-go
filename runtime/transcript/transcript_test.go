@@ -46,6 +46,16 @@ func TestCompactPreservesHostAnchorWithoutOwningItsPolicy(t *testing.T) {
 	}
 }
 
+func TestTruncateToolOutputPreservesExactMaximum(t *testing.T) {
+	content := strings.Repeat("head", 100) + `"citations":["p1"]}`
+	got := TruncateToolOutput(content, 180, func(content string) int {
+		return strings.LastIndex(content, `"citations"`)
+	})
+	if len(got) != 180 || !strings.Contains(got, `"citations"`) || !strings.Contains(got, "...[tool output truncated for context]...") {
+		t.Fatalf("TruncateToolOutput() = %q (len=%d)", got, len(got))
+	}
+}
+
 func TestSanitizeStrictProtocolAndReasoning(t *testing.T) {
 	got, diagnostic := Sanitize(llm.Conversation{
 		{Role: "assistant", Content: "<thinking>private</thinking>visible", ToolCalls: []llm.FunctionCall{{Name: "lookup", Arguments: `{}`}}},

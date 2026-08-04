@@ -55,6 +55,9 @@ type CompactionPolicy struct {
 }
 
 func Compact(messages llm.Conversation, policy CompactionPolicy) (llm.Conversation, Diagnostic)
+func CompactToolOutputs(messages llm.Conversation, policy CompactionPolicy) (llm.Conversation, int)
+func CompactHistoryBodies(messages llm.Conversation, maxChars int) (llm.Conversation, int)
+func TruncateToolOutput(content string, maxChars int, selector AnchorSelector) string
 ```
 
 压缩顺序固定为：较早的 tool output，再到较早的 user/assistant 正文；最后一条消息和工具
@@ -62,6 +65,10 @@ func Compact(messages llm.Conversation, policy CompactionPolicy) (llm.Conversati
 认为重要的尾部片段；canonical package 不内置 PDF、citation 或业务标记。
 
 启用压缩时返回 defensive copy，不修改调用方切片。selector 必须确定性且可安全并发调用。
+`TruncateToolOutput` 暴露与 `Compact` 相同的单条 head/tail 截断机制，便于 Host 保留已有
+package-private 兼容入口；它不执行整段预算判断或历史正文压缩。
+两个 `Compact*` 分阶段函数用于已有 Host 维持原诊断计数和调用顺序；新调用方通常应直接
+使用组合后的 `Compact`。
 
 ## 协议修复与历史裁剪
 

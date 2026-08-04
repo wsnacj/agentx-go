@@ -113,12 +113,29 @@ func OverflowMessage(estimatedChars, maxChars int) string {
 // Compact reduces tool results first and older user/assistant bodies second.
 // It always returns a defensive conversation copy when compaction is enabled.
 func Compact(messages llm.Conversation, policy CompactionPolicy) (llm.Conversation, Diagnostic) {
-	toolCompacted, toolCount := compactToolOutputs(messages, policy)
-	historyCompacted, historyCount := compactHistoryBodies(toolCompacted, policy.MaxChars)
+	toolCompacted, toolCount := CompactToolOutputs(messages, policy)
+	historyCompacted, historyCount := CompactHistoryBodies(toolCompacted, policy.MaxChars)
 	return historyCompacted, Diagnostic{
 		CompactedToolOutputs:   toolCount,
 		CompactedHistoryBodies: historyCount,
 	}
+}
+
+// CompactToolOutputs applies only the tool-output phase of Compact.
+func CompactToolOutputs(messages llm.Conversation, policy CompactionPolicy) (llm.Conversation, int) {
+	return compactToolOutputs(messages, policy)
+}
+
+// CompactHistoryBodies applies only the older user/assistant body phase of
+// Compact. The last message and tool protocol fields are not compacted.
+func CompactHistoryBodies(messages llm.Conversation, maxChars int) (llm.Conversation, int) {
+	return compactHistoryBodies(messages, maxChars)
+}
+
+// TruncateToolOutput applies the same deterministic head/tail truncation used
+// by Compact to one tool result. It does not add a budget policy or side effect.
+func TruncateToolOutput(content string, maxChars int, selector AnchorSelector) string {
+	return truncateToolOutput(content, maxChars, selector)
 }
 
 // Sanitize repairs role/tool-call protocol, optionally strips internal
