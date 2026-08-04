@@ -1,6 +1,6 @@
 # 示例与可运行消费证据
 
-`examples` 是 AgentX 的中文教学入口。示例固定`v0.1.0 Developer Preview`，
+`examples` 是 AgentX 的中文教学入口。示例固定到下方的 Developer Preview 版本，
 在 `GOWORK=off`、无本地 `replace`、无 HS、无 Runner 条件下构建，
 因此既能阅读，也能作为真实外部项目的最小接入样板。
 
