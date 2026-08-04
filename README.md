@@ -7,6 +7,8 @@ AgentX Go 是面向 Go 项目的可组合 Agent Runtime。它提供稳定、窄�
 > 首个版本为 `v0.1.0 Developer Preview`，只对文档明确列出的9包核心候选面实施受治理
 > 变更；它不是 Beta、Stable、production-ready 或生产 SLA。
 
+最低工具链为 Go 1.25.0；发布验证固定使用 Go 1.25.12。
+
 ## 为什么使用 AgentX
 
 - 一个统一的 `Run`、typed error、context cancellation 和有界 `Shutdown` 合同；

@@ -129,6 +129,9 @@ func checkReleaseModules(root string) {
 		if strings.Contains(content, "replace ") || strings.Contains(content, "replace(") {
 			check(fmt.Errorf("%s contains replace", path))
 		}
+		if !strings.Contains(content, "\ngo 1.25.0\n") {
+			check(fmt.Errorf("%s must declare go 1.25.0", path))
+		}
 		scanner := bufio.NewScanner(strings.NewReader(content))
 		for scanner.Scan() {
 			fields := strings.Fields(scanner.Text())

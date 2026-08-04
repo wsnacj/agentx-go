@@ -61,8 +61,8 @@ Developer Preview 期间：
 
 ## 平台与工具链
 
-- module language baseline：Go 1.24.1；
-- 推荐验证工具链和实际支持平台以 Release 说明为准；
+- module language baseline：Go 1.25.0；
+- 首版发布验证工具链：Go 1.25.12；
 - API/build surface 已持续覆盖 macOS arm64 和 Linux amd64；
 - Browser、OCR、CGO、Python、ffmpeg/ffprobe 等可选能力需要额外平台依赖；
 - 未经测试的平台不应被推断为受支持。

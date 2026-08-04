@@ -1,6 +1,6 @@
 module github.com/wsnacj/agentx-go/extensions
 
-go 1.24.1
+go 1.25.0
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0

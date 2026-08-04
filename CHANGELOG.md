@@ -29,6 +29,8 @@
 - Workflow 和 Docparse 的低层可导入 package 明确标记为 Experimental，不作为推荐稳定入口。
 - 首版核心兼容候选面收窄为根contract、`components/llm`及7个Runtime/Host Kit package；
   A股、Browser Ops、Company Research、Docparse和Public News入口保持可用但降为Experimental。
+- 最低 Go 版本统一为1.25.0，以采用`x/net`与`x/text`的安全修复版本；发布验证使用
+  Go 1.25.12。
 
 ### Known limitations
 
