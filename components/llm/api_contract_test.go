@@ -22,7 +22,7 @@ func TestW301ExactExportSurface(t *testing.T) {
 		"BotUsageModel", "ChatInput", "ChatRequest", "ChatResponse", "Conversation",
 		"EmbedInput", "EmbeddingOptions", "EmbeddingRequest", "EmbeddingResponse",
 		"EventStreamResult", "Function", "FunctionCall", "FunctionCallDelta",
-		"FunctionResult", "Message", "PayloadHook", "ReasoningOptions",
+		"FunctionResult", "Message", "ModelCapabilities", "PayloadHook", "ReasoningOptions",
 		"RequestOptions", "ResponseHook", "ResponseMetadata", "SimpleStreamChunk",
 		"SimpleStreamResult", "SparseEntry", "StreamChunk", "StreamEvent",
 		"StreamEventType", "StreamMessageSnapshot", "StreamResult", "StreamStopReason",

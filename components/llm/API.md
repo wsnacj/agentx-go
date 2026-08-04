@@ -219,17 +219,37 @@ func WithLabels(...string) VisualOption
 | `Usage` | prompt/completion/total token 计数 |
 | `UsageRecord` | 带时间、feature 和 metadata 的 usage 记录 |
 
+## ModelCapabilities
+
+```go
+type ModelCapabilities struct {
+    TextGeneration   bool
+    ToolCalling      bool
+    VisionInput      bool
+    Streaming        bool
+    LocalMediaInput  bool
+    ReasoningControl bool
+    ParallelTools    bool
+    BotCompletion    bool
+}
+```
+
+这是一个最小、provider-neutral 的 adapter 能力描述，不是模型 catalog。字段为 `true`
+表示当前 provider adapter/config 明确声明调用方可以使用；`false` 表示调用方不得假设可用，
+不代表对应 provider 的所有上游模型永久不支持。Files、Images 等 provider service API 不混入
+本结构，credential、配额、地区和租户策略也不属于能力描述。
+
 ## 完整导出面
 
 W3-01 冻结以下 exact candidate surface，防止迁移时遗漏；冻结不等于成熟度晋级。
 
-Types（45）：
+Types（46）：
 
 ```text
 BotInput BotReference BotResponse BotUsage BotUsageAction BotUsageModel
 ChatInput ChatRequest ChatResponse Conversation
 EmbedInput EmbeddingOptions EmbeddingRequest EmbeddingResponse
-EventStreamResult Function FunctionCall FunctionCallDelta FunctionResult Message
+EventStreamResult Function FunctionCall FunctionCallDelta FunctionResult Message ModelCapabilities
 PayloadHook ReasoningOptions RequestOptions ResponseHook ResponseMetadata
 SimpleStreamChunk SimpleStreamResult SparseEntry StreamChunk StreamEvent
 StreamEventType StreamMessageSnapshot StreamResult StreamStopReason ThinkingOptions
@@ -276,4 +296,4 @@ StreamStopReasonContentFilter
 - HTTP transport、retry、metrics、tracing、usage persistence；
 - Workflow、Objective、Resume、durable lifecycle；
 - Runtime protocol、Scene、CLI、HTTP API；
-- 对本页 45/21/10/19 个导出项作 Public/Beta/Stable 承诺。
+- 对本页 46/21/10/19 个导出项作 Public/Beta/Stable 承诺。
