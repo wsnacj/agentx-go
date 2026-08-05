@@ -44,6 +44,8 @@ Experimental。共享 module不表示任意 Scene获得独立
 - [`conformance/pack-consumer`](conformance/pack-consumer)；
 - [`conformance/skills-consumer`](conformance/skills-consumer)：使用固定版本验证
   immutable AssetFS加载、缓存、路径激活、requested semantics、资源完整性和 deep clone。
+- [`conformance/plugin-consumer`](conformance/plugin-consumer)：使用固定pseudo-version验证
+  portable Plugin manifest、权限请求边界与typed error，不安装或执行包内容；
 - [`conformance/productshell-consumer`](conformance/productshell-consumer)：验证portable
   ProductShell两阶段准备、临时Workflow规划与Host port组合；
 - [`conformance/productshell-observation-consumer`](conformance/productshell-observation-consumer)：
