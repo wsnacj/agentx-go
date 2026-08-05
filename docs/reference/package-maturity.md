@@ -67,6 +67,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `runtime/hosthttp/resourcepolicy` | Experimental extension | [API](../../runtime/hosthttp/resourcepolicy/API.md) | Host 资源 allowlist 与预算收窄 |
 | `runtime/toolloop` | Developer Preview candidate | [Tool Loop API](../../runtime/toolloop/API.md) | portable 多轮驱动、phase、检测和 assembly |
 | `runtime/transcript` | Experimental extension | [API](../../runtime/transcript/API.md) | 对话预算、压缩、工具协议修复与历史裁剪机制 |
+| `runtime/contextwindow` | Experimental extension | [API](../../runtime/contextwindow/API.md) | 无状态上下文窗口编排、保护边界与显式语义摘要 port |
 | `runtime/workflow` | Developer Preview candidate | [API](../../runtime/workflow/API.md) | Workflow Spec 数据合同与 Host admission seam |
 | `runtime/workflow/hostkit` | Developer Preview candidate | [Workflow Host Kit API](../../runtime/workflow/hostkit/API.md) | Workflow标准构造入口；组合 portable lowering、journal、node execution和orchestration |
 | `runtime/budget` | Experimental extension | [API](../../runtime/budget/API.md) | 预算判定 mechanism |

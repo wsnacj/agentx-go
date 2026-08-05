@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -29,9 +30,14 @@ func main() {
 		command := exec.Command("go", "list", "-f", "{{.Dir}}", "./...")
 		command.Dir = directory
 		command.Env = append(os.Environ(), "GOWORK=off")
-		output, err := command.CombinedOutput()
+		output, err := command.Output()
 		if err != nil {
-			check(fmt.Errorf("go list %s: %w: %s", module, err, strings.TrimSpace(string(output))))
+			detail := ""
+			var exitError *exec.ExitError
+			if errors.As(err, &exitError) {
+				detail = strings.TrimSpace(string(exitError.Stderr))
+			}
+			check(fmt.Errorf("go list %s: %w: %s", module, err, detail))
 		}
 		for _, packageDir := range strings.Fields(string(output)) {
 			relative, err := filepath.Rel(root, packageDir)
