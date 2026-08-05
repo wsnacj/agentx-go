@@ -33,6 +33,7 @@ scenes/publicnews/hostkit	experimental_extension	scenes/publicnews/hostkit/API.m
 scenes/publicsource	experimental_extension	scenes/publicsource/API.md	-
 scenes/publictransport	experimental_extension	scenes/publictransport/API.md	-
 scenes/wechatarticle	experimental_extension	scenes/wechatarticle/API.md	-
+extensions/catalog	experimental_extension	extensions/catalog/API.md	-
 extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-

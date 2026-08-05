@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页的focused gate评估root、components、runtime、extensions与scenes五个module中
-实际存在的78个production package；其中9个Developer Preview candidate进入签名门禁。
+实际存在的79个production package；其中9个Developer Preview candidate进入签名门禁。
 Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
 surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
@@ -57,6 +57,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 | `scenes/finance/metrics` | Experimental extension | [API](../../scenes/finance/metrics/API.md) | 财报指标Pack、字段来源guard和确定性evaluator |
 | `scenes/finance/brief` | Experimental extension | [API](../../scenes/finance/brief/API.md) | 财报简报Pack、evidence与确定性evaluator |
 | `scenes/finance/hostkit` | Experimental extension | [API](../../scenes/finance/hostkit/API.md) | candidates→metrics→guard→optional brief协调 |
+| `extensions/catalog` | Experimental extension | [API](../../extensions/catalog/API.md) | 六类capability的只读发现envelope、规范化、确定性检索与差异 |
 | `extensions/domainkit` | Experimental extension | [API](../../extensions/domainkit/API.md) | 无模型module/tool dispatch、typed error与deterministic output digest |
 | `extensions/domainmodule` | Experimental extension | [API](../../extensions/domainmodule/API.md) | portable manifest、config、diagnostics与顺序注册编排 |
 | `extensions/pack` | Experimental extension | [API](../../extensions/pack/API.md) | Pack定义、显式校验、注册、选择、物化与 Binding |
@@ -188,7 +189,7 @@ Experimental并补齐Reference，而不是伪装成推荐稳定入口。Go `inte
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-78个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+79个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 

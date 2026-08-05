@@ -8,6 +8,8 @@ github.com/wsnacj/agentx-go/extensions
 
 当前包含：
 
+- [`catalog`](./catalog/API.md)：Tool、Skill、Plugin、Connector、Expert、Team 的统一只读
+  discovery envelope、规范化、确定性检索、fingerprint与差异；不执行、安装或路由资产。
 - [`domainmodule`](./domainmodule/API.md)：编译期 Domain Module的portable
   manifest、config、diagnostics与顺序注册编排。
 - [`pack`](./pack/API.md)：Domain Pack定义、显式校验、注册、Workflow选择/物化、
