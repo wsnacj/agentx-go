@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页的focused gate评估root、components、runtime、extensions与scenes五个module中
-实际存在的79个production package；其中9个Developer Preview candidate进入签名门禁。
+实际存在的81个production package；其中9个Developer Preview candidate进入签名门禁。
 Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
 surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
@@ -189,7 +189,7 @@ Experimental并补齐Reference，而不是伪装成推荐稳定入口。Go `inte
 
 机器可检查的同源清单位于
 [`developer-preview-packages.tsv`](developer-preview-packages.tsv)。它只服务当前
-79个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
+81个 package 的覆盖与漂移门禁，不是新的全仓 API registry。
 
 ## 漂移门禁
 
