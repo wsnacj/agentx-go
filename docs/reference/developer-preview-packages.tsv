@@ -45,6 +45,7 @@ runtime/cases	experimental_extension	runtime/cases/API.md	-
 runtime/channel	experimental_extension	runtime/channel/API.md	-
 runtime/construction	experimental_extension	runtime/construction/API.md	-
 runtime/contextwindow	experimental_extension	runtime/contextwindow/API.md	-
+runtime/memory	experimental_extension	runtime/memory/API.md	-
 runtime/controlcontract	experimental_extension	runtime/controlcontract/API.md	-
 runtime/execution	developer_preview_candidate	runtime/execution/API.md	5adf5ace5c15f5cc9182ff95cfe0483c1379661fcc4e3535c79025672bc464fe
 runtime/executionpolicy	experimental_extension	runtime/executionpolicy/API.md	-

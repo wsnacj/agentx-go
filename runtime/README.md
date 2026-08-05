@@ -41,6 +41,11 @@ github.com/wsnacj/agentx-go/runtime
   预算阶段、停止原因与近限额警告判定。
 - [`promptcontext`](./promptcontext/API.md)：构造 prompt rendering 所需的时间、
   timezone、session/model identity，并提供 fail-soft RFC3339 时间投影。
+- [`contextwindow`](./contextwindow/API.md)：无状态上下文窗口准备、确定性压缩、受保护的
+  语义摘要替换与显式 Host summarizer port；Session summary 和 provider 留在 Host。
+- [`memory`](./memory/API.md)：带显式 scope/provenance、recall 上限、幂等写入、revision
+  CAS、归档与 typed error 的无状态长期记忆 lifecycle 协调；store、ranking、visibility
+  与 retention 留在 Host。
 - [`runstore`](./runstore/API.md)：Run、NodeExecution和Event的数据合同、存储 port、
   node execution投影，以及并发安全的 `MemoryStore`；durable backend、事务、保留期、
   跨进程一致性和恢复策略继续由 Host拥有。
