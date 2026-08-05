@@ -29,6 +29,8 @@ const (
 	ErrorCodeInvalidSummary ErrorCode = "invalid_summary"
 	// ErrorCodeLimitUnresolved marks a result that still exceeds the configured limit.
 	ErrorCodeLimitUnresolved ErrorCode = "limit_unresolved"
+	// ErrorCodeTokenCountFailed marks a Host token counter failure.
+	ErrorCodeTokenCountFailed ErrorCode = "token_count_failed"
 )
 
 // Error is a display-safe typed context-window error. Cause is available via
@@ -58,6 +60,8 @@ func (e *Error) Error() string {
 		return "context window summarizer returned an invalid summary"
 	case ErrorCodeLimitUnresolved:
 		return "context window limit could not be satisfied"
+	case ErrorCodeTokenCountFailed:
+		return "context window token count failed"
 	default:
 		return "context window preparation failed"
 	}
@@ -99,13 +103,17 @@ type Policy struct {
 	ProtectedHeadSegments  int
 	ProtectedTailSegments  int
 	SummaryTargetChars     int
+	WarnInputTokens        int64
+	MaxInputTokens         int64
 }
 
 // Request is one immutable context preparation input. PreviousSummary is
 // explicit state supplied by a Host; this package does not retain it.
 type Request struct {
+	Model           string
 	SystemPrompt    string
 	Messages        llm.Conversation
+	Tools           []llm.Tool
 	PreviousSummary string
 }
 
@@ -141,8 +149,9 @@ func (f SummarizerFunc) Summarize(ctx context.Context, request SummaryRequest) (
 
 // Orchestrator performs stateless context preparation.
 type Orchestrator struct {
-	Policy     Policy
-	Summarizer Summarizer
+	Policy       Policy
+	Summarizer   Summarizer
+	TokenCounter llm.TokenCounter
 }
 
 // Report contains bounded transformation facts and never includes message or
@@ -159,6 +168,10 @@ type Report struct {
 	SummarizedMessages     int
 	ProtectedHeadSegments  int
 	ProtectedTailSegments  int
+	BeforeInputTokens      int64
+	AfterInputTokens       int64
+	InputTokenCountExact   bool
+	InputTokenCountSource  string
 }
 
 // Result is the prepared conversation and the current semantic summary.
@@ -175,6 +188,9 @@ func (o Orchestrator) Prepare(ctx context.Context, request Request) (Result, err
 	original := cloneConversation(request.Messages)
 	failure := func(report Report, err error) (Result, error) {
 		report.AfterChars = estimate(request.SystemPrompt, original)
+		if report.AfterInputTokens == 0 {
+			report.AfterInputTokens = report.BeforeInputTokens
+		}
 		return Result{Messages: original, Summary: strings.TrimSpace(request.PreviousSummary), Report: report}, err
 	}
 
@@ -184,11 +200,19 @@ func (o Orchestrator) Prepare(ctx context.Context, request Request) (Result, err
 	if err := contextError(ctx.Err()); err != nil {
 		return failure(Report{}, err)
 	}
-	if err := validatePolicy(o.Policy); err != nil {
+	if err := validatePolicy(o.Policy, o.TokenCounter); err != nil {
 		return failure(Report{}, err)
 	}
 
 	report := Report{BeforeChars: estimate(request.SystemPrompt, original)}
+	if tokenCount, err := o.countInput(ctx, request, original); err != nil {
+		return failure(report, err)
+	} else {
+		report.BeforeInputTokens = tokenCount.Tokens
+		report.AfterInputTokens = tokenCount.Tokens
+		report.InputTokenCountExact = tokenCount.Exact
+		report.InputTokenCountSource = displaySafeSource(tokenCount.Source)
+	}
 	working, diagnostic := transcript.Sanitize(original, transcript.SanitizePolicy{
 		StrictToolProtocol:     o.Policy.StrictToolProtocol,
 		StripInternalReasoning: o.Policy.StripInternalReasoning,
@@ -208,14 +232,12 @@ func (o Orchestrator) Prepare(ctx context.Context, request Request) (Result, err
 		report.ProtocolAwareDrops = drops
 	}
 
-	decision := transcript.Evaluate(transcript.EstimateInput{
-		SystemPrompt: request.SystemPrompt,
-		Messages:     working,
-		RoleAware:    true,
-	}, transcript.GuardPolicy{WarnChars: o.Policy.WarnChars, MaxChars: o.Policy.MaxChars})
-	report.Warned = decision.Warn
+	decision, err := o.evaluate(ctx, request, working)
+	if err != nil {
+		return failure(report, err)
+	}
+	applyAssessment(&report, decision)
 	if !decision.Overflow {
-		report.AfterChars = decision.EstimatedChars
 		return Result{Messages: cloneConversation(working), Summary: effectivePreviousSummary(request.PreviousSummary, working), Report: report}, nil
 	}
 
@@ -223,8 +245,12 @@ func (o Orchestrator) Prepare(ctx context.Context, request Request) (Result, err
 		MaxChars:         o.Policy.MaxChars,
 		ToolOutputAnchor: o.Policy.ToolOutputAnchor,
 	})
-	if estimated := estimate(request.SystemPrompt, working); estimated < o.Policy.MaxChars {
-		report.AfterChars = estimated
+	decision, err = o.evaluate(ctx, request, working)
+	if err != nil {
+		return failure(report, err)
+	}
+	applyAssessment(&report, decision)
+	if !decision.Overflow {
 		return Result{Messages: cloneConversation(working), Summary: effectivePreviousSummary(request.PreviousSummary, working), Report: report}, nil
 	}
 
@@ -238,16 +264,24 @@ func (o Orchestrator) Prepare(ctx context.Context, request Request) (Result, err
 			return failure(report, err)
 		}
 		report.SemanticSummaryUsed = true
-		report.AfterChars = estimate(request.SystemPrompt, candidate)
-		if report.AfterChars >= o.Policy.MaxChars {
+		decision, err = o.evaluate(ctx, request, candidate)
+		if err != nil {
+			return failure(report, err)
+		}
+		applyAssessment(&report, decision)
+		if decision.Overflow {
 			return failure(report, &Error{Code: ErrorCodeLimitUnresolved})
 		}
 		return Result{Messages: candidate, Summary: summary, Report: report}, nil
 	}
 
 	working, report.CompactedHistoryBodies = transcript.CompactHistoryBodies(working, o.Policy.MaxChars)
-	report.AfterChars = estimate(request.SystemPrompt, working)
-	if report.AfterChars < o.Policy.MaxChars {
+	decision, err = o.evaluate(ctx, request, working)
+	if err != nil {
+		return failure(report, err)
+	}
+	applyAssessment(&report, decision)
+	if !decision.Overflow {
 		return Result{Messages: working, Summary: previousSummary, Report: report}, nil
 	}
 	return failure(report, &Error{Code: ErrorCodeSummarizerUnavailable})
@@ -308,14 +342,84 @@ func (o Orchestrator) semanticCompact(ctx context.Context, messages llm.Conversa
 	}, nil
 }
 
-func validatePolicy(policy Policy) error {
+func validatePolicy(policy Policy, counter llm.TokenCounter) error {
 	if policy.MaxChars <= 0 || policy.SummaryTargetChars <= 0 || policy.ProtectedHeadSegments < 0 || policy.ProtectedTailSegments < 1 {
 		return &Error{Code: ErrorCodeInvalidPolicy}
 	}
 	if policy.WarnChars < 0 || policy.MaxEvents < 0 {
 		return &Error{Code: ErrorCodeInvalidPolicy}
 	}
+	if policy.WarnInputTokens < 0 || policy.MaxInputTokens < 0 ||
+		(policy.MaxInputTokens > 0 && policy.WarnInputTokens >= policy.MaxInputTokens) ||
+		((policy.WarnInputTokens > 0 || policy.MaxInputTokens > 0) && counter == nil) {
+		return &Error{Code: ErrorCodeInvalidPolicy}
+	}
 	return nil
+}
+
+type assessment struct {
+	Chars    int
+	Tokens   llm.TokenCount
+	Warn     bool
+	Overflow bool
+}
+
+func (o Orchestrator) evaluate(ctx context.Context, request Request, messages llm.Conversation) (assessment, error) {
+	charDecision := transcript.Evaluate(transcript.EstimateInput{
+		SystemPrompt: request.SystemPrompt,
+		Messages:     messages,
+		RoleAware:    true,
+	}, transcript.GuardPolicy{WarnChars: o.Policy.WarnChars, MaxChars: o.Policy.MaxChars})
+	result := assessment{Chars: charDecision.EstimatedChars, Warn: charDecision.Warn, Overflow: charDecision.Overflow}
+	count, err := o.countInput(ctx, request, messages)
+	if err != nil {
+		return assessment{}, err
+	}
+	result.Tokens = count
+	if o.Policy.WarnInputTokens > 0 && count.Tokens >= o.Policy.WarnInputTokens {
+		result.Warn = true
+	}
+	if o.Policy.MaxInputTokens > 0 && count.Tokens > o.Policy.MaxInputTokens {
+		result.Overflow = true
+	}
+	return result, nil
+}
+
+func (o Orchestrator) countInput(ctx context.Context, request Request, messages llm.Conversation) (llm.TokenCount, error) {
+	if o.Policy.WarnInputTokens == 0 && o.Policy.MaxInputTokens == 0 {
+		return llm.TokenCount{}, nil
+	}
+	count, err := o.TokenCounter.CountInput(ctx, llm.TokenCountRequest{
+		Model: request.Model, System: request.SystemPrompt, Messages: cloneConversation(messages), Tools: append([]llm.Tool(nil), request.Tools...),
+	})
+	if err != nil {
+		if ctxErr := contextError(ctx.Err()); ctxErr != nil {
+			return llm.TokenCount{}, ctxErr
+		}
+		return llm.TokenCount{}, &Error{Code: ErrorCodeTokenCountFailed, Cause: err}
+	}
+	if count.Tokens < 0 {
+		return llm.TokenCount{}, &Error{Code: ErrorCodeTokenCountFailed}
+	}
+	return count, nil
+}
+
+func applyAssessment(report *Report, value assessment) {
+	report.AfterChars = value.Chars
+	report.Warned = report.Warned || value.Warn
+	report.AfterInputTokens = value.Tokens.Tokens
+	if value.Tokens.Source != "" {
+		report.InputTokenCountExact = value.Tokens.Exact
+		report.InputTokenCountSource = displaySafeSource(value.Tokens.Source)
+	}
+}
+
+func displaySafeSource(source string) string {
+	source = strings.TrimSpace(strings.NewReplacer("\n", " ", "\r", " ", "\t", " ").Replace(source))
+	if len(source) > 128 {
+		return source[:128]
+	}
+	return source
 }
 
 func contextError(err error) error {

@@ -4,9 +4,12 @@ import "time"
 
 // Usage tracks token accounting data.
 type Usage struct {
-	PromptTokens     int `json:"prompt_tokens"`
-	CompletionTokens int `json:"completion_tokens"`
-	TotalTokens      int `json:"total_tokens"`
+	PromptTokens      int `json:"prompt_tokens"`
+	CompletionTokens  int `json:"completion_tokens"`
+	TotalTokens       int `json:"total_tokens"`
+	CachedInputTokens int `json:"cached_input_tokens,omitempty"`
+	CacheWriteTokens  int `json:"cache_write_tokens,omitempty"`
+	ReasoningTokens   int `json:"reasoning_tokens,omitempty"`
 }
 
 // UsageRecord tags usage with source metadata.

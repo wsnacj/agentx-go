@@ -214,8 +214,49 @@ func WithLabels(...string) VisualOption
 
 | API | 说明 |
 | --- | --- |
-| `Usage` | prompt/completion/total token 计数 |
+| `Usage` | provider-reported prompt/completion/total、cache 和 reasoning token 计数 |
 | `UsageRecord` | 带时间、feature 和 metadata 的 usage 记录 |
+
+`PromptTokens`、`CompletionTokens` 与 `TotalTokens` 保持既有 JSON 字段；
+`CachedInputTokens`、`CacheWriteTokens` 和 `ReasoningTokens` 是可选补充。它们只承载 provider
+返回的实际 usage，不应由请求前估算值填充。Provider 没有返回某一维度时保持零值。
+
+## Model limits 与请求前 Token Count
+
+```go
+type ModelLimits struct {
+    ContextWindowTokens int64
+    MaxInputTokens      int64
+    MaxOutputTokens     int64
+}
+
+func (ModelLimits) Normalize() ModelLimits
+
+type TokenCount struct {
+    Tokens int64
+    Exact  bool
+    Source string
+}
+
+type TokenCountRequest struct {
+    Model    string
+    System   string
+    Messages Conversation
+    Tools    []Tool
+}
+
+type TokenCounter interface {
+    CountInput(context.Context, TokenCountRequest) (TokenCount, error)
+}
+
+type TokenCounterFunc func(context.Context, TokenCountRequest) (TokenCount, error)
+func (TokenCounterFunc) CountInput(context.Context, TokenCountRequest) (TokenCount, error)
+```
+
+`ModelLimits` 是 Host 对一个已配置模型的 provider-neutral 限制快照；零值表示未知，不会被
+`Normalize` 猜测。`TokenCounter` 只用于请求前输入计数或保守估算；`Exact=false` 必须继续
+作为估算传播，不能冒充 provider-reported `Usage`。Tokenizer 选择、模型 catalog、价格、凭据
+和路由属于 Host/Platform。
 
 ## ModelCapabilities
 
@@ -241,17 +282,17 @@ type ModelCapabilities struct {
 
 W3-01 冻结以下 exact candidate surface，防止迁移时遗漏；冻结不等于成熟度晋级。
 
-Types（46）：
+Types（51）：
 
 ```text
 BotInput BotReference BotResponse BotUsage BotUsageAction BotUsageModel
 ChatInput ChatRequest ChatResponse Conversation
 EmbedInput EmbeddingOptions EmbeddingRequest EmbeddingResponse
-EventStreamResult Function FunctionCall FunctionCallDelta FunctionResult Message ModelCapabilities
+EventStreamResult Function FunctionCall FunctionCallDelta FunctionResult Message ModelCapabilities ModelLimits
 PayloadHook ReasoningOptions RequestOptions ResponseHook ResponseMetadata
 SimpleStreamChunk SimpleStreamResult SparseEntry StreamChunk StreamEvent
 StreamEventType StreamMessageSnapshot StreamResult StreamStopReason ThinkingOptions
-Tool ToolChoice ToolChoiceFunction Usage UsageRecord VisionInput VisualContent
+TokenCount TokenCountRequest TokenCounter TokenCounterFunc Tool ToolChoice ToolChoiceFunction Usage UsageRecord VisionInput VisualContent
 VisualOption VisualRequest VisualResponse
 ```
 
@@ -266,13 +307,14 @@ SanitizeProviderOptionMap SanitizeToolSchemas SortedFunctionCallIndexes
 SortedStringSnapshotIndexes WithDetail WithFPS WithLabels
 ```
 
-Methods（10）：
+Methods（12）：
 
 ```text
 BotInput.Clone ChatInput.Clone EmbedInput.Clone
 EmbeddingOptions.Clone EmbeddingOptions.ToMap
 FunctionCallDelta.HasArguments FunctionCallDelta.HasName
-RequestOptions.Clone RequestOptions.ToMap VisionInput.Clone
+ModelLimits.Normalize RequestOptions.Clone RequestOptions.ToMap
+TokenCounterFunc.CountInput VisionInput.Clone
 ```
 
 Constants（19）：
@@ -294,4 +336,4 @@ StreamStopReasonContentFilter
 - HTTP transport、retry、metrics、tracing、usage persistence；
 - Workflow、Objective、Resume、durable lifecycle；
 - Runtime protocol、Scene、CLI、HTTP API；
-- 对本页 46/21/10/19 个导出项作 Public/Beta/Stable 承诺。
+- 对本页 51/21/12/19 个导出项作 Public/Beta/Stable 承诺。

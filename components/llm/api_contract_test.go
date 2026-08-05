@@ -22,11 +22,12 @@ func TestW301ExactExportSurface(t *testing.T) {
 		"BotUsageModel", "ChatInput", "ChatRequest", "ChatResponse", "Conversation",
 		"EmbedInput", "EmbeddingOptions", "EmbeddingRequest", "EmbeddingResponse",
 		"EventStreamResult", "Function", "FunctionCall", "FunctionCallDelta",
-		"FunctionResult", "Message", "ModelCapabilities", "PayloadHook", "ReasoningOptions",
+		"FunctionResult", "Message", "ModelCapabilities", "ModelLimits", "PayloadHook", "ReasoningOptions",
 		"RequestOptions", "ResponseHook", "ResponseMetadata", "SimpleStreamChunk",
 		"SimpleStreamResult", "SparseEntry", "StreamChunk", "StreamEvent",
 		"StreamEventType", "StreamMessageSnapshot", "StreamResult", "StreamStopReason",
-		"ThinkingOptions", "Tool", "ToolChoice", "ToolChoiceFunction", "Usage",
+		"ThinkingOptions", "TokenCount", "TokenCountRequest", "TokenCounter", "TokenCounterFunc",
+		"Tool", "ToolChoice", "ToolChoiceFunction", "Usage",
 		"UsageRecord", "VisionInput", "VisualContent", "VisualOption", "VisualRequest",
 		"VisualResponse",
 	})
@@ -43,7 +44,8 @@ func TestW301ExactExportSurface(t *testing.T) {
 		"BotInput.Clone", "ChatInput.Clone", "EmbedInput.Clone",
 		"EmbeddingOptions.Clone", "EmbeddingOptions.ToMap",
 		"FunctionCallDelta.HasArguments", "FunctionCallDelta.HasName",
-		"RequestOptions.Clone", "RequestOptions.ToMap", "VisionInput.Clone",
+		"ModelLimits.Normalize", "RequestOptions.Clone", "RequestOptions.ToMap",
+		"TokenCounterFunc.CountInput", "VisionInput.Clone",
 	})
 	assertExactStrings(t, "constants", constants, []string{
 		"DetailAuto", "DetailHigh", "StreamEventDone", "StreamEventError",

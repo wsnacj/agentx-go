@@ -18,8 +18,9 @@ Session、summary 或用户记忆。
 
 ```go
 type Orchestrator struct {
-    Policy     Policy
-    Summarizer Summarizer
+    Policy       Policy
+    Summarizer   Summarizer
+    TokenCounter llm.TokenCounter
 }
 
 func (o Orchestrator) Prepare(
@@ -53,6 +54,8 @@ type Policy struct {
     ProtectedHeadSegments  int
     ProtectedTailSegments  int
     SummaryTargetChars     int
+    WarnInputTokens        int64
+    MaxInputTokens         int64
 }
 ```
 
@@ -60,7 +63,13 @@ type Policy struct {
 - `ProtectedTailSegments` 至少为 1，canonical 还会把最新 user segment 到末尾全部保护；
 - assistant tool call 与紧随的 tool results 是一个不可拆分 protocol segment；
 - `MaxEvents=0` 表示不做 history prune；
-- 字符预算不冒充精确 tokenizer。Host 可以依据模型能力映射保守预算。
+- 字符预算继续兼容；只有 Host 设置 token limit 并注入 `TokenCounter` 时才启用 token-aware
+  溢出判定和压缩后复核；
+- `TokenCount.Exact=false` 会原样进入 report，不冒充精确 tokenizer 或 provider usage。
+
+`Request` 可同时携带 `Model` 和 `Tools`，使 Host tokenizer 能覆盖 system、conversation 和
+tool schema。token counter 失败返回 `token_count_failed`；调用方取消仍优先映射为
+`canceled`/`deadline_exceeded`。
 
 ## Summarizer port
 
@@ -96,8 +105,9 @@ type Result struct {
 }
 ```
 
-`Report` 只包含前后字符数、转换计数和保护 segment 数，不包含 prompt、消息、summary、凭据
-或 provider 错误。Host 可以安全地把这些计数投影到自己的 observability。
+`Report` 只包含前后字符/token 数、token count 的 exact/source、转换计数和保护 segment 数，
+不包含 prompt、消息、summary、凭据或 provider 错误。Host 可以把这些 bounded 计数投影到
+自己的 observability；source 会移除换行并限制长度。
 
 ## Typed error
 
@@ -111,7 +121,7 @@ func AsError(error) (*Error, bool)
 ```
 
 稳定 code 包括 `invalid_policy`、`canceled`、`deadline_exceeded`、
-`summarizer_unavailable`、`summarization_failed`、`invalid_summary` 和
+`summarizer_unavailable`、`summarization_failed`、`invalid_summary`、`token_count_failed` 和
 `limit_unresolved`。`Error()` 只返回 display-safe 文本；底层原因通过 `errors.Unwrap` 提供，
 因此 `errors.Is(err, context.Canceled)` 与 `errors.As` 均可用。
 

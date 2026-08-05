@@ -91,9 +91,39 @@ budget near limit (max_tool_calls): <current>/<limit>
 budget near limit (max_duration_ms): <current>/<limit>ms
 ```
 
+## 请求前 Token Window Plan
+
+```go
+type TokenPlanRequest struct {
+    Limits                llm.ModelLimits
+    Input                 llm.TokenCount
+    RequestedOutputTokens int64
+    ReservedOutputTokens  int64
+}
+
+type TokenPlan struct {
+    Allowed             bool
+    Reason              string
+    Input               llm.TokenCount
+    InputLimitTokens     int64
+    OutputLimitTokens    int64
+    PlannedOutputTokens  int64
+    ReservedOutputTokens int64
+    ContextWindowTokens  int64
+}
+
+func PlanTokens(TokenPlanRequest) TokenPlan
+```
+
+`PlanTokens` 同时考虑 context window、模型输入上限、模型输出上限和显式输出预留。它不会
+调用 tokenizer、provider 或价格服务，也不会把 `Input.Exact=false` 的估算改写成实际 usage。
+新增稳定 reason 为 `context_window_tokens` 和 `invalid_token_plan`；输入或输出方向的既有限制
+继续使用 `max_input_tokens` 与 `max_output_tokens`。
+
 ## 非目标
 
 - 不定义 execution contract 或 snapshot 的唯一来源；
 - 不采集 usage、计算 provider 价格或持久化预算；
+- 不选择 tokenizer、模型 profile 或 provider；
 - 不执行停止、取消、重试、恢复或 approval；
 - 不构成 Public、Beta、Stable 或 production-ready 声明。
