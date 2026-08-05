@@ -16,6 +16,10 @@ github.com/wsnacj/agentx-go/extensions
   权限请求与typed error；不安装、不授权且不执行包内容。
 - [`mcp`](./mcp/API.md)：稳定MCP `2025-11-25`生命周期、Tool发现/调用和现有Tool合同适配；
   concrete transport、credential与授权仍由Host拥有。
+- [`expert`](./expert/API.md)：portable Expert角色、untrusted instruction与显式资产requirements；
+  不选择model、不创建Session/Subagent且不执行资产。
+- [`team`](./team/API.md)：引用Expert的Team DAG与确定性topological stage plan；不拥有scheduler、
+  queue、budget或第二套Agent Loop。
 - [`domainmodule`](./domainmodule/API.md)：编译期 Domain Module的portable
   manifest、config、diagnostics与顺序注册编排。
 - [`pack`](./pack/API.md)：Domain Pack定义、显式校验、注册、Workflow选择/物化、
