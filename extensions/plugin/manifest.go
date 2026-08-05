@@ -89,7 +89,13 @@ func Normalize(raw Manifest) (Manifest, error) {
 }
 
 func validateHostOwnedFields(fields map[string]json.RawMessage) error {
-	for field, value := range fields {
+	names := make([]string, 0, len(fields))
+	for field := range fields {
+		names = append(names, field)
+	}
+	sort.Strings(names)
+	for _, field := range names {
+		value := fields[field]
 		key := strings.ToLower(strings.TrimSpace(field))
 		if forbiddenHostFields[key] {
 			return manifestError(ErrorCodeForbiddenField, key)
@@ -101,7 +107,12 @@ func validateHostOwnedFields(fields map[string]json.RawMessage) error {
 		if err := json.Unmarshal(value, &metadata); err != nil {
 			continue
 		}
+		nestedNames := make([]string, 0, len(metadata))
 		for nested := range metadata {
+			nestedNames = append(nestedNames, nested)
+		}
+		sort.Strings(nestedNames)
+		for _, nested := range nestedNames {
 			key = strings.ToLower(strings.TrimSpace(nested))
 			if forbiddenHostFields[key] {
 				return manifestError(ErrorCodeForbiddenField, "metadata."+key)
