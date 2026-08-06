@@ -63,7 +63,7 @@ runtime/mediaartifact	experimental_extension	runtime/mediaartifact/API.md	-
 runtime/objective	experimental_extension	runtime/objective/API.md	-
 runtime/objective/hostkit	developer_preview_candidate	runtime/objective/hostkit/API.md	7c75ed3c6e8632fceb220daa73befd14e0ef3c5c3b45f3605b805600d3794df0
 runtime/session	experimental_extension	runtime/session/API.md	-
-runtime/session/hostkit	developer_preview_candidate	runtime/session/hostkit/API.md	f3d099ac70b116fbbb0bfc2628ee4da46275bdf781ea1fa3f8247bf65abce49c
+runtime/session/hostkit	developer_preview_candidate	runtime/session/hostkit/API.md	7aa5bb811c17d2e6b0cc0a41287ecaae708e0adcb9e32201275df8b92c76c293
 runtime/session/resume	experimental_extension	runtime/session/resume/API.md	-
 runtime/promptcontext	experimental_extension	runtime/promptcontext/API.md	-
 runtime/protocol	experimental_extension	runtime/protocol/API.md	-
@@ -72,7 +72,7 @@ runtime/scheduler	experimental_extension	runtime/scheduler/API.md	-
 runtime/telemetry	experimental_extension	runtime/telemetry/API.md	-
 runtime/telemetry/safeerror	experimental_extension	runtime/telemetry/safeerror/API.md	-
 runtime/toolerrors	experimental_extension	runtime/toolerrors/API.md	-
-runtime/toolloop	developer_preview_candidate	runtime/toolloop/API.md	ef5ca50321470d3e0fb3ba6f5e250fa11515474c9559cc870eaa5633e0106c43
+runtime/toolloop	developer_preview_candidate	runtime/toolloop/API.md	14e056331f08750b42dda652311cb5c69b9c4afcd869c3486ebf89e84a3534b9
 runtime/transcript	experimental_extension	runtime/transcript/API.md	-
 runtime/workflow	developer_preview_candidate	runtime/workflow/API.md	20a54669c45cce9f1bf8eb7efe5599c78e57aa9bf1a0686230b33d810c68173c
 runtime/workflow/bindingstate	experimental_extension	runtime/workflow/bindingstate/API.md	-

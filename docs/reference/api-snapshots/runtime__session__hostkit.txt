@@ -453,4 +453,3 @@ type WorkerRuntime interface {
 	InvokeDelegationWorker(ctx context.Context, request WorkerRequest) (WorkerResult, error)
 	ReadDelegationWorkerResult(ctx context.Context, request WorkerReadbackRequest) (WorkerReadback, error)
 }
-

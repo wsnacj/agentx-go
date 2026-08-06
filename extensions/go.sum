@@ -1,9 +1,9 @@
 github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
 github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
-github.com/wsnacj/agentx-go/components v0.1.1-0.20260805062037-378edb9eb58a h1:QVAD32uvUMU1csO8yONpgU4DH1bMkgSrxC8NGsahBJw=
-github.com/wsnacj/agentx-go/components v0.1.1-0.20260805062037-378edb9eb58a/go.mod h1:vzDNyIfw/9k4wzNf4IKLEbk9F4qhjg7fkK57Id3Y0oc=
-github.com/wsnacj/agentx-go/runtime v0.1.1-0.20260805062037-378edb9eb58a h1:/XGPTG+JubuZ0bCj9mb6rBXcxoqK3zV3VfMtm3hBc/k=
-github.com/wsnacj/agentx-go/runtime v0.1.1-0.20260805062037-378edb9eb58a/go.mod h1:jX1pEY1yQPXCDP6GohEHNz59tMS/N/oLie7se/8MLIk=
+github.com/wsnacj/agentx-go/components v0.2.0 h1:fe4oggS+qiinGor9QnQttYHlFts4BzAOyKy47IxjSB4=
+github.com/wsnacj/agentx-go/components v0.2.0/go.mod h1:l+GytucLCrA4F+ZZZjlKm9kd7HeG84gsi3ldvLAV86I=
+github.com/wsnacj/agentx-go/runtime v0.2.0 h1:U+9QpyBMk4Nm9bcl79vK3y50afLjAHR5rXPcqvslj/Q=
+github.com/wsnacj/agentx-go/runtime v0.2.0/go.mod h1:58+CjmWhFaFqTCnVBWg984yOw6oQEnDGue8zq1QBf2o=
 golang.org/x/sys v0.13.0 h1:Af8nKPmuFypiUBjVoU9V20FiaFXOcuZI21p0ycVYYGE=
 golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

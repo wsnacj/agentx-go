@@ -328,4 +328,3 @@ type TerminationSignal struct {
 }
     TerminationSignal is a portable stop fact. User-visible projection remains
     host-owned.
-

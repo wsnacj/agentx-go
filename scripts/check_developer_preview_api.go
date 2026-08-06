@@ -245,7 +245,10 @@ func docOutput(dir string, selected target) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("go doc %s [%s]: %w: %s", dir, selected.label(), err, diagnostics)
 	}
-	return output, nil
+	// go doc may emit more than one trailing newline across toolchain patch
+	// versions. Normalize that formatting-only detail so snapshots stay clean
+	// without weakening the signature and content comparison.
+	return append(bytes.TrimRight(output, "\r\n"), '\n'), nil
 }
 
 func checkSnapshot(root, dir string, output []byte, update bool) {
