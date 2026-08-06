@@ -9,7 +9,7 @@ Apache-2.0、历史`v0.1.0`九module release-train、9包核心兼容候选面�
 `v0.1.0`曾被重建，不同不可变Go代理、当前origin和既有consumer保存了不一致的zip/checksum。
 这些tag不得再次重写，也不得作为首次公开安装基线。
 
-当前开发分支为`378edb9eb58a1948e13a6db7d43440aa7b02acaa`，包含`v0.1.0`之后的Context、Memory、
+当前production-code基线为`378edb9eb58a1948e13a6db7d43440aa7b02acaa`，包含`v0.1.0`之后的Context、Memory、
 Plugin、Connector/MCP、Expert/Team等Experimental增量；agentx-platform和HS开发分支通过固定
 `v0.1.1-0...`pseudo-version消费。Public Developer Preview必须选择一个从未发布的新版本，对该
 精确source重新执行九module、module zip、clean proxy/direct/cache、文档和安全readback。仓库
@@ -49,6 +49,7 @@ Browser、Document、CGO 和系统命令路径还需要在受支持平台执行�
 | 发布审批与回滚责任 | `@wsnacj`；首版暂无backup owner |
 | 历史`v0.1.0`技术与安全门禁 | 历史checkpoint曾通过；不能替代新版本重验 |
 | 新版本远端tag / Release readback | 未开始；Public准入前保持fail closed |
+| GitHub dependency alert | 2026-08-06推送时默认分支报告1个high告警；尚未归因或关闭，阻断Public准入 |
 | 正式公开开关 | 待批准 |
 
 任何技术测试通过都不能替代这些决定。
