@@ -4,11 +4,21 @@
 
 ## 当前结论
 
-代码、examples、中文 API 和多 module 验证已经达到 Developer Preview 候选水平。
-Apache-2.0、`v0.1.0`九module release-train、9包核心兼容候选面及具名责任已经批准。
-当前源码已经通过九module test/race/vet/tidy/list、module zip、clean-room/offline consumer、
-双平台API签名、文档站和可达漏洞扫描。tag与私有GitHub Release只在远端提交及readback
-一致后创建；仓库public开关继续需要独立授权。
+代码、examples、中文 API 和多 module 验证已经达到 Private Developer Preview 候选水平。
+Apache-2.0、历史`v0.1.0`九module release-train、9包核心兼容候选面及具名责任已经批准，但
+`v0.1.0`曾被重建，不同不可变Go代理、当前origin和既有consumer保存了不一致的zip/checksum。
+这些tag不得再次重写，也不得作为首次公开安装基线。
+
+当前开发分支为`378edb9eb58a1948e13a6db7d43440aa7b02acaa`，包含`v0.1.0`之后的Context、Memory、
+Plugin、Connector/MCP、Expert/Team等Experimental增量；agentx-platform和HS开发分支通过固定
+`v0.1.1-0...`pseudo-version消费。Public Developer Preview必须选择一个从未发布的新版本，对该
+精确source重新执行九module、module zip、clean proxy/direct/cache、文档和安全readback。仓库
+public开关继续需要独立授权。
+
+当前active development baseline为`v0.1.1-0.20260805062037-378edb9eb58a`：九个production module的
+仓内依赖、examples、HS和agentx-platform均已对齐，normal/vet/tidy、examples与Platform race、API与
+中文Reference门禁通过。该pseudo-version只是私有开发基线，不是新tag、Release或兼容性承诺；历史
+conformance/release matrix中的`v0.1.0`仅保留为旧train证据，必须由未来全新版本替换后再做公开readback。
 
 ## 技术门禁
 
@@ -32,12 +42,13 @@ Browser、Document、CGO 和系统命令路径还需要在受支持平台执行�
 | --- | --- |
 | License / NOTICE | 已采用 Apache-2.0；九个 library module 与 examples module 均携带一致副本 |
 | 直接依赖归属摘要 | 已提交；发行二进制时仍须按实际依赖闭包重新复核 |
-| 首个版本号与九 module tag | 已批准：`v0.1.0 Developer Preview`九module同版 |
+| 历史私有版本与九 module tag | `v0.1.0`已存在但有重建/checksum冲突，不得作为首次公开基线 |
+| 首个公开版本 | 待批准：必须使用从未发布、不可变的新版本并重做完整readback |
 | Developer Preview兼容范围 | 已批准：9包核心候选面；其它可导入包保持Experimental |
 | 安全响应责任 | `@wsnacj`；目标3个工作日确认收到，无修复SLA |
 | 发布审批与回滚责任 | `@wsnacj`；首版暂无backup owner |
-| 本地技术与安全门禁 | 已通过；所有module可达漏洞为0 |
-| 远端tag / Release readback | 待发布流程完成 |
+| 历史`v0.1.0`技术与安全门禁 | 历史checkpoint曾通过；不能替代新版本重验 |
+| 新版本远端tag / Release readback | 未开始；Public准入前保持fail closed |
 | 正式公开开关 | 待批准 |
 
 任何技术测试通过都不能替代这些决定。

@@ -7,7 +7,7 @@
 当前固定版本：
 
 ```text
-v0.1.0
+v0.1.1-0.20260805062037-378edb9eb58a
 ```
 
 私有仓库首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`

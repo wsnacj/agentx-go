@@ -6,8 +6,8 @@ require (
 	codeberg.org/readeck/go-readability/v2 v2.1.1
 	github.com/PuerkitoBio/goquery v1.10.2
 	github.com/sergi/go-diff v1.4.0
-	github.com/wsnacj/agentx-go/components v0.1.0
-	github.com/wsnacj/agentx-go/runtime v0.1.0
+	github.com/wsnacj/agentx-go/components v0.1.1-0.20260805062037-378edb9eb58a
+	github.com/wsnacj/agentx-go/runtime v0.1.1-0.20260805062037-378edb9eb58a
 	golang.org/x/net v0.56.0
 )
 

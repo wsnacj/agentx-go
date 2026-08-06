@@ -3,9 +3,10 @@
 AgentX Go 是面向 Go 项目的可组合 Agent Runtime。它提供稳定、窄小的执行合同，
 并把模型、工具、工作流、长任务、浏览器、文档和领域能力拆成显式选择的模块。
 
-> 当前成熟度：Developer Preview。已有真实实现、外部消费示例和中文 API Reference，
-> 首个版本为 `v0.1.0 Developer Preview`，只对文档明确列出的9包核心候选面实施受治理
-> 变更；它不是 Beta、Stable、production-ready 或生产 SLA。
+> 当前成熟度：Private Developer Preview。已有真实实现、外部消费示例和中文 API Reference。
+> 历史`v0.1.0`tag存在重建/checksum冲突，不得作为首次公开安装基线；当前私有开发固定到
+> `v0.1.1-0.20260805062037-378edb9eb58a`，只对文档明确列出的9包核心候选面实施受治理
+> 变更。它不是 Public、Beta、Stable、production-ready 或生产 SLA。
 
 最低工具链为 Go 1.25.0；发布验证固定使用 Go 1.25.12。
 
@@ -23,9 +24,9 @@ AgentX Go 是面向 Go 项目的可组合 Agent Runtime。它提供稳定、窄�
 安装最小 Chat 路径：
 
 ```bash
-go get github.com/wsnacj/agentx-go@v0.1.0
-go get github.com/wsnacj/agentx-go/components@v0.1.0
-go get github.com/wsnacj/agentx-go/runtime@v0.1.0
+go get github.com/wsnacj/agentx-go@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/components@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/runtime@v0.1.1-0.20260805062037-378edb9eb58a
 ```
 
 调用方显式提供模型函数：

@@ -1,6 +1,6 @@
 # package_dir<TAB>maturity<TAB>Chinese_Reference<TAB>go_doc_sha256_or_dash
 .	developer_preview_candidate	docs/reference/agentx.md	56524266ec67143741b704b5b793fff21956fb852d2cf130ef6b39e9ab8ed619
-components/llm	developer_preview_candidate	components/llm/API.md	570a1c7924d8db25dc8bbe9198468ee6187c9783a21790273ad697529d95fb41
+components/llm	developer_preview_candidate	components/llm/API.md	f3d7148efd708e01e8ffa32cae903764ed5916b8d4fe9b6ad14feb611f08ef74
 components/tool	experimental_extension	components/tool/API.md	-
 scenes/astock	experimental_extension	scenes/astock/API.md	-
 scenes/astock/contracts	experimental_extension	scenes/astock/contracts/API.md	-
@@ -34,11 +34,16 @@ scenes/publicsource	experimental_extension	scenes/publicsource/API.md	-
 scenes/publictransport	experimental_extension	scenes/publictransport/API.md	-
 scenes/wechatarticle	experimental_extension	scenes/wechatarticle/API.md	-
 extensions/catalog	experimental_extension	extensions/catalog/API.md	-
+extensions/connector	experimental_extension	extensions/connector/API.md	-
 extensions/domainkit	experimental_extension	extensions/domainkit/API.md	-
 extensions/domainmodule	experimental_extension	extensions/domainmodule/API.md	-
+extensions/expert	experimental_extension	extensions/expert/API.md	-
+extensions/mcp	experimental_extension	extensions/mcp/API.md	-
 extensions/pack	experimental_extension	extensions/pack/API.md	-
+extensions/plugin	experimental_extension	extensions/plugin/API.md	-
 extensions/productshell	experimental_extension	extensions/productshell/API.md	-
 extensions/skills	experimental_extension	extensions/skills/API.md	-
+extensions/team	experimental_extension	extensions/team/API.md	-
 runtime/assetfs	experimental_extension	runtime/assetfs/API.md	-
 runtime/artifact	experimental_extension	runtime/artifact/API.md	-
 runtime/budget	experimental_extension	runtime/budget/API.md	-

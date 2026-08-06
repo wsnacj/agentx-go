@@ -251,6 +251,18 @@ type ModelCapabilities struct {
     assume the capability is available; it is not a global claim about every
     upstream model offered by that provider.
 
+type ModelLimits struct {
+	ContextWindowTokens int64 `json:"context_window_tokens,omitempty"`
+	MaxInputTokens      int64 `json:"max_input_tokens,omitempty"`
+	MaxOutputTokens     int64 `json:"max_output_tokens,omitempty"`
+}
+    ModelLimits describes provider-neutral token boundaries for one configured
+    model. Zero means the Host has not declared that limit.
+
+func (l ModelLimits) Normalize() ModelLimits
+    Normalize returns non-negative limits and clamps per-direction limits to a
+    known context window. It does not invent an unknown limit.
+
 type PayloadHook func(ctx context.Context, payload any) (any, error)
     PayloadHook can inspect or replace a provider-bound payload before
     marshal/send.
@@ -417,6 +429,36 @@ type ThinkingOptions struct {
 }
     ThinkingOptions captures typed thinking controls for provider adapters.
 
+type TokenCount struct {
+	Tokens int64  `json:"tokens"`
+	Exact  bool   `json:"exact"`
+	Source string `json:"source,omitempty"`
+}
+    TokenCount is a request-time input count. Exact distinguishes a model
+    tokenizer result from a conservative estimate; provider-reported response
+    usage continues to use Usage.
+
+type TokenCountRequest struct {
+	Model    string
+	System   string
+	Messages Conversation
+	Tools    []Tool
+}
+    TokenCountRequest contains the complete provider-bound input surface that
+    can affect input token usage.
+
+type TokenCounter interface {
+	CountInput(context.Context, TokenCountRequest) (TokenCount, error)
+}
+    TokenCounter counts or conservatively estimates provider-bound input.
+    It must honor ctx and must not mutate the request.
+
+type TokenCounterFunc func(context.Context, TokenCountRequest) (TokenCount, error)
+    TokenCounterFunc adapts a Host function to TokenCounter.
+
+func (f TokenCounterFunc) CountInput(ctx context.Context, request TokenCountRequest) (TokenCount, error)
+    CountInput delegates to f.
+
 type Tool struct {
 	Type     string   `json:"type"`
 	Function Function `json:"function"`
@@ -440,9 +482,12 @@ type ToolChoiceFunction struct {
     ToolChoiceFunction 在指定函数时提供名称。
 
 type Usage struct {
-	PromptTokens     int `json:"prompt_tokens"`
-	CompletionTokens int `json:"completion_tokens"`
-	TotalTokens      int `json:"total_tokens"`
+	PromptTokens      int `json:"prompt_tokens"`
+	CompletionTokens  int `json:"completion_tokens"`
+	TotalTokens       int `json:"total_tokens"`
+	CachedInputTokens int `json:"cached_input_tokens,omitempty"`
+	CacheWriteTokens  int `json:"cache_write_tokens,omitempty"`
+	ReasoningTokens   int `json:"reasoning_tokens,omitempty"`
 }
     Usage tracks token accounting data.
 
