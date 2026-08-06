@@ -140,7 +140,7 @@ func main() {
 	for _, module := range candidateModules {
 		target := filepath.Join(stagingRoot, module.name)
 		copyTrackedModule(root, module.dir, target, nestedRoots)
-		rewriteCandidateRequirements(target, goCommand, baseEnv, *prepareProxyOnly)
+		rewriteCandidateRequirements(target, goCommand, baseEnv)
 		staged[module.path] = target
 	}
 
@@ -362,7 +362,7 @@ func belongsToNestedModule(tracked, moduleDir string, nestedRoots []string) bool
 	return false
 }
 
-func rewriteCandidateRequirements(dir, goCommand string, env []string, resetCandidateSums bool) {
+func rewriteCandidateRequirements(dir, goCommand string, env []string) {
 	goMod := filepath.Join(dir, "go.mod")
 	content := readTrimmed(goMod)
 	for _, module := range candidateModules {
@@ -371,9 +371,12 @@ func rewriteCandidateRequirements(dir, goCommand string, env []string, resetCand
 		}
 	}
 	checkNoReplace(goMod)
-	if resetCandidateSums {
-		resetAgentXSums(filepath.Join(dir, "go.sum"))
-	}
+	// Candidate modules are rebuilt from this exact tracked source revision.
+	// Any previously committed checksum for the same candidate version belongs
+	// to an older local artifact and would make the next revision impossible to
+	// stage. Remove only AgentX-owned sums in the temporary copy; third-party
+	// checksums remain authoritative and the final artifact sums are recalculated.
+	resetAgentXSums(filepath.Join(dir, "go.sum"))
 }
 
 func resetAgentXSums(path string) {
