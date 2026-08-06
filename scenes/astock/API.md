@@ -1,6 +1,6 @@
 # `scenes/astock` 中文 API Reference
 
-成熟度：**Experimental extension**。本包随 `scenes/v0.2.0`提供，但不进入9包核心
+成熟度：**Experimental extension**。本包随 `scenes/v0.2.1`提供，但不进入9包核心
 兼容候选面；调用方必须固定精确版本并执行升级 differential。
 
 本包是 A股 portable领域扩展的推荐 Go入口，组合 Manifest、不可变 skill/tool资产、

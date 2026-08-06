@@ -81,7 +81,7 @@ func readVersionMatrix(path string) (map[string]string, error) {
 			continue
 		}
 		fields := strings.Fields(line)
-		if len(fields) != 2 || fields[1] != "v0.2.0" || strings.ContainsAny(fields[1], "\t\r\n ") {
+		if len(fields) != 2 || fields[1] != "v0.2.1" || strings.ContainsAny(fields[1], "\t\r\n ") {
 			return nil, fmt.Errorf("invalid version matrix line %q", line)
 		}
 		if _, exists := versions[fields[0]]; exists {

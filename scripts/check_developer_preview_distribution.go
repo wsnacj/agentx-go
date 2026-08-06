@@ -213,7 +213,7 @@ func readVersionMatrix(path string) map[string]string {
 			continue
 		}
 		fields := strings.Fields(line)
-		if len(fields) != 2 || fields[1] != "v0.2.0" {
+		if len(fields) != 2 || fields[1] != "v0.2.1" {
 			check(fmt.Errorf("invalid Developer Preview version matrix line %q", line))
 		}
 		if _, exists := versions[fields[0]]; exists {

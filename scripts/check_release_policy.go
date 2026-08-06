@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_release_policy verifies the v0.2.0 Developer Preview candidate
+// check_release_policy verifies the v0.2.1 Developer Preview candidate
 // compatibility and named responsibility decisions before artifacts or tags.
 package main
 
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const releaseVersion = "v0.2.0"
+const releaseVersion = "v0.2.1"
 
 var releaseModuleDirs = []string{
 	".",

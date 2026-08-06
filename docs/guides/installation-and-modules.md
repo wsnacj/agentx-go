@@ -2,7 +2,7 @@
 
 AgentX Go 由九个 library module 组成。项目只应安装实际使用的模块。
 
-`v0.2.0 Developer Preview`的最低Go版本是1.25.0，发行验证使用Go 1.25.12。
+`v0.2.1 Developer Preview`的最低Go版本是1.25.0，发行验证使用Go 1.25.12。
 请固定精确版本，不要依赖branch或`@latest`。
 
 ## 最小安装
@@ -10,25 +10,25 @@ AgentX Go 由九个 library module 组成。项目只应安装实际使用的模
 根 Client：
 
 ```bash
-go get github.com/wsnacj/agentx-go@v0.2.0
+go get github.com/wsnacj/agentx-go@v0.2.1
 ```
 
 模型合同与 Runtime Host Kit：
 
 ```bash
-go get github.com/wsnacj/agentx-go/components@v0.2.0
-go get github.com/wsnacj/agentx-go/runtime@v0.2.0
+go get github.com/wsnacj/agentx-go/components@v0.2.1
+go get github.com/wsnacj/agentx-go/runtime@v0.2.1
 ```
 
 按需增加：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.2.0
-go get github.com/wsnacj/agentx-go/providers@v0.2.0
-go get github.com/wsnacj/agentx-go/tools@v0.2.0
-go get github.com/wsnacj/agentx-go/browser@v0.2.0
-go get github.com/wsnacj/agentx-go/document@v0.2.0
-go get github.com/wsnacj/agentx-go/scenes@v0.2.0
+go get github.com/wsnacj/agentx-go/extensions@v0.2.1
+go get github.com/wsnacj/agentx-go/providers@v0.2.1
+go get github.com/wsnacj/agentx-go/tools@v0.2.1
+go get github.com/wsnacj/agentx-go/browser@v0.2.1
+go get github.com/wsnacj/agentx-go/document@v0.2.1
+go get github.com/wsnacj/agentx-go/scenes@v0.2.1
 ```
 
 需要可重复构建的项目应固定精确版本。升级时应同时更新所使用的AgentX module，并运行自身的

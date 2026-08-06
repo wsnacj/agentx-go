@@ -1,6 +1,6 @@
 # `scenes/browserops` 中文 API Reference
 
-成熟度：**Experimental extension**。本包随 `scenes/v0.2.0`提供，但不进入9包核心
+成熟度：**Experimental extension**。本包随 `scenes/v0.2.1`提供，但不进入9包核心
 兼容候选面；调用方应固定精确版本，并在升级时执行 API 与行为 differential。
 
 本包是 Browser Ops Domain Kit 的 portable source authority：提供 Pack/Workflow Definition、

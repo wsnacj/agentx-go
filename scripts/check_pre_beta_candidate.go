@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	candidateVersion     = "v0.2.0"
+	candidateVersion     = "v0.2.1"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
 	candidateGoToolchain = "go1.25.12"
@@ -606,7 +606,7 @@ func buildManifest(revision string, commitTime time.Time, rollbackRevision strin
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "security_standard_library_version=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
-	fmt.Fprintf(&builder, "candidate_version_scope=public_v0.2.0_developer_preview_candidate\n")
+	fmt.Fprintf(&builder, "candidate_version_scope=public_v0.2.1_developer_preview_candidate\n")
 	fmt.Fprintf(&builder, "rollback_revision=%s\n", rollbackRevision)
 	fmt.Fprintf(&builder, "rollback_strategy=withdraw_release_and_restore_pre_release_branch\n")
 	fmt.Fprintf(&builder, "security_scanner=%s@%s\n", govulncheckModule, govulncheckVersion)

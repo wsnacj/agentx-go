@@ -1,6 +1,6 @@
 # `scenes/companyresearch` 中文 API Reference
 
-成熟度：**Experimental extension**。本包随 `scenes/v0.2.0`提供，但不进入9包核心
+成熟度：**Experimental extension**。本包随 `scenes/v0.2.1`提供，但不进入9包核心
 兼容候选面；调用方必须固定精确版本，并在升级时执行 API/行为 differential。
 
 本包是公司研究领域的 portable source authority：提供单公司/多公司意图与结果合同、

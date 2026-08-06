@@ -9,6 +9,14 @@
 
 当前没有尚未发布的调用方可见变化。
 
+## [0.2.1] - 2026-08-07
+
+### Fixed
+
+- 重新发布九个不可变 Go module tag，修复 `v0.2.0` 曾被移动而导致公共模块代理与
+  clean-room consumer 出现 checksum mismatch 的问题；API 与运行时行为不变。
+- 安装文档、模块矩阵、API 版本常量与签名快照统一到 `v0.2.1`。
+
 ## [0.2.0] - 2026-08-06
 
 ### Added
@@ -45,4 +53,5 @@
 - 不提供Beta/Stable兼容承诺、生产SLA或长期支持周期；
 - Developer Preview不代表所有可导入package都具备相同兼容等级。
 
+[0.2.1]: https://github.com/wsnacj/agentx-go/releases/tag/v0.2.1
 [0.2.0]: https://github.com/wsnacj/agentx-go/releases/tag/v0.2.0
