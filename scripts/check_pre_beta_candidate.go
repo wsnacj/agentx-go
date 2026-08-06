@@ -144,7 +144,8 @@ func main() {
 		staged[module.path] = target
 	}
 
-	candidateEnv := append(baseEnv,
+	candidatePath := filepath.Dir(goCommand) + string(os.PathListSeparator) + os.Getenv("PATH")
+	candidateEnv := append(replaceEnv(baseEnv, "PATH", candidatePath),
 		// govulncheck intentionally accepts GOVERSION for source-mode standard
 		// library analysis. Keep this explicit: a newer launcher alone does not
 		// change the version modeled by the scanner.
