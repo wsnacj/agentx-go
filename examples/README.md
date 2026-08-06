@@ -7,11 +7,11 @@
 当前固定版本：
 
 ```text
-v0.1.1-0.20260805062037-378edb9eb58a
+v0.2.0
 ```
 
-私有仓库首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`
-以及可读取仓库的 Git 凭据；凭据不能写入本目录、源码或 `go.mod`。
+如果仓库尚未公开，首次运行前需要配置 `GOPRIVATE`、`GONOSUMDB`、`GOPROXY=direct`
+以及可读取仓库的Git凭据；凭据不能写入本目录、源码或`go.mod`。
 
 ## 七条核心能力与两条重型扩展路径
 

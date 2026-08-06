@@ -9,12 +9,13 @@ AgentX Go 自身以 Apache License 2.0 提供。本文档记录九个 library mo
 | `codeberg.org/readeck/go-readability/v2` | `v2.1.1` | MIT |
 | `github.com/PuerkitoBio/goquery` | `v1.10.2` | BSD-3-Clause |
 | `github.com/sergi/go-diff` | `v1.4.0` | MIT |
-| `golang.org/x/net` | `v0.43.0` | BSD-3-Clause |
+| `golang.org/x/net` | `v0.56.0` | BSD-3-Clause |
 | `github.com/agext/levenshtein` | `v1.2.3` | Apache-2.0 |
 | `github.com/cenkalti/backoff/v5` | `v5.0.3` | MIT |
 | `github.com/prometheus/client_golang` | `v1.22.0` | Apache-2.0 |
 | `github.com/stretchr/testify` | `v1.10.0` | MIT |
 | `go.uber.org/zap` | `v1.27.0` | MIT |
+| `playwright` | `1.55.1` | Apache-2.0 |
 | `vitepress` | `1.6.4` | MIT |
 
 ## 上游 NOTICE 归属

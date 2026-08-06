@@ -38,6 +38,7 @@ var directDependencyNotices = []string{
 	"github.com/prometheus/client_golang",
 	"github.com/stretchr/testify",
 	"go.uber.org/zap",
+	"playwright",
 	"vitepress",
 }
 

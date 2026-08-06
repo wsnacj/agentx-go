@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_release_policy verifies the approved v0.1.0 Developer Preview
+// check_release_policy verifies the v0.2.0 Developer Preview candidate
 // compatibility and named responsibility decisions before artifacts or tags.
 package main
 
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const releaseVersion = "v0.1.0"
+const releaseVersion = "v0.2.0"
 
 var releaseModuleDirs = []string{
 	".",
@@ -60,7 +60,7 @@ func main() {
 		"暂无backup owner",
 	})
 	checkMarkers(filepath.Join(root, "CHANGELOG.md"), []string{
-		"## [0.1.0] - 2026-08-05",
+		"## [0.2.0] - 2026-08-06",
 		"首版核心兼容候选面收窄",
 	})
 

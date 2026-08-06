@@ -39,7 +39,7 @@ func TestExactExportSurfaceAndChineseReference(t *testing.T) {
 	}
 	text := string(content)
 	for _, required := range []string{
-		"v0.1.0 Developer Preview candidate",
+		"v0.2.0 Developer Preview candidate",
 		"Config",
 		"Factory",
 		"RunConfig",

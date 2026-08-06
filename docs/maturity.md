@@ -80,11 +80,10 @@ Developer Preview 期间：
 首次正式开源发布至少需要：
 
 1. 已完成：提交 Apache-2.0、NOTICE、九个 library module 的分发副本和直接依赖归属摘要；
-2. 已完成：批准`v0.1.0`九module同版tag与9包核心兼容候选面；
-3. 已完成：当前源码通过test、race、vet、tidy、list、module zip和clean-room/offline consumer；
-4. 已完成：安全与依赖扫描通过，九module可达漏洞为0；
-5. 已完成：文档站、examples、Package API、双平台签名和Release内容一致；
-6. 已完成：`@wsnacj`承担首版安全、发布与回滚责任，暂无backup owner。
+2. `v0.2.0`九module同版artifact、tag前缀与9包核心兼容候选面一致；
+3. 当前源码通过test、race、vet、tidy、list、module zip和clean-room/offline consumer；
+4. Go与Node安全扫描通过，九module可达漏洞为0；
+5. 文档站、examples、Package API、双平台签名和Release内容一致；
+6. `@wsnacj`承担首版安全、发布与回滚责任，暂无backup maintainer。
 
-上述技术条件允许创建私有Developer Preview tag和Release，但仓库公开可见性仍需独立授权。
-即使全部完成，`v0.1.0`仍不是Beta、Stable或production-ready。
+满足这些条件只表示可以发布Developer Preview，不表示Beta、Stable、production-ready或生产SLA。

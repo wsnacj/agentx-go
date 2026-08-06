@@ -3,7 +3,7 @@ package hostkit // import "github.com/wsnacj/agentx-go/runtime/objective/hostkit
 Package hostkit composes the canonical Objective ingress, host-owned runtime
 adapter dispatch, observation normalization, and verification mechanisms.
 
-The package is part of the v0.1.0 Developer Preview compatibility surface.
+The package is part of the v0.2.0 Developer Preview compatibility surface.
 It does not provide a provider, Runner, backend, credential, product policy,
 or production side effect.
 
@@ -120,4 +120,3 @@ func New(config Config) (*Runtime, error)
 func (runtime *Runtime) Run(ctx context.Context, request RunRequest) RunResult
     Run projects one managed Objective and, only after explicit enable and host
     confirmation, invokes exactly one selected handler before verification.
-

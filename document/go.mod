@@ -8,9 +8,9 @@ require (
 	github.com/prometheus/client_golang v1.22.0
 	github.com/sergi/go-diff v1.4.0
 	github.com/stretchr/testify v1.10.0
-	github.com/wsnacj/agentx-go/components v0.1.1-0.20260805062037-378edb9eb58a
-	github.com/wsnacj/agentx-go/runtime v0.1.1-0.20260805062037-378edb9eb58a
-	github.com/wsnacj/agentx-go/tools v0.1.1-0.20260805062037-378edb9eb58a
+	github.com/wsnacj/agentx-go/components v0.2.0
+	github.com/wsnacj/agentx-go/runtime v0.2.0
+	github.com/wsnacj/agentx-go/tools v0.2.0
 	go.uber.org/zap v1.27.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -28,3 +28,5 @@ require (
 	golang.org/x/sys v0.30.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 )
+
+retract v0.1.0

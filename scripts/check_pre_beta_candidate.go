@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	candidateVersion     = "v0.1.0"
+	candidateVersion     = "v0.2.0"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
 	candidateGoToolchain = "go1.25.12"
@@ -602,14 +602,14 @@ func buildManifest(revision string, commitTime time.Time, rollbackRevision strin
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "security_standard_library_version=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
-	fmt.Fprintf(&builder, "candidate_version_scope=approved_v0.1.0_developer_preview\n")
+	fmt.Fprintf(&builder, "candidate_version_scope=public_v0.2.0_developer_preview_candidate\n")
 	fmt.Fprintf(&builder, "rollback_revision=%s\n", rollbackRevision)
 	fmt.Fprintf(&builder, "rollback_strategy=withdraw_release_and_restore_pre_release_branch\n")
 	fmt.Fprintf(&builder, "security_scanner=%s@%s\n", govulncheckModule, govulncheckVersion)
 	fmt.Fprintf(&builder, "known_reachable_vulnerabilities=0\n")
 	fmt.Fprintf(&builder, "license_notice_status=%s\n", legalStatus)
 	fmt.Fprintf(&builder, "named_security_approval_status=approved_at_wsnacj\n")
-	fmt.Fprintf(&builder, "release_authorization_status=approved_for_private_v0.1.0_tags\n")
+	fmt.Fprintf(&builder, "release_authorization_status=candidate_validation_authorized_tags_pending\n")
 	fmt.Fprintf(&builder, "public_visibility_authorization_status=pending\n")
 	fmt.Fprintf(&builder, "compatibility_promotion_status=developer_preview_9_packages\n")
 	for _, artifact := range artifacts {

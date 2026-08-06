@@ -14,13 +14,13 @@ import productshell "github.com/wsnacj/agentx-go/extensions/productshell"
 安装当前版本：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/extensions@v0.2.0
 ```
 
 如果代码直接导入 `runtime/cases`：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/runtime@v0.2.0
 ```
 
 可重复构建的项目应固定`go.mod`和`go.sum`。完整的无专有Runner、无长期

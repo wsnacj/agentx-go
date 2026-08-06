@@ -2,37 +2,37 @@
 
 AgentX Go 由九个 library module 组成。项目只应安装实际使用的模块。
 
-当前私有开发基线的最低 Go 版本是 1.25.0，验证使用 Go 1.25.12。历史`v0.1.0`tag
-存在重建/checksum冲突，不得作为首次公开安装基线；下列命令固定到已推送、不可变的开发提交。
+`v0.2.0 Developer Preview`的最低Go版本是1.25.0，发行验证使用Go 1.25.12。
+请固定精确版本，不要依赖branch或`@latest`。
 
 ## 最小安装
 
 根 Client：
 
 ```bash
-go get github.com/wsnacj/agentx-go@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go@v0.2.0
 ```
 
 模型合同与 Runtime Host Kit：
 
 ```bash
-go get github.com/wsnacj/agentx-go/components@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/runtime@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/components@v0.2.0
+go get github.com/wsnacj/agentx-go/runtime@v0.2.0
 ```
 
 按需增加：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/providers@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/tools@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/browser@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/document@v0.1.1-0.20260805062037-378edb9eb58a
-go get github.com/wsnacj/agentx-go/scenes@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/extensions@v0.2.0
+go get github.com/wsnacj/agentx-go/providers@v0.2.0
+go get github.com/wsnacj/agentx-go/tools@v0.2.0
+go get github.com/wsnacj/agentx-go/browser@v0.2.0
+go get github.com/wsnacj/agentx-go/document@v0.2.0
+go get github.com/wsnacj/agentx-go/scenes@v0.2.0
 ```
 
-当前pseudo-version是私有开发基线，不是正式公开release。需要可重复构建的项目应固定精确版本，
-不要依赖branch或`@latest`；首次公开版本必须使用从未发布的新tag并重做clean readback。
+需要可重复构建的项目应固定精确版本。升级时应同时更新所使用的AgentX module，并运行自身的
+回归与集成验证。
 
 ## 私有仓库访问
 

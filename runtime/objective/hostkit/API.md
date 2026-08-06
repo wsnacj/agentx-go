@@ -1,6 +1,6 @@
 # `runtime/objective/hostkit` 中文 API Reference
 
-状态：**v0.1.0 Developer Preview candidate**。本包进入首版9包核心兼容候选面及
+状态：**v0.2.0 Developer Preview candidate**。本包进入9包核心兼容候选面及
 签名、文档和consumer门禁，但不是Beta、Stable或生产SLA。
 
 本package是C5 Objective Runtime Loop面向普通Host的推荐construction路径。它真实组合：

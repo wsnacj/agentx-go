@@ -9,7 +9,7 @@
 ## 安装
 
 ```bash
-go get github.com/wsnacj/agentx-go/scenes@v0.1.1-0.20260805062037-378edb9eb58a
+go get github.com/wsnacj/agentx-go/scenes@v0.2.0
 ```
 
 可重复构建的项目应把解析结果固定在`go.mod`和`go.sum`中。

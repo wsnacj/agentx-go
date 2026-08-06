@@ -101,7 +101,7 @@ func main() {
 	}
 
 	nav := navigation{
-		Version:      "v0.1.0 Developer Preview",
+		Version:      "v0.2.0 Developer Preview",
 		SourceCommit: commit,
 		Packages:     entries,
 	}
