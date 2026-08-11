@@ -73,7 +73,11 @@ func markdownFiles(root string) ([]string, error) {
 				return walkErr
 			}
 			if entry.IsDir() {
-				if entry.Name() == ".git" || entry.Name() == "vendor" {
+				// Only AgentX-owned Markdown belongs to the documentation
+				// contract. Vendored Go and Node dependency documentation is
+				// validated by its upstream owner and may contain repository-local
+				// links that intentionally do not exist in AgentX.
+				if entry.Name() == ".git" || entry.Name() == "vendor" || entry.Name() == "node_modules" {
 					return filepath.SkipDir
 				}
 				return nil
