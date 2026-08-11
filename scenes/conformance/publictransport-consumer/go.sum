@@ -1,6 +1,6 @@
-github.com/wsnacj/agentx-go/extensions v0.2.2 h1:UwuivNuvPdoDR1XS+Mu28+XhwdgP2rNEsjQDHuk3CjA=
+github.com/wsnacj/agentx-go/extensions v0.2.2 h1:cg7rI7eJBh6NZts8S5088pa2RnPtuKV3segeAgD1uWk=
 github.com/wsnacj/agentx-go/extensions v0.2.2/go.mod h1:DtTkEGeur03O6AZAMjV+ar6nOSB4szL1/2Nhr1qp594=
-github.com/wsnacj/agentx-go/runtime v0.2.2 h1:oqrbOsxs30kLuL8t0RxHWFyY/C4qkRhFnL02lXKpu18=
+github.com/wsnacj/agentx-go/runtime v0.2.2 h1:3xJHcJjnk5EJuXVE4ANgmw6fNbCcrs8Hd+Q9pe7dQYQ=
 github.com/wsnacj/agentx-go/runtime v0.2.2/go.mod h1:C/DZkipclxg5fT1ecI+e9w/OwN4pse+HWTOzQ1rjbEQ=
-github.com/wsnacj/agentx-go/scenes v0.2.2 h1:FC6FMHeMdNT+K451xq4QNkfoe68rS0SwoWNpF5Kq+6M=
+github.com/wsnacj/agentx-go/scenes v0.2.2 h1:F8HoQvS2/2nXkVNgSpctRzHKTmF0p0ptU0ltZYR3k/I=
 github.com/wsnacj/agentx-go/scenes v0.2.2/go.mod h1:mFcx0TdmaSCnKOvNvbqwKF0iHSyDH4Usoj0WBQGvo78=

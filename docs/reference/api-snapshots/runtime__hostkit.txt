@@ -1,4 +1,4 @@
-package hostkit // import "agentx-go/runtime/hostkit"
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/hostkit"
 
 Package hostkit 组合 portable tool-loop、execution adapter 和根 AgentX Client，为不依赖特定
 Runner 的宿主提供最小执行内核。

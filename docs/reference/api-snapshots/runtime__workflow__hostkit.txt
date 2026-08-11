@@ -1,4 +1,4 @@
-package hostkit // import "agentx-go/runtime/workflow/hostkit"
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/workflow/hostkit"
 
 Package hostkit 组合 canonical Workflow lowering、journal、node execution
 coordination 和 orchestration，为不依赖特定 Runner 的宿主提供最小构造入口。

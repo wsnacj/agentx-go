@@ -1,4 +1,4 @@
-package toolloop // import "agentx-go/runtime/toolloop"
+package toolloop // import "github.com/wsnacj/agentx-go/runtime/toolloop"
 
 Package toolloop owns the portable Open Tool Loop mechanism.
 

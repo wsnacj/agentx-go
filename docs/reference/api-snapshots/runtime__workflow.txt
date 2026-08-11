@@ -1,4 +1,4 @@
-package workflow // import "agentx-go/runtime/workflow"
+package workflow // import "github.com/wsnacj/agentx-go/runtime/workflow"
 
 Package workflow 定义 AgentX Workflow Spec 和 validator construction seam。
 

@@ -1,4 +1,4 @@
-package hostkit // import "agentx-go/runtime/objective/hostkit"
+package hostkit // import "github.com/wsnacj/agentx-go/runtime/objective/hostkit"
 
 Package hostkit composes the canonical Objective ingress, host-owned runtime
 adapter dispatch, observation normalization, and verification mechanisms.

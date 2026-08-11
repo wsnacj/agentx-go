@@ -29,9 +29,9 @@ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81P
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/wsnacj/agentx-go/components v0.2.2 h1:6Q23dnHHLa9NunWyezQ+pRvWcg9Pm2Vj9zfB9qZJ2Jw=
+github.com/wsnacj/agentx-go/components v0.2.2 h1:+s5zyIdRHk5+S+VsXBGpsexPcGrmJF/tLYxyCgyECXA=
 github.com/wsnacj/agentx-go/components v0.2.2/go.mod h1:l+GytucLCrA4F+ZZZjlKm9kd7HeG84gsi3ldvLAV86I=
-github.com/wsnacj/agentx-go/runtime v0.2.2 h1:oqrbOsxs30kLuL8t0RxHWFyY/C4qkRhFnL02lXKpu18=
+github.com/wsnacj/agentx-go/runtime v0.2.2 h1:3xJHcJjnk5EJuXVE4ANgmw6fNbCcrs8Hd+Q9pe7dQYQ=
 github.com/wsnacj/agentx-go/runtime v0.2.2/go.mod h1:C/DZkipclxg5fT1ecI+e9w/OwN4pse+HWTOzQ1rjbEQ=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
