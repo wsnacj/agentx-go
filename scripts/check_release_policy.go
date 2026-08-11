@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_release_policy verifies the v0.2.1 Developer Preview candidate
+// check_release_policy verifies the v0.2.2 Developer Preview candidate
 // compatibility and named responsibility decisions before artifacts or tags.
 package main
 
@@ -10,10 +10,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
-const releaseVersion = "v0.2.1"
+var releaseVersionPattern = regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$`)
 
 var releaseModuleDirs = []string{
 	".",
@@ -42,11 +43,14 @@ var compatibilityPackages = map[string]bool{
 func main() {
 	root, err := os.Getwd()
 	check(err)
+	releaseVersion := strings.TrimSpace(string(mustRead(filepath.Join(root, "docs/reference/developer-preview-version.txt"))))
+	if !releaseVersionPattern.MatchString(releaseVersion) {
+		check(fmt.Errorf("invalid Developer Preview release version %q", releaseVersion))
+	}
 
-	checkVersionFile(filepath.Join(root, "docs/reference/developer-preview-version.txt"))
-	checkVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"))
+	checkVersionMatrix(filepath.Join(root, "docs/reference/developer-preview-module-versions.txt"), releaseVersion)
 	checkCompatibility(filepath.Join(root, "docs/reference/developer-preview-packages.tsv"))
-	checkReleaseModules(root)
+	checkReleaseModules(root, releaseVersion)
 	checkMarkers(filepath.Join(root, "SECURITY.md"), []string{
 		"@wsnacj",
 		"3个工作日",
@@ -60,6 +64,8 @@ func main() {
 		"暂无backup owner",
 	})
 	checkMarkers(filepath.Join(root, "CHANGELOG.md"), []string{
+		"## [0.2.2] - 2026-08-11",
+		"root module checksum",
 		"## [0.2.0] - 2026-08-06",
 		"首版核心兼容候选面收窄",
 	})
@@ -68,14 +74,7 @@ func main() {
 		releaseVersion, len(releaseModuleDirs), len(compatibilityPackages))
 }
 
-func checkVersionFile(path string) {
-	content := strings.TrimSpace(string(mustRead(path)))
-	if content != releaseVersion {
-		check(fmt.Errorf("%s = %q, want %s", path, content, releaseVersion))
-	}
-}
-
-func checkVersionMatrix(path string) {
+func checkVersionMatrix(path, releaseVersion string) {
 	seen := 0
 	scanner := bufio.NewScanner(bytes.NewReader(mustRead(path)))
 	for scanner.Scan() {
@@ -122,7 +121,7 @@ func checkCompatibility(path string) {
 	}
 }
 
-func checkReleaseModules(root string) {
+func checkReleaseModules(root, releaseVersion string) {
 	for _, moduleDir := range releaseModuleDirs {
 		path := filepath.Join(root, moduleDir, "go.mod")
 		content := string(mustRead(path))

@@ -1,6 +1,6 @@
 # `scenes/docparse` 中文 API Reference
 
-成熟度：**Experimental extension**。本包随 `scenes/v0.2.1`提供，但不进入9包核心
+成熟度：**Experimental extension**。本包随 `scenes/v0.2.2`提供，但不进入9包核心
 兼容候选面；调用方应固定精确版本，并在升级时运行合同测试。
 
 本包是 AgentX 文档理解 Domain Kit 的推荐入口，拥有可移植 Pack Definition、编译期

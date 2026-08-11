@@ -9,6 +9,18 @@
 
 当前没有尚未发布的调用方可见变化。
 
+## [0.2.2] - 2026-08-11
+
+### Fixed
+
+- 修复`v0.2.1`发布后7个仓内nested module/consumer `go.sum`仍记录旧root module checksum，导致
+  `runtime`、`examples`和部分conformance consumer在官方Go Proxy/SumDB下于编译前失败的问题；
+- 公开发行门禁改为从单一版本矩阵读取当前版本，并在fresh-cache模式下实际使用官方Go Proxy/SumDB，
+  不再通过`GOPRIVATE`或`GONOSUMDB`绕过公开模块校验；
+- 九个library module、examples、conformance、中文安装/升级文档和API版本说明统一到`v0.2.2`。
+
+本补丁不修改公共API、Runtime行为、错误、JSON、状态、取消、durable write顺序或副作用边界。
+
 ## [0.2.1] - 2026-08-07
 
 ### Fixed
@@ -53,5 +65,6 @@
 - 不提供Beta/Stable兼容承诺、生产SLA或长期支持周期；
 - Developer Preview不代表所有可导入package都具备相同兼容等级。
 
+[0.2.2]: https://github.com/wsnacj/agentx-go/releases/tag/v0.2.2
 [0.2.1]: https://github.com/wsnacj/agentx-go/releases/tag/v0.2.1
 [0.2.0]: https://github.com/wsnacj/agentx-go/releases/tag/v0.2.0

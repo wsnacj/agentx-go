@@ -25,7 +25,6 @@ import (
 )
 
 const (
-	candidateVersion     = "v0.2.1"
 	govulncheckModule    = "golang.org/x/vuln/cmd/govulncheck"
 	govulncheckVersion   = "v1.6.0"
 	candidateGoToolchain = "go1.25.12"
@@ -59,6 +58,7 @@ type securitySummary struct {
 }
 
 var (
+	candidateVersion     string
 	securityCountPattern = regexp.MustCompile(`This scan also found ([0-9]+) vulnerabilit(y|ies) in packages you import and ([0-9]+)[[:space:]]+vulnerabilit(y|ies) in modules you require`)
 	vulnerabilityPattern = regexp.MustCompile(`GO-[0-9]{4}-[0-9]+`)
 )
@@ -89,6 +89,10 @@ func main() {
 	check(err)
 	checkRepositoryRoot(root)
 	checkCleanTree(root)
+	candidateVersion = readTrimmed(filepath.Join(root, "docs/reference/developer-preview-version.txt"))
+	if !regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$`).MatchString(candidateVersion) {
+		check(fmt.Errorf("invalid Developer Preview candidate version %q", candidateVersion))
+	}
 	revision := strings.TrimSpace(run(root, os.Environ(), "git", "rev-parse", "HEAD"))
 	commitTime := readCommitTime(root)
 	rollbackRevision := strings.TrimSpace(run(root, os.Environ(), "git", "rev-parse", "HEAD^"))
@@ -110,7 +114,15 @@ func main() {
 	check(err)
 	defer os.RemoveAll(work)
 
-	baseEnv := append(os.Environ(), "GOWORK=off", "GOTOOLCHAIN=local")
+	baseEnv := replaceEnv(os.Environ(),
+		"GOWORK", "off",
+		"GOTOOLCHAIN", "local",
+		"GOROOT", filepath.Dir(filepath.Dir(goCommand)),
+		// The repository may be exercised by a different Go 1.25 patch release
+		// immediately before this gate. Never reuse its compiled standard-library
+		// cache with the pinned release toolchain.
+		"GOCACHE", filepath.Join(work, "preflight-gocache"),
+	)
 	printRun(root, baseEnv, goCommand, "run", "./scripts/check_release_legal.go")
 	printRun(root, baseEnv, goCommand, "run", "./scripts/check_release_policy.go")
 	printRun(root, baseEnv, goCommand, "run", "./scripts/check_developer_preview_version.go")
@@ -606,7 +618,7 @@ func buildManifest(revision string, commitTime time.Time, rollbackRevision strin
 	fmt.Fprintf(&builder, "candidate_go_toolchain=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "security_standard_library_version=%s\n", candidateGoToolchain)
 	fmt.Fprintf(&builder, "candidate_version=%s\n", candidateVersion)
-	fmt.Fprintf(&builder, "candidate_version_scope=public_v0.2.1_developer_preview_candidate\n")
+	fmt.Fprintf(&builder, "candidate_version_scope=public_%s_developer_preview_candidate\n", candidateVersion)
 	fmt.Fprintf(&builder, "rollback_revision=%s\n", rollbackRevision)
 	fmt.Fprintf(&builder, "rollback_strategy=withdraw_release_and_restore_pre_release_branch\n")
 	fmt.Fprintf(&builder, "security_scanner=%s@%s\n", govulncheckModule, govulncheckVersion)

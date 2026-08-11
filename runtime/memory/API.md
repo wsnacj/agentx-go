@@ -6,7 +6,7 @@
 import "github.com/wsnacj/agentx-go/runtime/memory"
 ```
 
-成熟度：**Experimental**。本包不属于 `v0.2.1` Developer Preview
+成熟度：**Experimental**。本包不属于 `v0.2.2` Developer Preview
 兼容候选面，也不构成 Public、Beta 或 Stable 承诺。
 
 `memory` 提供 provider-neutral 的长期记忆 lifecycle 协调：显式 scope、provenance、recall

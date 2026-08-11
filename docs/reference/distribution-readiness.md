@@ -4,7 +4,7 @@
 
 ## 当前结论
 
-`v0.2.1`是首个公开Developer Preview发行组合：九个library module使用同一版本，推荐的9包核心
+`v0.2.2`是首个公开Developer Preview发行组合：九个library module使用同一版本，推荐的9包核心
 兼容候选面进入签名、中文Reference和external consumer门禁，其余可导入package保持Experimental。
 
 正式Release必须证明九module artifact来自同一revision，且test、race、vet、tidy、list、module zip、
@@ -33,7 +33,7 @@ Browser、Document、CGO 和系统命令路径还需要在受支持平台执行�
 | --- | --- |
 | License / NOTICE | 已采用 Apache-2.0；九个 library module 与 examples module 均携带一致副本 |
 | 直接依赖归属摘要 | 已提交；发行二进制时仍须按实际依赖闭包重新复核 |
-| 发行版本 | `v0.2.1`九module同版组合 |
+| 发行版本 | `v0.2.2`九module同版组合 |
 | Developer Preview兼容范围 | 9包核心候选面；其它可导入包保持Experimental |
 | 安全响应责任 | `@wsnacj`；目标3个工作日确认收到，无修复SLA |
 | 发布审批与回滚责任 | `@wsnacj`；首版暂无backup maintainer |

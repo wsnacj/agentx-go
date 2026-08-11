@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -35,6 +36,8 @@ var modules = []moduleSpec{
 	{path: "github.com/wsnacj/agentx-go/scenes", consumer: "conformance/consumer/go.mod"},
 }
 
+var releaseVersionPattern = regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$`)
+
 func main() {
 	root, err := os.Getwd()
 	check(err)
@@ -49,6 +52,11 @@ func main() {
 	rootVersion := strings.TrimSpace(string(rootVersionBytes))
 	if rootVersion != expected["github.com/wsnacj/agentx-go"] {
 		check(fmt.Errorf("legacy root version = %q, matrix has %q", rootVersion, expected["github.com/wsnacj/agentx-go"]))
+	}
+	for path, version := range expected {
+		if version != rootVersion {
+			check(fmt.Errorf("version matrix selects %s at %q, want shared version %q", path, version, rootVersion))
+		}
 	}
 
 	for _, module := range modules {
@@ -81,7 +89,7 @@ func readVersionMatrix(path string) (map[string]string, error) {
 			continue
 		}
 		fields := strings.Fields(line)
-		if len(fields) != 2 || fields[1] != "v0.2.1" || strings.ContainsAny(fields[1], "\t\r\n ") {
+		if len(fields) != 2 || !releaseVersionPattern.MatchString(fields[1]) || strings.ContainsAny(fields[1], "\t\r\n ") {
 			return nil, fmt.Errorf("invalid version matrix line %q", line)
 		}
 		if _, exists := versions[fields[0]]; exists {

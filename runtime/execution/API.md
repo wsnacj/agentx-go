@@ -1,6 +1,6 @@
 # `runtime/execution` API
 
-状态：**v0.2.1 Developer Preview candidate**。本包进入9包核心兼容候选面及
+状态：**v0.2.2 Developer Preview candidate**。本包进入9包核心兼容候选面及
 签名/文档漂移门禁，但不是Beta、Stable或生产SLA。
 
 `runtime/execution` 是根 `agentx.Client` 与具体执行宿主之间的最窄 Run adapter。

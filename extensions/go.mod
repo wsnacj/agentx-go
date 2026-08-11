@@ -4,8 +4,8 @@ go 1.25.0
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/wsnacj/agentx-go/components v0.2.1
-	github.com/wsnacj/agentx-go/runtime v0.2.1
+	github.com/wsnacj/agentx-go/components v0.2.2
+	github.com/wsnacj/agentx-go/runtime v0.2.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 

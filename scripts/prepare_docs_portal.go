@@ -87,6 +87,12 @@ func main() {
 	if candidates != 9 {
 		check(fmt.Errorf("package maturity source has %d Developer Preview candidates, want 9", candidates))
 	}
+	versionBytes, err := os.ReadFile(filepath.Join(root, "docs", "reference", "developer-preview-version.txt"))
+	check(err)
+	releaseVersion := strings.TrimSpace(string(versionBytes))
+	if releaseVersion == "" {
+		check(fmt.Errorf("Developer Preview version is empty"))
+	}
 
 	for index := range entries {
 		entry := &entries[index]
@@ -101,7 +107,7 @@ func main() {
 	}
 
 	nav := navigation{
-		Version:      "v0.2.1 Developer Preview",
+		Version:      releaseVersion + " Developer Preview",
 		SourceCommit: commit,
 		Packages:     entries,
 	}

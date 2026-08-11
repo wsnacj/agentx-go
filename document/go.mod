@@ -8,9 +8,9 @@ require (
 	github.com/prometheus/client_golang v1.22.0
 	github.com/sergi/go-diff v1.4.0
 	github.com/stretchr/testify v1.10.0
-	github.com/wsnacj/agentx-go/components v0.2.1
-	github.com/wsnacj/agentx-go/runtime v0.2.1
-	github.com/wsnacj/agentx-go/tools v0.2.1
+	github.com/wsnacj/agentx-go/components v0.2.2
+	github.com/wsnacj/agentx-go/runtime v0.2.2
+	github.com/wsnacj/agentx-go/tools v0.2.2
 	go.uber.org/zap v1.27.0
 	gopkg.in/yaml.v3 v3.0.1
 )

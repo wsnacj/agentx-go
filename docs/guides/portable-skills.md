@@ -9,13 +9,13 @@ portable加载机制。它适合需要读取 `SKILL.md`、检查资源、按路�
 私有仓库访问方式见[安装与多 Module 引用](installation-and-modules.md)。目录加载只需：
 
 ```bash
-go get github.com/wsnacj/agentx-go/extensions@v0.2.1
+go get github.com/wsnacj/agentx-go/extensions@v0.2.2
 ```
 
 如果调用方直接使用 `runtime/assetfs`构造 immutable source，还应固定 Runtime：
 
 ```bash
-go get github.com/wsnacj/agentx-go/runtime@v0.2.1
+go get github.com/wsnacj/agentx-go/runtime@v0.2.2
 ```
 
 可重复构建的项目应把解析结果固定在`go.mod`和`go.sum`中。

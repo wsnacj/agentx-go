@@ -6,7 +6,7 @@
 import "github.com/wsnacj/agentx-go/runtime/contextwindow"
 ```
 
-成熟度：**Experimental**。本包不属于 `v0.2.1` 的 Developer Preview
+成熟度：**Experimental**。本包不属于 `v0.2.2` 的 Developer Preview
 兼容候选面，也不构成 Public、Beta 或 Stable 承诺。
 
 `contextwindow` 提供 provider-neutral 的上下文窗口准备编排。它复用

@@ -1,11 +1,12 @@
 # 版本、升级与回滚
 
-AgentX Go 当前发布 `v0.2.1 Developer Preview`。该版本不是Beta或Stable，长期支持周期
+AgentX Go 当前发布 `v0.2.2 Developer Preview`。该版本不是Beta或Stable，长期支持周期
 仍以Release说明为准。
 
 `v0.2.0` 的公开标签曾在首次发布后移动，公共模块代理可能持有不同源码和校验和，因此不得作为
-新依赖使用。`v0.2.1` 是内容固定、可由 clean-room consumer 复现的首个推荐组合；该补丁不改变
-API 或运行时行为。
+新依赖使用。`v0.2.1`九个module artifact保持不可移动，但tag源码内7个nested module/consumer仍保存
+旧root module checksum，不能作为仓库examples与conformance的完整可复现基线。`v0.2.2`只修复发行元数据、
+版本矩阵和fixed consumer，不改变API或运行时行为，是当前推荐组合。
 
 ## 版本原则
 
@@ -15,21 +16,21 @@ API 或运行时行为。
 - Experimental package 的变更风险高于 Developer Preview candidate；
 - 版本升级必须可以回滚到升级前的 `go.mod`/`go.sum`。
 
-## v0.2.1 九 Module 发行前缀
+## v0.2.2 九 Module 发行前缀
 
 首版采用标准nested-module同版tag：
 
 | Module | Tag 前缀 |
 | --- | --- |
-| root | `v0.2.1` |
-| components | `components/v0.2.1` |
-| runtime | `runtime/v0.2.1` |
-| extensions | `extensions/v0.2.1` |
-| providers | `providers/v0.2.1` |
-| tools | `tools/v0.2.1` |
-| browser | `browser/v0.2.1` |
-| document | `document/v0.2.1` |
-| scenes | `scenes/v0.2.1` |
+| root | `v0.2.2` |
+| components | `components/v0.2.2` |
+| runtime | `runtime/v0.2.2` |
+| extensions | `extensions/v0.2.2` |
+| providers | `providers/v0.2.2` |
+| tools | `tools/v0.2.2` |
+| browser | `browser/v0.2.2` |
+| document | `document/v0.2.2` |
+| scenes | `scenes/v0.2.2` |
 
 九个tag必须指向同一经过验证的release commit；只升级其中一部分不属于受验证组合。
 

@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -46,6 +47,8 @@ var releaseModules = []moduleSpec{
 	{path: "github.com/wsnacj/agentx-go/scenes", dir: "scenes", required: "astock/API.md"},
 }
 
+var releaseVersionPattern = regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$`)
+
 func main() {
 	freshCache := flag.Bool("fresh-cache", false, "fetch the consumer and all release modules from VCS into empty temporary caches")
 	readOnlyCache := flag.Bool("read-only-cache", false, "freeze the fresh consumer module cache before verify, test and run")
@@ -63,6 +66,11 @@ func main() {
 	rootVersion := versions["github.com/wsnacj/agentx-go"]
 	if rootVersion == "" || len(versions) != len(releaseModules) {
 		check(fmt.Errorf("Developer Preview version matrix has %d modules and root %q, want %d modules", len(versions), rootVersion, len(releaseModules)))
+	}
+	for _, module := range releaseModules {
+		if versions[module.path] != rootVersion {
+			check(fmt.Errorf("Developer Preview module %s selects %q, want shared version %q", module.path, versions[module.path], rootVersion))
+		}
 	}
 
 	env := append(os.Environ(), "GOWORK=off")
@@ -91,8 +99,7 @@ func main() {
 		artifactEnv = append(os.Environ(),
 			"GOWORK=off",
 			"GOPROXY=https://proxy.golang.org,direct",
-			"GOPRIVATE=github.com/wsnacj/agentx-go",
-			"GONOSUMDB=github.com/wsnacj/agentx-go",
+			"GOSUMDB=sum.golang.org",
 			"GOMODCACHE="+moduleCache,
 			"GOCACHE="+filepath.Join(temporary, "gocache"),
 		)
@@ -213,7 +220,7 @@ func readVersionMatrix(path string) map[string]string {
 			continue
 		}
 		fields := strings.Fields(line)
-		if len(fields) != 2 || fields[1] != "v0.2.1" {
+		if len(fields) != 2 || !releaseVersionPattern.MatchString(fields[1]) {
 			check(fmt.Errorf("invalid Developer Preview version matrix line %q", line))
 		}
 		if _, exists := versions[fields[0]]; exists {
@@ -248,7 +255,6 @@ func checkArtifact(root string, env []string, module moduleSpec, version, revisi
 	command.Dir = root
 	command.Env = append(env,
 		"GOPROXY=off",
-		"GONOSUMDB=github.com/wsnacj/agentx-go",
 	)
 	output, err := command.CombinedOutput()
 	if err != nil {

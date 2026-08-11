@@ -80,7 +80,7 @@ Developer Preview 期间：
 首次正式开源发布至少需要：
 
 1. 已完成：提交 Apache-2.0、NOTICE、九个 library module 的分发副本和直接依赖归属摘要；
-2. `v0.2.1`九module同版artifact、tag前缀与9包核心兼容候选面一致；
+2. `v0.2.2`九module同版artifact、tag前缀与9包核心兼容候选面一致；
 3. 当前源码通过test、race、vet、tidy、list、module zip和clean-room/offline consumer；
 4. Go与Node安全扫描通过，九module可达漏洞为0；
 5. 文档站、examples、Package API、双平台签名和Release内容一致；

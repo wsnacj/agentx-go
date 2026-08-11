@@ -59,7 +59,6 @@ func main() {
 	env := append(os.Environ(),
 		"GOWORK=off",
 		"GOPROXY=off",
-		"GONOSUMDB=github.com/wsnacj/agentx-go",
 		"GOFLAGS=-mod=readonly",
 	)
 	if *freshCache {
@@ -67,7 +66,7 @@ func main() {
 		moduleCache := filepath.Join(temporary, "gomodcache")
 		env = append(env,
 			"GOPROXY=https://proxy.golang.org,direct",
-			"GOPRIVATE=github.com/wsnacj/agentx-go",
+			"GOSUMDB=sum.golang.org",
 			"GOMODCACHE="+moduleCache,
 			"GOCACHE="+filepath.Join(temporary, "gocache"),
 		)
