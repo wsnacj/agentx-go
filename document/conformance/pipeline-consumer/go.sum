@@ -4,7 +4,7 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/wsnacj/agentx-go/document v0.2.2 h1:ty30fy9FhK+u39hEbtaRAXaDwMfRr8sQM1qIlgei4no=
+github.com/wsnacj/agentx-go/document v0.2.2 h1:FKM6egSrbjZCNZ9goW0z+cPxi/9aJ8KIOsSmKZAk7PI=
 github.com/wsnacj/agentx-go/document v0.2.2/go.mod h1:J4GsvFpXPlU6oZLwCSoxhjSfw5gbzu8PakZcZGlaPIo=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
