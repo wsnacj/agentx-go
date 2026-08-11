@@ -1,6 +1,6 @@
 //go:build ignore
 
-// check_release_policy verifies the v0.2.2 Developer Preview candidate
+// check_release_policy verifies the current Developer Preview candidate
 // compatibility and named responsibility decisions before artifacts or tags.
 package main
 

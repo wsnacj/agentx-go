@@ -1,9 +1,9 @@
-package execution // import "github.com/wsnacj/agentx-go/runtime/execution"
+package execution // import "agentx-go/runtime/execution"
 
 Package execution 提供根 AgentX Client 与 concrete execution host 之间的
 substrate-neutral Run dispatch、result assembly和 lifecycle adapter。
 
-本package进入v0.2.2 Developer Preview核心兼容候选面。它不构造模型、工具、
+本package进入当前Developer Preview核心兼容候选面。它不构造模型、工具、
 Workflow、RunStore或Scene；这些能力由Host拥有。
 
 TYPES

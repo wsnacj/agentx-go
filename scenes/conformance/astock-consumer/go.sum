@@ -1,8 +1,8 @@
-github.com/wsnacj/agentx-go/components v0.2.1 h1:I6yhnoWd8J4gSESY7xDjLCQdWrjYRxeyE7XH0+7Ltso=
-github.com/wsnacj/agentx-go/components v0.2.1/go.mod h1:l+GytucLCrA4F+ZZZjlKm9kd7HeG84gsi3ldvLAV86I=
-github.com/wsnacj/agentx-go/extensions v0.2.1 h1:MVOtOb6QusI+cPJBSScOcjcMcUhB48EcwjEQfWI8sqw=
-github.com/wsnacj/agentx-go/extensions v0.2.1/go.mod h1:o1JITQ94n/awW2AmeP0sxo0iTqfNzCjQsHAnvF91enA=
-github.com/wsnacj/agentx-go/runtime v0.2.1 h1:0kotIgkR2U5kORseXervkFxp70RsB8Q0vfiW2uCDhvU=
-github.com/wsnacj/agentx-go/runtime v0.2.1/go.mod h1:c5KdjQ6YGv5FFE0ER7Aj2hqBxkbxYlFjhfw3EoQk74Y=
-github.com/wsnacj/agentx-go/scenes v0.2.1 h1:+LnnV1HXkn23uhEQ5/U0fpbO22E0gKRKrwT8L238fYA=
-github.com/wsnacj/agentx-go/scenes v0.2.1/go.mod h1:EqOpKCMa/JbtcDKn3TPrNflr9vkHVYNH2bY2HXIbXt0=
+github.com/wsnacj/agentx-go/components v0.2.2 h1:6Q23dnHHLa9NunWyezQ+pRvWcg9Pm2Vj9zfB9qZJ2Jw=
+github.com/wsnacj/agentx-go/components v0.2.2/go.mod h1:l+GytucLCrA4F+ZZZjlKm9kd7HeG84gsi3ldvLAV86I=
+github.com/wsnacj/agentx-go/extensions v0.2.2 h1:UwuivNuvPdoDR1XS+Mu28+XhwdgP2rNEsjQDHuk3CjA=
+github.com/wsnacj/agentx-go/extensions v0.2.2/go.mod h1:DtTkEGeur03O6AZAMjV+ar6nOSB4szL1/2Nhr1qp594=
+github.com/wsnacj/agentx-go/runtime v0.2.2 h1:oqrbOsxs30kLuL8t0RxHWFyY/C4qkRhFnL02lXKpu18=
+github.com/wsnacj/agentx-go/runtime v0.2.2/go.mod h1:C/DZkipclxg5fT1ecI+e9w/OwN4pse+HWTOzQ1rjbEQ=
+github.com/wsnacj/agentx-go/scenes v0.2.2 h1:FC6FMHeMdNT+K451xq4QNkfoe68rS0SwoWNpF5Kq+6M=
+github.com/wsnacj/agentx-go/scenes v0.2.2/go.mod h1:mFcx0TdmaSCnKOvNvbqwKF0iHSyDH4Usoj0WBQGvo78=

@@ -1,7 +1,7 @@
 // Package hostkit composes the canonical Objective ingress, host-owned runtime
 // adapter dispatch, observation normalization, and verification mechanisms.
 //
-// The package is part of the v0.2.2 Developer Preview compatibility surface. It does
+// The package is part of the current Developer Preview compatibility surface. It does
 // not provide a provider, Runner, backend, credential, product policy, or
 // production side effect.
 package hostkit

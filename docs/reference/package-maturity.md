@@ -1,7 +1,7 @@
 # Package API 索引与成熟度矩阵
 
 本页的focused gate评估root、components、runtime、extensions与scenes五个module中
-实际存在的81个production package；其中9个Developer Preview candidate进入签名门禁。
+实际存在的production package；其中9个Developer Preview candidate进入签名门禁。
 Providers、Tools、Browser与Document在后文按可选module列出推荐入口和分级。它不是历史
 surface inventory，也不会把任何符号自动升级为Public、Beta或Stable。
 
@@ -101,7 +101,7 @@ surface inventory，也不会把任何符号自动升级为Public、Beta或Stabl
 
 ## 可选 Providers module
 
-下列8个package不进入当前root/components/runtime/extensions/scenes五module的52包focused
+下列8个package不进入当前root/components/runtime/extensions/scenes五module的focused
 gate，全部保持Experimental：
 
 | Package | 分级 | 中文 Reference | 主要用途 |
@@ -120,7 +120,7 @@ Developer Preview candidate、Public、Beta或Stable。
 
 ## 可选 Tools module
 
-下列tools module package不进入当前五module的52包focused gate，全部保持Experimental：
+下列tools module package不进入当前五module的focused gate，全部保持Experimental：
 
 | Package | 分级 | 中文 Reference | 主要用途 |
 | --- | --- | --- | --- |

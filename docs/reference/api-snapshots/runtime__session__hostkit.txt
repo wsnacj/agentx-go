@@ -1,4 +1,4 @@
-package hostkit // import "github.com/wsnacj/agentx-go/runtime/session/hostkit"
+package hostkit // import "agentx-go/runtime/session/hostkit"
 
 Package hostkit provides the portable coordination layer for one host-owned
 child worker lifecycle.
