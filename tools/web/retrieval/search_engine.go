@@ -1,6 +1,7 @@
 package retrieval
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -45,19 +46,23 @@ type SearchResult struct {
 }
 
 type SearchRunOptions struct {
-	Provider              string
-	Query                 string
-	Count                 int
-	Country               string
-	SearchLang            string
-	UILang                string
-	Freshness             string
-	TimeoutMs             int
-	BraveEndpoint         string
-	BraveAPIKey           string
-	DoubaoCustomEndpoint  string
-	DoubaoCustomAPIKey    string
-	DoubaoCustomTimeRange string
+	Provider                     string
+	Query                        string
+	Count                        int
+	Country                      string
+	SearchLang                   string
+	UILang                       string
+	Freshness                    string
+	TimeoutMs                    int
+	BraveEndpoint                string
+	BraveAPIKey                  string
+	DoubaoCustomEndpoint         string
+	DoubaoCustomAPIKey           string
+	DoubaoCustomTimeRange        string
+	DoubaoGlobalEndpoint         string
+	DoubaoGlobalAPIKey           string
+	DoubaoGlobalMaxSnippetTokens int
+	DoubaoGlobalICPHostOnly      bool
 	// Deprecated: use DoubaoCustomEndpoint. Retained for source compatibility.
 	ArkEndpoint string
 	// Deprecated: use DoubaoCustomAPIKey. Retained for source compatibility.
@@ -136,6 +141,40 @@ type doubaoCustomSearchResponse struct {
 	} `json:"Result"`
 }
 
+type doubaoGlobalSearchResponse struct {
+	Code             json.RawMessage `json:"code,omitempty"`
+	Message          string          `json:"message,omitempty"`
+	ResponseMetadata struct {
+		RequestID string `json:"RequestId"`
+		Error     *struct {
+			Code    string `json:"Code"`
+			CodeN   int    `json:"CodeN"`
+			Message string `json:"Message"`
+		} `json:"Error,omitempty"`
+	} `json:"ResponseMetadata"`
+	Result *struct {
+		TotalDocCount int    `json:"TotalDocCount"`
+		ErrorCode     int    `json:"ErrorCode"`
+		ErrorMsg      string `json:"ErrorMsg"`
+		Documents     []struct {
+			Rank    int    `json:"Rank"`
+			URL     string `json:"Url"`
+			Title   string `json:"Title"`
+			Snippet []struct {
+				Type string `json:"Type"`
+				Text string `json:"Text"`
+			} `json:"Snippet"`
+			DocumentInfo struct {
+				PublishTime string `json:"PublishTime"`
+			} `json:"DocumentInfo"`
+			HostInfo struct {
+				Hostname       string `json:"Hostname"`
+				AuthorityLevel string `json:"AuthorityLevel"`
+			} `json:"HostInfo"`
+		} `json:"Documents"`
+	} `json:"Result"`
+}
+
 type baiduSearchResponse struct {
 	RequestID  string `json:"request_id"`
 	Code       *int   `json:"code,omitempty"`
@@ -173,6 +212,8 @@ func RunSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error
 		return runBraveSearch(ctx, opts)
 	case SearchProviderDoubaoCustom:
 		return runDoubaoCustomSearch(ctx, opts)
+	case SearchProviderDoubaoGlobal:
+		return runDoubaoGlobalSearch(ctx, opts)
 	case "baidu":
 		return runBaiduSearch(ctx, opts)
 	default:
@@ -441,6 +482,106 @@ func runDoubaoCustomSearch(ctx context.Context, opts SearchRunOptions) (SearchPa
 		TookMs:       time.Since(started).Milliseconds(),
 		RequestID:    strings.TrimSpace(parsed.ResponseMetadata.RequestID),
 		Results:      results,
+	}, nil
+}
+
+func runDoubaoGlobalSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error) {
+	started := time.Now()
+	prepared, err := prepareSearchEndpoint(ctx, opts.Prepare, opts.DoubaoGlobalEndpoint, opts.TimeoutMs)
+	if err != nil {
+		return SearchPayload{}, err
+	}
+	endpoint := prepared.URL
+	requestBody := map[string]any{
+		"Query":      opts.Query,
+		"SearchType": "web",
+		"DocCount":   opts.Count,
+	}
+	maxSnippetTokens := opts.DoubaoGlobalMaxSnippetTokens
+	if maxSnippetTokens <= 0 {
+		maxSnippetTokens = 500
+	}
+	if maxSnippetTokens > 3000 {
+		return SearchPayload{}, fmt.Errorf("web_search: doubao_global max snippet tokens must be between 1 and 3000")
+	}
+	requestBody["MaxSnippetLength"] = maxSnippetTokens
+	requestBody["MaxImageCountPerDoc"] = 0
+	if opts.DoubaoGlobalICPHostOnly {
+		requestBody["Filter"] = map[string]any{"IcpHostOnly": true}
+	}
+	blob, err := json.Marshal(requestBody)
+	if err != nil {
+		return SearchPayload{}, err
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint.String(), bytes.NewReader(blob))
+	if err != nil {
+		return SearchPayload{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+opts.DoubaoGlobalAPIKey)
+	resp, err := prepared.Doer.Do(req)
+	if err != nil {
+		return SearchPayload{}, formatSearchRequestError(SearchProviderDoubaoGlobal, endpoint.String(), err, opts.ClassifyNetworkError)
+	}
+	defer resp.Body.Close()
+	rawBody, readErr := io.ReadAll(io.LimitReader(resp.Body, 4<<20))
+	if readErr != nil {
+		return SearchPayload{}, fmt.Errorf("web_search: decode response: %w", readErr)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		code, message := doubaoTopLevelError(rawBody)
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoGlobal, code, message, resp.StatusCode)
+	}
+	var parsed doubaoGlobalSearchResponse
+	if err := json.Unmarshal(rawBody, &parsed); err != nil {
+		return SearchPayload{}, fmt.Errorf("web_search: decode response: %w", err)
+	}
+	if parsed.ResponseMetadata.Error != nil {
+		providerError := parsed.ResponseMetadata.Error
+		code := strings.TrimSpace(providerError.Code)
+		if code == "" && providerError.CodeN != 0 {
+			code = strconv.Itoa(providerError.CodeN)
+		}
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoGlobal, code, providerError.Message, resp.StatusCode)
+	}
+	if code := rawJSONScalarString(parsed.Code); code != "" || (parsed.Result == nil && strings.TrimSpace(parsed.Message) != "") {
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoGlobal, code, parsed.Message, resp.StatusCode)
+	}
+	if parsed.Result != nil && parsed.Result.ErrorCode != 0 {
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoGlobal, strconv.Itoa(parsed.Result.ErrorCode), parsed.Result.ErrorMsg, resp.StatusCode)
+	}
+	results := make([]SearchResult, 0)
+	if parsed.Result != nil {
+		for _, document := range parsed.Result.Documents {
+			if len(results) >= opts.Count {
+				break
+			}
+			text := make([]string, 0, len(document.Snippet))
+			for _, snippet := range document.Snippet {
+				if strings.EqualFold(strings.TrimSpace(snippet.Type), "text") && strings.TrimSpace(snippet.Text) != "" {
+					text = append(text, strings.TrimSpace(snippet.Text))
+				}
+			}
+			current := SearchResult{
+				Title:       strings.TrimSpace(document.Title),
+				URL:         strings.TrimSpace(document.URL),
+				Description: strings.Join(text, "\n"),
+				Published:   strings.TrimSpace(document.DocumentInfo.PublishTime),
+				SiteName:    strings.TrimSpace(document.HostInfo.Hostname),
+				Authority:   strings.TrimSpace(document.HostInfo.AuthorityLevel),
+			}
+			if current.SiteName == "" {
+				current.SiteName = resolveSiteName(current.URL)
+			}
+			results = append(results, current)
+		}
+	}
+	return SearchPayload{
+		Query: opts.Query, Provider: SearchProviderDoubaoGlobal,
+		ProviderKind: searchProviderKindString(ResolveSearchProviderKind(SearchProviderDoubaoGlobal)),
+		ResultKind:   searchResultKindString(ResolveSearchResultKind(SearchProviderDoubaoGlobal)),
+		Count:        len(results), TookMs: time.Since(started).Milliseconds(),
+		RequestID: strings.TrimSpace(parsed.ResponseMetadata.RequestID), Results: results,
 	}, nil
 }
 

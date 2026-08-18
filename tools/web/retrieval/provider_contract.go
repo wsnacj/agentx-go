@@ -280,6 +280,10 @@ func SearchProviderCapability(provider string) ProviderCapability {
 		capability.QueryRewrite = true
 		capability.StructuredSnippets = true
 		capability.MaxResults = 50
+	case SearchProviderDoubaoGlobal:
+		capability.Cache = false
+		capability.StructuredSnippets = true
+		capability.MaxResults = 20
 	case "baidu":
 		capability.DateFilters = true
 		capability.StructuredSnippets = true

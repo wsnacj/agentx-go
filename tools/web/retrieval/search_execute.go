@@ -6,18 +6,20 @@ import (
 )
 
 type SearchExecuteOptions struct {
-	Prepared             PreparedSearchRequest
-	Endpoint             string
-	ProviderAPIKey       string
-	PerplexityAPIKey     string
-	PerplexityBaseURL    string
-	PerplexityModel      string
-	TimeoutMs            int
-	CacheTTL             time.Duration
-	TrustedEnvProxy      bool
-	Prepare              Preparer
-	ClassifyNetworkError NetworkErrorClassifier
-	Audit                func(SearchAuditEvent)
+	Prepared                     PreparedSearchRequest
+	Endpoint                     string
+	ProviderAPIKey               string
+	PerplexityAPIKey             string
+	PerplexityBaseURL            string
+	PerplexityModel              string
+	DoubaoGlobalMaxSnippetTokens int
+	DoubaoGlobalICPHostOnly      bool
+	TimeoutMs                    int
+	CacheTTL                     time.Duration
+	TrustedEnvProxy              bool
+	Prepare                      Preparer
+	ClassifyNetworkError         NetworkErrorClassifier
+	Audit                        func(SearchAuditEvent)
 }
 
 // SearchAuditEvent is the policy-neutral observation emitted by search.
@@ -61,35 +63,39 @@ func ExecutePreparedSearch(ctx context.Context, opts SearchExecuteOptions) (Sear
 		}
 	}
 	payload, err := RunSearch(ctx, SearchRunOptions{
-		Provider:               provider,
-		Query:                  opts.Prepared.Query,
-		Count:                  opts.Prepared.Count,
-		Country:                opts.Prepared.Country,
-		SearchLang:             opts.Prepared.SearchLang,
-		UILang:                 opts.Prepared.UILang,
-		Freshness:              opts.Prepared.Freshness,
-		TimeoutMs:              opts.TimeoutMs,
-		BraveEndpoint:          opts.Endpoint,
-		BraveAPIKey:            opts.ProviderAPIKey,
-		DoubaoCustomEndpoint:   opts.Endpoint,
-		DoubaoCustomAPIKey:     opts.ProviderAPIKey,
-		DoubaoCustomTimeRange:  opts.Prepared.DoubaoCustomTimeRange,
-		DoubaoSites:            append([]string(nil), opts.Prepared.DoubaoSites...),
-		DoubaoBlockedHosts:     append([]string(nil), opts.Prepared.DoubaoBlockedHosts...),
-		AuthoritativeOnly:      opts.Prepared.AuthoritativeOnly,
-		QueryRewrite:           opts.Prepared.QueryRewrite,
-		BaiduEndpoint:          opts.Endpoint,
-		BaiduAPIKey:            opts.ProviderAPIKey,
-		BaiduRecency:           opts.Prepared.BaiduRecency,
-		PerplexityAPIKey:       opts.PerplexityAPIKey,
-		PerplexityBaseURL:      opts.PerplexityBaseURL,
-		PerplexityModel:        opts.PerplexityModel,
-		PerplexityRecency:      opts.Prepared.PerplexityRecency,
-		PerplexityDateAfter:    opts.Prepared.PerplexityDateAfter,
-		PerplexityDateBefore:   opts.Prepared.PerplexityDateBefore,
-		PerplexityDomainFilter: append([]string(nil), opts.Prepared.DomainFilter...),
-		Prepare:                opts.Prepare,
-		ClassifyNetworkError:   opts.ClassifyNetworkError,
+		Provider:                     provider,
+		Query:                        opts.Prepared.Query,
+		Count:                        opts.Prepared.Count,
+		Country:                      opts.Prepared.Country,
+		SearchLang:                   opts.Prepared.SearchLang,
+		UILang:                       opts.Prepared.UILang,
+		Freshness:                    opts.Prepared.Freshness,
+		TimeoutMs:                    opts.TimeoutMs,
+		BraveEndpoint:                opts.Endpoint,
+		BraveAPIKey:                  opts.ProviderAPIKey,
+		DoubaoCustomEndpoint:         opts.Endpoint,
+		DoubaoCustomAPIKey:           opts.ProviderAPIKey,
+		DoubaoCustomTimeRange:        opts.Prepared.DoubaoCustomTimeRange,
+		DoubaoGlobalEndpoint:         opts.Endpoint,
+		DoubaoGlobalAPIKey:           opts.ProviderAPIKey,
+		DoubaoGlobalMaxSnippetTokens: opts.DoubaoGlobalMaxSnippetTokens,
+		DoubaoGlobalICPHostOnly:      opts.DoubaoGlobalICPHostOnly,
+		DoubaoSites:                  append([]string(nil), opts.Prepared.DoubaoSites...),
+		DoubaoBlockedHosts:           append([]string(nil), opts.Prepared.DoubaoBlockedHosts...),
+		AuthoritativeOnly:            opts.Prepared.AuthoritativeOnly,
+		QueryRewrite:                 opts.Prepared.QueryRewrite,
+		BaiduEndpoint:                opts.Endpoint,
+		BaiduAPIKey:                  opts.ProviderAPIKey,
+		BaiduRecency:                 opts.Prepared.BaiduRecency,
+		PerplexityAPIKey:             opts.PerplexityAPIKey,
+		PerplexityBaseURL:            opts.PerplexityBaseURL,
+		PerplexityModel:              opts.PerplexityModel,
+		PerplexityRecency:            opts.Prepared.PerplexityRecency,
+		PerplexityDateAfter:          opts.Prepared.PerplexityDateAfter,
+		PerplexityDateBefore:         opts.Prepared.PerplexityDateBefore,
+		PerplexityDomainFilter:       append([]string(nil), opts.Prepared.DomainFilter...),
+		Prepare:                      opts.Prepare,
+		ClassifyNetworkError:         opts.ClassifyNetworkError,
 	})
 	if err != nil {
 		emitSearchAudit(opts, provider, "search_provider_request", false, 0, started, err)

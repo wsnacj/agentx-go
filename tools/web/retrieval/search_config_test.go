@@ -22,6 +22,9 @@ func TestDoubaoSearchProviderNamesAndEndpoints(t *testing.T) {
 	if got := DefaultSearchEndpointForProvider(SearchProviderDoubaoGlobal); got != DefaultSearchDoubaoGlobalURL {
 		t.Fatalf("global endpoint = %q", got)
 	}
+	if !IsSupportedSearchProvider(SearchProviderDoubaoGlobal) {
+		t.Fatal("doubao_global should be supported")
+	}
 	if SearchProviderAllowsCache(SearchProviderDoubaoCustom) || SearchProviderAllowsCache(SearchProviderDoubaoGlobal) {
 		t.Fatal("doubao search content must not enter the process cache")
 	}

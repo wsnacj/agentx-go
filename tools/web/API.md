@@ -59,6 +59,31 @@ Custom会把portable日期区间映射为`YYYY-MM-DD..YYYY-MM-DD`，把正负`do
 受豆包搜索服务条款约束，Custom返回内容不会进入本包的进程内搜索缓存；调用方也不应把原始
 Summary或Content写入durable store。URL、标题、请求ID和引用关系的持久化策略仍由Host审阅并负责。
 
+### 豆包搜索 Global
+
+Global使用`doubao_global`和独立`global_search` endpoint，不复用Custom解析器。Host可以固定
+`MaxSnippetTokens`和是否只搜索国内ICP备案站点：
+
+```go
+options := web.SearchOptions{
+    DefaultProvider: retrieval.SearchProviderDoubaoGlobal,
+    Providers: map[string]web.ProviderConfig{
+        retrieval.SearchProviderDoubaoGlobal: {
+            APIKey: searchKey,
+            DoubaoGlobal: web.DoubaoGlobalConfig{
+                MaxSnippetTokens: 800,
+                ICPHostOnly: true,
+            },
+        },
+    },
+    Prepare: hostPreparer,
+}
+```
+
+Global只支持搜索控制台创建的按量后付费Key，订阅套餐Key会返回稳定的不支持/套餐错误。
+Global返回的text snippet会合并为`SearchResult.Description`，`HostInfo.AuthorityLevel`
+会写入`SearchResult.Authority`；图片snippet暂不进入web搜索结果。返回内容同样不进入进程搜索缓存。
+
 ## Go API
 
 - `RunSearch(ctx, SearchRequest, SearchOptions)`：执行显式配置的搜索 provider；不自动读取凭据，也不实施产品级 provider 降级策略。

@@ -2,6 +2,7 @@ package web_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -52,6 +53,33 @@ func TestRunSearchUsesCanonicalProviderProtocol(t *testing.T) {
 	}
 	if !credentialSensitive || payload.Provider != "brave" || len(payload.Results) != 1 || payload.Results[0].Title != "AgentX" {
 		t.Fatalf("payload = %#v", payload)
+	}
+}
+
+func TestRunSearchKeepsDoubaoGlobalPolicyHostOwned(t *testing.T) {
+	prepare := fakePreparer(t, func(request *http.Request) (*http.Response, error) {
+		var body map[string]any
+		if err := json.NewDecoder(request.Body).Decode(&body); err != nil {
+			t.Fatal(err)
+		}
+		filter, _ := body["Filter"].(map[string]any)
+		if body["MaxSnippetLength"] != float64(750) || filter["IcpHostOnly"] != true {
+			t.Fatalf("request = %#v", body)
+		}
+		response := `{"ResponseMetadata":{"RequestId":"request:global"},"Result":{"Documents":[],"ErrorCode":0,"ErrorMsg":""}}`
+		return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(response)), Request: request}, nil
+	})
+	payload, err := web.RunSearch(context.Background(), web.SearchRequest{Query: "agent runtime", MaxResults: 3}, web.SearchOptions{
+		DefaultProvider: retrieval.SearchProviderDoubaoGlobal, Prepare: prepare,
+		Providers: map[string]web.ProviderConfig{
+			retrieval.SearchProviderDoubaoGlobal: {
+				APIKey: "explicit-key", Endpoint: retrieval.DefaultSearchDoubaoGlobalURL,
+				DoubaoGlobal: web.DoubaoGlobalConfig{MaxSnippetTokens: 750, ICPHostOnly: true},
+			},
+		},
+	})
+	if err != nil || payload.Provider != retrieval.SearchProviderDoubaoGlobal {
+		t.Fatalf("payload=%#v err=%v", payload, err)
 	}
 }
 

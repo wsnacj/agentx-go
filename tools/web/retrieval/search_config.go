@@ -63,7 +63,7 @@ func NormalizeSearchProvider(value string) string {
 
 func IsSupportedSearchProvider(provider string) bool {
 	switch NormalizeSearchProvider(provider) {
-	case "brave", "perplexity", "openrouter", SearchProviderDoubaoCustom, "baidu":
+	case "brave", "perplexity", "openrouter", SearchProviderDoubaoCustom, SearchProviderDoubaoGlobal, "baidu":
 		return true
 	default:
 		return false

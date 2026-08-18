@@ -29,10 +29,18 @@ const (
 // ProviderConfig explicitly supplies one search provider's credentials and
 // endpoint. This package never discovers credentials from the environment.
 type ProviderConfig struct {
-	Provider string
-	Endpoint string
-	APIKey   string
-	Model    string
+	Provider     string
+	Endpoint     string
+	APIKey       string
+	Model        string
+	DoubaoGlobal DoubaoGlobalConfig
+}
+
+// DoubaoGlobalConfig contains Host-owned Global protocol bounds. It is not
+// exposed as model-selectable input.
+type DoubaoGlobalConfig struct {
+	MaxSnippetTokens int
+	ICPHostOnly      bool
 }
 
 // SearchOptions configures the portable provider protocol implementation.
@@ -210,7 +218,9 @@ func RunSearch(ctx context.Context, request SearchRequest, opts SearchOptions) (
 	return retrieval.ExecutePreparedSearch(ctx, retrieval.SearchExecuteOptions{
 		Prepared: prepared, Endpoint: endpoint, ProviderAPIKey: config.APIKey,
 		PerplexityAPIKey: config.APIKey, PerplexityBaseURL: endpoint, PerplexityModel: model,
-		TimeoutMs: timeoutMs, CacheTTL: opts.CacheTTL, TrustedEnvProxy: opts.TrustedProxyVariant,
+		DoubaoGlobalMaxSnippetTokens: config.DoubaoGlobal.MaxSnippetTokens,
+		DoubaoGlobalICPHostOnly:      config.DoubaoGlobal.ICPHostOnly,
+		TimeoutMs:                    timeoutMs, CacheTTL: opts.CacheTTL, TrustedEnvProxy: opts.TrustedProxyVariant,
 		Prepare: opts.Prepare, ClassifyNetworkError: opts.ClassifyNetworkError, Audit: opts.Audit,
 	})
 }

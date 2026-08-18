@@ -113,3 +113,68 @@ func TestMapOpenDoubaoCustomDateRangeUsesProvidedClock(t *testing.T) {
 		t.Fatalf("date range = %q", got)
 	}
 }
+
+func TestRunDoubaoGlobalSearchProtocol(t *testing.T) {
+	t.Parallel()
+	prepare := searchPreparer(t, func(request *http.Request) (*http.Response, error) {
+		if request.Header.Get("Authorization") != "Bearer global-key" {
+			t.Fatalf("authorization header was not populated")
+		}
+		var body map[string]any
+		if err := json.NewDecoder(request.Body).Decode(&body); err != nil {
+			t.Fatalf("decode request: %v", err)
+		}
+		filter, _ := body["Filter"].(map[string]any)
+		if body["SearchType"] != "web" || body["DocCount"] != float64(3) ||
+			body["MaxSnippetLength"] != float64(800) || body["MaxImageCountPerDoc"] != float64(0) ||
+			filter["IcpHostOnly"] != true {
+			t.Fatalf("request body = %#v", body)
+		}
+		response := `{"ResponseMetadata":{"RequestId":"request:global"},"Result":{"TotalDocCount":20,"Documents":[{"Rank":0,"Url":"https://docs.example.com/agentx","Title":"AgentX","Snippet":[{"Type":"text","Text":"first"},{"Type":"image","Image":{"ImageUrl":"https://img.example.com/a.png"}},{"Type":"text","Text":"second"}],"DocumentInfo":{"PublishTime":"2026-08-18"},"HostInfo":{"Hostname":"Example Docs","AuthorityLevel":"very_high"}}],"ErrorCode":0,"ErrorMsg":""}}`
+		return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(response)), Request: request}, nil
+	})
+	payload, err := RunSearch(context.Background(), SearchRunOptions{
+		Provider: SearchProviderDoubaoGlobal, Query: "AgentX", Count: 3,
+		DoubaoGlobalEndpoint: DefaultSearchDoubaoGlobalURL, DoubaoGlobalAPIKey: "global-key",
+		DoubaoGlobalMaxSnippetTokens: 800, DoubaoGlobalICPHostOnly: true, Prepare: prepare,
+	})
+	if err != nil {
+		t.Fatalf("RunSearch: %v", err)
+	}
+	if payload.Provider != SearchProviderDoubaoGlobal || payload.RequestID != "request:global" || len(payload.Results) != 1 {
+		t.Fatalf("payload = %#v", payload)
+	}
+	result := payload.Results[0]
+	if result.Description != "first\nsecond" || result.Published != "2026-08-18" || result.SiteName != "Example Docs" || result.Authority != "very_high" {
+		t.Fatalf("result = %#v", result)
+	}
+}
+
+func TestRunDoubaoGlobalSearchReturnsTypedPlanError(t *testing.T) {
+	t.Parallel()
+	prepare := searchPreparer(t, func(request *http.Request) (*http.Response, error) {
+		response := `{"ResponseMetadata":{"RequestId":"request:global-error"},"Result":{"ErrorCode":10409,"ErrorMsg":"subscription plan unsupported"}}`
+		return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(response)), Request: request}, nil
+	})
+	_, err := RunSearch(context.Background(), SearchRunOptions{
+		Provider: SearchProviderDoubaoGlobal, Query: "AgentX", Count: 1,
+		DoubaoGlobalEndpoint: DefaultSearchDoubaoGlobalURL, DoubaoGlobalAPIKey: "subscription-key", Prepare: prepare,
+	})
+	var providerErr *SearchProviderError
+	if !errors.As(err, &providerErr) || providerErr.Code != "10409" || providerErr.Health != ProviderHealthUnsupportedFeature || providerErr.Retryable {
+		t.Fatalf("error = %#v", err)
+	}
+	if strings.Contains(err.Error(), "subscription plan unsupported") || strings.Contains(err.Error(), "subscription-key") {
+		t.Fatalf("error should remain display-safe: %v", err)
+	}
+}
+
+func TestPrepareDoubaoGlobalRejectsUnsupportedDateFilter(t *testing.T) {
+	t.Parallel()
+	_, validation := PrepareSearchRequest(SearchPrepareOptions{
+		ConfiguredProvider: SearchProviderDoubaoGlobal, Query: "AgentX", Count: 3, DateAfter: "2026-08-01",
+	})
+	if validation == nil || validation.Code != "unsupported_date_filter" {
+		t.Fatalf("validation = %#v", validation)
+	}
+}

@@ -15,7 +15,7 @@ func WebSearchDefinition() toolcontract.Definition {
 func searchDefinition(name, description string) toolcontract.Definition {
 	return toolcontract.Definition{Type: "function", Function: toolcontract.Function{Name: name, Description: description, Parameters: object(map[string]any{
 		"query":       text("Natural-language search query."),
-		"provider":    enum("Optional provider override. ark is a compatibility alias for doubao_custom.", "brave", "perplexity", "openrouter", "doubao_custom", "ark", "baidu"),
+		"provider":    enum("Optional provider override. ark is a compatibility alias for doubao_custom.", "brave", "perplexity", "openrouter", "doubao_custom", "doubao_global", "ark", "baidu"),
 		"max_results": integer("Maximum results to return.", 1, 10),
 		"count":       integer("Compatibility alias for max_results.", 1, 10),
 		"country":     text("Optional country preference."), "search_lang": text("Optional search language."), "ui_lang": text("Optional UI language."),

@@ -15,4 +15,9 @@
 `doubao_custom`。Custom协议支持时间区间、站点包含/排除、最高权威等级和Query改写，
 要求搜索专用凭据，且provider返回内容不进入进程内搜索缓存。
 
+Global协议的identity为`doubao_global`，使用独立`global_search` endpoint和
+`Documents/Snippet/HostInfo`响应结构。`DocCount`由portable count控制；
+`MaxSnippetLength`和`IcpHostOnly`由Host配置，不暴露为模型可选参数。Global只支持按量后付费Key，
+不支持Custom订阅套餐Key。
+
 该包不会导入 HS、Runner、Scene、具体代理实现或凭据系统。

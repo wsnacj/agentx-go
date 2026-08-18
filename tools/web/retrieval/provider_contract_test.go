@@ -3,8 +3,8 @@ package retrieval
 import "testing"
 
 func TestSearchProviderCapabilities(t *testing.T) {
-	capabilities := SearchProviderCapabilities([]string{"", "brave", "perplexity", "openrouter", "doubao_custom", "brave"})
-	if len(capabilities) != 4 {
+	capabilities := SearchProviderCapabilities([]string{"", "brave", "perplexity", "openrouter", "doubao_custom", "doubao_global", "brave"})
+	if len(capabilities) != 5 {
 		t.Fatalf("expected deduped capabilities, got %#v", capabilities)
 	}
 	byProvider := map[string]ProviderCapability{}
@@ -23,6 +23,10 @@ func TestSearchProviderCapabilities(t *testing.T) {
 	custom := byProvider[SearchProviderDoubaoCustom]
 	if !custom.DateFilters || !custom.DomainFilters || !custom.AuthorityFilter || !custom.QueryRewrite || custom.Cache || custom.MaxResults != 50 {
 		t.Fatalf("unexpected doubao custom capability: %#v", custom)
+	}
+	global := byProvider[SearchProviderDoubaoGlobal]
+	if global.DateFilters || global.DomainFilters || !global.StructuredSnippets || global.Cache || global.MaxResults != 20 {
+		t.Fatalf("unexpected doubao global capability: %#v", global)
 	}
 }
 

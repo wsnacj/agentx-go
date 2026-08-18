@@ -83,7 +83,7 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 	if plan.RequestedProvider != "" && !IsSupportedSearchProvider(plan.RequestedProvider) {
 		return PreparedSearchRequest{}, &SearchValidationError{
 			Code:    "unsupported_provider",
-			Message: "provider must be brave, perplexity, openrouter, doubao_custom, ark, or baidu",
+			Message: "provider must be brave, perplexity, openrouter, doubao_custom, doubao_global, ark, or baidu",
 		}
 	}
 	if plan.RequestedProvider != "" && plan.RequestedProvider != plan.EffectiveProvider {
@@ -154,6 +154,11 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 			return PreparedSearchRequest{}, &SearchValidationError{
 				Code:    "unsupported_date_filter",
 				Message: "date_after/date_before filtering is not supported by the openrouter compatibility path. Use provider=perplexity for structured date filters.",
+			}
+		case SearchProviderDoubaoGlobal:
+			return PreparedSearchRequest{}, &SearchValidationError{
+				Code:    "unsupported_date_filter",
+				Message: "date_after/date_before filtering is not supported by doubao_global.",
 			}
 		default:
 			plan.ProviderNote = AppendSearchProviderNote(plan.ProviderNote, fmt.Sprintf("date_after/date_before were ignored because provider %s does not support structured date filters", plan.EffectiveProvider))
