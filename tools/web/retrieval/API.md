@@ -20,4 +20,7 @@ Global协议的identity为`doubao_global`，使用独立`global_search` endpoint
 `MaxSnippetLength`和`IcpHostOnly`由Host配置，不暴露为模型可选参数。Global只支持按量后付费Key，
 不支持Custom订阅套餐Key。
 
+当前Custom已由无HS consumer以真实套餐完成正向协议验证；Global实现与负向套餐边界已验证，但在配置按量
+后付费Key前不得写成真实成功。两种provider均保持显式选择，不做静默fallback。
+
 该包不会导入 HS、Runner、Scene、具体代理实现或凭据系统。

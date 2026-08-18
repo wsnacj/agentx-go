@@ -104,4 +104,6 @@ Global返回的text snippet会合并为`SearchResult.Description`，`HostInfo.Au
 - 浏览器交互、登录态和 JavaScript 页面自动化；
 - 将缓存作为 durable lifecycle 或 RunStore。
 
-当前成熟度为 Experimental。进入 Developer Preview 前仍需完成 HS fixed-version cutover、兼容差异测试和签名漂移门禁。
+当前成熟度仍为 Experimental。已有fixed-version Platform consumer、无HS Tool-only真实Custom smoke与兼容
+测试，但这不自动升级公共承诺；进入Developer Preview仍需完成候选surface冻结、签名漂移门禁和Global
+按量后付费Key的正向证据，或明确把Global继续标为未验收扩展。
