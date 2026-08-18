@@ -69,18 +69,20 @@ type Options struct {
 
 // SearchRequest is the model- and Go-facing portable search input.
 type SearchRequest struct {
-	Query        string   `json:"query"`
-	Provider     string   `json:"provider,omitempty"`
-	MaxResults   int      `json:"max_results,omitempty"`
-	Count        int      `json:"count,omitempty"`
-	Country      string   `json:"country,omitempty"`
-	SearchLang   string   `json:"search_lang,omitempty"`
-	UILang       string   `json:"ui_lang,omitempty"`
-	Freshness    string   `json:"freshness,omitempty"`
-	DateAfter    string   `json:"date_after,omitempty"`
-	DateBefore   string   `json:"date_before,omitempty"`
-	DomainFilter []string `json:"domain_filter,omitempty"`
-	TimeoutMs    int      `json:"timeout_ms,omitempty"`
+	Query             string   `json:"query"`
+	Provider          string   `json:"provider,omitempty"`
+	MaxResults        int      `json:"max_results,omitempty"`
+	Count             int      `json:"count,omitempty"`
+	Country           string   `json:"country,omitempty"`
+	SearchLang        string   `json:"search_lang,omitempty"`
+	UILang            string   `json:"ui_lang,omitempty"`
+	Freshness         string   `json:"freshness,omitempty"`
+	DateAfter         string   `json:"date_after,omitempty"`
+	DateBefore        string   `json:"date_before,omitempty"`
+	DomainFilter      []string `json:"domain_filter,omitempty"`
+	AuthoritativeOnly bool     `json:"authoritative_only,omitempty"`
+	QueryRewrite      bool     `json:"query_rewrite,omitempty"`
+	TimeoutMs         int      `json:"timeout_ms,omitempty"`
 }
 
 // FetchRequest is the Go-facing input shared by WebFetch and OpenPage.
@@ -170,7 +172,8 @@ func RunSearch(ctx context.Context, request SearchRequest, opts SearchOptions) (
 		ConfiguredProvider: provider, RequestedProvider: request.Provider, Query: query, Count: count,
 		Country: request.Country, SearchLang: request.SearchLang, UILang: request.UILang,
 		Freshness: request.Freshness, DateAfter: request.DateAfter, DateBefore: request.DateBefore,
-		DomainFilter: request.DomainFilter, CanUseProvider: canUse,
+		DomainFilter: request.DomainFilter, AuthoritativeOnly: request.AuthoritativeOnly,
+		QueryRewrite: request.QueryRewrite, CanUseProvider: canUse,
 		CanUsePerplexityStructuredDateFilters: canUse("perplexity"),
 	})
 	if validation != nil {

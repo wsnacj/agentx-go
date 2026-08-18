@@ -18,6 +18,8 @@ type SearchPrepareOptions struct {
 	DateAfter                             string
 	DateBefore                            string
 	DomainFilter                          []string
+	AuthoritativeOnly                     bool
+	QueryRewrite                          bool
 	CanUseProvider                        func(provider string) bool
 	CanUsePerplexityStructuredDateFilters bool
 	Now                                   func() time.Time
@@ -29,19 +31,25 @@ type SearchValidationError struct {
 }
 
 type PreparedSearchRequest struct {
-	Query                string
-	Count                int
-	Country              string
-	SearchLang           string
-	UILang               string
-	RequestedProvider    string
-	EffectiveProvider    string
-	ProviderNote         string
-	Freshness            string
-	DateAfter            string
-	DateBefore           string
-	DomainFilter         []string
+	Query                 string
+	Count                 int
+	Country               string
+	SearchLang            string
+	UILang                string
+	RequestedProvider     string
+	EffectiveProvider     string
+	ProviderNote          string
+	Freshness             string
+	DateAfter             string
+	DateBefore            string
+	DomainFilter          []string
+	DoubaoCustomTimeRange string
+	// Deprecated: use DoubaoCustomTimeRange. Retained for source compatibility.
 	ArkTimeRange         string
+	DoubaoSites          []string
+	DoubaoBlockedHosts   []string
+	AuthoritativeOnly    bool
+	QueryRewrite         bool
 	BaiduRecency         string
 	PerplexityRecency    string
 	PerplexityDateAfter  string
@@ -59,6 +67,8 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 		Freshness:         strings.TrimSpace(opts.Freshness),
 		DateAfter:         strings.TrimSpace(opts.DateAfter),
 		DateBefore:        strings.TrimSpace(opts.DateBefore),
+		AuthoritativeOnly: opts.AuthoritativeOnly,
+		QueryRewrite:      opts.QueryRewrite,
 	}
 	if requested := strings.TrimSpace(opts.RequestedProvider); requested != "" {
 		plan.RequestedProvider = NormalizeSearchProvider(requested)
@@ -73,7 +83,7 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 	if plan.RequestedProvider != "" && !IsSupportedSearchProvider(plan.RequestedProvider) {
 		return PreparedSearchRequest{}, &SearchValidationError{
 			Code:    "unsupported_provider",
-			Message: "provider must be brave, perplexity, openrouter, ark, or baidu",
+			Message: "provider must be brave, perplexity, openrouter, doubao_custom, ark, or baidu",
 		}
 	}
 	if plan.RequestedProvider != "" && plan.RequestedProvider != plan.EffectiveProvider {
@@ -84,7 +94,7 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 			plan.ProviderNote = AppendSearchProviderNote(plan.ProviderNote, fmt.Sprintf("provider override %s ignored: missing credentials, fallback to %s", plan.RequestedProvider, plan.EffectiveProvider))
 		}
 	}
-	domainFilter, domainFilterErr := NormalizeSearchDomainFilter(opts.DomainFilter)
+	domainFilter, domainFilterErr := normalizeSearchDomainFilter(opts.DomainFilter, plan.EffectiveProvider == SearchProviderDoubaoCustom)
 	if domainFilterErr != "" {
 		return PreparedSearchRequest{}, &SearchValidationError{
 			Code:    "invalid_domain_filter",
@@ -119,7 +129,7 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 	if plan.DateAfter != "" || plan.DateBefore != "" {
 		compatibleProvider := resolveDateFilterProviderWithPredicate(plan.EffectiveProvider, opts.CanUsePerplexityStructuredDateFilters, canUseProvider)
 		if compatibleProvider != "" && compatibleProvider != plan.EffectiveProvider {
-			plan.ProviderNote = AppendSearchProviderNote(plan.ProviderNote, fmt.Sprintf("provider %s switched to %s because structured date filters require brave or perplexity", plan.EffectiveProvider, compatibleProvider))
+			plan.ProviderNote = AppendSearchProviderNote(plan.ProviderNote, fmt.Sprintf("provider %s switched to %s because structured date filters require brave, perplexity, or doubao_custom", plan.EffectiveProvider, compatibleProvider))
 			plan.EffectiveProvider = compatibleProvider
 		}
 		switch plan.EffectiveProvider {
@@ -129,6 +139,14 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 				now = opts.Now
 			}
 			plan.Freshness = BuildFreshnessFromDateRange(plan.DateAfter, plan.DateBefore, now().UTC())
+		case SearchProviderDoubaoCustom:
+			now := time.Now
+			if opts.Now != nil {
+				now = opts.Now
+			}
+			plan.DoubaoCustomTimeRange = MapDateRangeForDoubaoCustom(plan.DateAfter, plan.DateBefore, now().UTC())
+			plan.ArkTimeRange = plan.DoubaoCustomTimeRange
+			plan.Freshness = plan.DoubaoCustomTimeRange
 		case "perplexity":
 			plan.PerplexityDateAfter = FormatDateForPerplexity(plan.DateAfter)
 			plan.PerplexityDateBefore = FormatDateForPerplexity(plan.DateBefore)
@@ -154,16 +172,19 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 				}
 			}
 			plan.Freshness = normalized
-		case "ark":
-			mapped, ok := MapFreshnessForArk(plan.Freshness)
-			if !ok {
-				return PreparedSearchRequest{}, &SearchValidationError{
-					Code:    "invalid_freshness",
-					Message: "ark provider freshness supports only pd, pw, pm, py.",
+		case SearchProviderDoubaoCustom:
+			if plan.DoubaoCustomTimeRange == "" {
+				mapped, ok := MapFreshnessForArk(plan.Freshness)
+				if !ok {
+					return PreparedSearchRequest{}, &SearchValidationError{
+						Code:    "invalid_freshness",
+						Message: "doubao_custom provider freshness supports only pd, pw, pm, py.",
+					}
 				}
+				plan.DoubaoCustomTimeRange = mapped
+				plan.ArkTimeRange = mapped
+				plan.Freshness = mapped
 			}
-			plan.ArkTimeRange = mapped
-			plan.Freshness = mapped
 		case "baidu":
 			mapped, ok := MapFreshnessForBaidu(plan.Freshness)
 			if !ok {
@@ -187,18 +208,37 @@ func PrepareSearchRequest(opts SearchPrepareOptions) (PreparedSearchRequest, *Se
 		default:
 			return PreparedSearchRequest{}, &SearchValidationError{
 				Code:    "unsupported_freshness",
-				Message: "freshness is only supported for brave/perplexity/openrouter/ark/baidu providers.",
+				Message: "freshness is only supported for brave/perplexity/openrouter/doubao_custom/baidu providers.",
 			}
 		}
 	}
-	if len(plan.DomainFilter) > 0 && plan.EffectiveProvider != "perplexity" {
-		message := fmt.Sprintf("domain_filter is not supported by the %s provider. Only Perplexity supports domain filtering.", plan.EffectiveProvider)
+	if len(plan.DomainFilter) > 0 && plan.EffectiveProvider != "perplexity" && plan.EffectiveProvider != SearchProviderDoubaoCustom {
+		message := fmt.Sprintf("domain_filter is not supported by the %s provider. Use Perplexity or Doubao Custom for domain filtering.", plan.EffectiveProvider)
 		if plan.EffectiveProvider == "openrouter" {
 			message = "domain_filter is not supported by the openrouter compatibility path. Use provider=perplexity for native Perplexity domain filtering."
 		}
 		return PreparedSearchRequest{}, &SearchValidationError{
 			Code:    "unsupported_domain_filter",
 			Message: message,
+		}
+	}
+	if plan.EffectiveProvider == SearchProviderDoubaoCustom {
+		plan.DoubaoSites, plan.DoubaoBlockedHosts = SplitDomainFilterForDoubaoCustom(plan.DomainFilter)
+		if len(plan.DoubaoSites) > 20 || len(plan.DoubaoBlockedHosts) > 5 {
+			return PreparedSearchRequest{}, &SearchValidationError{
+				Code:    "domain_filter_limit",
+				Message: "doubao_custom supports at most 20 included domains and 5 excluded domains.",
+			}
+		}
+	} else if plan.AuthoritativeOnly {
+		return PreparedSearchRequest{}, &SearchValidationError{
+			Code:    "unsupported_authority_filter",
+			Message: fmt.Sprintf("authoritative_only is not supported by the %s provider.", plan.EffectiveProvider),
+		}
+	} else if plan.QueryRewrite {
+		return PreparedSearchRequest{}, &SearchValidationError{
+			Code:    "unsupported_query_rewrite",
+			Message: fmt.Sprintf("query_rewrite is not supported by the %s provider.", plan.EffectiveProvider),
 		}
 	}
 	return plan, nil
@@ -222,7 +262,7 @@ func AppendSearchProviderNote(current string, note string) string {
 func resolveDateFilterProviderWithPredicate(currentProvider string, canUseStructuredPerplexity bool, canUseProvider func(provider string) bool) string {
 	currentProvider = NormalizeSearchProvider(currentProvider)
 	switch currentProvider {
-	case "brave", "perplexity":
+	case "brave", "perplexity", SearchProviderDoubaoCustom:
 		return currentProvider
 	}
 	if canUseStructuredPerplexity {

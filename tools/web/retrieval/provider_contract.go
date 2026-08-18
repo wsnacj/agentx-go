@@ -30,6 +30,8 @@ type ProviderCapability struct {
 	Kind                 string `json:"kind,omitempty"`
 	DateFilters          bool   `json:"date_filters"`
 	DomainFilters        bool   `json:"domain_filters"`
+	AuthorityFilter      bool   `json:"authority_filter"`
+	QueryRewrite         bool   `json:"query_rewrite"`
 	Locale               bool   `json:"locale"`
 	StructuredSnippets   bool   `json:"structured_snippets"`
 	SynthesizedCitations bool   `json:"synthesized_citations"`
@@ -270,7 +272,15 @@ func SearchProviderCapability(provider string) ProviderCapability {
 		capability.DateFilters = true
 		capability.Locale = true
 		capability.StructuredSnippets = true
-	case "ark", "baidu":
+	case SearchProviderDoubaoCustom:
+		capability.Cache = false
+		capability.DateFilters = true
+		capability.DomainFilters = true
+		capability.AuthorityFilter = true
+		capability.QueryRewrite = true
+		capability.StructuredSnippets = true
+		capability.MaxResults = 50
+	case "baidu":
 		capability.DateFilters = true
 		capability.StructuredSnippets = true
 	case "perplexity":

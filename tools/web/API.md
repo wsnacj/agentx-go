@@ -23,6 +23,42 @@ options := web.Options{
 web.Register(registry, options)
 ```
 
+### 豆包搜索 Custom
+
+豆包搜索使用独立的搜索凭据，不能复用方舟模型的`ARK_API_KEY`。Host应从豆包搜索控制台获取Key，
+在调用点解析后显式注入；推荐的环境变量名是官方MCP使用的
+`ASK_ECHO_SEARCH_INFINITY_API_KEY`。`ark`只作为旧配置兼容别名保留，新的provider identity为
+`doubao_custom`：
+
+```go
+options := web.SearchOptions{
+    DefaultProvider: retrieval.SearchProviderDoubaoCustom,
+    Providers: map[string]web.ProviderConfig{
+        retrieval.SearchProviderDoubaoCustom: {
+            APIKey: searchKey,
+        },
+    },
+    Prepare: hostPreparer,
+}
+
+result, err := web.RunSearch(ctx, web.SearchRequest{
+    Query:              "AgentX Go 最新进展",
+    MaxResults:         5,
+    Freshness:          "pw",
+    DomainFilter:       []string{"github.com", "-spam.example"},
+    AuthoritativeOnly:  true,
+    QueryRewrite:       true,
+}, options)
+```
+
+Custom会把portable日期区间映射为`YYYY-MM-DD..YYYY-MM-DD`，把正负`domain_filter`分别映射为
+`Sites`与`BlockHosts`，并固定请求`NeedUrl=true`、`NeedContent=false`，完整正文仍由`open_page`
+按Host网络策略读取。响应优先使用适合模型消费的`Summary`，并保留`score`、`authority`、
+`authority_level`与display-safe `request_id`。
+
+受豆包搜索服务条款约束，Custom返回内容不会进入本包的进程内搜索缓存；调用方也不应把原始
+Summary或Content写入durable store。URL、标题、请求ID和引用关系的持久化策略仍由Host审阅并负责。
+
 ## Go API
 
 - `RunSearch(ctx, SearchRequest, SearchOptions)`：执行显式配置的搜索 provider；不自动读取凭据，也不实施产品级 provider 降级策略。

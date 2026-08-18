@@ -28,32 +28,46 @@ type SearchPayload struct {
 	ProviderDiagnostics    *ProviderDiagnostics `json:"provider_diagnostics,omitempty"`
 	Count                  int                  `json:"count"`
 	TookMs                 int64                `json:"took_ms"`
+	RequestID              string               `json:"request_id,omitempty"`
 	Results                []SearchResult       `json:"results,omitempty"`
 	Cached                 bool                 `json:"cached,omitempty"`
 }
 
 type SearchResult struct {
-	Title       string `json:"title"`
-	URL         string `json:"url"`
-	Description string `json:"description"`
-	Published   string `json:"published,omitempty"`
-	SiteName    string `json:"site_name,omitempty"`
+	Title          string  `json:"title"`
+	URL            string  `json:"url"`
+	Description    string  `json:"description"`
+	Published      string  `json:"published,omitempty"`
+	SiteName       string  `json:"site_name,omitempty"`
+	Score          float64 `json:"score,omitempty"`
+	Authority      string  `json:"authority,omitempty"`
+	AuthorityLevel int     `json:"authority_level,omitempty"`
 }
 
 type SearchRunOptions struct {
-	Provider               string
-	Query                  string
-	Count                  int
-	Country                string
-	SearchLang             string
-	UILang                 string
-	Freshness              string
-	TimeoutMs              int
-	BraveEndpoint          string
-	BraveAPIKey            string
-	ArkEndpoint            string
-	ArkAPIKey              string
+	Provider              string
+	Query                 string
+	Count                 int
+	Country               string
+	SearchLang            string
+	UILang                string
+	Freshness             string
+	TimeoutMs             int
+	BraveEndpoint         string
+	BraveAPIKey           string
+	DoubaoCustomEndpoint  string
+	DoubaoCustomAPIKey    string
+	DoubaoCustomTimeRange string
+	// Deprecated: use DoubaoCustomEndpoint. Retained for source compatibility.
+	ArkEndpoint string
+	// Deprecated: use DoubaoCustomAPIKey. Retained for source compatibility.
+	ArkAPIKey string
+	// Deprecated: use DoubaoCustomTimeRange. Retained for source compatibility.
 	ArkTimeRange           string
+	DoubaoSites            []string
+	DoubaoBlockedHosts     []string
+	AuthoritativeOnly      bool
+	QueryRewrite           bool
 	BaiduEndpoint          string
 	BaiduAPIKey            string
 	BaiduRecency           string
@@ -95,7 +109,9 @@ type braveSearchResult struct {
 	} `json:"meta_url"`
 }
 
-type arkSearchResponse struct {
+type doubaoCustomSearchResponse struct {
+	Code             json.RawMessage `json:"code,omitempty"`
+	Message          string          `json:"message,omitempty"`
 	ResponseMetadata struct {
 		RequestID string `json:"RequestId"`
 		Error     *struct {
@@ -105,13 +121,17 @@ type arkSearchResponse struct {
 		} `json:"Error,omitempty"`
 	} `json:"ResponseMetadata"`
 	Result *struct {
-		WebResults []struct {
-			Title       string `json:"Title"`
-			URL         string `json:"Url"`
-			Snippet     string `json:"Snippet"`
-			Summary     string `json:"Summary"`
-			PublishTime string `json:"PublishTime"`
-			SiteName    string `json:"SiteName"`
+		ResultCount int `json:"ResultCount"`
+		WebResults  []struct {
+			Title         string  `json:"Title"`
+			URL           string  `json:"Url"`
+			Snippet       string  `json:"Snippet"`
+			Summary       string  `json:"Summary"`
+			PublishTime   string  `json:"PublishTime"`
+			SiteName      string  `json:"SiteName"`
+			RankScore     float64 `json:"RankScore"`
+			AuthInfoDes   string  `json:"AuthInfoDes"`
+			AuthInfoLevel int     `json:"AuthInfoLevel"`
 		} `json:"WebResults"`
 	} `json:"Result"`
 }
@@ -151,8 +171,8 @@ func RunSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error
 		return runPerplexitySearch(ctx, opts)
 	case "brave":
 		return runBraveSearch(ctx, opts)
-	case "ark":
-		return runArkSearch(ctx, opts)
+	case SearchProviderDoubaoCustom:
+		return runDoubaoCustomSearch(ctx, opts)
 	case "baidu":
 		return runBaiduSearch(ctx, opts)
 	default:
@@ -310,9 +330,12 @@ func normalizeBraveSearchResults(parsed braveSearchResponse, maxResults int) []S
 	return results
 }
 
-func runArkSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error) {
+func runDoubaoCustomSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error) {
 	started := time.Now()
-	prepared, err := prepareSearchEndpoint(ctx, opts.Prepare, opts.ArkEndpoint, opts.TimeoutMs)
+	endpointValue := firstNonEmpty(opts.DoubaoCustomEndpoint, opts.ArkEndpoint)
+	apiKey := firstNonEmpty(opts.DoubaoCustomAPIKey, opts.ArkAPIKey)
+	timeRange := firstNonEmpty(opts.DoubaoCustomTimeRange, opts.ArkTimeRange)
+	prepared, err := prepareSearchEndpoint(ctx, opts.Prepare, endpointValue, opts.TimeoutMs)
 	if err != nil {
 		return SearchPayload{}, fmt.Errorf("web_search: invalid endpoint: %w", err)
 	}
@@ -327,8 +350,22 @@ func runArkSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, er
 	if opts.Count > 0 {
 		reqBody["Count"] = opts.Count
 	}
-	if strings.TrimSpace(opts.ArkTimeRange) != "" {
-		reqBody["TimeRange"] = strings.TrimSpace(opts.ArkTimeRange)
+	if strings.TrimSpace(timeRange) != "" {
+		reqBody["TimeRange"] = strings.TrimSpace(timeRange)
+	}
+	filter := map[string]any{"NeedUrl": true, "NeedContent": false}
+	if len(opts.DoubaoSites) > 0 {
+		filter["Sites"] = strings.Join(opts.DoubaoSites, "|")
+	}
+	if len(opts.DoubaoBlockedHosts) > 0 {
+		filter["BlockHosts"] = strings.Join(opts.DoubaoBlockedHosts, "|")
+	}
+	if opts.AuthoritativeOnly {
+		filter["AuthInfoLevel"] = 1
+	}
+	reqBody["Filter"] = filter
+	if opts.QueryRewrite {
+		reqBody["QueryControl"] = map[string]any{"QueryRewrite": true}
 	}
 	blob, err := json.Marshal(reqBody)
 	if err != nil {
@@ -340,27 +377,34 @@ func runArkSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, er
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+opts.ArkAPIKey)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
 	resp, err := prepared.Doer.Do(req)
 	if err != nil {
-		return SearchPayload{}, formatSearchRequestError("ark", endpoint.String(), err, opts.ClassifyNetworkError)
+		return SearchPayload{}, formatSearchRequestError(SearchProviderDoubaoCustom, endpoint.String(), err, opts.ClassifyNetworkError)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		detail, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
-		message := strings.TrimSpace(string(detail))
-		if message == "" {
-			message = resp.Status
-		}
-		return SearchPayload{}, fmt.Errorf("web_search: ark api error (%d): %s", resp.StatusCode, truncate(message, 320))
+	rawBody, readErr := io.ReadAll(io.LimitReader(resp.Body, 2<<20))
+	if readErr != nil {
+		return SearchPayload{}, fmt.Errorf("web_search: decode response: %w", readErr)
 	}
-	var parsed arkSearchResponse
-	if err := json.NewDecoder(io.LimitReader(resp.Body, 2<<20)).Decode(&parsed); err != nil {
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		code, message := doubaoTopLevelError(rawBody)
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoCustom, code, message, resp.StatusCode)
+	}
+	var parsed doubaoCustomSearchResponse
+	if err := json.Unmarshal(rawBody, &parsed); err != nil {
 		return SearchPayload{}, fmt.Errorf("web_search: decode response: %w", err)
 	}
 	if parsed.ResponseMetadata.Error != nil {
 		e := parsed.ResponseMetadata.Error
-		return SearchPayload{}, fmt.Errorf("web_search: ark api error (%d/%s): %s", e.CodeN, strings.TrimSpace(e.Code), strings.TrimSpace(e.Message))
+		code := strings.TrimSpace(e.Code)
+		if code == "" && e.CodeN != 0 {
+			code = strconv.Itoa(e.CodeN)
+		}
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoCustom, code, e.Message, resp.StatusCode)
+	}
+	if code := rawJSONScalarString(parsed.Code); code != "" || (parsed.Result == nil && strings.TrimSpace(parsed.Message) != "") {
+		return SearchPayload{}, newDoubaoProviderError(SearchProviderDoubaoCustom, code, parsed.Message, resp.StatusCode)
 	}
 	results := make([]SearchResult, 0)
 	if parsed.Result != nil {
@@ -373,11 +417,14 @@ func runArkSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, er
 				description = strings.TrimSpace(item.Snippet)
 			}
 			current := SearchResult{
-				Title:       strings.TrimSpace(item.Title),
-				URL:         strings.TrimSpace(item.URL),
-				Description: description,
-				Published:   strings.TrimSpace(item.PublishTime),
-				SiteName:    strings.TrimSpace(item.SiteName),
+				Title:          strings.TrimSpace(item.Title),
+				URL:            strings.TrimSpace(item.URL),
+				Description:    description,
+				Published:      strings.TrimSpace(item.PublishTime),
+				SiteName:       strings.TrimSpace(item.SiteName),
+				Score:          item.RankScore,
+				Authority:      strings.TrimSpace(item.AuthInfoDes),
+				AuthorityLevel: item.AuthInfoLevel,
 			}
 			if current.SiteName == "" {
 				current.SiteName = resolveSiteName(current.URL)
@@ -387,13 +434,46 @@ func runArkSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, er
 	}
 	return SearchPayload{
 		Query:        opts.Query,
-		Provider:     "ark",
-		ProviderKind: searchProviderKindString(ResolveSearchProviderKind("ark")),
-		ResultKind:   searchResultKindString(ResolveSearchResultKind("ark")),
+		Provider:     SearchProviderDoubaoCustom,
+		ProviderKind: searchProviderKindString(ResolveSearchProviderKind(SearchProviderDoubaoCustom)),
+		ResultKind:   searchResultKindString(ResolveSearchResultKind(SearchProviderDoubaoCustom)),
 		Count:        len(results),
 		TookMs:       time.Since(started).Milliseconds(),
+		RequestID:    strings.TrimSpace(parsed.ResponseMetadata.RequestID),
 		Results:      results,
 	}, nil
+}
+
+func doubaoTopLevelError(raw []byte) (string, string) {
+	var payload struct {
+		Code    json.RawMessage `json:"code"`
+		Message string          `json:"message"`
+	}
+	if json.Unmarshal(raw, &payload) != nil {
+		return "", ""
+	}
+	return rawJSONScalarString(payload.Code), strings.TrimSpace(payload.Message)
+}
+
+func rawJSONScalarString(raw json.RawMessage) string {
+	raw = json.RawMessage(strings.TrimSpace(string(raw)))
+	if len(raw) == 0 || string(raw) == "null" {
+		return ""
+	}
+	var text string
+	if json.Unmarshal(raw, &text) == nil {
+		return strings.TrimSpace(text)
+	}
+	return strings.TrimSpace(string(raw))
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 func runBaiduSearch(ctx context.Context, opts SearchRunOptions) (SearchPayload, error) {

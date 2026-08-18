@@ -15,12 +15,14 @@ func WebSearchDefinition() toolcontract.Definition {
 func searchDefinition(name, description string) toolcontract.Definition {
 	return toolcontract.Definition{Type: "function", Function: toolcontract.Function{Name: name, Description: description, Parameters: object(map[string]any{
 		"query":       text("Natural-language search query."),
-		"provider":    enum("Optional provider override.", "brave", "perplexity", "openrouter", "ark", "baidu"),
+		"provider":    enum("Optional provider override. ark is a compatibility alias for doubao_custom.", "brave", "perplexity", "openrouter", "doubao_custom", "ark", "baidu"),
 		"max_results": integer("Maximum results to return.", 1, 10),
 		"count":       integer("Compatibility alias for max_results.", 1, 10),
 		"country":     text("Optional country preference."), "search_lang": text("Optional search language."), "ui_lang": text("Optional UI language."),
 		"freshness": text("Optional provider-specific recency filter."), "date_after": text("Optional start date YYYY-MM-DD."), "date_before": text("Optional end date YYYY-MM-DD."),
 		"domain_filter": array(text("Domain allow/deny entry.")), "timeout_ms": integer("Request timeout in milliseconds.", 1, 120000),
+		"authoritative_only": map[string]any{"type": "boolean", "description": "Limit results to the provider's highest authority tier when supported."},
+		"query_rewrite":      map[string]any{"type": "boolean", "description": "Allow the provider to rewrite a conversational query when supported."},
 	}, []string{"query"})}}
 }
 

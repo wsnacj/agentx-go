@@ -38,6 +38,7 @@ func ExecutePreparedSearch(ctx context.Context, opts SearchExecuteOptions) (Sear
 	if provider == "" {
 		provider = DefaultSearchProvider
 	}
+	cacheAllowed := SearchProviderAllowsCache(provider)
 	cacheKey := SearchCacheKey(
 		provider,
 		opts.Prepared.Query,
@@ -52,7 +53,7 @@ func ExecutePreparedSearch(ctx context.Context, opts SearchExecuteOptions) (Sear
 		opts.PerplexityModel,
 		opts.TrustedEnvProxy,
 	)
-	if opts.CacheTTL > 0 {
+	if opts.CacheTTL > 0 && cacheAllowed {
 		if cached, ok := ReadSearchCache(cacheKey); ok {
 			payload := applyPreparedSearchMetadata(cached, opts.Prepared, true)
 			emitSearchAudit(opts, provider, "search_provider_cache_hit", true, len(payload.Results), started, nil)
@@ -70,9 +71,13 @@ func ExecutePreparedSearch(ctx context.Context, opts SearchExecuteOptions) (Sear
 		TimeoutMs:              opts.TimeoutMs,
 		BraveEndpoint:          opts.Endpoint,
 		BraveAPIKey:            opts.ProviderAPIKey,
-		ArkEndpoint:            opts.Endpoint,
-		ArkAPIKey:              opts.ProviderAPIKey,
-		ArkTimeRange:           opts.Prepared.ArkTimeRange,
+		DoubaoCustomEndpoint:   opts.Endpoint,
+		DoubaoCustomAPIKey:     opts.ProviderAPIKey,
+		DoubaoCustomTimeRange:  opts.Prepared.DoubaoCustomTimeRange,
+		DoubaoSites:            append([]string(nil), opts.Prepared.DoubaoSites...),
+		DoubaoBlockedHosts:     append([]string(nil), opts.Prepared.DoubaoBlockedHosts...),
+		AuthoritativeOnly:      opts.Prepared.AuthoritativeOnly,
+		QueryRewrite:           opts.Prepared.QueryRewrite,
 		BaiduEndpoint:          opts.Endpoint,
 		BaiduAPIKey:            opts.ProviderAPIKey,
 		BaiduRecency:           opts.Prepared.BaiduRecency,
@@ -92,10 +97,21 @@ func ExecutePreparedSearch(ctx context.Context, opts SearchExecuteOptions) (Sear
 	}
 	payload = applyPreparedSearchMetadata(payload, opts.Prepared, false)
 	emitSearchAudit(opts, provider, "search_provider_request", false, len(payload.Results), started, nil)
-	if opts.CacheTTL > 0 {
+	if opts.CacheTTL > 0 && cacheAllowed {
 		WriteSearchCache(cacheKey, payload, opts.CacheTTL)
 	}
 	return payload, nil
+}
+
+// SearchProviderAllowsCache reports whether the provider contract permits
+// retaining returned search content in the process cache.
+func SearchProviderAllowsCache(provider string) bool {
+	switch NormalizeSearchProvider(provider) {
+	case SearchProviderDoubaoCustom, SearchProviderDoubaoGlobal:
+		return false
+	default:
+		return true
+	}
 }
 
 func emitSearchAudit(opts SearchExecuteOptions, provider, event string, cacheHit bool, resultCount int, started time.Time, err error) {

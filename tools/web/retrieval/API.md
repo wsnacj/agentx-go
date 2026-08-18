@@ -11,4 +11,8 @@
 - `NetworkErrorClassifier`：将 Host 私有网络错误映射到稳定检索错误类别，不转移策略所有权；
 - `SearchAuditEvent`：只发出 policy-neutral 观察，审计开关、脱敏和落盘仍由 Host 负责。
 
+豆包搜索Custom协议的identity为`doubao_custom`；旧`ark`名称仅规范化为
+`doubao_custom`。Custom协议支持时间区间、站点包含/排除、最高权威等级和Query改写，
+要求搜索专用凭据，且provider返回内容不进入进程内搜索缓存。
+
 该包不会导入 HS、Runner、Scene、具体代理实现或凭据系统。

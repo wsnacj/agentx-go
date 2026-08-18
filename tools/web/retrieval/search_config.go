@@ -8,12 +8,19 @@ import (
 )
 
 const (
-	DefaultSearchEndpoint      = "https://api.search.brave.com/res/v1/web/search"
-	DefaultSearchPerplexityURL = "https://api.perplexity.ai/chat/completions"
-	DefaultSearchOpenRouterURL = "https://openrouter.ai/api/v1/chat/completions"
-	DefaultSearchArkURL        = "https://open.feedcoopapi.com/search_api/web_search"
-	DefaultSearchBaiduURL      = "https://qianfan.baidubce.com/v2/ai_search/web_search"
-	DefaultSearchProvider      = "brave"
+	SearchProviderDoubaoCustom = "doubao_custom"
+	SearchProviderDoubaoGlobal = "doubao_global"
+
+	DefaultSearchEndpoint        = "https://api.search.brave.com/res/v1/web/search"
+	DefaultSearchPerplexityURL   = "https://api.perplexity.ai/chat/completions"
+	DefaultSearchOpenRouterURL   = "https://openrouter.ai/api/v1/chat/completions"
+	DefaultSearchDoubaoCustomURL = "https://open.feedcoopapi.com/search_api/web_search"
+	DefaultSearchDoubaoGlobalURL = "https://open.feedcoopapi.com/search_api/global_search"
+	// DefaultSearchArkURL is retained for source compatibility. New code should
+	// use DefaultSearchDoubaoCustomURL and a search-specific credential.
+	DefaultSearchArkURL   = DefaultSearchDoubaoCustomURL
+	DefaultSearchBaiduURL = "https://qianfan.baidubce.com/v2/ai_search/web_search"
+	DefaultSearchProvider = "brave"
 )
 
 var (
@@ -26,9 +33,11 @@ var (
 )
 
 func DefaultSearchEndpointForProvider(provider string) string {
-	switch provider {
-	case "ark":
-		return DefaultSearchArkURL
+	switch NormalizeSearchProvider(provider) {
+	case SearchProviderDoubaoCustom:
+		return DefaultSearchDoubaoCustomURL
+	case SearchProviderDoubaoGlobal:
+		return DefaultSearchDoubaoGlobalURL
 	case "baidu":
 		return DefaultSearchBaiduURL
 	default:
@@ -42,8 +51,10 @@ func NormalizeSearchProvider(value string) string {
 		return DefaultSearchProvider
 	}
 	switch normalized {
-	case "arksearch":
-		return "ark"
+	case "ark", "arksearch", "doubao", "doubao-search", "doubao_search", "doubao-custom", "doubao_search_custom":
+		return SearchProviderDoubaoCustom
+	case "doubao-global", "doubao_search_global":
+		return SearchProviderDoubaoGlobal
 	case "bidu", "bidusearch":
 		return "baidu"
 	}
@@ -52,7 +63,7 @@ func NormalizeSearchProvider(value string) string {
 
 func IsSupportedSearchProvider(provider string) bool {
 	switch NormalizeSearchProvider(provider) {
-	case "brave", "perplexity", "openrouter", "ark", "baidu":
+	case "brave", "perplexity", "openrouter", SearchProviderDoubaoCustom, "baidu":
 		return true
 	default:
 		return false
@@ -95,6 +106,38 @@ func MapFreshnessForArk(value string) (string, bool) {
 	default:
 		return "", false
 	}
+}
+
+// MapDateRangeForDoubaoCustom maps the portable inclusive date contract to
+// the Custom API's YYYY-MM-DD..YYYY-MM-DD form. Open ranges are closed using
+// the Unix epoch or the caller-supplied current date.
+func MapDateRangeForDoubaoCustom(dateAfter, dateBefore string, now time.Time) string {
+	dateAfter = strings.TrimSpace(dateAfter)
+	dateBefore = strings.TrimSpace(dateBefore)
+	if dateAfter == "" && dateBefore == "" {
+		return ""
+	}
+	if dateAfter == "" {
+		dateAfter = "1970-01-01"
+	}
+	if dateBefore == "" {
+		dateBefore = now.UTC().Format("2006-01-02")
+	}
+	return dateAfter + ".." + dateBefore
+}
+
+// SplitDomainFilterForDoubaoCustom maps portable allow and deny entries to
+// the Custom API's separate Sites and BlockHosts fields.
+func SplitDomainFilterForDoubaoCustom(items []string) (sites []string, blocked []string) {
+	for _, item := range items {
+		item = strings.TrimSpace(item)
+		if strings.HasPrefix(item, "-") {
+			blocked = append(blocked, strings.TrimSpace(strings.TrimPrefix(item, "-")))
+			continue
+		}
+		sites = append(sites, item)
+	}
+	return sites, blocked
 }
 
 func MapFreshnessForBaidu(value string) (string, bool) {
@@ -141,6 +184,10 @@ func BuildFreshnessFromDateRange(dateAfter string, dateBefore string, now time.T
 }
 
 func NormalizeSearchDomainFilter(items []string) ([]string, string) {
+	return normalizeSearchDomainFilter(items, false)
+}
+
+func normalizeSearchDomainFilter(items []string, allowMixed bool) ([]string, string) {
 	if len(items) == 0 {
 		return nil, ""
 	}
@@ -179,7 +226,7 @@ func NormalizeSearchDomainFilter(items []string) ([]string, string) {
 	if len(out) == 0 {
 		return nil, ""
 	}
-	if hasAllowlist && hasDenylist {
+	if !allowMixed && hasAllowlist && hasDenylist {
 		return nil, "domain_filter cannot mix allowlist and denylist entries. Use either all positive entries or all entries prefixed with '-'."
 	}
 	if len(out) > 20 {
@@ -203,7 +250,7 @@ func FormatDateForPerplexity(value string) string {
 func ResolveDateFilterProvider(currentProvider string, configuredProvider string, configuredProviderAPIKey string, configuredPerplexityAPIKey string, configuredPerplexityURL string, isConfigured func(provider string, providerAPIKey string, perplexityAPIKey string) bool) string {
 	currentProvider = NormalizeSearchProvider(currentProvider)
 	switch currentProvider {
-	case "brave", "perplexity":
+	case "brave", "perplexity", SearchProviderDoubaoCustom:
 		return currentProvider
 	}
 	if CanUsePerplexityStructuredDateFilters(configuredPerplexityAPIKey, configuredPerplexityURL) {
