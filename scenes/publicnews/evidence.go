@@ -145,17 +145,23 @@ func BuildGuardPayload(ctx Context, params map[string]any, resolver ContextResol
 	if primaryAIGenerated {
 		reviewReasons = appendUniqueString(reviewReasons, "primary_source_ai_generated")
 	}
-	if relevanceStats.eventMismatchCount > 0 {
-		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_event_mismatch")
-	}
-	if relevanceStats.topicMismatchCount > 0 {
-		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_topic_mismatch")
-	}
-	if relevanceStats.freshnessMismatchCount > 0 {
-		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_outside_freshness_window")
-	}
-	if relevanceStats.communitySourceCount > 0 {
-		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_community_surface")
+	// Rejected supporting candidates remain observable as warnings below. They
+	// block the guard only when fewer than two usable, independent sources
+	// remain; otherwise an unrelated or stale extra candidate must not poison a
+	// valid cross-check.
+	if sourceCount < 2 {
+		if relevanceStats.eventMismatchCount > 0 {
+			reviewReasons = appendUniqueString(reviewReasons, "supporting_source_event_mismatch")
+		}
+		if relevanceStats.topicMismatchCount > 0 {
+			reviewReasons = appendUniqueString(reviewReasons, "supporting_source_topic_mismatch")
+		}
+		if relevanceStats.freshnessMismatchCount > 0 {
+			reviewReasons = appendUniqueString(reviewReasons, "supporting_source_outside_freshness_window")
+		}
+		if relevanceStats.communitySourceCount > 0 {
+			reviewReasons = appendUniqueString(reviewReasons, "supporting_source_community_surface")
+		}
 	}
 	if claimedSourceCount >= 2 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "cross_check_evidence_missing")

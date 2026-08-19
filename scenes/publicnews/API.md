@@ -43,6 +43,9 @@ spec, _ := publicnews.MaterializedDefaultWorkflow(coordinator)
   来源执行确定性抽取与 guard，不抓取网页。
 - `DefaultEvidenceQualityPolicy`、`DefaultSourceRelevancePolicy`：portable mechanism；
   站点 allowlist、publisher/provider 偏好仍由 Host 拥有。
+- `BuildGuardPayload`会排除事件、主题、时效或来源质量不合格的 supporting candidate。
+  若排除后不足两个可用且独立的来源，对应原因进入`review_reasons`并阻断通过；若仍有
+  至少两个有效来源，则被排除的额外候选只保留为`warnings`，不得污染已经成立的交叉核验。
 - `LatestNewsLookupAnswerReadiness`、`LatestNewsLookupAnswerContract`、
   `BuildLatestNewsEvaluatorReport`：生成 bounded answer/evidence 状态，不生成或背书新闻
   事实。

@@ -673,6 +673,49 @@ func TestBuildGuardPayloadPassesWithIndependentThirdSourceAfterSyndicatedCopy(t 
 	}
 }
 
+func TestBuildGuardPayloadPassesWithIndependentSourceAfterUnrelatedCandidate(t *testing.T) {
+	body := strings.Repeat("示例公司发布产品更新，计划在多个市场逐步扩大测试范围并披露后续运营数据。", 8)
+	payload := BuildGuardPayload(Context{
+		UserMessage: "帮我看下示例公司最新新闻",
+		Title:       "示例公司发布产品更新",
+		SourceURL:   "https://primary.example.com/update",
+		Text:        "发布时间: 2026-07-07 20:26\n" + body,
+	}, map[string]any{
+		"topic":           "示例公司",
+		"entity_mentions": []any{"示例公司"},
+		"headline":        "示例公司发布产品更新",
+		"source_url":      "https://primary.example.com/update",
+		"published_at":    "2026-07-07 20:26",
+		"key_update":      "示例公司发布产品更新，并计划逐步扩大测试范围。",
+		"source_count":    3,
+		"supporting_sources": []any{
+			map[string]any{
+				"headline":     "示例公司完成新一轮融资",
+				"source_url":   "https://unrelated.example.net/financing",
+				"published_at": "2026-07-07 20:29",
+				"key_update":   "示例公司完成新一轮融资，资金将用于扩充销售团队。",
+				"text":         strings.Repeat("示例公司完成新一轮融资，资金将用于扩充销售团队。", 8),
+			},
+			map[string]any{
+				"headline":     "行业媒体核实示例公司产品更新",
+				"source_url":   "https://independent.example.org/report",
+				"published_at": "2026-07-07 21:10",
+				"key_update":   "行业媒体独立核实示例公司发布产品更新并扩大测试范围。",
+				"text":         strings.Repeat("行业媒体独立核实示例公司发布产品更新并扩大测试范围，同时披露后续运营数据。", 8),
+			},
+		},
+	}, nil, PayloadOptions{})
+	if payload.GuardStatus != "passed" || !payload.CrossCheckReady || payload.ObservedSourceCount != 2 {
+		t.Fatalf("expected unrelated extra candidate not to poison a valid cross-check, got %#v", payload)
+	}
+	if !strings.Contains(strings.Join(payload.Warnings, ","), "supporting_source_event_mismatch_ignored") {
+		t.Fatalf("expected ignored event mismatch to remain observable, got %#v", payload.Warnings)
+	}
+	if strings.Contains(strings.Join(payload.ReviewReasons, ","), "supporting_source_event_mismatch") {
+		t.Fatalf("expected rejected extra candidate to remain warning-only after valid cross-check, got %#v", payload.ReviewReasons)
+	}
+}
+
 func TestBuildGuardPayloadRejectsUngroundedModelFields(t *testing.T) {
 	payload := BuildGuardPayload(Context{}, map[string]any{
 		"headline":     "示例事件最新进展",
