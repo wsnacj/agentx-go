@@ -108,12 +108,22 @@ func refreshEvidenceReviewCrossCheckProjection(payload Payload) Payload {
 		payload.ReviewReasons = removeStringValues(payload.ReviewReasons, "no_usable_source", "single_source_only", "cross_check_evidence_missing")
 	}
 	if UngroundedSupportingSourceCount(payload.SupportingSources) > 0 {
-		payload.ReviewReasons = appendUniqueString(payload.ReviewReasons, "supporting_source_ungrounded")
+		payload.Warnings = appendUniqueString(payload.Warnings, "supporting_source_ungrounded_ignored")
+		if sourceCount < 2 {
+			payload.ReviewReasons = appendUniqueString(payload.ReviewReasons, "supporting_source_ungrounded")
+		} else {
+			payload.ReviewReasons = removeStringValues(payload.ReviewReasons, "supporting_source_ungrounded")
+		}
 	} else {
 		payload.ReviewReasons = removeStringValues(payload.ReviewReasons, "supporting_source_ungrounded")
 	}
 	if NoisySupportingSourceCount(payload.SupportingSources) > 0 {
-		payload.ReviewReasons = appendUniqueString(payload.ReviewReasons, "supporting_source_low_quality")
+		payload.Warnings = appendUniqueString(payload.Warnings, "supporting_source_low_quality_ignored")
+		if sourceCount < 2 {
+			payload.ReviewReasons = appendUniqueString(payload.ReviewReasons, "supporting_source_low_quality")
+		} else {
+			payload.ReviewReasons = removeStringValues(payload.ReviewReasons, "supporting_source_low_quality")
+		}
 	} else {
 		payload.ReviewReasons = removeStringValues(payload.ReviewReasons, "supporting_source_low_quality")
 	}

@@ -120,6 +120,8 @@ func BuildGuardPayload(ctx Context, params map[string]any, resolver ContextResol
 	supportingCollectionCount := newsCollectionSupportingSourceCount(supportingSources)
 	primaryAIGenerated := AIGeneratedSourceText(evidence.groundedText)
 	supportingAIGeneratedCount := aiGeneratedSupportingSourceCount(supportingSources)
+	ungroundedSupportingCount := UngroundedSupportingSourceCount(supportingSources)
+	noisySupportingCount := NoisySupportingSourceCount(supportingSources)
 	if !GroundedTextAvailable(ctx) {
 		missingFields = appendUniqueString(missingFields, "grounded_page_text")
 		reviewReasons = appendUniqueString(reviewReasons, "ungrounded_news_fields")
@@ -166,16 +168,16 @@ func BuildGuardPayload(ctx Context, params map[string]any, resolver ContextResol
 	if claimedSourceCount >= 2 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "cross_check_evidence_missing")
 	}
-	if UngroundedSupportingSourceCount(supportingSources) > 0 {
+	if ungroundedSupportingCount > 0 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_ungrounded")
 	}
-	if NoisySupportingSourceCount(supportingSources) > 0 {
+	if noisySupportingCount > 0 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_low_quality")
 	}
-	if supportingCollectionCount > 0 {
+	if supportingCollectionCount > 0 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_collection_surface")
 	}
-	if supportingAIGeneratedCount > 0 {
+	if supportingAIGeneratedCount > 0 && sourceCount < 2 {
 		reviewReasons = appendUniqueString(reviewReasons, "supporting_source_ai_generated")
 	}
 	if (crossCheckStats.syndicatedCopyCount > 0 || crossCheckStats.duplicatePublisherCount > 0 || crossCheckStats.attributedRepublicationCount > 0 || crossCheckStats.sharedUpstreamPublisherCount > 0) && sourceCount < 2 {
@@ -211,6 +213,12 @@ func BuildGuardPayload(ctx Context, params map[string]any, resolver ContextResol
 	}
 	if relevanceStats.communitySourceCount > 0 {
 		warnings = appendUniqueString(warnings, "supporting_source_community_surface_ignored")
+	}
+	if ungroundedSupportingCount > 0 {
+		warnings = appendUniqueString(warnings, "supporting_source_ungrounded_ignored")
+	}
+	if noisySupportingCount > 0 {
+		warnings = appendUniqueString(warnings, "supporting_source_low_quality_ignored")
 	}
 	if primaryCollection {
 		warnings = appendUniqueString(warnings, "primary_source_collection_surface_ignored")
