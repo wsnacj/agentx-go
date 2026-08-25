@@ -24,5 +24,9 @@ client；`providers/ark/types` 是对应的 request、response、tool、stream e
 `ResponseModelCapabilities()` 描述 Ark Responses 路径已实现的 text/tool/stream/reasoning
 能力。Files 与 image generation 是独立 provider service，不混入 model capability 合同。
 
+`providers/ark/types.ResponseRequest.ParallelToolCalls`是provider wire控制，不代表所有Ark模型默认支持并行
+工具能力。Host应按固定model/endpoint完成能力核对；即使请求`false`，工具数量、身份、参数和副作用仍须在
+执行前独立校验。
+
 能力探测、模型路由、降级策略、凭据管理和业务重试继续由 Host 负责。当前包为
 Experimental，不构成 Public/Beta/Stable 承诺。

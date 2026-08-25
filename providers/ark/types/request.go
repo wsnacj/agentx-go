@@ -23,7 +23,7 @@ type ResponseRequest struct {
 	Text               *TextFormat        `json:"text,omitempty"`
 	Tools              []Tool             `json:"tools,omitempty"`
 	ToolChoice         any                `json:"tool_choice,omitempty"`
-	MaxToolCalls       *int               `json:"max_tool_calls,omitempty"`
+	ParallelToolCalls  *bool              `json:"parallel_tool_calls,omitempty"`
 	ContextManagement  *ContextManagement `json:"context_management,omitempty"`
 	Extra              map[string]any     `json:"-"`
 	ExtraHeaders       map[string]string  `json:"-"`
@@ -311,7 +311,7 @@ func (r ResponseRequest) MarshalJSON() ([]byte, error) {
 		Text               *TextFormat        `json:"text,omitempty"`
 		Tools              []Tool             `json:"tools,omitempty"`
 		ToolChoice         any                `json:"tool_choice,omitempty"`
-		MaxToolCalls       *int               `json:"max_tool_calls,omitempty"`
+		ParallelToolCalls  *bool              `json:"parallel_tool_calls,omitempty"`
 		ContextManagement  *ContextManagement `json:"context_management,omitempty"`
 	}{
 		Model:              r.Model,
@@ -330,7 +330,7 @@ func (r ResponseRequest) MarshalJSON() ([]byte, error) {
 		Text:               r.Text,
 		Tools:              r.Tools,
 		ToolChoice:         r.ToolChoice,
-		MaxToolCalls:       r.MaxToolCalls,
+		ParallelToolCalls:  r.ParallelToolCalls,
 		ContextManagement:  r.ContextManagement,
 	})
 	if err != nil {

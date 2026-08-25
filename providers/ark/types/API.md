@@ -16,6 +16,10 @@ wire contract，并提供无网络副作用的构造和解码 helper。它不读
 - `UploadFileRequest`、`FileObject`、`FileList`、`InputItemList`：Files API；
 - `ThinkingConfig`、`ReasoningConfig`、`CachingConfig`、`ContextManagement`：请求控制。
 
+`ResponseRequest.ParallelToolCalls`直接映射provider wire字段。Host只有在目标model/endpoint已经完成能力
+核对后才应设置；`false`表示要求Provider不要在同一响应中并行生成多个Function Call，不等同于总Tool预算。
+本合同不提供`max_tool_calls`数量字段，调用数量、allowlist和副作用准入仍必须由Host独立fail closed。
+
 ## 构造与解码
 
 `NewInputText/Items`、`NewMessage`、`NewInput*Item`、`NewFunctionTool` 及各 provider tool builder
@@ -27,4 +31,4 @@ wire contract，并提供无网络副作用的构造和解码 helper。它不读
 
 这些类型直接映射 provider JSON，字段名、omitempty、union marshal/unmarshal 与 event type 是
 协议兼容面，但当前仍为 Experimental，不形成 Public/Beta/Stable 承诺。认证头、HTTP client、
-timeout、SSE 生命周期、工具授权和执行由 `providers/ark` Client 与 Host 负责。
+timeout、SSE 生命周期、模型级字段能力、工具授权和执行由 `providers/ark` Client 与 Host 负责。
