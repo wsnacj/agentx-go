@@ -112,8 +112,8 @@ func (EmbeddingOptions) Clone() EmbeddingOptions
 | --- | --- |
 | `Tool` | 当前承载 function tool |
 | `Function` | name、description、parameters、output schema、strict |
-| `FunctionCall` | 完整工具调用 identity/name/arguments |
-| `FunctionCallDelta` | 流式工具调用增量 |
+| `FunctionCall` | 完整工具调用 identity/name/arguments，以及 Provider 要求原样续传的 opaque continuation token |
+| `FunctionCallDelta` | 流式工具调用增量，包括可选 continuation token |
 | `ToolChoice` | 工具选择策略 |
 | `ToolChoiceFunction` | 指定 function name |
 
@@ -130,6 +130,10 @@ func (FunctionCallDelta) HasArguments() bool
 
 `SanitizeToolSchemas` 返回复制后的 tool slice，不修改 `OutputSchema`；
 `OutputSchema` 仍是上层内部输出合同，不应自动发送给 OpenAI-compatible provider。
+
+`FunctionCall.ContinuationToken` 是 Provider 为该次 Tool Call 签发的 opaque 状态，只允许原样保存并在
+后续模型轮次随同一 `FunctionCall` 续传。Host 不得解析、合成或复用到其它调用；持久化时应按会话正文同等
+敏感级别保护。没有该要求的 Provider 保持空值，不能用它承载业务状态、Tool 参数或路由策略。
 
 ## Stream 合同
 

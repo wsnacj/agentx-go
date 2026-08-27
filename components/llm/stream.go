@@ -314,6 +314,9 @@ func MergeToolCallSnapshot(current FunctionCall, delta FunctionCallDelta) Functi
 	if delta.Arguments != "" {
 		current.Arguments += delta.Arguments
 	}
+	if delta.ContinuationToken != "" {
+		current.ContinuationToken = delta.ContinuationToken
+	}
 	return current
 }
 

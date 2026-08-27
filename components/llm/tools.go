@@ -28,19 +28,21 @@ type ToolChoiceFunction struct {
 
 // FunctionCall 表示模型返回的函数调用指令。
 type FunctionCall struct {
-	ID        string `json:"id,omitempty"`
-	Type      string `json:"type,omitempty"`
-	Name      string `json:"name"`
-	Arguments string `json:"arguments"`
+	ID                string `json:"id,omitempty"`
+	Type              string `json:"type,omitempty"`
+	Name              string `json:"name"`
+	Arguments         string `json:"arguments"`
+	ContinuationToken string `json:"continuation_token,omitempty"`
 }
 
 // FunctionCallDelta 描述流式函数调用的增量更新。
 type FunctionCallDelta struct {
-	ID        string
-	Type      string
-	Name      string
-	Arguments string
-	Index     int
+	ID                string
+	Type              string
+	Name              string
+	Arguments         string
+	ContinuationToken string
+	Index             int
 }
 
 // HasName 判断 delta 中是否包含函数名。

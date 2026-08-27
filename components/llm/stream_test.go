@@ -21,17 +21,18 @@ func TestNormalizeStreamStopReason(t *testing.T) {
 
 func TestMergeToolCallSnapshot(t *testing.T) {
 	snapshot := MergeToolCallSnapshot(FunctionCall{}, FunctionCallDelta{
-		ID:        "call_1",
-		Type:      "function",
-		Name:      "lookup",
-		Arguments: "{\"q\":\"hel",
-		Index:     0,
+		ID:                "call_1",
+		Type:              "function",
+		Name:              "lookup",
+		Arguments:         "{\"q\":\"hel",
+		ContinuationToken: "opaque-provider-token",
+		Index:             0,
 	})
 	snapshot = MergeToolCallSnapshot(snapshot, FunctionCallDelta{
 		Arguments: "lo\"}",
 		Index:     0,
 	})
-	if snapshot.ID != "call_1" || snapshot.Type != "function" || snapshot.Name != "lookup" {
+	if snapshot.ID != "call_1" || snapshot.Type != "function" || snapshot.Name != "lookup" || snapshot.ContinuationToken != "opaque-provider-token" {
 		t.Fatalf("expected snapshot metadata preserved, got %#v", snapshot)
 	}
 	if snapshot.Arguments != "{\"q\":\"hello\"}" {
@@ -219,7 +220,7 @@ func TestBridgeLegacyStreamResultBuildsTextSnapshotPerContentIndex(t *testing.T)
 
 func TestBridgeLegacyStreamResultBuildsToolCallSnapshotPerContentIndex(t *testing.T) {
 	ch := make(chan StreamChunk, 3)
-	ch <- StreamChunk{ToolCalls: []FunctionCallDelta{{Index: 1, ID: "call_1", Type: "function", Name: "lookup", Arguments: "{\"q\":\"hel"}}, Raw: []byte("tool1")}
+	ch <- StreamChunk{ToolCalls: []FunctionCallDelta{{Index: 1, ID: "call_1", Type: "function", Name: "lookup", Arguments: "{\"q\":\"hel", ContinuationToken: "opaque-provider-token"}}, Raw: []byte("tool1")}
 	ch <- StreamChunk{ToolCalls: []FunctionCallDelta{{Index: 1, Arguments: "lo\"}"}}, Raw: []byte("tool2")}
 	ch <- StreamChunk{Done: true, Raw: []byte("done")}
 	close(ch)
@@ -234,7 +235,7 @@ func TestBridgeLegacyStreamResultBuildsToolCallSnapshotPerContentIndex(t *testin
 	if len(toolEvents) != 2 {
 		t.Fatalf("expected 2 tool events, got %d", len(toolEvents))
 	}
-	if toolEvents[0].ToolCallSnapshot == nil || toolEvents[0].ToolCallSnapshot.Arguments != "{\"q\":\"hel" {
+	if toolEvents[0].ToolCallSnapshot == nil || toolEvents[0].ToolCallSnapshot.Arguments != "{\"q\":\"hel" || toolEvents[0].ToolCallSnapshot.ContinuationToken != "opaque-provider-token" {
 		t.Fatalf("expected first tool-call snapshot, got %#v", toolEvents[0].ToolCallSnapshot)
 	}
 	if toolEvents[1].ToolCallSnapshot == nil || toolEvents[1].ToolCallSnapshot.Arguments != "{\"q\":\"hello\"}" {
