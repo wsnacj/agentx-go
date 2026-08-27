@@ -104,7 +104,11 @@ func buildMessageContents(messages llm.Conversation) ([]map[string]any, error) {
 						return nil, fmt.Errorf("gemini: decode assistant function arguments: %w", err)
 					}
 				}
-				parts = append(parts, map[string]any{"functionCall": map[string]any{"name": name, "args": args}})
+				functionCall := map[string]any{"name": name, "args": args}
+				if id := strings.TrimSpace(call.ID); id != "" {
+					functionCall["id"] = id
+				}
+				parts = append(parts, map[string]any{"functionCall": functionCall})
 			}
 			if len(parts) > 0 {
 				contents = append(contents, map[string]any{"role": "model", "parts": parts})
@@ -117,9 +121,11 @@ func buildMessageContents(messages llm.Conversation) ([]map[string]any, error) {
 			if name == "" {
 				return nil, fmt.Errorf("gemini: tool response name is required")
 			}
-			parts = append(parts, map[string]any{"functionResponse": map[string]any{
-				"name": name, "response": geminiFunctionResponse(message.Content),
-			}})
+			functionResponse := map[string]any{"name": name, "response": geminiFunctionResponse(message.Content)}
+			if id := strings.TrimSpace(message.ToolCallID); id != "" {
+				functionResponse["id"] = id
+			}
+			parts = append(parts, map[string]any{"functionResponse": functionResponse})
 			contents = append(contents, map[string]any{"role": "user", "parts": parts})
 		default:
 			if message.Content != "" {
@@ -162,7 +168,7 @@ func extractFunctionCalls(resp *GenerateContentResponse) []llm.FunctionCall {
 		if err != nil {
 			continue
 		}
-		calls = append(calls, llm.FunctionCall{Type: "function", Name: part.FunctionCall.Name, Arguments: string(args)})
+		calls = append(calls, llm.FunctionCall{ID: part.FunctionCall.ID, Type: "function", Name: part.FunctionCall.Name, Arguments: string(args)})
 	}
 	return calls
 }

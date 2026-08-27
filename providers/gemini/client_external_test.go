@@ -77,7 +77,7 @@ func TestProviderChatAndVisionContract(t *testing.T) {
 
 func TestProviderChatToolContinuationContract(t *testing.T) {
 	doer := &toolSequenceDoer{responses: []string{
-		`{"candidates":[{"content":{"role":"model","parts":[{"functionCall":{"name":"lookup","args":{"id":"fixture"}}}]},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":2,"candidatesTokenCount":3,"totalTokenCount":5}}`,
+		`{"candidates":[{"content":{"role":"model","parts":[{"functionCall":{"id":"call-fixture","name":"lookup","args":{"id":"fixture"}}}]},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":2,"candidatesTokenCount":3,"totalTokenCount":5}}`,
 		`{"candidates":[{"content":{"role":"model","parts":[{"text":"AGENTX_GEMINI_TOOL_OK"}]},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":4,"candidatesTokenCount":2,"totalTokenCount":6}}`,
 	}}
 	provider := gemini.NewProvider(gemini.Config{BaseURL: "https://example.invalid/v1beta", HTTPClient: doer})
@@ -90,14 +90,14 @@ func TestProviderChatToolContinuationContract(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(first.Calls) != 1 || first.Calls[0].Name != "lookup" || usage == nil || usage.TotalTokens != 5 || first.Usage != usage {
+	if len(first.Calls) != 1 || first.Calls[0].ID != "call-fixture" || first.Calls[0].Name != "lookup" || usage == nil || usage.TotalTokens != 5 || first.Usage != usage {
 		t.Fatalf("first = %#v usage=%#v", first, usage)
 	}
 	second, _, err := provider.Chat(context.Background(), model, llm.ChatRequest{
 		Messages: llm.Conversation{
 			{Role: "user", Content: "lookup fixture"},
 			{Role: "assistant", ToolCalls: first.Calls},
-			{Role: "tool", ToolName: "lookup", Content: `{"value":"ready"}`},
+			{Role: "tool", ToolCallID: first.Calls[0].ID, ToolName: "lookup", Content: `{"value":"ready"}`},
 		},
 		Tools: []llm.Tool{tool}, ToolChoice: &llm.ToolChoice{Type: "none"},
 	})
@@ -110,6 +110,15 @@ func TestProviderChatToolContinuationContract(t *testing.T) {
 	contents := doer.bodies[1]["contents"].([]any)
 	if len(contents) != 3 {
 		t.Fatalf("continuation contents = %#v", contents)
+	}
+	modelContent := contents[1].(map[string]any)
+	modelParts := modelContent["parts"].([]any)
+	functionCall := modelParts[0].(map[string]any)["functionCall"].(map[string]any)
+	toolContent := contents[2].(map[string]any)
+	toolParts := toolContent["parts"].([]any)
+	functionResponse := toolParts[0].(map[string]any)["functionResponse"].(map[string]any)
+	if functionCall["id"] != "call-fixture" || functionResponse["id"] != "call-fixture" {
+		t.Fatalf("continuation identity: call=%#v response=%#v", functionCall, functionResponse)
 	}
 }
 

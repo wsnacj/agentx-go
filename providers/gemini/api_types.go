@@ -32,12 +32,14 @@ type Part struct {
 
 // FunctionCall is a Gemini-native function invocation emitted by a model.
 type FunctionCall struct {
+	ID   string         `json:"id,omitempty"`
 	Name string         `json:"name,omitempty"`
 	Args map[string]any `json:"args,omitempty"`
 }
 
 // FunctionResponse is a Gemini-native function result supplied by the Host.
 type FunctionResponse struct {
+	ID       string         `json:"id,omitempty"`
 	Name     string         `json:"name,omitempty"`
 	Response map[string]any `json:"response,omitempty"`
 }
