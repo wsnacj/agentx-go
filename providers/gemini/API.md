@@ -16,7 +16,7 @@
 
 `NewProvider(Config)` 进一步提供面向 `components/llm` 的 `Chat`、`Vision`、
 `Embedding` 与 normalized stream event。`Chat` 与 `StreamChatEvents` 可以把 canonical function
-Tool 映射为 Gemini `functionDeclarations`、`functionCallingConfig`、`functionCall` 和
+Tool 映射为 Gemini `functionDeclarations.parametersJsonSchema`、`functionCallingConfig`、`functionCall` 和
 `functionResponse`；返回值统一为 `llm.FunctionCall` 或 ToolCall stream event。模型默认值通过 `ModelConfig` 或
 `EmbeddingConfig` 显式传入；本地媒体只能通过 `Config.ResolveMedia` 由 Host 批准和解析，
 provider 本身不读取文件系统。

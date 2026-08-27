@@ -33,6 +33,12 @@ func TestBuildGeneratePayloadProjectsCanonicalToolContract(t *testing.T) {
 	if !ok || len(declarations) != 1 || declarations[0]["name"] != "lookup" {
 		t.Fatalf("functionDeclarations = %#v", tools[0]["functionDeclarations"])
 	}
+	if _, ok := declarations[0]["parametersJsonSchema"]; !ok {
+		t.Fatalf("parametersJsonSchema = %#v", declarations[0])
+	}
+	if _, exists := declarations[0]["parameters"]; exists {
+		t.Fatalf("canonical JSON Schema used legacy Gemini Schema field: %#v", declarations[0])
+	}
 	config := payload["toolConfig"].(map[string]any)["functionCallingConfig"].(map[string]any)
 	if config["mode"] != "ANY" {
 		t.Fatalf("toolConfig = %#v", config)

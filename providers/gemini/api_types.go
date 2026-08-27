@@ -136,9 +136,11 @@ type ToolConfig struct {
 
 // FunctionDeclaration describes a callable function.
 type FunctionDeclaration struct {
-	Name        string         `json:"name,omitempty"`
-	Description string         `json:"description,omitempty"`
-	Parameters  map[string]any `json:"parameters,omitempty"`
+	Name                 string         `json:"name,omitempty"`
+	Description          string         `json:"description,omitempty"`
+	Parameters           map[string]any `json:"parameters,omitempty"`
+	ParametersJSONSchema any            `json:"parametersJsonSchema,omitempty"`
+	ResponseJSONSchema   any            `json:"responseJsonSchema,omitempty"`
 }
 
 // FunctionCallingConfig configures function calling.

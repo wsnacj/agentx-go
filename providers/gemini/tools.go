@@ -28,7 +28,13 @@ func buildGeminiTools(tools []llm.Tool) ([]map[string]any, error) {
 			declaration["description"] = description
 		}
 		if len(tool.Function.Parameters) > 0 {
-			declaration["parameters"] = tool.Function.Parameters
+			// Canonical Tool schemas are standard JSON Schema. Gemini's legacy
+			// `parameters` field uses its protobuf Schema enum, so use the
+			// dedicated JSON Schema field to preserve lowercase JSON types.
+			declaration["parametersJsonSchema"] = tool.Function.Parameters
+		}
+		if len(tool.Function.OutputSchema) > 0 {
+			declaration["responseJsonSchema"] = tool.Function.OutputSchema
 		}
 		declarations = append(declarations, declaration)
 	}
