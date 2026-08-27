@@ -1,6 +1,6 @@
 # package_dir<TAB>maturity<TAB>Chinese_Reference<TAB>go_doc_sha256_or_dash
 .	developer_preview_candidate	docs/reference/agentx.md	f856ec49a287c98881cb0e5db14883fc1f0a21a8e8a2949c5d49e590ff2d37f4
-components/llm	developer_preview_candidate	components/llm/API.md	3fa1276f3c47e4f9d2438c9fcd4fb5842a6ef249c08429c4fafb0b3630f04430
+components/llm	developer_preview_candidate	components/llm/API.md	3a0b13ef40f9f60b744bd5bd4f7660c556a850645130ae9ffb5f52d2227f7d01
 components/tool	experimental_extension	components/tool/API.md	-
 scenes/astock	experimental_extension	scenes/astock/API.md	-
 scenes/astock/contracts	experimental_extension	scenes/astock/contracts/API.md	-
