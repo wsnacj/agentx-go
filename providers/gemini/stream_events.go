@@ -199,7 +199,10 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 				events = append(events, types.StreamEvent{Type: types.StreamEventError, Err: fmt.Errorf("encode streamed function arguments: %w", err), Raw: raw})
 				continue
 			}
-			incoming := types.FunctionCall{ID: part.FunctionCall.ID, Type: "function", Name: part.FunctionCall.Name, Arguments: string(arguments)}
+			incoming := types.FunctionCall{
+				ID: part.FunctionCall.ID, Type: "function", Name: part.FunctionCall.Name,
+				Arguments: string(arguments), ContinuationToken: part.ThoughtSignature,
+			}
 			if previous, exists := p.toolSnapshots[idx]; exists {
 				if previous != incoming {
 					events = append(events, types.StreamEvent{Type: types.StreamEventError, Err: fmt.Errorf("gemini: streamed function call changed after emission"), Raw: raw})
@@ -208,7 +211,10 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 			}
 			p.toolSnapshots[idx] = incoming
 			contentIndex := idx
-			delta := types.FunctionCallDelta{ID: incoming.ID, Type: "function", Name: incoming.Name, Arguments: incoming.Arguments, Index: contentIndex}
+			delta := types.FunctionCallDelta{
+				ID: incoming.ID, Type: "function", Name: incoming.Name, Arguments: incoming.Arguments,
+				ContinuationToken: incoming.ContinuationToken, Index: contentIndex,
+			}
 			events = append(events,
 				types.StreamEvent{
 					Type: types.StreamEventToolCallStart, ContentIndex: &contentIndex,

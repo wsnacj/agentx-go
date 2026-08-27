@@ -12,7 +12,7 @@ func TestBuildGeneratePayloadProjectsCanonicalToolContract(t *testing.T) {
 	payload, err := buildGeneratePayload(context.Background(), nil, ModelConfig{Capability: Capability{ToolCalling: true}}, llm.ChatRequest{
 		Messages: llm.Conversation{
 			{Role: "user", Content: "lookup fixture"},
-			{Role: "assistant", ToolCalls: []llm.FunctionCall{{ID: "call-fixture", Name: "lookup", Arguments: `{"id":"fixture"}`}}},
+			{Role: "assistant", ToolCalls: []llm.FunctionCall{{ID: "call-fixture", Name: "lookup", Arguments: `{"id":"fixture"}`, ContinuationToken: "opaque-provider-token"}}},
 			{Role: "tool", ToolCallID: "call-fixture", ToolName: "lookup", Content: `{"value":"ready"}`},
 		},
 		Tools: []llm.Tool{{Type: "function", Function: llm.Function{
@@ -53,7 +53,7 @@ func TestBuildGeneratePayloadProjectsCanonicalToolContract(t *testing.T) {
 	}
 	assistantParts := contents[1]["parts"].([]map[string]any)
 	functionCall, ok := assistantParts[0]["functionCall"].(map[string]any)
-	if !ok || functionCall["id"] != "call-fixture" {
+	if !ok || functionCall["id"] != "call-fixture" || assistantParts[0]["thoughtSignature"] != "opaque-provider-token" {
 		t.Fatalf("assistant parts = %#v", assistantParts)
 	}
 	toolParts := contents[2]["parts"].([]map[string]any)
@@ -82,13 +82,13 @@ func TestBuildGeneratePayloadToolContractFailsClosed(t *testing.T) {
 
 func TestExtractFunctionCallsAndReasoningUsage(t *testing.T) {
 	response := &GenerateContentResponse{
-		Candidates: []Candidate{{Content: Content{Parts: []Part{{FunctionCall: &FunctionCall{
+		Candidates: []Candidate{{Content: Content{Parts: []Part{{ThoughtSignature: "opaque-provider-token", FunctionCall: &FunctionCall{
 			ID: "call-fixture", Name: "lookup", Args: map[string]any{"id": "fixture"},
 		}}}}}},
 		UsageMetadata: &UsageMetadata{PromptTokenCount: 2, CandidatesTokenCount: 3, TotalTokenCount: 8, ThoughtsTokenCount: 3},
 	}
 	calls := extractFunctionCalls(response)
-	if len(calls) != 1 || calls[0].ID != "call-fixture" || calls[0].Name != "lookup" || calls[0].Arguments != `{"id":"fixture"}` {
+	if len(calls) != 1 || calls[0].ID != "call-fixture" || calls[0].Name != "lookup" || calls[0].Arguments != `{"id":"fixture"}` || calls[0].ContinuationToken != "opaque-provider-token" {
 		t.Fatalf("calls = %#v", calls)
 	}
 	usage := extractUsage(response)
@@ -101,7 +101,7 @@ func TestGeminiStreamParserEmitsNormalizedToolEvents(t *testing.T) {
 	parser := &geminiStreamEventParser{}
 	events := parser.ParseResponse(&GenerateContentResponse{
 		Candidates: []Candidate{{
-			Content: Content{Parts: []Part{{
+			Content: Content{Parts: []Part{{ThoughtSignature: "opaque-provider-token",
 				FunctionCall: &FunctionCall{ID: "call-fixture", Name: "lookup", Args: map[string]any{"id": "fixture"}},
 			}}},
 			FinishReason: "STOP",
@@ -110,7 +110,7 @@ func TestGeminiStreamParserEmitsNormalizedToolEvents(t *testing.T) {
 	if len(events) != 2 || events[0].Type != llm.StreamEventToolCallStart || events[1].Type != llm.StreamEventToolCallDelta {
 		t.Fatalf("events = %#v", events)
 	}
-	if events[1].ToolCall == nil || events[1].ToolCall.ID != "call-fixture" || events[1].ToolCall.Name != "lookup" || !json.Valid([]byte(events[1].ToolCall.Arguments)) {
+	if events[1].ToolCall == nil || events[1].ToolCall.ID != "call-fixture" || events[1].ToolCall.Name != "lookup" || events[1].ToolCall.ContinuationToken != "opaque-provider-token" || !json.Valid([]byte(events[1].ToolCall.Arguments)) {
 		t.Fatalf("tool delta = %#v", events[1].ToolCall)
 	}
 	done := parser.DoneEvents(nil)

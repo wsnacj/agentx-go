@@ -29,9 +29,14 @@ provider 本身不读取文件系统。
 - non-stream Chat 返回函数名和 JSON 参数，stream 返回 start/delta/end 与最终 snapshot；
 - `Vision`/`StreamVisionEvents` 仍拒绝 Tool，因为当前 `llm.VisualResponse` 没有函数调用结果面。
 
+Gemini thinking model 在 Tool Call part 返回的 `thoughtSignature` 会作为 canonical
+`FunctionCall.ContinuationToken` 透明返回，并在下一轮同一 Tool Call 上原样写回。Host 不得解析、合成、
+输出或跨调用复用该 token；它是加密的 Provider continuation state，不是思维链正文。
+
 这些 capability 相互独立：`Streaming=true` 与 `ToolCalling=true` 只声明文本 Chat 的组合实现，不自动声明
 Visual Tool、并行 Tool 或任意上游模型均支持。协议字段依据
-[Gemini Function Calling](https://ai.google.dev/gemini-api/docs/function-calling)；Host仍负责核对所选模型。
+[Gemini Function Calling](https://ai.google.dev/gemini-api/docs/function-calling) 和
+[Gemini Thinking](https://ai.google.dev/gemini-api/docs/thinking)；Host仍负责核对所选模型。
 
 默认 endpoint 仅用于协议兼容。生产 Host 仍应显式确认 endpoint、凭据、代理、配额、
 重试和网络授权。当前包为 Experimental，不构成 Public/Beta/Stable 承诺。

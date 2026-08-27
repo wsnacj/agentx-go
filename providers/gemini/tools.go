@@ -108,7 +108,11 @@ func buildMessageContents(messages llm.Conversation) ([]map[string]any, error) {
 				if id := strings.TrimSpace(call.ID); id != "" {
 					functionCall["id"] = id
 				}
-				parts = append(parts, map[string]any{"functionCall": functionCall})
+				part := map[string]any{"functionCall": functionCall}
+				if token := strings.TrimSpace(call.ContinuationToken); token != "" {
+					part["thoughtSignature"] = token
+				}
+				parts = append(parts, part)
 			}
 			if len(parts) > 0 {
 				contents = append(contents, map[string]any{"role": "model", "parts": parts})
@@ -168,7 +172,10 @@ func extractFunctionCalls(resp *GenerateContentResponse) []llm.FunctionCall {
 		if err != nil {
 			continue
 		}
-		calls = append(calls, llm.FunctionCall{ID: part.FunctionCall.ID, Type: "function", Name: part.FunctionCall.Name, Arguments: string(args)})
+		calls = append(calls, llm.FunctionCall{
+			ID: part.FunctionCall.ID, Type: "function", Name: part.FunctionCall.Name,
+			Arguments: string(args), ContinuationToken: part.ThoughtSignature,
+		})
 	}
 	return calls
 }
