@@ -7,31 +7,6 @@ import (
 	types "github.com/wsnacj/agentx-go/components/llm"
 )
 
-type generateContentResponse struct {
-	Candidates    []generateCandidate `json:"candidates"`
-	UsageMetadata *usageMetadata      `json:"usageMetadata"`
-}
-
-type generateCandidate struct {
-	Content      content `json:"content"`
-	FinishReason string  `json:"finishReason"`
-}
-
-type usageMetadata struct {
-	PromptTokenCount     int `json:"promptTokenCount"`
-	CandidatesTokenCount int `json:"candidatesTokenCount"`
-	TotalTokenCount      int `json:"totalTokenCount"`
-}
-
-type content struct {
-	Role  string `json:"role"`
-	Parts []part `json:"parts"`
-}
-
-type part struct {
-	Text string `json:"text"`
-}
-
 type contentEmbedding struct {
 	Values []float32 `json:"values"`
 }
@@ -44,15 +19,15 @@ type batchEmbedContentResponse struct {
 	Embeddings []contentEmbedding `json:"embeddings"`
 }
 
-func decodeGenerateContent(raw []byte) (*generateContentResponse, error) {
-	var resp generateContentResponse
+func decodeGenerateContent(raw []byte) (*GenerateContentResponse, error) {
+	var resp GenerateContentResponse
 	if err := json.Unmarshal(raw, &resp); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 	return &resp, nil
 }
 
-func extractText(resp *generateContentResponse) string {
+func extractText(resp *GenerateContentResponse) string {
 	if resp == nil || len(resp.Candidates) == 0 {
 		return ""
 	}
@@ -70,7 +45,7 @@ func extractText(resp *generateContentResponse) string {
 	return out
 }
 
-func extractUsage(resp *generateContentResponse) *types.Usage {
+func extractUsage(resp *GenerateContentResponse) *types.Usage {
 	if resp == nil || resp.UsageMetadata == nil {
 		return nil
 	}
@@ -79,6 +54,7 @@ func extractUsage(resp *generateContentResponse) *types.Usage {
 		PromptTokens:     usage.PromptTokenCount,
 		CompletionTokens: usage.CandidatesTokenCount,
 		TotalTokens:      usage.TotalTokenCount,
+		ReasoningTokens:  usage.ThoughtsTokenCount,
 	}
 }
 

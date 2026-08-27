@@ -19,13 +19,27 @@ type Content struct {
 
 // Part represents a multi-modal part. Only one of the data fields should be set.
 type Part struct {
-	Text             string           `json:"text,omitempty"`
-	Thought          bool             `json:"thought,omitempty"`
-	ThoughtSignature string           `json:"thoughtSignature,omitempty"`
-	InlineData       *InlineData      `json:"inlineData,omitempty"`
-	FileData         *FileData        `json:"fileData,omitempty"`
-	VideoMetadata    *VideoMetadata   `json:"videoMetadata,omitempty"`
-	MediaResolution  *MediaResolution `json:"mediaResolution,omitempty"`
+	Text             string            `json:"text,omitempty"`
+	Thought          bool              `json:"thought,omitempty"`
+	ThoughtSignature string            `json:"thoughtSignature,omitempty"`
+	FunctionCall     *FunctionCall     `json:"functionCall,omitempty"`
+	FunctionResponse *FunctionResponse `json:"functionResponse,omitempty"`
+	InlineData       *InlineData       `json:"inlineData,omitempty"`
+	FileData         *FileData         `json:"fileData,omitempty"`
+	VideoMetadata    *VideoMetadata    `json:"videoMetadata,omitempty"`
+	MediaResolution  *MediaResolution  `json:"mediaResolution,omitempty"`
+}
+
+// FunctionCall is a Gemini-native function invocation emitted by a model.
+type FunctionCall struct {
+	Name string         `json:"name,omitempty"`
+	Args map[string]any `json:"args,omitempty"`
+}
+
+// FunctionResponse is a Gemini-native function result supplied by the Host.
+type FunctionResponse struct {
+	Name     string         `json:"name,omitempty"`
+	Response map[string]any `json:"response,omitempty"`
 }
 
 // MediaResolution controls media token budget at part level.

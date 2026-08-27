@@ -50,14 +50,11 @@ func NewProvider(cfg Config) *Provider {
 
 func (p *Provider) Chat(ctx context.Context, cfg ModelConfig, req types.ChatRequest) (*types.ChatResponse, *types.Usage, error) {
 	req = resolveChatRequest(cfg, req)
-	if len(req.Tools) > 0 || req.ToolChoice != nil {
-		return nil, nil, providers.ErrUnsupported
-	}
 	payload, usage, err := p.generate(ctx, cfg, req, nil, defaultChatTimeout)
 	if err != nil {
 		return nil, nil, err
 	}
-	return &types.ChatResponse{Content: payload.Text, Raw: payload.Raw}, usage, nil
+	return &types.ChatResponse{Content: payload.Text, Calls: payload.Calls, Raw: payload.Raw, Usage: usage}, usage, nil
 }
 
 func (p *Provider) Vision(ctx context.Context, cfg ModelConfig, req types.VisualRequest) (*types.VisualResponse, *types.Usage, error) {
@@ -106,24 +103,24 @@ func (p *Provider) StreamVision(ctx context.Context, cfg ModelConfig, req types.
 	return types.BridgeEventStreamResult(events), nil
 }
 
-func (p *Provider) generate(ctx context.Context, cfg ModelConfig, req types.ChatRequest, visuals []types.VisualContent, timeout time.Duration) (generatedText, *types.Usage, error) {
+func (p *Provider) generate(ctx context.Context, cfg ModelConfig, req types.ChatRequest, visuals []types.VisualContent, timeout time.Duration) (generatedContent, *types.Usage, error) {
 	payload, err := buildGeneratePayload(ctx, p.resolveMedia, cfg, req, visuals)
 	if err != nil {
-		return generatedText{}, nil, err
+		return generatedContent{}, nil, err
 	}
 	settings := transport.Resolve(p.cfg.Transport, types.RequestOptionsFromMap(req.Options))
 
 	endpoint := p.buildEndpoint(req.Model, "generateContent")
 	raw, err := p.post(ctx, endpoint, payload, timeout, settings)
 	if err != nil {
-		return generatedText{}, nil, err
+		return generatedContent{}, nil, err
 	}
 
 	resp, err := decodeGenerateContent(raw)
 	if err != nil {
-		return generatedText{}, nil, err
+		return generatedContent{}, nil, err
 	}
-	return generatedText{Text: extractText(resp), Raw: raw}, extractUsage(resp), nil
+	return generatedContent{Text: extractText(resp), Calls: extractFunctionCalls(resp), Raw: raw}, extractUsage(resp), nil
 }
 
 func (p *Provider) embed(ctx context.Context, cfg EmbeddingConfig, req types.EmbeddingRequest, timeout time.Duration) ([][]float32, *types.Usage, error) {
@@ -222,17 +219,17 @@ func (p *Provider) post(ctx context.Context, endpoint string, payload any, timeo
 
 func buildContents(ctx context.Context, resolver MediaResolver, cfg ModelConfig, messages types.Conversation, visuals []types.VisualContent) ([]map[string]any, error) {
 	if len(visuals) == 0 {
-		return buildTextContents(messages), nil
+		return buildMessageContents(messages)
 	}
-
+	// Preserve the established visual contract: message text and media are one
+	// user turn. Visual Tool calling remains unsupported by the neutral response
+	// surface and is rejected before this builder is reached.
 	parts := make([]map[string]any, 0, len(messages)+len(visuals))
-	for _, msg := range messages {
-		if msg.Content == "" {
-			continue
+	for _, message := range messages {
+		if message.Content != "" {
+			parts = append(parts, map[string]any{"text": message.Content})
 		}
-		parts = append(parts, map[string]any{"text": msg.Content})
 	}
-
 	for _, visual := range visuals {
 		part, err := buildVisualPart(ctx, resolver, cfg, visual)
 		if err != nil {
@@ -246,27 +243,7 @@ func buildContents(ctx context.Context, resolver MediaResolver, cfg ModelConfig,
 	if len(parts) == 0 {
 		return nil, fmt.Errorf("empty content")
 	}
-
-	return []map[string]any{
-		{
-			"role":  "user",
-			"parts": parts,
-		},
-	}, nil
-}
-
-func buildTextContents(messages types.Conversation) []map[string]any {
-	contents := make([]map[string]any, 0, len(messages))
-	for _, msg := range messages {
-		if msg.Content == "" {
-			continue
-		}
-		contents = append(contents, map[string]any{
-			"role":  normalizeRole(msg.Role),
-			"parts": []map[string]any{{"text": msg.Content}},
-		})
-	}
-	return contents
+	return []map[string]any{{"role": "user", "parts": parts}}, nil
 }
 
 func buildSystemInstruction(systemPrompt string) map[string]any {
@@ -434,18 +411,10 @@ func pickFirstNonEmpty(values ...string) string {
 	return ""
 }
 
-func normalizeRole(role string) string {
-	switch strings.ToLower(role) {
-	case "assistant", "model":
-		return "model"
-	default:
-		return "user"
-	}
-}
-
-type generatedText struct {
-	Text string
-	Raw  []byte
+type generatedContent struct {
+	Text  string
+	Calls []types.FunctionCall
+	Raw   []byte
 }
 
 func applyResolvedHeaders(headers http.Header, resolved map[string]string) {

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	types "github.com/wsnacj/agentx-go/components/llm"
+	"github.com/wsnacj/agentx-go/providers"
 )
 
 func chatRequestFromVisualRequest(req types.VisualRequest) types.ChatRequest {
@@ -23,6 +24,9 @@ func ChatRequestFromVisualRequest(request types.VisualRequest) types.ChatRequest
 }
 
 func buildGeneratePayload(ctx context.Context, resolver MediaResolver, cfg ModelConfig, req types.ChatRequest, visuals []types.VisualContent) (map[string]any, error) {
+	if (len(req.Tools) > 0 || req.ToolChoice != nil) && !cfg.Capability.ToolCalling {
+		return nil, providers.ErrUnsupported
+	}
 	sanitizedOptions := types.SanitizeProviderOptionMap(req.Options)
 	payload := map[string]any{}
 	contents, err := buildContents(ctx, resolver, cfg, req.Messages, visuals)
@@ -39,6 +43,20 @@ func buildGeneratePayload(ctx context.Context, resolver MediaResolver, cfg Model
 	generationConfig := buildGenerationConfig(req.MaxTokens, req.Temperature, sanitizedOptions)
 	if len(generationConfig) > 0 {
 		payload["generationConfig"] = generationConfig
+	}
+	tools, err := buildGeminiTools(req.Tools)
+	if err != nil {
+		return nil, err
+	}
+	if len(tools) > 0 {
+		payload["tools"] = tools
+	}
+	toolConfig, err := buildGeminiToolConfig(req.ToolChoice, req.Tools)
+	if err != nil {
+		return nil, err
+	}
+	if len(toolConfig) > 0 {
+		payload["toolConfig"] = toolConfig
 	}
 	return payload, nil
 }

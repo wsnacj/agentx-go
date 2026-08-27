@@ -20,9 +20,6 @@ func (p *Provider) StreamChatEvents(ctx context.Context, cfg ModelConfig, req ty
 		return nil, providers.ErrUnsupported
 	}
 	req = resolveChatRequest(cfg, req)
-	if len(req.Tools) > 0 || req.ToolChoice != nil {
-		return nil, providers.ErrUnsupported
-	}
 	return p.streamEvents(ctx, cfg, req, nil)
 }
 
@@ -162,6 +159,7 @@ type geminiStreamEventParser struct {
 	pendingFinishReason string
 	textSnapshots       map[int]string
 	thinkingSnapshots   map[int]string
+	toolSnapshots       map[int]types.FunctionCall
 }
 
 func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, raw []byte) []types.StreamEvent {
@@ -173,6 +171,9 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 	}
 	if p.thinkingSnapshots == nil {
 		p.thinkingSnapshots = map[int]string{}
+	}
+	if p.toolSnapshots == nil {
+		p.toolSnapshots = map[int]types.FunctionCall{}
 	}
 
 	events := make([]types.StreamEvent, 0, 4)
@@ -188,6 +189,40 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 	}
 	candidate := resp.Candidates[0]
 	for idx, part := range candidate.Content.Parts {
+		if part.FunctionCall != nil {
+			argsMap := part.FunctionCall.Args
+			if argsMap == nil {
+				argsMap = map[string]any{}
+			}
+			arguments, err := json.Marshal(argsMap)
+			if err != nil {
+				events = append(events, types.StreamEvent{Type: types.StreamEventError, Err: fmt.Errorf("encode streamed function arguments: %w", err), Raw: raw})
+				continue
+			}
+			incoming := types.FunctionCall{Type: "function", Name: part.FunctionCall.Name, Arguments: string(arguments)}
+			if previous, exists := p.toolSnapshots[idx]; exists {
+				if previous != incoming {
+					events = append(events, types.StreamEvent{Type: types.StreamEventError, Err: fmt.Errorf("gemini: streamed function call changed after emission"), Raw: raw})
+				}
+				continue
+			}
+			p.toolSnapshots[idx] = incoming
+			contentIndex := idx
+			delta := types.FunctionCallDelta{Type: "function", Name: incoming.Name, Arguments: incoming.Arguments, Index: contentIndex}
+			events = append(events,
+				types.StreamEvent{
+					Type: types.StreamEventToolCallStart, ContentIndex: &contentIndex,
+					ToolCallSnapshot: cloneGeminiFunctionCall(incoming),
+					MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots), Raw: raw,
+				},
+				types.StreamEvent{
+					Type: types.StreamEventToolCallDelta, ContentIndex: &contentIndex, ToolCall: &delta,
+					ToolCallSnapshot: cloneGeminiFunctionCall(incoming),
+					MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots), Raw: raw,
+				},
+			)
+			continue
+		}
 		if part.Text == "" {
 			continue
 		}
@@ -200,7 +235,7 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 					Type:             types.StreamEventThinkingStart,
 					ContentIndex:     &contentIndex,
 					ThinkingSnapshot: p.thinkingSnapshots[contentIndex],
-					MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+					MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 					Raw:              raw,
 				})
 			}
@@ -214,7 +249,7 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 				ContentIndex:     &contentIndex,
 				ThinkingDelta:    delta,
 				ThinkingSnapshot: snapshot,
-				MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+				MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 				Raw:              raw,
 			})
 			continue
@@ -226,7 +261,7 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 				Type:            types.StreamEventTextStart,
 				ContentIndex:    &contentIndex,
 				TextSnapshot:    p.textSnapshots[contentIndex],
-				MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+				MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 				Raw:             raw,
 			})
 		}
@@ -240,7 +275,7 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 			ContentIndex:    &contentIndex,
 			TextDelta:       delta,
 			TextSnapshot:    snapshot,
-			MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+			MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 			Raw:             raw,
 		})
 	}
@@ -251,13 +286,13 @@ func (p *geminiStreamEventParser) ParseResponse(resp *GenerateContentResponse, r
 }
 
 func (p *geminiStreamEventParser) DoneEvents(raw []byte) []types.StreamEvent {
-	events := make([]types.StreamEvent, 0, len(p.thinkingSnapshots)+len(p.textSnapshots)+1)
+	events := make([]types.StreamEvent, 0, len(p.thinkingSnapshots)+len(p.textSnapshots)+len(p.toolSnapshots)+1)
 	for _, contentIndex := range types.SortedStringSnapshotIndexes(p.thinkingSnapshots) {
 		events = append(events, types.StreamEvent{
 			Type:             types.StreamEventThinkingEnd,
 			ContentIndex:     &contentIndex,
 			ThinkingSnapshot: p.thinkingSnapshots[contentIndex],
-			MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+			MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 			Raw:              raw,
 		})
 	}
@@ -266,18 +301,36 @@ func (p *geminiStreamEventParser) DoneEvents(raw []byte) []types.StreamEvent {
 			Type:            types.StreamEventTextEnd,
 			ContentIndex:    &contentIndex,
 			TextSnapshot:    p.textSnapshots[contentIndex],
-			MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+			MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 			Raw:             raw,
 		})
+	}
+	for _, contentIndex := range types.SortedFunctionCallIndexes(p.toolSnapshots) {
+		events = append(events, types.StreamEvent{
+			Type:             types.StreamEventToolCallEnd,
+			ContentIndex:     &contentIndex,
+			ToolCallSnapshot: cloneGeminiFunctionCall(p.toolSnapshots[contentIndex]),
+			MessageSnapshot:  types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
+			Raw:              raw,
+		})
+	}
+	stopReason := types.NormalizeStreamStopReason(p.pendingFinishReason)
+	if len(p.toolSnapshots) > 0 && (stopReason == "" || stopReason == types.StreamStopReasonStop) {
+		stopReason = types.StreamStopReasonToolUse
 	}
 	events = append(events, types.StreamEvent{
 		Type:            types.StreamEventDone,
 		FinishReason:    p.pendingFinishReason,
-		StopReason:      types.NormalizeStreamStopReason(p.pendingFinishReason),
-		MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, nil),
+		StopReason:      stopReason,
+		MessageSnapshot: types.BuildStreamMessageSnapshot(p.textSnapshots, p.thinkingSnapshots, p.toolSnapshots),
 		Raw:             raw,
 	})
 	return events
+}
+
+func cloneGeminiFunctionCall(call types.FunctionCall) *types.FunctionCall {
+	copy := call
+	return &copy
 }
 
 func advanceSnapshot(previous string, incoming string) (string, string) {
@@ -305,5 +358,6 @@ func extractStreamUsage(resp *GenerateContentResponse) *types.Usage {
 		PromptTokens:     usage.PromptTokenCount,
 		CompletionTokens: usage.CandidatesTokenCount,
 		TotalTokens:      usage.TotalTokenCount,
+		ReasoningTokens:  usage.ThoughtsTokenCount,
 	}
 }

@@ -22,3 +22,20 @@ HTTP 协议、错误分类、有限重试、usage 收集接缝和具体 provider
 - `providers/usage`：`Collector` 与 `NoopCollector`。
 
 所有包目前均为 Experimental，不构成 Public/Beta/Stable 或正式发行承诺。
+
+## 高层能力一致性基线
+
+下表描述当前 canonical 高层 adapter 已真正实现的合同，不代表对应供应商的全部模型能力。`显式`表示 Host
+必须对所选模型开启 capability；`透传`表示只提供受控 provider 字段映射，不构成统一强类型保证。
+
+| Provider | Stream | Structured output | Function Tool | Thinking / reasoning | Cache | Usage |
+|---|---|---|---|---|---|---|
+| OpenAI-compatible | 显式 | `response_format`透传 | 是；并行能力显式 | 显式 | transport透传 | 是 |
+| Anthropic | 否 | 否 | 是；non-stream | 否 | 否 | 基础input/output |
+| Gemini native | 显式 | `generationConfig`透传 | 显式；Chat与StreamChat | 显式thinking | native低层类型；高层未开放 | prompt/output/total/reasoning |
+| Ark Responses | 是 | native Responses合同 | 是 | 是 | provider报告为准 | prompt/output/total/cache/reasoning |
+| Codex Responses | 内部SSE收集；无公开normalized stream | provider合同 | 是 | 显式 | prompt cache key | prompt/output/total/cache/reasoning |
+
+所有 adapter 的网络/API失败统一保留 `providers.APIError` cause；Platform或其它Host必须在外部边界再次映射为
+display-safe error，不能把响应正文、prompt、模型输出或凭据直接显示给调用方。缺少的组合能力必须返回
+`ErrUnsupported`或保持 capability=false，不允许通过静默换模、自动fallback或空实现伪装支持。

@@ -43,9 +43,10 @@ type Config struct {
 
 // Capability controls optional request fields supported by one model.
 type Capability struct {
-	Vision     bool
-	LocalFiles bool
-	Streaming  bool
+	Vision      bool
+	LocalFiles  bool
+	Streaming   bool
+	ToolCalling bool
 }
 
 // ModelConfig contains one chat/vision model's host-selected defaults.
