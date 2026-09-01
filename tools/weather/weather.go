@@ -188,8 +188,8 @@ func lookupLocation(ctx context.Context, location, baseURL string, timeoutMs int
 	query.Set("format", "json")
 	endpoint := baseURL + "/v1/search?" + query.Encode()
 	var payload geocodingResponse
-	if err := getJSON(ctx, endpoint, timeoutMs, opts, &payload); err != nil {
-		return geocodingResult{}, fmt.Errorf("%s: geocoding failed: %w", Name, err)
+	if err := getJSON(ctx, endpoint, "geocoding", timeoutMs, opts, &payload); err != nil {
+		return geocodingResult{}, err
 	}
 	if len(payload.Results) == 0 {
 		return geocodingResult{}, fmt.Errorf("%s: no location match for %q", Name, location)
@@ -211,8 +211,8 @@ func lookupForecast(ctx context.Context, place geocodingResult, baseURL string, 
 	query.Set("timezone", "auto")
 	endpoint := baseURL + "/v1/forecast?" + query.Encode()
 	var payload forecastResponse
-	if err := getJSON(ctx, endpoint, timeoutMs, opts, &payload); err != nil {
-		return Result{}, fmt.Errorf("%s: forecast failed: %w", Name, err)
+	if err := getJSON(ctx, endpoint, "forecast", timeoutMs, opts, &payload); err != nil {
+		return Result{}, err
 	}
 	result := Result{Provider: "open-meteo", Location: place.Name, Country: place.Country, Timezone: place.Timezone}
 	if result.Location == "" {
@@ -238,7 +238,7 @@ func lookupForecast(ctx context.Context, place geocodingResult, baseURL string, 
 	return result, nil
 }
 
-func getJSON(ctx context.Context, endpoint string, timeoutMs int, opts Options, target any) error {
+func getJSON(ctx context.Context, endpoint, phase string, timeoutMs int, opts Options, target any) error {
 	prepared, err := opts.Prepare(ctx, httprequest.PrepareInput{
 		RawURL: endpoint, TimeoutMs: timeoutMs, FollowRedirects: false, MaxRedirects: 0,
 	})
@@ -271,7 +271,7 @@ func getJSON(ctx context.Context, endpoint string, timeoutMs int, opts Options, 
 	}
 	defer response.Body.Close()
 	if response.StatusCode >= http.StatusBadRequest {
-		return fmt.Errorf("status %d", response.StatusCode)
+		return fmt.Errorf("%s: %s failed with status %d", Name, phase, response.StatusCode)
 	}
 	decoder := json.NewDecoder(io.LimitReader(response.Body, maxProviderBytes+1))
 	if err := decoder.Decode(target); err != nil {
