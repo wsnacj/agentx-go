@@ -283,6 +283,12 @@ func validateArgumentValue(value any, schema map[string]any, path string, bindin
 		required, _ := schemaStringList(schema["required"], true)
 		for _, name := range required {
 			if _, exists := typed[name]; !exists {
+				if child, ok := properties[name].(map[string]any); ok {
+					if sources, err := schemaStringList(child[bindingSourcesKeyword], true); err == nil && len(sources) > 0 {
+						result.NeedsClarification = append(result.NeedsClarification, path+"."+name)
+						continue
+					}
+				}
 				return fmt.Errorf("%s.%s: required property is missing", path, name)
 			}
 		}

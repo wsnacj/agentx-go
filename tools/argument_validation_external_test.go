@@ -21,6 +21,7 @@ func TestValidateCallArgumentsRequiresTrustedWeatherLocation(t *testing.T) {
 		{name: "user input", raw: `{"location":"北京"}`, bindings: tools.BindingContext{UserInput: "请告诉我北京今天天气如何"}, ready: true, wantSource: tools.BindingSourceUserInput},
 		{name: "trusted host", raw: `{"location":"Beijing"}`, bindings: tools.BindingContext{TrustedHost: map[string]string{"$.location": "Beijing"}}, ready: true, wantSource: tools.BindingSourceTrustedHost},
 		{name: "invented", raw: `{"location":"北京"}`, bindings: tools.BindingContext{UserInput: "请告诉我今天天气如何"}},
+		{name: "missing", raw: `{}`, bindings: tools.BindingContext{UserInput: "请告诉我今天天气如何"}},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
