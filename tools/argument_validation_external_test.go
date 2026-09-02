@@ -70,3 +70,22 @@ func TestValidateCallArgumentsRejectsUnsupportedDefinition(t *testing.T) {
 		t.Fatalf("error = %v", err)
 	}
 }
+
+func TestValidateArgumentsAcceptsNativeStringEnum(t *testing.T) {
+	definition := toolcontract.Definition{Type: "function", Function: toolcontract.Function{
+		Name: "enum_tool",
+		Parameters: map[string]any{
+			"type": "object", "additionalProperties": false,
+			"properties": map[string]any{
+				"mode": map[string]any{"type": "string", "enum": []string{"fast", "safe"}},
+			},
+			"required": []string{"mode"},
+		},
+	}}
+	if err := tools.ValidateArguments(definition, `{"mode":"safe"}`); err != nil {
+		t.Fatal(err)
+	}
+	if err := tools.ValidateArguments(definition, `{"mode":"unknown"}`); !errors.Is(err, tools.ErrInvalidToolArguments) {
+		t.Fatalf("error = %v", err)
+	}
+}

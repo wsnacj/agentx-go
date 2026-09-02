@@ -202,6 +202,12 @@ func validateArgumentSchema(schema map[string]any, path string, root bool) error
 			}
 		}
 	}
+	if raw, ok := schema["enum"]; ok {
+		values, valid := schemaLiteralList(raw)
+		if !valid || len(values) == 0 {
+			return fmt.Errorf("%s.enum: must be a non-empty JSON value array", path)
+		}
+	}
 	if raw, ok := schema[bindingSourcesKeyword]; ok {
 		sources, err := schemaStringList(raw, false)
 		if err != nil || len(sources) == 0 || !containsString(types, "string") {
@@ -489,7 +495,7 @@ func matchesAnySchemaType(value any, types []string) bool {
 }
 
 func matchesLiteralList(value, raw any) bool {
-	items, ok := raw.([]any)
+	items, ok := schemaLiteralList(raw)
 	if !ok || len(items) == 0 {
 		return false
 	}
@@ -499,6 +505,20 @@ func matchesLiteralList(value, raw any) bool {
 		}
 	}
 	return false
+}
+
+func schemaLiteralList(raw any) ([]any, bool) {
+	encoded, err := json.Marshal(raw)
+	if err != nil {
+		return nil, false
+	}
+	decoder := json.NewDecoder(bytes.NewReader(encoded))
+	decoder.UseNumber()
+	var values []any
+	if err := decoder.Decode(&values); err != nil || values == nil {
+		return nil, false
+	}
+	return values, true
 }
 
 func jsonValuesEqual(left, right any) bool {
