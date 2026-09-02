@@ -4,6 +4,11 @@ import toolcontract "github.com/wsnacj/agentx-go/components/tool"
 
 // Definition returns the stable model-facing weather_lookup declaration.
 func Definition() toolcontract.Definition {
+	location := stringSchema("City or place name copied from the user's request or supplied by a trusted Host binding. " +
+		"Never guess a location; when no location is explicit, ask the user before calling this tool.")
+	location["minLength"] = 1
+	location["maxLength"] = 200
+	location["x-agentx-binding-sources"] = []any{"user_input", "trusted_host"}
 	return toolcontract.Definition{
 		Type: "function",
 		Function: toolcontract.Function{
@@ -11,9 +16,7 @@ func Definition() toolcontract.Definition {
 			Description: "Look up current weather and today's forecast for a city using Open-Meteo without an API key. " +
 				"This tool is not an arbitrary future forecast surface; if the user asks for tomorrow or a later date, " +
 				"say that only current/today weather is supported unless another forecast tool is available.",
-			Parameters: closedSchema(map[string]any{
-				"location": stringSchema("City or place name for current/today weather, for example Beijing or 北京."),
-			}, []string{"location"}),
+			Parameters: closedSchema(map[string]any{"location": location}, []string{"location"}),
 			OutputSchema: closedSchema(map[string]any{
 				"provider":   stringSchema("Weather provider used for the lookup."),
 				"location":   stringSchema("Resolved place name used for the forecast."),

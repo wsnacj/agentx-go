@@ -46,3 +46,20 @@ func TestRegistryConcurrentUse(t *testing.T) {
 		<-done
 	}
 }
+
+func TestRegistryValidateCallUsesRegisteredDefinitionAndNameRepair(t *testing.T) {
+	registry := tools.NewRegistry()
+	registry.Register(toolcontract.Definition{Type: "function", Function: toolcontract.Function{
+		Name: "weather_lookup", Parameters: map[string]any{
+			"type": "object", "additionalProperties": false,
+			"properties": map[string]any{"location": map[string]any{
+				"type": "string", "minLength": 1, "x-agentx-binding-sources": []any{"user_input"},
+			}},
+			"required": []string{"location"},
+		},
+	}}, func(context.Context, toolcontract.Call) (toolcontract.Result, error) { return "unused", nil })
+	result, err := registry.ValidateCall(toolcontract.Call{Name: "weather-lookup", Arguments: `{"location":"北京"}`}, tools.BindingContext{UserInput: "北京天气"})
+	if err != nil || !result.Ready() || len(result.Evidence) != 1 || result.Evidence[0].Source != tools.BindingSourceUserInput {
+		t.Fatalf("result=%#v err=%v", result, err)
+	}
+}

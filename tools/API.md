@@ -16,6 +16,7 @@
 func NewRegistry() *Registry
 func (*Registry) Register(tool.Definition, tool.Handler)
 func (*Registry) Execute(context.Context, tool.Call) (tool.Result, error)
+func (*Registry) ValidateCall(tool.Call, BindingContext) (ArgumentValidation, error)
 func (*Registry) Definitions() []tool.Definition
 func (*Registry) Version() uint64
 func (*Registry) Reset()
@@ -24,6 +25,40 @@ func Ensure(tool.Executor) tool.Executor
 
 `Registry`可并发使用；definition按名称稳定排序。重复名称覆盖旧handler并推进version。
 缺失名称返回`*ToolNameError`，可用`errors.As`或`AsToolNameError`识别。
+
+## Tool 参数校验
+
+```go
+type BindingSource string
+
+const (
+    BindingSourceUserInput       BindingSource = "user_input"
+    BindingSourceTrustedHost     BindingSource = "trusted_host"
+    BindingSourcePriorToolResult BindingSource = "prior_tool_result"
+    BindingSourceDefaultAllowed  BindingSource = "default_allowed"
+)
+
+type BindingContext struct {
+    UserInput       string
+    TrustedHost     map[string]string
+    PriorToolResult map[string]string
+    DefaultAllowed  map[string]bool
+}
+
+type ArgumentValidation struct {
+    NeedsClarification []string
+    Evidence           []BindingEvidence
+}
+
+func ValidateArguments(tool.Definition, string) error
+func ValidateCallArguments(tool.Definition, string, BindingContext) (ArgumentValidation, error)
+```
+
+校验器只实现model-facing Tool实际使用的有界JSON Schema子集，并要求参数是一个精确JSON object；不接受
+代码块、字符串/数组包裹或尾随JSON。Tool owner可在字符串字段上声明
+`x-agentx-binding-sources`，要求调用值来自用户输入、可信Host、前序Tool结果或显式允许的默认值。
+校验只返回content-free字段路径和来源，不执行Tool、不访问网络，也不拥有authorization或sandbox。
+`strict`仍是Provider提示，不替代Runtime校验。
 
 ## 名称修复
 

@@ -54,7 +54,7 @@ func (r *Registry) Execute(ctx context.Context, call toolcontract.Call) (toolcon
 	if !ok {
 		repair = resolveNameRepair(r.entries, call.Name)
 		if repair.ok {
-			item = entry{handler: repair.handler}
+			item = r.entries[repair.name]
 			call.Name = repair.name
 			ok = true
 		}
@@ -68,6 +68,35 @@ func (r *Registry) Execute(ctx context.Context, call toolcontract.Call) (toolcon
 		})
 	}
 	return item.handler(ctx, call)
+}
+
+// ValidateCall validates one registered definition without executing its
+// handler. It applies the same deterministic name repair as Execute and is
+// safe to call before authorization or sandbox admission.
+func (r *Registry) ValidateCall(call toolcontract.Call, bindings BindingContext) (ArgumentValidation, error) {
+	if r == nil {
+		return ArgumentValidation{}, fmt.Errorf("llmx: tool registry not initialised")
+	}
+	r.mu.RLock()
+	item, ok := r.entries[call.Name]
+	repair := nameRepairMatch{}
+	if !ok {
+		repair = resolveNameRepair(r.entries, call.Name)
+		if repair.ok {
+			item = r.entries[repair.name]
+			call.Name = repair.name
+			ok = true
+		}
+	}
+	r.mu.RUnlock()
+	if !ok {
+		return ArgumentValidation{}, NewToolNameError(call.Name, ToolNameRepairResolution{
+			Requested: strings.TrimSpace(call.Name), NormalizedKey: strings.TrimSpace(canonicalNameKey(call.Name)),
+			Candidates: repair.candidates, Ambiguous: repair.ambiguous,
+			Reason: firstNonEmpty(repair.reason, "not_registered"),
+		})
+	}
+	return ValidateCallArguments(item.definition, call.Arguments, bindings)
 }
 
 // Ensure returns exec or a new empty Registry when exec is nil.

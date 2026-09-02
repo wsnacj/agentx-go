@@ -37,5 +37,8 @@ func Lookup(context.Context, Request, Options) (Result, error)
 current与单日today结果。缺少地点、Host未注入网络端口、网络被拒绝、provider失败或context取消都会显式返回
 错误，不会退回需要API key的provider或伪造天气。
 
+model-facing `location` schema关闭未知字段并声明`user_input / trusted_host`来源。Host应在Security和网络访问前
+调用`tools.ValidateCallArguments`；没有可信地点时返回`NeedsClarification`并追问用户，禁止模型猜测当前位置。
+
 `Result`包含provider、解析后的地点/国家/时区、UTC获取时间、当前温度/体感/湿度/风速/天气码，以及今日
 最高温、最低温与天气码。温度单位为摄氏度，风速单位为km/h。
